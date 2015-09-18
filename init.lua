@@ -17,14 +17,19 @@ hs.grid.GRIDHEIGHT 	= 7
 -- disable animation
 hs.window.animationDuration = 0
 
+-- screen watcher, since this is used on multiple computers
+
+
 
 ---------
 -- Vars
 ---------
 
 -- var for hyper key and mash
-local hyper = {"cmd", "alt", "ctrl"}
-local mash = {"cmd", "alt"}
+-- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
+-- Doesn't make any sense though both in terms of naming and use.
+local mash = {"cmd", "alt", "ctrl"}
+local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
 ------------------------------------------------------------------------------
@@ -35,8 +40,8 @@ local alt = {"alt"}
 ------------------------------------------------------------------------------
 -- var representing display name (this is name of MBP internal display)
 local display_laptop = "Color LCD"
--- default window layouts for laptop
-local internal_display = {   
+-- default window layouts for notebook
+local notebook = {   
    {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"OmniFocus",         nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Mail",              nil,          display_laptop, hs.layout.maximized, nil, nil},
@@ -48,11 +53,26 @@ local internal_display = {
    {"Emacs",             nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
--- default windows layouts for Mac Pro (dual monitor)
+-- default windows layouts for desktop (dual monitor)
 -- layouts go here
+local display_desktop_main  = "DELL P2815Q"
+local display_desktop_aux   = "DELL U2312HM"
+local desktop = {   
+   {"Safari",            nil,          display_desktop_main, hs.layout.maximized, nil, nil},
+   {"OmniFocus",         nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Calendar",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Evernote",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
+   {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Postbox",           nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
+}
+
 -- /not done
 ------------------------------------------------------------------------------
-
+hs.layout.apply(desktop)
 
 
 -- layouts invoked by hotkey
@@ -101,9 +121,9 @@ hs.hotkey.bind(mash, "right", function()
 		  local screen = win:screen()
 		  local max = screen:frame()
 		  f.x = max.x + (max.w * 0.75)
+		  f.y = max.y
 		  f.w = max.w * 0.25
 		  f.h = max.h
-		  f.y = max.y
 		  win:setFrame(f)
 end)
 
@@ -119,6 +139,16 @@ hs.hotkey.bind(mash, "left", function()
 		  f.y = max.y
 		  win:setFrame(f)
 end)
+
+hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
+hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
+
+
+-- set mash+1-9 as percentage widths for current window
+-- if less than 60, move to right side
+-- if 60 or greater, move to left side
+-- ex. mash+4 makes current window 40% width of screen and moves it to
+-- right side of screen
 
 ------------------------------------------------------------------------------
 -- NOTE
@@ -196,6 +226,59 @@ function moveRight(win)
    win:setFrame(newFrame)
 end
 
+-- Gets current url from active safari tab
+function mailToSelf()
+    script = [[
+    tell application "Safari"
+        set currentURL to URL of document 1
+    end tell
+    return currentURL
+    ]]
+    ok, result = hs.applescript(script)
+    if (ok) then
+       -- hs.eventtap.keyStrokes(result)
+       hs.applescript.applescript([[
+        tell application "Safari"
+            set result to URL of document 1
+        end tell
+        tell application "Mail"
+             set theMessage to make new outgoing message with properties {subject:result, content:result, visible:true}
+             tell theMessage
+                  make new to recipient with properties {name:"Andrew Williams", address:"hammerspoon@nonissue.org"}
+                  send
+             end tell
+        end tell
+        ]])
+        -- hs.eventtap.keyStrokes(result)
+    end
+end
+
+
+hs.hotkey.bind(mash, 'U', mailToSelf)
+
+
+-- functions for different locations
+-- configure things like drive mounts, display sleep (for security), etc.
+
+-- sets displaysleep to 90 minutes if at home
+-- should be called based on ssid
+-- not the most secure since someone could fake ssid I guess
+-- might want some other level of verification
+
+function home_arrived()
+         -- requires modified sudoers file
+         -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
+         os.execute("sudo pmset -b displaysleep 90")
+end
+
+-- sets displaysleep to lowervalue
+-- eventually should unmount disks and perform other functions?
+function home_departed()
+         -- set volume to 0? 
+         os.execute("sudo pmset -a displaysleep 1 sleep 15")
+end
+
+
 -- currently unnecessary
 function getGrid(win)
    local winFrame = win:frame()
@@ -208,8 +291,15 @@ function getGrid(win)
    }
 end
 
-
-
+numberOfScreens = #hs.screen.allScreens()
+if numberOfScreens == 1 then
+   hs.layout.apply(notebook)
+   print("notebook layout applied")
+elseif numberOfScreens == 2 then
+   hs.layout.apply(desktop)
+   print("desktop layout applied")
+end
+    
 function reload_config(files)
    hs.reload()
 end
