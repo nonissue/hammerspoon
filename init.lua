@@ -254,7 +254,22 @@ function mailToSelf()
 end
 
 
+-- mails current url to myself using mailtoself function
 hs.hotkey.bind(mash, 'U', mailToSelf)
+
+-- makes new window from current tab in safari
+function tab_to_new_window()
+   hs.application.launchOrFocus("Safari")
+   local safari = hs.appfinder.appFromName("Safari")
+   
+   local target_item_in_menu = {"Window", "Move Tab to New Window"}
+   safari:selectMenuItem(target_item_in_menu)
+   
+   hs.alert.show("making new window from tab")
+end
+
+hs.hotkey.bind(mash, 'T', tab_to_new_window)
+
 
 
 -- functions for different locations
