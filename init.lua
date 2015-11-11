@@ -8,6 +8,57 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
+
+-- General Utilities
+
+
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "H", function()
+  hs.notify.new({title="Hammerspoon", informativeText="Hello World!"}):send()
+end)
+
+
+function print_table(t)
+   for k, v in pairs(t) do
+      print(k, v)
+   end
+end
+
+
+-- can be used to print out tables and subtables
+function print_r ( t )  
+    local print_r_cache={}
+    local function sub_print_r(t,indent)
+        if (print_r_cache[tostring(t)]) then
+            print(indent.."*"..tostring(t))
+        else
+            print_r_cache[tostring(t)]=true
+            if (type(t)=="table") then
+                for pos,val in pairs(t) do
+                    if (type(val)=="table") then
+                        print(indent.."["..pos.."] => "..tostring(t).." {")
+                        sub_print_r(val,indent..string.rep(" ",string.len(pos)+8))
+                        print(indent..string.rep(" ",string.len(pos)+6).."}")
+                    elseif (type(val)=="string") then
+                        print(indent.."["..pos..'] => "'..val..'"')
+                    else
+                        print(indent.."["..pos.."] => "..tostring(val))
+                    end
+                end
+            else
+                print(indent..tostring(t))
+            end
+        end
+    end
+    if (type(t)=="table") then
+        print(tostring(t).." {")
+        sub_print_r(t,"  ")
+        print("}")
+    else
+        sub_print_r(t,"  ")
+    end
+    print()
+end
+   
 -- init grid
 hs.grid.MARGINX 	= 0
 hs.grid.MARGINY 	= 0
@@ -18,8 +69,6 @@ hs.grid.GRIDHEIGHT 	= 7
 hs.window.animationDuration = 0
 
 -- screen watcher, since this is used on multiple computers
-
-
 
 ---------
 -- Vars
@@ -72,8 +121,8 @@ local desktop = {
 
 -- /not done
 ------------------------------------------------------------------------------
+-- sets default? This is controlled by function much lower down?
 hs.layout.apply(desktop)
-
 
 -- layouts invoked by hotkey
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
@@ -143,42 +192,6 @@ end)
 hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
-
--- set mash+1-9 as percentage widths for current window
--- if less than 60, move to right side
--- if 60 or greater, move to left side
--- ex. mash+4 makes current window 40% width of screen and moves it to
--- right side of screen
-
-------------------------------------------------------------------------------
--- NOTE
-------------------------------------------------------------------------------
--- The below works but is not necessary
-------------------------------------------------------------------------------
--- resizes current window
--- accepts params
--- w for width
--- h for height
--- local resizeCurrentWindow = function (w, h)
---    return function()
---       local win = hs.window.focusedWindow()
---       local f = win:frame()
---       local screen = win:screen()
---       local max = screen:frame()
---       f.w = max.w * w
---       f.h = max.h * h
---       win:setFrame(f)
---    end
--- end
-
--- resizes current window
--- accepts params
--- w for width
--- h for height
-------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------
--- NOTE
 ------------------------------------------------------------------------------
 -- There is redunancy in the code above which I intend to eliminate, but
 -- below is a vastly more complicated way of managing windows/positioning
@@ -225,6 +238,116 @@ function moveRight(win)
    }
    win:setFrame(newFrame)
 end
+
+local desktopResolutions = {
+   {w = 1920, h = 1080, s = 1},
+   {w = 2048, h = 1152, s = 2},
+   {w = 2304, h = 1296, s = 2},
+   {w = 2560, h = 1440, s = 2}
+}
+
+local charsTest = {"1","2","3","4","5", "6"}
+
+function setupModal()
+   k = hs.hotkey.modal.new('cmd-alt', 'r')
+   k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
+   function k:entered()
+      hs.alert('1: 1980 / 2: 2048 / 3: 2304 / 4: 2560 / ESC: exit', 30)
+   end
+   function k:exited()
+      hs.alert('no longer setting resolution!', 5)
+      hs.alert.closeAll()
+   end
+   for _, c in ipairs(charsTest) do
+      k:bind({}, c, function () processKey(c) end)
+   end
+   
+   -- for i = 1, #desktopResolutions do
+      -- print (i)
+      -- k:bind({}, i, function() processKey(i) end)
+   -- end
+   -- need to iterate through key binding here, and call processkey, which
+   -- should change res
+   -- changeResolution()
+end
+
+-- desktop resolutions in form {w, h, scale} to be passed to setMode
+
+-- print_r(desktopResolutions[1])
+-- print(desktopResolutions[1]['w'])
+
+function processKey(i)
+   res = desktopResolutions[tonumber(i)]
+   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
+   changeRes(res.w, res.h, res.s)
+   k:exit()
+   print(desktopResolutions[tonumber(i)])
+   print_r(desktopResolutions[tonumber(i)])
+end
+
+setupModal()
+
+-- function displayResolutions(currentWidth, resolutions)
+--    -- print("display res called!")
+--    local c = 1
+--    for i = 1, #resolutions do
+--       print("reg for loop from display")
+--       print("i: ", i)
+--       local res = resolutions[i]
+--       if res['w'] ~= currentWidth then
+--          hs.alert(tostring(c) .. ": " .. tostring(res.w))
+--          -- hs.alert(res.w, res.h, res.s)
+--          print(res.w, res.h, res.s)
+--          -- print(i)
+--          -- print(type(c))
+--          k:bind({}, c, function() changeResProcessKey(res.w, res.h, res.s) end)
+--          c = c + 1
+--          print(c)
+--       else
+--          print("-------")
+--          print("omitting current resolution from list: ")
+--          print(res.w, res.h, res.s)
+--          print("-------")
+--       end
+--    end
+-- end
+
+
+
+-- function changeResolution()
+
+--    local screen = hs.screen.primaryScreen()
+--    if screen:name(screen) == "DELL P2815Q" then
+--       -- print(screen:currentMode().w)
+--       displayResolutions(screen:currentMode().w, desktopResolutions)
+--    end
+-- end
+
+
+function changeRes(w, h, s)
+   print("SETTING THIS SHIT!")
+   hs.screen.primaryScreen():setMode(w, h, s)
+end
+
+
+-- setupModal()
+-- function resolution.setupModal()
+
+
+--   for _, c in ipairs(hints.hintChars) do
+--     k:bind({}, c, function() hints.processChar(c) end)
+--   end
+--   return k
+-- end
+
+
+-- function k:entered() changeResolution() end
+-- function k:exited() hs.alert'Exited mode' end
+-- k:bind('', 'escape', function()
+--           hs.alert.closeAll()
+--           k:exit() end)
+-- k:bind('', 'J', 'Pressed J',function() print'let the record show that J was pressed' end)
+      
 
 -- Gets current url from active safari tab
 function mailToSelf()
@@ -283,29 +406,32 @@ hs.hotkey.bind(mash, 'T', tab_to_new_window)
 function home_arrived()
          -- requires modified sudoers file
          -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
-         os.execute("sudo pmset -b displaysleep 90")
+   os.execute("sudo pmset -b displaysleep 90")
+   -- set audiodevice to speakers
 end
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
 function home_departed()
-         -- set volume to 0? 
-         os.execute("sudo pmset -a displaysleep 1 sleep 15")
+         -- set volume to 0?
+   os.execute("sudo pmset -a displaysleep 1 sleep 15")
 end
 
 
 -- currently unnecessary
-function getGrid(win)
-   local winFrame = win:frame()
-   local screenFrame = win:screen():frame()
-   return {
-      x = screenFrame.x,
-      y = screenFrame.y,
-      w = screenFrame.w,
-      h = screenFrame.h
-   }
-end
+-- function getGrid(win)
+--    local winFrame = win:frame()
+--    local screenFrame = win:screen():frame()
+--    return {
+--       x = screenFrame.x,
+--       y = screenFrame.y,
+--       w = screenFrame.w,
+--       h = screenFrame.h
+--    }
+-- end
+-- end of necessary
 
+-- this is cool
 numberOfScreens = #hs.screen.allScreens()
 if numberOfScreens == 1 then
    hs.layout.apply(notebook)
