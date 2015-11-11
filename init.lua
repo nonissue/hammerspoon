@@ -255,8 +255,9 @@ function setupModal()
       hs.alert('1: 1980 / 2: 2048 / 3: 2304 / 4: 2560 / ESC: exit', 30)
    end
    function k:exited()
-      hs.alert('no longer setting resolution!', 5)
       hs.alert.closeAll()
+      hs.alert('no longer setting resolution!', 2)
+      
    end
    for _, c in ipairs(charsTest) do
       k:bind({}, c, function () processKey(c) end)
@@ -287,45 +288,8 @@ end
 
 setupModal()
 
--- function displayResolutions(currentWidth, resolutions)
---    -- print("display res called!")
---    local c = 1
---    for i = 1, #resolutions do
---       print("reg for loop from display")
---       print("i: ", i)
---       local res = resolutions[i]
---       if res['w'] ~= currentWidth then
---          hs.alert(tostring(c) .. ": " .. tostring(res.w))
---          -- hs.alert(res.w, res.h, res.s)
---          print(res.w, res.h, res.s)
---          -- print(i)
---          -- print(type(c))
---          k:bind({}, c, function() changeResProcessKey(res.w, res.h, res.s) end)
---          c = c + 1
---          print(c)
---       else
---          print("-------")
---          print("omitting current resolution from list: ")
---          print(res.w, res.h, res.s)
---          print("-------")
---       end
---    end
--- end
-
-
-
--- function changeResolution()
-
---    local screen = hs.screen.primaryScreen()
---    if screen:name(screen) == "DELL P2815Q" then
---       -- print(screen:currentMode().w)
---       displayResolutions(screen:currentMode().w, desktopResolutions)
---    end
--- end
-
-
 function changeRes(w, h, s)
-   print("SETTING THIS SHIT!")
+   print("Setting resolution!")
    hs.screen.primaryScreen():setMode(w, h, s)
 end
 
