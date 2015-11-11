@@ -246,7 +246,7 @@ local desktopResolutions = {
    {w = 2560, h = 1440, s = 2}
 }
 
-local charsTest = {"1","2","3","4","5", "6"}
+local charsTest = {"1","2","3","4","5","6"}
 
 function setupModal()
    k = hs.hotkey.modal.new('cmd-alt', 'r')
@@ -262,14 +262,6 @@ function setupModal()
    for _, c in ipairs(charsTest) do
       k:bind({}, c, function () processKey(c) end)
    end
-   
-   -- for i = 1, #desktopResolutions do
-      -- print (i)
-      -- k:bind({}, i, function() processKey(i) end)
-   -- end
-   -- need to iterate through key binding here, and call processkey, which
-   -- should change res
-   -- changeResolution()
 end
 
 -- desktop resolutions in form {w, h, scale} to be passed to setMode
@@ -278,12 +270,18 @@ end
 -- print(desktopResolutions[1]['w'])
 
 function processKey(i)
-   res = desktopResolutions[tonumber(i)]
-   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
-   changeRes(res.w, res.h, res.s)
-   k:exit()
-   print(desktopResolutions[tonumber(i)])
-   print_r(desktopResolutions[tonumber(i)])
+   -- this really should verify that i is in range of available resolutions, and display error message if not
+   -- and ignore key input
+   if tonumber(i) > #desktopResolutions then
+      hs.alert("Sorry, that is not an option")
+   else
+      res = desktopResolutions[tonumber(i)]
+      hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
+      changeRes(res.w, res.h, res.s)
+      k:exit()
+      print(desktopResolutions[tonumber(i)])
+      print_r(desktopResolutions[tonumber(i)])
+   end
 end
 
 setupModal()
