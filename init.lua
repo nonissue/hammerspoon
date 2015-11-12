@@ -3,10 +3,13 @@
 ------------------------------------------------------------------------------
 -- By: Andrew Williams / andy@nonissue.org
 ------------------------------------------------------------------------------
+-- Still a goddamn mess, but may be useful to someone
 -- Haven't done much of anything, most of it is just experimenting
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
+
+
 
 
 -- General Utilities
