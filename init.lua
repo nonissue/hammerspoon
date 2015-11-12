@@ -12,9 +12,9 @@
 -- General Utilities
 
 
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "H", function()
-  hs.notify.new({title="Hammerspoon", informativeText="Hello World!"}):send()
-end)
+-- hs.hotkey.bind({"cmd", "alt", "ctrl"}, "H", function()
+--   hs.notify.new({title="Hammerspoon", informativeText="Hello World!"}):send()
+-- end)
 
 
 function print_table(t)
@@ -25,6 +25,7 @@ end
 
 
 -- can be used to print out tables and subtables
+-- I think there is a native function to replicate this? hs.inspect?
 function print_r ( t )  
     local print_r_cache={}
     local function sub_print_r(t,indent)
@@ -107,22 +108,24 @@ local notebook = {
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
 local desktop = {   
-   {"Safari",            nil,          display_desktop_main, hs.layout.maximized, nil, nil},
+   -- {"Safari",            nil,          display_desktop_main, hs.layout.maximized, nil, nil},
    {"OmniFocus",         nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   {"Calendar",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   {"Evernote",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   -- {"Calendar",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   -- {"Evernote",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
+   {"Dash",              nil,          display_desktop_aux,  hs.layout.left75, nil, nil},
    {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Postbox",           nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"Hammerspoon",       nil,          display_desktop_aux,  hs.layout.right25, nil, nil},
    {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
 }
 
 -- /not done
 ------------------------------------------------------------------------------
 -- sets default? This is controlled by function much lower down?
-hs.layout.apply(desktop)
+-- hs.layout.apply(desktop)
 
 -- layouts invoked by hotkey
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
@@ -202,43 +205,8 @@ hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 -- complicated and not necessary for most use cases and for what I want
 -- I may return to this in future.
 ------------------------------------------------------------------------------
-local resizeCurrentWindow = function (w, h)
-   local win = hs.window.focusedWindow()
-   local f = win:frame()
-   local screen = win:screen()
-   local max = screen:frame()
-   f.w = max.w * w
-   f.h = max.h * h
-   return function()
-      win:setFrame(f)
-   end
-end
 
-function adjustWindow(win)
-   return function ()
-      local win = hs.window.focusedWindow()
-      moveRight(win)
-   end
-end
-
-function moveRight(win)
-   local q = win:frame()
-   local screen = win:screen()
-   local screenFrame = win:screen():frame()
-   if screen:frame().x < 0 then
-      currentW = 0 - q.w
-   elseif screen.frame().x > 0 then
-      currentW = screen:frame().w - q.w
-   end
-   local newFrame = {
-      y = screen:frame().y,
-      x = currentW,
-      w = screen:fullFrame().w * 0.25,
-      h = screen:fullFrame().h
-   }
-   win:setFrame(newFrame)
-end
-
+-- Start of resolution switching customizations
 local desktopResolutions = {
    {w = 1920, h = 1080, s = 1},
    {w = 2048, h = 1152, s = 2},
@@ -246,72 +214,97 @@ local desktopResolutions = {
    {w = 2560, h = 1440, s = 2}
 }
 
-local charsTest = {"1","2","3","4","5","6"}
-
-function setupModal()
+function setupModal(possibleResolutions)
    k = hs.hotkey.modal.new('cmd-alt', 'r')
    k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
-   function k:entered()
-      hs.alert('1: 1980 / 2: 2048 / 3: 2304 / 4: 2560 / ESC: exit', 30)
+   
+   function k:entered() hs.alert('1: 1980 / 2: 2048 / 3: 2304 / 4: 2560 / ESC: exit', 30) end
+   function k:exited() hs.alert.closeAll() end
+   
+   for i = 1, #possibleResolutions do
+      k:bind({}, tostring(i), function () processKey(tostring(i), possibleResolutions) end)
    end
-   function k:exited()
-      hs.alert.closeAll()
-      hs.alert('no longer setting resolution!', 2)
-      
-   end
-   for _, c in ipairs(charsTest) do
-      k:bind({}, c, function () processKey(c) end)
-   end
+end
+
+-- processes the key from modal binding
+-- resolution array is also passed so we can grab the corresponding resolution
+-- then calls changeRes function with hte values we want to change to
+function processKey(i, possibleResolutions)
+   local res = possibleResolutions[tonumber(i)]
+   
+   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
+   changeRes(res.w, res.h, res.s)
+   setResolutionDisplay(res.w)
+   k:exit()
 end
 
 -- desktop resolutions in form {w, h, scale} to be passed to setMode
-
--- print_r(desktopResolutions[1])
--- print(desktopResolutions[1]['w'])
-
-function processKey(i)
-   -- this really should verify that i is in range of available resolutions, and display error message if not
-   -- and ignore key input
-   if tonumber(i) > #desktopResolutions then
-      hs.alert("Sorry, that is not an option")
-   else
-      res = desktopResolutions[tonumber(i)]
-      hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
-      changeRes(res.w, res.h, res.s)
-      k:exit()
-      print(desktopResolutions[tonumber(i)])
-      print_r(desktopResolutions[tonumber(i)])
-   end
-end
-
-setupModal()
-
 function changeRes(w, h, s)
-   print("Setting resolution!")
    hs.screen.primaryScreen():setMode(w, h, s)
 end
 
-
--- setupModal()
--- function resolution.setupModal()
-
-
---   for _, c in ipairs(hints.hintChars) do
---     k:bind({}, c, function() hints.processChar(c) end)
---   end
---   return k
--- end
+-- Checks which machine we are currently on
+-- as desktop/mbpr have different options
+if hs.host.localizedName() == "iMac" then
+   setupModal(desktopResolutions)
+else
+   -- don't know mbpr hostname/possible resolutions yet
+   hs.alert("current machine is" .. hs.host.localizedName())
+end
 
 
--- function k:entered() changeResolution() end
--- function k:exited() hs.alert'Exited mode' end
--- k:bind('', 'escape', function()
---           hs.alert.closeAll()
---           k:exit() end)
--- k:bind('', 'J', 'Pressed J',function() print'let the record show that J was pressed' end)
-      
+-- Initializes a menubar item that displays the current resolution of display
+-- And when clicked, toggles between two most commonly used resolutions
+local resolutionMenu = hs.menubar.new()
 
--- Gets current url from active safari tab
+-- sets title to be displayed in menubar (really doesn't have to be own func?)
+function setResolutionDisplay(w)
+   resolutionMenu:setTitle(w)
+end
+
+-- When clicked, toggles through two most common resolutions by passing
+-- key manually to process key function
+function resolutionClicked()
+   local screen = hs.screen.primaryScreen()
+   if screen:currentMode().w == 1920 then
+      processKey("3")
+   else
+      processKey("1")
+   end
+end
+
+-- sets callback and calls settitle function
+if resolutionMenu then
+   resolutionMenu:setClickCallback(resolutionClicked)
+   setResolutionDisplay(hs.screen.primaryScreen():currentMode().w)
+end
+
+-- Toggles useragent
+-- Taken from: http://www.hammerspoon.org/go/#applescript
+-- modified to toggle between iOS and default
+function cycle_safari_agents()
+    hs.application.launchOrFocus("Safari")
+    local safari = hs.appfinder.appFromName("Safari")
+
+    local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
+    local str_iPad = {"Develop", "User Agent", "Safari iOS 8.1 — iPad"}
+
+    local default = safari:findMenuItem(str_default)
+    local iPad = safari:findMenuItem(str_iPad)
+
+    if (default and default["ticked"]) then
+       safari:selectMenuItem(str_iPad)
+        hs.alert.show("iPad")
+    end
+    if (iPad and iPad["ticked"]) then
+        safari:selectMenuItem(str_default)
+        hs.alert.show("Safari")
+    end
+end
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
+
+
+-- Gets current url from active safari tab and mails it to me, which I find handy
 function mailToSelf()
     script = [[
     tell application "Safari"
@@ -334,6 +327,7 @@ function mailToSelf()
              end tell
         end tell
         ]])
+       hs.alert("Page successfully emailed to self")
         -- hs.eventtap.keyStrokes(result)
     end
 end
@@ -343,6 +337,7 @@ end
 hs.hotkey.bind(mash, 'U', mailToSelf)
 
 -- makes new window from current tab in safari
+-- could maybe send it to next monitor immediately if there is one?
 function tab_to_new_window()
    hs.application.launchOrFocus("Safari")
    local safari = hs.appfinder.appFromName("Safari")
@@ -355,8 +350,6 @@ end
 
 hs.hotkey.bind(mash, 'T', tab_to_new_window)
 
-
-
 -- functions for different locations
 -- configure things like drive mounts, display sleep (for security), etc.
 
@@ -365,6 +358,7 @@ hs.hotkey.bind(mash, 'T', tab_to_new_window)
 -- not the most secure since someone could fake ssid I guess
 -- might want some other level of verification
 
+-- Also this only really applies for laptop, not desktop?
 function home_arrived()
          -- requires modified sudoers file
          -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
@@ -379,18 +373,6 @@ function home_departed()
    os.execute("sudo pmset -a displaysleep 1 sleep 15")
 end
 
-
--- currently unnecessary
--- function getGrid(win)
---    local winFrame = win:frame()
---    local screenFrame = win:screen():frame()
---    return {
---       x = screenFrame.x,
---       y = screenFrame.y,
---       w = screenFrame.w,
---       h = screenFrame.h
---    }
--- end
 -- end of necessary
 
 -- this is cool
@@ -408,3 +390,5 @@ function reload_config(files)
 end
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/init.lua", reload_config):start()
 hs.alert.show("Config loaded")
+
+
