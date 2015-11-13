@@ -14,21 +14,11 @@
 
 -- General Utilities
 
-
 -- hs.hotkey.bind({"cmd", "alt", "ctrl"}, "H", function()
 --   hs.notify.new({title="Hammerspoon", informativeText="Hello World!"}):send()
 -- end)
 
-
-function print_table(t)
-   for k, v in pairs(t) do
-      print(k, v)
-   end
-end
-
-
--- can be used to print out tables and subtables
--- I think there is a native function to replicate this? hs.inspect?
+-- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )  
     local print_r_cache={}
     local function sub_print_r(t,indent)
@@ -210,6 +200,13 @@ hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 ------------------------------------------------------------------------------
 
 -- Start of resolution switching customizations
+local laptopResolutions = {
+   {w = 1440, h = 900, s = 2},
+   {w = 1680, h = 1050, s = 2},
+   {w = 1920, h = 1200, s = 2}
+   -- {w = 2048, h = 1280, s =2}
+}
+
 local desktopResolutions = {
    {w = 1920, h = 1080, s = 1},
    {w = 2048, h = 1152, s = 2},
@@ -217,23 +214,51 @@ local desktopResolutions = {
    {w = 2560, h = 1440, s = 2}
 }
 
-function setupModal(possibleResolutions)
-   k = hs.hotkey.modal.new('cmd-alt', 'r')
+local resolutions = {}
+
+if hs.host.localizedName() == "iMac" then
+   resolutions = desktopResolutions
+elseif hs.host.localizedName() == "apw@me.com" then
+   -- setupModal(laptopResolutions)
+   resolutions = laptopResolutions
+else
+   print('no resolutions available for this computer/monitor')
+end
+
+function setupModal()
+   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'p')
    k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
+
+   -- choices table is for storing the widths to display with hs.alert later
+   -- this is necessary because possible resolutions vary based on display
+   local choices = {}
+   for i = 1, #resolutions do
+      -- inserts resolutions width in to choices table so we can iterate through them easily later
+      table.insert(choices, resolutions[tonumber(i)].w)
+      k:bind({}, tostring(i), function () processKey(tostring(i)) end)
+   end
+
+   -- function to display the choices as an alert
+   -- called on hotkey modal entry
+   function displayChoices()
+      for i = 1, #choices do
+         hs.alert(tostring(i) .. ": " .. choices[i], 99)
+      end
+   end
+
    
-   function k:entered() hs.alert('1: 1980 / 2: 2048 / 3: 2304 / 4: 2560 / ESC: exit', 30) end
+   -- on modal entry, display choices
+   function k:entered() displayChoices() end
+   -- on model exit, clear all alerts
    function k:exited() hs.alert.closeAll() end
    
-   for i = 1, #possibleResolutions do
-      k:bind({}, tostring(i), function () processKey(tostring(i), possibleResolutions) end)
-   end
 end
 
 -- processes the key from modal binding
 -- resolution array is also passed so we can grab the corresponding resolution
 -- then calls changeRes function with hte values we want to change to
-function processKey(i, possibleResolutions)
-   local res = possibleResolutions[tonumber(i)]
+function processKey(i)
+   local res = resolutions[tonumber(i)]
    
    hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
    changeRes(res.w, res.h, res.s)
@@ -246,14 +271,15 @@ function changeRes(w, h, s)
    hs.screen.primaryScreen():setMode(w, h, s)
 end
 
+
+setupModal()
 -- Checks which machine we are currently on
 -- as desktop/mbpr have different options
-if hs.host.localizedName() == "iMac" then
-   setupModal(desktopResolutions)
-else
-   -- don't know mbpr hostname/possible resolutions yet
-   hs.alert("current machine is" .. hs.host.localizedName())
-end
+-- if hs.host.localizedName() == "iMac" then
+--    setupModal(desktopResolutions)
+-- else
+--    setupModal(laptopResolutions)
+-- end
 
 
 -- Initializes a menubar item that displays the current resolution of display
@@ -317,7 +343,6 @@ function mailToSelf()
     ]]
     ok, result = hs.applescript(script)
     if (ok) then
-       -- hs.eventtap.keyStrokes(result)
        hs.applescript.applescript([[
         tell application "Safari"
             set result to URL of document 1
@@ -331,7 +356,6 @@ function mailToSelf()
         end tell
         ]])
        hs.alert("Page successfully emailed to self")
-        -- hs.eventtap.keyStrokes(result)
     end
 end
 
