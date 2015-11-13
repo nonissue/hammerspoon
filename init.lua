@@ -9,14 +9,7 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
-
-
-
 -- General Utilities
-
--- hs.hotkey.bind({"cmd", "alt", "ctrl"}, "H", function()
---   hs.notify.new({title="Hammerspoon", informativeText="Hello World!"}):send()
--- end)
 
 -- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )  
@@ -75,15 +68,7 @@ local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
-------------------------------------------------------------------------------
--- NOTE
-------------------------------------------------------------------------------
--- Not currently implemented, need to write coniditonal for different
--- computers since, I use two with different display set ups
-------------------------------------------------------------------------------
--- var representing display name (this is name of MBP internal display)
 local display_laptop = "Color LCD"
--- default window layouts for notebook
 local notebook = {   
    {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"OmniFocus",         nil,          display_laptop, hs.layout.maximized, nil, nil},
@@ -96,8 +81,7 @@ local notebook = {
    {"Emacs",             nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
--- default windows layouts for desktop (dual monitor)
--- layouts go here
+
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
 local desktop = {   
@@ -115,26 +99,28 @@ local desktop = {
    {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
 }
 
--- /not done
-------------------------------------------------------------------------------
--- sets default? This is controlled by function much lower down?
--- hs.layout.apply(desktop)
+local numberOfScreens = #hs.screen.allScreens()
 
+if numberOfScreens == 1 then
+   hs.layout.apply(notebook)
+elseif numberOfScreens == 2 then
+   hs.layout.apply(desktop)
+end
 -- layouts invoked by hotkey
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 hs.hotkey.bind(hyper, "H", function()
       hs.hints.windowHints()
 end)
 
-
--- snaps current window to grid
--- Not really using grid-based layout currently so disabled
--- hs.hotkey.bind(hyper, 'M', function() hs.grid.snap(hs.window.focusedWindow()) end)
-
--- taken from
+------------------------------------------------------------------------------
+-- Layout stuff
 -- http://larryhynes.net/2015/02/switching-from-slate-to-hammerspoon.html
--- a little too verbose for my liking, but simple enough to understand
--- moves window to left half of screen
+------------------------------------------------------------------------------
+-- Not very DRY but simple to understand and one of the first things I
+-- wrote for hammerspoon
+------------------------------------------------------------------------------
+
+-- Moves window to left half of screen
 hs.hotkey.bind(hyper, "left", function()
 		  local win = hs.window.focusedWindow()
 		  local f = win:frame()
@@ -146,7 +132,8 @@ hs.hotkey.bind(hyper, "left", function()
 		  f.h = max.h
 		  win:setFrame(f)
 end)
--- moves window/sets width to right half of screen
+
+-- Moves window/sets width to right half of screen
 hs.hotkey.bind(hyper, "right", function()
 		  local win = hs.window.focusedWindow()
 		  local f = win:frame()
@@ -158,8 +145,8 @@ hs.hotkey.bind(hyper, "right", function()
 		  f.h = max.h
 		  win:setFrame(f)
 end)
--- These two I modified for my own use
--- moves window to right, sets to 1/4 width
+
+-- Moves window to right, sets to 1/4 width
 hs.hotkey.bind(mash, "right", function()
 		  local win = hs.window.focusedWindow()
 		  local f = win:frame()
@@ -172,7 +159,7 @@ hs.hotkey.bind(mash, "right", function()
 		  win:setFrame(f)
 end)
 
--- moves window to left, sets to 3/4 width
+--Moves window to left, sets to 3/4 width
 hs.hotkey.bind(mash, "left", function()
 		  local win = hs.window.focusedWindow()
 		  local f = win:frame()
@@ -189,24 +176,26 @@ hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 ------------------------------------------------------------------------------
--- There is redunancy in the code above which I intend to eliminate, but
--- below is a vastly more complicated way of managing windows/positioning
--- that I never finished
+-- ChangeResolution
+------------------------------------------------------------------------------
+-- Modal hotkey to change a monitors resolution
+-- Also includes basic menu bar item, which is dynamically generated
+-- You do have to set the resolutions you want manually, and if
+-- you have multiple computers, you'll have to apply the layouts
+-- appropriately
 --
--- It is largely taken from mgee (github.com/mgee) though it uses OOP,
--- which though it is more flexible and polymorphic, is vastly more
--- complicated and not necessary for most use cases and for what I want
--- I may return to this in future.
+-- [ ] should make this it's own extension/file
+-- [ ] check the menu bar item corresponding to current res
 ------------------------------------------------------------------------------
 
--- Start of resolution switching customizations
+-- possible resolutions for 15 MBPr
 local laptopResolutions = {
    {w = 1440, h = 900, s = 2},
    {w = 1680, h = 1050, s = 2},
    {w = 1920, h = 1200, s = 2}
-   -- {w = 2048, h = 1280, s =2}
 }
 
+-- possible resolutions for 4k Dell monitor
 local desktopResolutions = {
    {w = 1920, h = 1080, s = 1},
    {w = 2048, h = 1152, s = 2},
@@ -214,28 +203,36 @@ local desktopResolutions = {
    {w = 2560, h = 1440, s = 2}
 }
 
+-- initialize variable to ultimately store the correct set of resolutions
 local resolutions = {}
+local choices = {}
+local dropdownOptions = {}
 
+-- find out which set we need
 if hs.host.localizedName() == "iMac" then
    resolutions = desktopResolutions
 elseif hs.host.localizedName() == "apw@me.com" then
-   -- setupModal(laptopResolutions)
    resolutions = laptopResolutions
 else
    print('no resolutions available for this computer/monitor')
 end
 
+-- configure the model hotkeys
+-- has some entered/exit options, mainly to show/hide available options on
+-- entry/exit
 function setupModal()
    k = hs.hotkey.modal.new('cmd-alt-ctrl', 'p')
    k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
 
    -- choices table is for storing the widths to display with hs.alert later
    -- this is necessary because possible resolutions vary based on display
-   local choices = {}
+
    for i = 1, #resolutions do
       -- inserts resolutions width in to choices table so we can iterate through them easily later
-      table.insert(choices, resolutions[tonumber(i)].w)
-      k:bind({}, tostring(i), function () processKey(tostring(i)) end)
+      table.insert(choices, resolutions[i].w)
+      -- also creates a table to pass to init our dropdown menu with menuitem title and callback
+      table.insert(dropdownOptions, {title = tostring(i) .. ": " .. tostring(choices[i]), fn = function() return processKey(i) end, checked = false })
+      k:bind({}, tostring(i), function () processKey(i) end)
    end
 
    -- function to display the choices as an alert
@@ -246,7 +243,6 @@ function setupModal()
       end
    end
 
-   
    -- on modal entry, display choices
    function k:entered() displayChoices() end
    -- on model exit, clear all alerts
@@ -258,11 +254,17 @@ end
 -- resolution array is also passed so we can grab the corresponding resolution
 -- then calls changeRes function with hte values we want to change to
 function processKey(i)
+   -- would be cool to check the menu bar option that is currently selected,
+   -- but it seems like a bit of a pain in the ass, because I think I'd have to reinitialize
+   -- all the menubar items, since I'd have to change check to false for current,
+   -- and true for new selection
    local res = resolutions[tonumber(i)]
    
    hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
    changeRes(res.w, res.h, res.s)
+
    setResolutionDisplay(res.w)
+   
    k:exit()
 end
 
@@ -273,14 +275,6 @@ end
 
 
 setupModal()
--- Checks which machine we are currently on
--- as desktop/mbpr have different options
--- if hs.host.localizedName() == "iMac" then
---    setupModal(desktopResolutions)
--- else
---    setupModal(laptopResolutions)
--- end
-
 
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
@@ -289,10 +283,15 @@ local resolutionMenu = hs.menubar.new()
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
    resolutionMenu:setTitle(w)
+   resolutionMenu:setMenu(dropdownOptions)
 end
 
 -- When clicked, toggles through two most common resolutions by passing
 -- key manually to process key function
+
+-- this is kind of flawed because logic only works on desktop
+-- where it toggles between gaming mode and non-gaming mode
+-- maybe just make it a dropdown?
 function resolutionClicked()
    local screen = hs.screen.primaryScreen()
    if screen:currentMode().w == 1920 then
@@ -304,13 +303,17 @@ end
 
 -- sets callback and calls settitle function
 if resolutionMenu then
-   resolutionMenu:setClickCallback(resolutionClicked)
+   -- resolutionMenu:setClickCallback(resolutionClicked)
    setResolutionDisplay(hs.screen.primaryScreen():currentMode().w)
 end
 
--- Toggles useragent
+------------------------------------------------------------------------------
+-- cycle_safari_agents
+------------------------------------------------------------------------------
 -- Taken from: http://www.hammerspoon.org/go/#applescript
 -- modified to toggle between iOS and default
+------------------------------------------------------------------------------
+
 function cycle_safari_agents()
     hs.application.launchOrFocus("Safari")
     local safari = hs.appfinder.appFromName("Safari")
@@ -332,8 +335,12 @@ function cycle_safari_agents()
 end
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
 
+------------------------------------------------------------------------------
+-- mailToSelf
+------------------------------------------------------------------------------
+-- Gets current url from active safari tab and mails it to specified address
+------------------------------------------------------------------------------
 
--- Gets current url from active safari tab and mails it to me, which I find handy
 function mailToSelf()
     script = [[
     tell application "Safari"
@@ -359,13 +366,17 @@ function mailToSelf()
     end
 end
 
-
 -- mails current url to myself using mailtoself function
 hs.hotkey.bind(mash, 'U', mailToSelf)
 
+------------------------------------------------------------------------------
+-- tabToNewWindow
+------------------------------------------------------------------------------
 -- makes new window from current tab in safari
 -- could maybe send it to next monitor immediately if there is one?
-function tab_to_new_window()
+------------------------------------------------------------------------------
+
+function tabToNewWindow()
    hs.application.launchOrFocus("Safari")
    local safari = hs.appfinder.appFromName("Safari")
    
@@ -375,17 +386,20 @@ function tab_to_new_window()
    hs.alert.show("making new window from tab")
 end
 
-hs.hotkey.bind(mash, 'T', tab_to_new_window)
+hs.hotkey.bind(mash, 'T', tabToNewWindow)
 
+------------------------------------------------------------------------------
+-- Location based functions to change system settings (not finished)
+------------------------------------------------------------------------------
 -- functions for different locations
 -- configure things like drive mounts, display sleep (for security), etc.
-
 -- sets displaysleep to 90 minutes if at home
 -- should be called based on ssid
 -- not the most secure since someone could fake ssid I guess
--- might want some other level of verification
-
--- Also this only really applies for laptop, not desktop?
+-- might want some other level of verification-- makes new window from current tab in safari
+-- could maybe send it to next monitor immediately if there is one?
+-- differentiate between settings for laptop vs desktop
+------------------------------------------------------------------------------
 function home_arrived()
          -- requires modified sudoers file
          -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
@@ -400,17 +414,7 @@ function home_departed()
    os.execute("sudo pmset -a displaysleep 1 sleep 15")
 end
 
--- end of necessary
 
--- this is cool
-numberOfScreens = #hs.screen.allScreens()
-if numberOfScreens == 1 then
-   hs.layout.apply(notebook)
-   print("notebook layout applied")
-elseif numberOfScreens == 2 then
-   hs.layout.apply(desktop)
-   print("desktop layout applied")
-end
     
 function reload_config(files)
    hs.reload()
