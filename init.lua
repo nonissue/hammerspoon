@@ -9,6 +9,11 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
+
+
+
+
+
 -- General Utilities
 
 -- I find it a little more flexible than hs.inspect for developing
@@ -45,7 +50,7 @@ function print_r ( t )
     end
     print()
 end
-   
+
 -- init grid
 hs.grid.MARGINX 	= 0
 hs.grid.MARGINY 	= 0
@@ -78,7 +83,7 @@ local notebook = {
    {"Calendar",          nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Messages",          nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Evernote",          nil,          display_laptop, hs.layout.maximized, nil, nil},
-   {"Emacs",             nil,          display_laptop, hs.layout.maximized, nil, nil},
+   -- {"Emacs",             nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
 
@@ -221,7 +226,7 @@ end
 -- has some entered/exit options, mainly to show/hide available options on
 -- entry/exit
 function setupModal()
-   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'p')
+   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'l')
    k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
 
    -- choices table is for storing the widths to display with hs.alert later
