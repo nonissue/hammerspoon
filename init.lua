@@ -202,6 +202,10 @@ local laptopResolutions = {
 
 -- possible resolutions for 4k Dell monitor
 local desktopResolutions = {
+   -- first 1920 is for retina resolution @ 30hz
+   -- might not be neede as 2048 looks pretty good
+   {w = 1920, h = 1080, s = 2},
+   -- this 1920 is for non-retina @ 60hz
    {w = 1920, h = 1080, s = 1},
    {w = 2048, h = 1152, s = 2},
    {w = 2304, h = 1296, s = 2},
