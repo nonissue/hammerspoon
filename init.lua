@@ -357,6 +357,7 @@ function mailToSelf()
     end tell
     return currentURL
     ]]
+    
     ok, result = hs.applescript(script)
     if (ok) then
        hs.applescript.applescript([[
