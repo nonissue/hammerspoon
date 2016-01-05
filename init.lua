@@ -8,16 +8,13 @@
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
-
-
-
-
-
+require 'sleeptimer'
+SleepTimer.new()
 
 -- General Utilities
 
 -- I find it a little more flexible than hs.inspect for developing
-function print_r ( t )  
+function print_r ( t )
     local print_r_cache={}
     local function sub_print_r(t,indent)
         if (print_r_cache[tostring(t)]) then
@@ -74,7 +71,7 @@ local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
 local display_laptop = "Color LCD"
-local notebook = {   
+local notebook = {
    {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"OmniFocus",         nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Mail",              nil,          display_laptop, hs.layout.maximized, nil, nil},
@@ -89,7 +86,7 @@ local notebook = {
 
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
-local desktop = {   
+local desktop = {
    -- {"Safari",            nil,          display_desktop_main, hs.layout.maximized, nil, nil},
    {"OmniFocus",         nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
@@ -130,7 +127,7 @@ hs.hotkey.bind(hyper, "left", function()
 		  local win = hs.window.focusedWindow()
 		  local f = win:frame()
 		  local screen = win:screen()
-		  local max = screen:frame()		   
+		  local max = screen:frame()
 		  f.x = max.x
 		  f.y = max.y
 		  f.w = max.w / 2
@@ -229,7 +226,7 @@ end
 -- configure the model hotkeys
 -- has some entered/exit options, mainly to show/hide available options on
 -- entry/exit
-function setupModal()
+function setupResModal()
    k = hs.hotkey.modal.new('cmd-alt-ctrl', 'l')
    k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
 
@@ -239,7 +236,7 @@ function setupModal()
    for i = 1, #resolutions do
       -- inserts resolutions width in to choices table so we can iterate through them easily later
       table.insert(choices, resolutions[i].w)
-      -- also creates a table to pass to init our dropdown menu with menuitem title and callback
+      -- also creates a table to pass to init our dropdown menu with menuitem title and callback (this is fucking ugly)
       table.insert(dropdownOptions, {title = tostring(i) .. ": " .. tostring(choices[i]), fn = function() return processKey(i) end, checked = false })
       k:bind({}, tostring(i), function () processKey(i) end)
    end
@@ -256,7 +253,7 @@ function setupModal()
    function k:entered() displayChoices() end
    -- on model exit, clear all alerts
    function k:exited() hs.alert.closeAll() end
-   
+
 end
 
 -- processes the key from modal binding
@@ -268,12 +265,12 @@ function processKey(i)
    -- all the menubar items, since I'd have to change check to false for current,
    -- and true for new selection
    local res = resolutions[tonumber(i)]
-   
+
    hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
    changeRes(res.w, res.h, res.s)
 
    setResolutionDisplay(res.w)
-   
+
    k:exit()
 end
 
@@ -283,7 +280,7 @@ function changeRes(w, h, s)
 end
 
 
-setupModal()
+setupResModal()
 
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
@@ -357,7 +354,7 @@ function mailToSelf()
     end tell
     return currentURL
     ]]
-    
+
     ok, result = hs.applescript(script)
     if (ok) then
        hs.applescript.applescript([[
@@ -389,10 +386,10 @@ hs.hotkey.bind(mash, 'U', mailToSelf)
 function tabToNewWindow()
    hs.application.launchOrFocus("Safari")
    local safari = hs.appfinder.appFromName("Safari")
-   
+
    local target_item_in_menu = {"Window", "Move Tab to New Window"}
    safari:selectMenuItem(target_item_in_menu)
-   
+
    hs.alert.show("making new window from tab")
 end
 
@@ -425,11 +422,9 @@ function home_departed()
 end
 
 
-    
+
 function reload_config(files)
    hs.reload()
 end
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/init.lua", reload_config):start()
 hs.alert.show("Config loaded")
-
-
