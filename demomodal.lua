@@ -7,7 +7,7 @@ local modalChoices = {"Choice 1", "Choice 2", "Choice 3", "Choice 4"}
 function DemoModal:new()
 -- function setupDemoModal()
     -- Set hotkey we want to enter modal.. mode
-    e = hs.hotkey.modal.new('cmd-alt-ctrl', 'd')
+    local e = hs.hotkey.modal.new('cmd-alt-ctrl', 'd')
 
     -- bind our exit modal mode key to esc
     e:bind('', 'escape', function() hs.alert.closeAll() e:exit() end)

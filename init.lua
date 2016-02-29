@@ -8,16 +8,20 @@
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
+require 'DemoChooser'
+DemoChooser:new()
+
 require 'sleeptimer'
+SleepTimer.new()
 
 -- Require our demomodal
 require 'DemoModal'
-
 -- Initialize modal
 DemoModal:new()
+
 -- require 'redshift'
 
-SleepTimer.new()
+
 
 -- General Utilities
 
@@ -105,7 +109,7 @@ local desktop = {
    {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Postbox",           nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   {"Hammerspoon",       nil,          display_desktop_aux,  hs.layout.right25, nil, nil},
+   -- {"Hammerspoon",       nil,          display_desktop_aux,  hs.layout.right25, nil, nil},
    {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
 }
 
