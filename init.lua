@@ -9,6 +9,14 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 require 'sleeptimer'
+
+-- Require our demomodal
+require 'DemoModal'
+
+-- Initialize modal
+DemoModal:new()
+-- require 'redshift'
+
 SleepTimer.new()
 
 -- General Utilities
@@ -288,7 +296,7 @@ local resolutionMenu = hs.menubar.new()
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
-   resolutionMenu:setTitle(w)
+   resolutionMenu:setTitle(tostring(w))
    resolutionMenu:setMenu(dropdownOptions)
 end
 
@@ -310,7 +318,8 @@ end
 -- sets callback and calls settitle function
 if resolutionMenu then
    -- resolutionMenu:setClickCallback(resolutionClicked)
-   setResolutionDisplay(hs.screen.primaryScreen():currentMode().w)
+   local currentRes = hs.screen.primaryScreen():currentMode().w
+   setResolutionDisplay(currentRes)
 end
 
 ------------------------------------------------------------------------------
