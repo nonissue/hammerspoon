@@ -20,10 +20,9 @@ local chooserChoices = {
 
 
 function DemoChooser:new()
-
-    local test = hs.chooser.new(function(input) print(input) end)
-        :rows(5)
-
+    -- test should be local, but just messing with this for now
+    test = hs.chooser.new(function(input) print(input) end)
+        :rows(3)
     test:choices(chooserChoices)
     test:show()
 
