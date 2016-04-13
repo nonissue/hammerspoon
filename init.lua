@@ -404,7 +404,26 @@ hs.hotkey.bind(mash, 'T', tabToNewWindow)
 -- might want some other level of verification-- makes new window from current tab in safari
 -- could maybe send it to next monitor immediately if there is one?
 -- differentiate between settings for laptop vs desktop
+-- Mostly lifted from:
+-- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
 ------------------------------------------------------------------------------
+local homeSSID = "1614 Apple"
+local lastSSID = hs.wifi.currentNetwork()
+
+function ssidChangedCallback()
+  newSSID = hs.wifi.currentNetwork()
+
+  if newSSID == homeSSID and lastSSID ~= homeSSID then
+    -- we are at home!
+    home_arrived()
+  elseif newSSID ~= homeSSID and lastSSID == homeSSID then
+    -- we are away from home!
+    home_departed()
+  end
+
+  lastSSID = newSSID
+end
+
 function home_arrived()
   -- requires modified sudoers file
   -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
@@ -412,6 +431,7 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 15")
   os.execute("sudo pmset -c displaysleep 30")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
+  hs.alert("Home settings enabled!")
   -- set audiodevice to speakers
 end
 
@@ -422,6 +442,16 @@ function home_departed()
   print("home departed!")
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
+  hs.alert("Away settings enabled!")
+end
+
+wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
+wifiWatcher:start()
+
+if hs.wifi.currentNetwork() == "1614 Apple" then
+    home_arrived()
+else
+    home_departed()
 end
 
 -- Fancier config reloading
