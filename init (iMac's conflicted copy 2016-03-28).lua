@@ -339,7 +339,7 @@ function cycle_safari_agents()
     local safari = hs.appfinder.appFromName("Safari")
 
     local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-    local str_iPad = {"Develop", "User Agent", "Safari — iOS 9.3 — iPad"}
+    local str_iPad = {"Develop", "User Agent", "Safari iOS 8.1 — iPad"}
 
     local default = safari:findMenuItem(str_default)
     local iPad = safari:findMenuItem(str_iPad)
@@ -350,7 +350,7 @@ function cycle_safari_agents()
     end
     if (iPad and iPad["ticked"]) then
         safari:selectMenuItem(str_default)
-        hs.alert.show("Default")
+        hs.alert.show("Safari")
     end
 end
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
@@ -435,9 +435,7 @@ function home_departed()
    os.execute("sudo pmset -a displaysleep 1 sleep 15")
 end
 
--- Fancier config reloading
--- Reloads HS if ANY files change in hammerspoon dir
--- Not just init.lua
+
 function reloadConfig(files)
     doReload = false
     for _,file in pairs(files) do

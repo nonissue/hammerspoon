@@ -3,12 +3,11 @@ DemoModal = {}
 
 -- Table for demo modal
 local modalChoices = {"Choice 1", "Choice 2", "Choice 3", "Choice 4"}
-local e = hs.hotkey.modal.new('cmd-alt-ctrl', 'd')
 
 function DemoModal:new()
 -- function setupDemoModal()
     -- Set hotkey we want to enter modal.. mode
-
+    local e = hs.hotkey.modal.new('cmd-alt-ctrl', 'd')
 
     -- bind our exit modal mode key to esc
     e:bind('', 'escape', function() hs.alert.closeAll() e:exit() end)
@@ -45,7 +44,7 @@ function DemoModal:processKey(i)
     e:exit()
     -- once all other alerts are closed and we are out of modal mode, show
     -- the user a message with the result of their choice
-    hs.alert("You picked choice " .. tostring(i) .. " from the modal menu", 2)
+    hs.alert("You picked choice " .. tostring(i) .. " from the modal menu", 5)
 end
 
 -- return DemoModal class
