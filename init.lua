@@ -86,31 +86,23 @@ local alt = {"alt"}
 local display_laptop = "Color LCD"
 local notebook = {
    {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
-   {"OmniFocus",         nil,          display_laptop, hs.layout.maximized, nil, nil},
+   {"2Do",               nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Mail",              nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Slack",             nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"1Password",         nil,          display_laptop, hs.layout.maximized, nil, nil},
-   {"Calendar",          nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"Messages",          nil,          display_laptop, hs.layout.maximized, nil, nil},
-   {"Evernote",          nil,          display_laptop, hs.layout.maximized, nil, nil},
-   -- {"Emacs",             nil,          display_laptop, hs.layout.maximized, nil, nil},
    {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
 
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
 local desktop = {
-   -- {"Safari",            nil,          display_desktop_main, hs.layout.maximized, nil, nil},
-   {"OmniFocus",         nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
+   {"2Do",               nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   -- {"Calendar",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   -- {"Evernote",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
    {"Dash",              nil,          display_desktop_aux,  hs.layout.left75, nil, nil},
    {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
    {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   {"Postbox",           nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-   -- {"Hammerspoon",       nil,          display_desktop_aux,  hs.layout.right25, nil, nil},
    {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
 }
 
@@ -353,6 +345,7 @@ function cycle_safari_agents()
         hs.alert.show("Default")
     end
 end
+
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
 
 ------------------------------------------------------------------------------
