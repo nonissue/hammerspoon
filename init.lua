@@ -85,13 +85,14 @@ local notebook = {
   {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
 
+-- These are no longer correct display names
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
 local desktop = {
   {"2Do",               nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
   {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
   {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
-  {"Dash",              nil,          display_desktop_aux,  hs.layout.left75, nil, nil},
+  {"Dash",              nil,          display_desktop_aux,  hs.layout.left75,    nil, nil},
   {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
   {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
   {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
@@ -312,7 +313,7 @@ end
 -- Taken from: http://www.hammerspoon.org/go/#applescript
 -- modified to toggle between iOS and default
 -- Useful for sites that insist on flash installations
--- Tricking them into thinking device is mobile is sometimes helpful
+-- Tricking them into thinking device is mobile is
 ------------------------------------------------------------------------------
 function cycle_safari_agents()
   hs.application.launchOrFocus("Safari")
@@ -406,12 +407,13 @@ hs.hotkey.bind(mash, 'T', tabToNewWindow)
 -- Doesn't work with current ugly USB Wlan set up, should probably just get a PCI-E
 -- networking card
 local homeSSID = "BROMEGA-5G"
+local homeSSID5G = "BROMEGA"
 local lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()
 
-  if newSSID == homeSSID and lastSSID ~= homeSSID then
+  if (newSSID == homeSSID or newSSID == homeSSID5G) and lastSSID ~= homeSSID then
     -- we are at home!
     home_arrived()
   elseif newSSID ~= homeSSID and lastSSID == homeSSID then
@@ -446,7 +448,7 @@ end
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "BROMEGA-5G" then
+if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" then
   home_arrived()
 else
   home_departed()
