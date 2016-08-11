@@ -20,9 +20,6 @@ require 'DemoModal'
 -- Initialize modal
 DemoModal:new()
 
--- require 'redshi
--- General Utilities
-
 -- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )
   local print_r_cache={}
@@ -67,11 +64,9 @@ hs.grid.GRIDHEIGHT 	= 7
 -- disable animation
 hs.window.animationDuration = 0
 
--- screen watcher, since this is used on multiple computers
 ---------
 -- Vars
 ---------
-
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
@@ -122,7 +117,6 @@ end)
 -- Not very DRY but simple to understand and one of the first things I
 -- wrote for hammerspoon
 ------------------------------------------------------------------------------
-
 -- Moves window to left half of screen
 hs.hotkey.bind(hyper, "left", function()
   local win = hs.window.focusedWindow()
@@ -190,7 +184,6 @@ hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 -- [ ] should make this it's own extension/file
 -- [ ] check the menu bar item corresponding to current res
 ------------------------------------------------------------------------------
-
 -- possible resolutions for 15 MBPr
 local laptopResolutions = {
   {w = 1440, h = 900, s = 2},
@@ -318,6 +311,8 @@ end
 ------------------------------------------------------------------------------
 -- Taken from: http://www.hammerspoon.org/go/#applescript
 -- modified to toggle between iOS and default
+-- Useful for sites that insist on flash installations
+-- Tricking them into thinking device is mobile is sometimes helpful
 ------------------------------------------------------------------------------
 function cycle_safari_agents()
   hs.application.launchOrFocus("Safari")
@@ -348,26 +343,26 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
 ------------------------------------------------------------------------------
 function mailToSelf()
   script = [[
-  tell application "Safari"
-  set currentURL to URL of document 1
-end tell
-return currentURL
-]]
+    tell application "Safari"
+    set currentURL to URL of document 1
+    end tell
+    return currentURL
+  ]]
 
 ok, result = hs.applescript(script)
 if (ok) then
   hs.applescript.applescript([[
-  tell application "Safari"
-  set result to URL of document 1
-end tell
-tell application "Mail"
-set theMessage to make new outgoing message with properties {subject:result, content:result, visible:true}
-tell theMessage
-make new to recipient with properties {name:"Andrew Williams", address:"hammerspoon@nonissue.org"}
-send
-end tell
-end tell
-]])
+    tell application "Safari"
+    set result to URL of document 1
+    end tell
+    tell application "Mail"
+    set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
+    tell theMessage
+    make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+    send
+    end tell
+    end tell
+  ]])
 hs.alert("Page successfully emailed to self")
 end
 end
@@ -407,7 +402,10 @@ hs.hotkey.bind(mash, 'T', tabToNewWindow)
 -- Mostly lifted from:
 -- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
 ------------------------------------------------------------------------------
-local homeSSID = "1614 Apple"
+
+-- Doesn't work with current ugly USB Wlan set up, should probably just get a PCI-E
+-- networking card
+local homeSSID = "BROMEGA-5G"
 local lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()
@@ -428,8 +426,8 @@ function home_arrived()
   -- requires modified sudoers file
   -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
   print("home arrived!")
-  os.execute("sudo pmset -b displaysleep 15")
-  os.execute("sudo pmset -c displaysleep 30")
+  os.execute("sudo pmset -b displaysleep 15 sleep 30")
+  os.execute("sudo pmset -c displaysleep 30 sleep 35")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
   hs.alert("Home settings enabled!")
   -- set audiodevice to speakers
@@ -448,15 +446,13 @@ end
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "1614 Apple" then
-    home_arrived()
+if hs.wifi.currentNetwork() == "BROMEGA-5G" then
+  home_arrived()
 else
-    home_departed()
+  home_departed()
 end
 
--- Fancier config reloading
--- Reloads HS if ANY files change in hammerspoon dir
--- Not just init.lua
+-- Fancier config reloading (from hammerspoon tutorial)
 function reloadConfig(files)
   doReload = false
   for _,file in pairs(files) do
@@ -468,5 +464,6 @@ function reloadConfig(files)
     hs.reload()
   end
 end
+
 hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
 hs.alert.show("Config loaded")
