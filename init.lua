@@ -432,7 +432,7 @@ function home_arrived()
   os.execute("sudo pmset -c displaysleep 30 sleep 35")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
   hs.alert("Home settings enabled!")
-  -- set audiodevice to speakers
+  -- TODO: set audiodevice to speakers
 end
 
 -- sets displaysleep to lowervalue
@@ -452,6 +452,7 @@ if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROM
   home_arrived()
 else
   home_departed()
+
 end
 
 -- Fancier config reloading (from hammerspoon tutorial)
@@ -464,8 +465,9 @@ function reloadConfig(files)
   end
   if doReload then
     hs.reload()
+    hs.alert.show("Config loaded")
   end
 end
 
-hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
-hs.alert.show("Config loaded")
+hs.pathwatcher.new(os.getenv("HOME") .. "/Dropbox/Sync/.hammerspoon", reloadConfig):start()
+-- hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
