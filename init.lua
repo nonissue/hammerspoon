@@ -9,6 +9,9 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
+-- Plugins!
+-- require('plugins/hs-weather.menuapp')
+
 -- require 'DemoChooser'
 -- DemoChooser:new()
 
@@ -408,6 +411,7 @@ hs.hotkey.bind(mash, 'T', tabToNewWindow)
 -- networking card
 local homeSSID = "BROMEGA-5G"
 local homeSSID5G = "BROMEGA"
+local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()
@@ -452,7 +456,6 @@ if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROM
   home_arrived()
 else
   home_departed()
-
 end
 
 -- Fancier config reloading (from hammerspoon tutorial)
