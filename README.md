@@ -28,8 +28,8 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 
 
 ## Todo
-* [ ] Laptop resolution changing
+* [x] Laptop resolution changing
 * [ ] Battery alerts on laptop
-* [ ] Change settings based on location (wifi ssid?)
+* [x] Change settings based on location (wifi ssid?)
 * [ ] Better display of resolution options (ala hs.hints)
 * [ ] grab active url from safari, send to clipboard?
