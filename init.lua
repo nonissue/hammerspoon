@@ -89,6 +89,7 @@ local notebook = {
 }
 
 -- These are no longer correct display names
+-- Also, I no longer have a second monitor for this computer
 local display_desktop_main  = "DELL P2815Q"
 local display_desktop_aux   = "DELL U2312HM"
 local desktop = {
@@ -406,9 +407,10 @@ hs.hotkey.bind(mash, 'T', tabToNewWindow)
 -- Mostly lifted from:
 -- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
 ------------------------------------------------------------------------------
-
--- Doesn't work with current ugly USB Wlan set up, should probably just get a PCI-E
--- networking card
+-- Don't love the logic of how this is implemented
+-- If computer is in between networks (say, woken from sleep in new location)
+-- Then desired settings like volume mute are not applied until after a delay
+-- Maybe implement a default setting that is applied when computer is 'in limbo'
 local homeSSID = "BROMEGA-5G"
 local homeSSID5G = "BROMEGA"
 local schoolSSID = "MacEwanSecure"
@@ -422,6 +424,8 @@ function ssidChangedCallback()
     home_arrived()
   elseif newSSID ~= homeSSID and lastSSID == homeSSID then
     -- we are away from home!
+    -- why do we need the validation check for lastSSID?
+    -- We can infer from newSSID ~= homeSSID that we aren't home?
     home_departed()
   end
 
