@@ -318,13 +318,19 @@ end
 -- modified to toggle between iOS and default
 -- Useful for sites that insist on flash installations
 -- Tricking them into thinking device is mobile is
+
+-- This is pretty brittle (it breaks when safari is updated)
+-- and I do it largely to force sites to present
+-- HTML5 video when flash is offered by default
+--
+-- Probably a better way to do it.
 ------------------------------------------------------------------------------
 function cycle_safari_agents()
   hs.application.launchOrFocus("Safari")
   local safari = hs.appfinder.appFromName("Safari")
 
   local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-  local str_iPad = {"Develop", "User Agent", "Safari — iOS 9.3 — iPad"}
+  local str_iPad = {"Develop", "User Agent", "Safari — iOS 10 — iPad"}
 
   local default = safari:findMenuItem(str_default)
   local iPad = safari:findMenuItem(str_iPad)
@@ -415,11 +421,12 @@ local homeSSID = "BROMEGA-5G"
 local homeSSID5G = "BROMEGA"
 local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
+local hostName = hs.host.localizedName()
 
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()
 
-  if (newSSID == homeSSID or newSSID == homeSSID5G) and lastSSID ~= homeSSID then
+  if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
     -- we are at home!
     home_arrived()
   elseif newSSID ~= homeSSID and lastSSID == homeSSID then
@@ -433,11 +440,12 @@ function ssidChangedCallback()
 end
 
 function home_arrived()
+  -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
   -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
   print("home arrived!")
-  os.execute("sudo pmset -b displaysleep 15 sleep 30")
-  os.execute("sudo pmset -c displaysleep 30 sleep 35")
+  os.execute("sudo pmset -b displaysleep 5 sleep 10")
+  os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
   hs.alert("Home settings enabled!")
   -- TODO: set audiodevice to speakers
@@ -456,7 +464,7 @@ end
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" then
+if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" or hostName == "iMac" then
   home_arrived()
 else
   home_departed()
