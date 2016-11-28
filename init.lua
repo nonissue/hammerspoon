@@ -12,16 +12,17 @@
 -- Plugins!
 -- require('plugins/hs-weather.menuapp')
 
--- require 'DemoChooser'
--- DemoChooser:new()
+require 'DemoChooser'
+DemoChooser:new()
+
 
 require 'sleeptimer'
 SleepTimer.new()
 
 -- Require our demomodal
-require 'DemoModal'
+-- require 'DemoModal'
 -- Initialize modal
-DemoModal:new()
+-- DemoModal:new()
 
 -- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )
@@ -78,6 +79,8 @@ local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
 local display_laptop = "Color LCD"
+
+
 local notebook = {
   {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
   {"2Do",               nil,          display_laptop, hs.layout.maximized, nil, nil},
@@ -90,8 +93,9 @@ local notebook = {
 
 -- These are no longer correct display names
 -- Also, I no longer have a second monitor for this computer
-local display_desktop_main  = "DELL P2815Q"
-local display_desktop_aux   = "DELL U2312HM"
+-- Both these monitors are gone...
+local display_desktop_main = "Acer B286HK"
+
 local desktop = {
   {"2Do",               nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
   {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
@@ -103,12 +107,23 @@ local desktop = {
 }
 
 local numberOfScreens = #hs.screen.allScreens()
+local current_screen_name = hs.screen.mainScreen():name()
 
-if numberOfScreens == 1 then
-  hs.layout.apply(notebook)
-elseif numberOfScreens == 2 then
+print(hs.screen.mainScreen())
+
+if current_screen_name == display_desktop_main then
   hs.layout.apply(desktop)
+  print("applying desktop settings!")
+elseif current_screen_name == display_laptop then
+  hs.layout.apply(notebook)
 end
+
+-- if numberOfScreens == 1 then
+--   hs.layout.apply(notebook)
+-- elseif numberOfScreens == 1 then
+--   hs.layout.apply(desktop)
+-- end
+
 -- layouts invoked by hotkey
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 hs.hotkey.bind(hyper, "H", function()
