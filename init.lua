@@ -9,12 +9,16 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
+-- TODO:
+-- [ ] really should create objects with the properties of laptop and desktop
+-- [ ] right now, if something changes, multiple references are scattered
+-- in the code in a bunch of places (like if display type for desktop changes)
+
 -- Plugins!
 -- require('plugins/hs-weather.menuapp')
 
 require 'DemoChooser'
 DemoChooser:new()
-
 
 require 'sleeptimer'
 SleepTimer.new()
@@ -80,7 +84,6 @@ local alt = {"alt"}
 
 local display_laptop = "Color LCD"
 
-
 local notebook = {
   {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
   {"2Do",               nil,          display_laptop, hs.layout.maximized, nil, nil},
@@ -113,18 +116,10 @@ print(hs.screen.mainScreen())
 
 if current_screen_name == display_desktop_main then
   hs.layout.apply(desktop)
-  print("applying desktop settings!")
 elseif current_screen_name == display_laptop then
   hs.layout.apply(notebook)
 end
 
--- if numberOfScreens == 1 then
---   hs.layout.apply(notebook)
--- elseif numberOfScreens == 1 then
---   hs.layout.apply(desktop)
--- end
-
--- layouts invoked by hotkey
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 hs.hotkey.bind(hyper, "H", function()
   hs.hints.windowHints()
@@ -228,8 +223,10 @@ local resolutions = {}
 local choices = {}
 local dropdownOptions = {}
 
+-- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
+
 -- find out which set we need
-if hs.host.localizedName() == "iMac" then
+if current_screen_name == display_desktop_main then
   resolutions = desktopResolutions
 elseif hs.host.localizedName() == "apw@me.com" then
   resolutions = laptopResolutions
