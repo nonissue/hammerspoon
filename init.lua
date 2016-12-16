@@ -13,6 +13,7 @@
 -- [ ] really should create objects with the properties of laptop and desktop
 -- [ ] right now, if something changes, multiple references are scattered
 -- in the code in a bunch of places (like if display type for desktop changes)
+-- [ ] Energy Activity Use Indicator for Mobile
 
 -- Plugins!
 -- require('plugins/hs-weather.menuapp')
