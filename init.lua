@@ -32,8 +32,8 @@
 require('init-plugins')
 
 apw_go({
-  "battery.burnrate",
   "apps.hammerspoon_config_reload",
+  "battery.burnrate",
 })
 
 -- I find it a little more flexible than hs.inspect for developing
