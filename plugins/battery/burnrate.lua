@@ -7,12 +7,12 @@
 -- Statuslets (From https://github.com/cmsj/hammerspoon-config/blob/master/init.lua)
 
 
-mod = {}
+local mod = {}
 --
--- mod.config {
---   enableIndicator = true,
---   allScreens = false,
--- }
+mod.config = {
+  enableIndicator = true,
+  allScreens = false,
+}
 
 -- local burnRateMenu = hs.menubar.new()
 --
