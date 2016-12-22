@@ -14,6 +14,7 @@
 -- [ ] right now, if something changes, multiple references are scattered
 -- in the code in a bunch of places (like if display type for desktop changes)
 -- [ ] Energy Activity Use Indicator for Mobile
+-- [ ] Plugin-ify non-standard config
 
 -- Plugins!
 -- require('plugins/hs-weather.menuapp')
@@ -23,6 +24,9 @@ DemoChooser:new()
 
 require 'sleeptimer'
 SleepTimer.new()
+
+require 'BurnRate'
+BurnRate.new()
 
 -- Require our demomodal
 -- require 'DemoModal'
@@ -82,6 +86,9 @@ hs.window.animationDuration = 0
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
+
+-- Self-explanatory
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'y', hs.toggleConsole)
 
 local display_laptop = "Color LCD"
 
@@ -212,8 +219,7 @@ local desktopResolutions = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
   {w = 1920, h = 1080, s = 2},
-  -- this 1920 is for non-retina @ 60hz
-  {w = 1920, h = 1080, s = 1},
+  {w = 1920, h = 1080, s = 1}, -- this 1920 is for non-retina @ 60hz
   {w = 2048, h = 1152, s = 2},
   {w = 2304, h = 1296, s = 2},
   {w = 2560, h = 1440, s = 2}

@@ -59,7 +59,7 @@ function SleepTimer.ProcessKey(i)
 end
 
 
-
+-- I don't think this does anything.
 function SleepTimer.start(countdown)
 
 end
