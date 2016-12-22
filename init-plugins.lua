@@ -48,7 +48,6 @@ function load_plugins(plugins)
    end
 end
 
-
 function apw_config(name, config)
    logger.df("apw_config, name=%s, config=%s", name, hs.inspect(config))
    APW_CONFIG[name]=config
