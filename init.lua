@@ -29,6 +29,13 @@
 -- OnLocation
 -- UsefulUtilites
 
+require('init-plugins')
+
+apw_go({
+  "battery.burnrate",
+  "apps.hammerspoon_config_reload",
+})
+
 -- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )
   local print_r_cache={}
@@ -462,6 +469,7 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
+  notify("OnLocation:", "Home settings enabled")
   hs.alert("Home settings enabled!")
   -- TODO: set audiodevice to speakers
 end
@@ -473,6 +481,7 @@ function home_departed()
   print("home departed!")
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
+  notify("OnLocation: ", "Away settings enabled")
   hs.alert("Away settings enabled!")
 end
 
