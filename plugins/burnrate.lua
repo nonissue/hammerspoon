@@ -1,8 +1,14 @@
 -- A status/menubarlet to reflect the current 'burnrate' for
 -- battery
 
+-- implementation inspiration:
+-- oh-my-hammerspoon https://github.com/zzamboni/oh-my-hammerspoon/blob/master/plugins/keyboard/menubar_indicator.lua
+-- ShowyEdge (https://pqrs.org/osx/ShowyEdge/index.html.en)
+-- Statuslets (From https://github.com/cmsj/hammerspoon-config/blob/master/init.lua)
+
+
 BurnRate = {}
-BurnRate.__index = Action
+
 local burnRateMenu = hs.menubar.new()
 
 function BurnRate:new()

@@ -15,23 +15,19 @@
 -- in the code in a bunch of places (like if display type for desktop changes)
 -- [ ] Energy Activity Use Indicator for Mobile
 -- [ ] Plugin-ify non-standard config
+-- [ ] Move plugins to plugins folder, load dynamically?
 
--- Plugins!
--- require('plugins/hs-weather.menuapp')
+-- Plugins (not finished):
+-- SleepTimer
+-- BurnRate
 
-require 'DemoChooser'
-DemoChooser:new()
-
-require 'sleeptimer'
-SleepTimer.new()
-
-require 'BurnRate'
-BurnRate.new()
-
--- Require our demomodal
--- require 'DemoModal'
--- Initialize modal
--- DemoModal:new()
+-- Plugins (to pluginify):
+-- DisplayRes
+-- CasualSafari
+-- WarmKeys
+-- WinWin
+-- OnLocation
+-- UsefulUtilites
 
 -- I find it a little more flexible than hs.inspect for developing
 function print_r ( t )
