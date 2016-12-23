@@ -7,12 +7,11 @@
 -- you have multiple computers, you'll have to apply the layouts
 -- appropriately
 --
--- [ ] should make this it's own extension/file
--- [ ] check the menu bar item corresponding to current res
+-- [x] should make this it's own extension/file
+-- [ ] insure val in menu == actual val (on startup they differ sometimes)
+-- [ ] Fix redundant logic and simplify code.
 ------------------------------------------------------------------------------
 local mod = {}
-
--- print_r(apw.plugin_cache)
 
 -- possible resolutions for 15 MBPr
 local laptopResolutions = {
@@ -105,6 +104,10 @@ end
 
 setupResModal()
 
+------------------------------------------------------------------------------
+-- End of Modal / Start of menubar
+------------------------------------------------------------------------------
+
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
 local resolutionMenu = hs.menubar.new()
@@ -117,22 +120,24 @@ end
 
 -- When clicked, toggles through two most common resolutions by passing
 -- key manually to process key function
+-- 2016/12/22: Wat? That's not what happens. Maybe this happened
+-- For 1920 on desktop (between 30hz/60hz) but I don't use that
+-- Monitor anymore
 
 -- this is kind of flawed because logic only works on desktop
 -- where it toggles between gaming mode and non-gaming mode
 -- maybe just make it a dropdown?
-function resolutionClicked()
-  local screen = hs.screen.primaryScreen()
-  if screen:currentMode().w == 1920 then
-    processKey("3")
-  else
-    processKey("1")
-  end
-end
+-- function resolutionClicked()
+--   local screen = hs.screen.primaryScreen()
+--   if screen:currentMode().w == 1920 then
+--     processKey("3")
+--   else
+--     processKey("1")
+--   end
+-- end
 
 -- sets callback and calls settitle function
 if resolutionMenu then
-  -- resolutionMenu:setClickCallback(resolutionClicked)
   local currentRes = hs.screen.primaryScreen():currentMode().w
   setResolutionDisplay(currentRes)
 end
