@@ -28,8 +28,9 @@
 -- WinWin
 -- OnLocation
 -- UsefulUtilites
-
+-- require('apw-lib')
 require('init-plugins')
+
 
 apw_go({
   "apps.utilities",
@@ -37,9 +38,11 @@ apw_go({
   "apps.hammerspoon_toggle_console",
   "apps.change_resolution",
   "battery.burnrate",
+  "skunkworks.demomodal",
 })
 
-print_r(apw.plugin_cache)
+-- skunkworks.demomodal.init()
+-- print_r(apw.plugin_cache)
 
 -- init grid
 hs.grid.MARGINX 	= 0

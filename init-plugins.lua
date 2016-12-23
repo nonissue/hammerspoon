@@ -5,7 +5,7 @@
 package.path = package.path .. ';plugins/?.lua'
 require('apw-lib')
 
-apw = {}
+-- apw = {}
 
 hostname = hs.host.localizedName()
 
@@ -65,5 +65,3 @@ if not status then
 end
 
 notify("APW Hammerspoon loaded", "Config loaded")
-
--- return apw

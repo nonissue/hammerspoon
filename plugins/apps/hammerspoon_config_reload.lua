@@ -3,6 +3,8 @@
 ---- Configuration file management
 ---- Original code from http://www.hammerspoon.org/go/#fancyreload
 
+require('apw-lib')
+
 local mod={}
 local configFileWatcher = nil
 
@@ -31,8 +33,8 @@ function mod.init()
       configFileWatcher:start()
    end
 
-   -- Manual config reload
-  --  apw.bind(mod.config.manual_reload_key, hs.reload)
+  --  Manual config reload
+   apw.bind(mod.config.manual_reload_key, hs.reload)
 end
 
 return mod

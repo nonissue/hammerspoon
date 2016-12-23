@@ -8,7 +8,7 @@ logger = hs.logger.new('apw-hs')
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 function notify(title, message)
-   hs.notify.new({title=title, informativeText=message}):send()
+  hs.notify.new({title=title, informativeText=message}):send()
 end
 
 function chooseContrastingColor(c)
@@ -37,7 +37,7 @@ function apw.capture(cmd, raw)
 end
 
 function apw.bind(keyspec, fun)
-   hs.hotkey.bind(keyspec[1], keyspec[2], fun)
+  hs.hotkey.bind(keyspec[1], keyspec[2], fun)
 end
 
 function sortedkeys(tab)
