@@ -40,9 +40,9 @@ local dropdownOptions = {}
 -- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
 
 -- find out which set we need
-if hs.host.localizedName() == "iMac" then
+if hostname == "iMac" then
   resolutions = desktopResolutions
-elseif hs.host.localizedName() == "apw@me.com" then
+elseif hostname == "apw@me.com" then
   resolutions = laptopResolutions
 else
   print('no resolutions available for this computer/monitor')

@@ -39,8 +39,6 @@ apw_go({
   "battery.burnrate",
 })
 
-
-
 print_r(apw.plugin_cache)
 
 -- init grid
@@ -61,9 +59,6 @@ hs.window.animationDuration = 0
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
-
--- Self-explanatory
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'y', hs.toggleConsole)
 
 local display_laptop = "Color LCD"
 
@@ -299,8 +294,7 @@ end
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
-  -- andrewwilliams ALL=(root) NOPASSWD: pmset -b displaysleep *
-  print("home arrived!")
+  -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
@@ -312,8 +306,9 @@ end
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
 function home_departed()
-  -- set volume to 0?
-  print("home departed!")
+  -- set volume to 0
+  -- 2016/12/22: Disabled set volume to zero as it's annoying when changing
+  -- HS config when not at home.
   -- hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
   notify("OnLocation: ", "Away settings enabled")

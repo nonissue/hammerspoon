@@ -14,38 +14,37 @@ local APW_PLUGINS={}
 local APW_CONFIG={}
 
 function load_plugins(plugins)
-  hs.alert('loading plugins!')
-   plugins = plugins or {}
-   for i,p in ipairs(plugins) do
-      table.insert(APW_PLUGINS, p)
-   end
-   for i,plugin in ipairs(APW_PLUGINS) do
-      logger.df("Loading plugin %s", plugin)
-      -- First, load the plugin
-      mod = require(plugin)
-      -- If it returns a table (like a proper module should), then
-      -- we may be able to access additional functionality
-      if type(mod) == "table" then
-         -- If the user has specified some config parameters, merge
-         -- them with the module's 'config' element (creating it
-         -- if it doesn't exist)
-         if APW_CONFIG[plugin] ~= nil then
-            if mod.config == nil then
-               mod.config = {}
-            end
-            for k,v in pairs(APW_CONFIG[plugin]) do
-               mod.config[k] = v
-            end
-         end
-         -- If it has an init() function, call it
-         if type(mod.init) == "function" then
-            logger.i(string.format("Initializing plugin %s", plugin))
-            mod.init()
-         end
-      end
-      -- Cache the module
-      apw.plugin_cache[plugin] = mod
-   end
+ plugins = plugins or {}
+ for i,p in ipairs(plugins) do
+    table.insert(APW_PLUGINS, p)
+ end
+ for i,plugin in ipairs(APW_PLUGINS) do
+    logger.df("Loading plugin %s", plugin)
+    -- First, load the plugin
+    mod = require(plugin)
+    -- If it returns a table (like a proper module should), then
+    -- we may be able to access additional functionality
+    if type(mod) == "table" then
+       -- If the user has specified some config parameters, merge
+       -- them with the module's 'config' element (creating it
+       -- if it doesn't exist)
+       if APW_CONFIG[plugin] ~= nil then
+          if mod.config == nil then
+             mod.config = {}
+          end
+          for k,v in pairs(APW_CONFIG[plugin]) do
+             mod.config[k] = v
+          end
+       end
+       -- If it has an init() function, call it
+       if type(mod.init) == "function" then
+          logger.i(string.format("Initializing plugin %s", plugin))
+          mod.init()
+       end
+    end
+    -- Cache the module
+    apw.plugin_cache[plugin] = mod
+ end
 end
 
 function apw_config(name, config)

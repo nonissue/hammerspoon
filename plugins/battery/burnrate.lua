@@ -16,7 +16,7 @@ mod.config = {
 
 function mod.init()
   logger.i('Enablng burnrate plugin')
-  hs.alert('enabling burrnate plugin')
+  -- hs.alert('enabling burrnate plugin')
 end
 
 return mod
