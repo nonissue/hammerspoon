@@ -6,6 +6,11 @@
 -- ShowyEdge (https://pqrs.org/osx/ShowyEdge/index.html.en)
 -- Statuslets (From https://github.com/cmsj/hammerspoon-config/blob/master/init.lua)
 
+-- More info:
+-- https://developer.apple.com/legacy/library/documentation/Darwin/Reference/ManPages/man1/powermetrics.1.html
+-- https://randomfoo.net/2013/11/08/more-on-os-x-mavericks-power-usage
+-- https://blog.mozilla.org/nnethercote/2015/08/26/what-does-the-os-x-activity-monitors-energy-impact-actually-measure/
+
 
 local mod = {}
 --
