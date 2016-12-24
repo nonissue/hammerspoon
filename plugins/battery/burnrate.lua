@@ -11,14 +11,18 @@
 -- https://randomfoo.net/2013/11/08/more-on-os-x-mavericks-power-usage
 -- https://blog.mozilla.org/nnethercote/2015/08/26/what-does-the-os-x-activity-monitors-energy-impact-actually-measure/
 
+-- Todo:
+-- [ ] Change display to make it a statuslet, or bar along top of screen
+-- [ ] Enable config so user can set battery options (as burrnate will vary between devices)
+-- [ ] Alternately: could replace sys battery indicator
 
 local mod = {}
---
+
+-- Nonsense placeholders
 mod.config = {
   enableIndicator = true,
   allScreens = false,
 }
-
 
 --------------------------------------------------
 -- Handler directly called by the "low-level" watcher API.
