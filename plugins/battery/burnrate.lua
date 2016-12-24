@@ -40,7 +40,7 @@ function check_burnrate()
   elseif designCap / cur_amh > 4 then
     setBurnrateText("Burnrate: Medium")
   else
-    setBurnrateTest("Burnrate: Worrisome")
+    setBurnrateText("Burnrate: Worrisome")
   end
 end
 
