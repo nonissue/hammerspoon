@@ -19,9 +19,38 @@ mod.config = {
   allScreens = false,
 }
 
+
+--------------------------------------------------
+-- Handler directly called by the "low-level" watcher API.
+--------------------------------------------------
+local cur_amh = nil
+function check_burnrate()
+  cur_amh = math.abs(hs.battery.amperage())
+  designCap = hs.battery.designCapacity()
+  if hs.battery.isCharging() then
+    setBurnrateText("Charging")
+  elseif designCap / cur_amh > 10 then
+    setBurnrateText("Burnrate: Unbelievably Low (Probably an error)")
+  elseif designCap / cur_amh > 7 then
+    setBurnrateText("Burnrate: Low")
+  elseif designCap / cur_amh > 4 then
+    setBurnrateText("Burnrate: Medium")
+  else
+    setBurnrateTest("Burnrate: Worrisome")
+  end
+end
+
+
+hs.battery.watcher.new(check_burnrate):start()
+local burnrateMenu = hs.menubar.new()
+
+function setBurnrateText(amperage)
+  burnrateMenu:setTitle(tostring(amperage))
+end
+
 function mod.init()
   logger.i('Enablng burnrate plugin')
-  -- hs.alert('enabling burrnate plugin')
+  check_burnrate()
 end
 
 return mod
