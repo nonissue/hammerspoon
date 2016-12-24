@@ -18,7 +18,7 @@
 
 local mod = {}
 
--- Nonsense placeholders
+-- Nonsense placeholder config options
 mod.config = {
   enableIndicator = true,
   allScreens = false,
@@ -43,7 +43,6 @@ function check_burnrate()
     setBurnrateTest("Burnrate: Worrisome")
   end
 end
-
 
 hs.battery.watcher.new(check_burnrate):start()
 local burnrateMenu = hs.menubar.new()
