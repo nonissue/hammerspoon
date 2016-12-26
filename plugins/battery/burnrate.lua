@@ -15,6 +15,8 @@
 -- [ ] Change display to make it a statuslet, or bar along top of screen
 -- [ ] Enable config so user can set battery options (as burrnate will vary between devices)
 -- [ ] Alternately: could replace sys battery indicator
+-- [ ] Fix bracketing for display (Something better than Low/Med/High)
+-- [ ] Improve formula? Normalize for range 1-10 or something?
 
 local mod = {}
 
@@ -29,18 +31,21 @@ mod.config = {
 --------------------------------------------------
 local cur_amh = nil
 function check_burnrate()
+  -- BurnRate = Rate of Battery drain = BR
   cur_amh = math.abs(hs.battery.amperage())
   designCap = hs.battery.designCapacity()
+  local burnrateActual = designCap / cur_amh
+  local burnrateRounded = round(burnrateActual, 1)
   if hs.battery.isCharging() then
     setBurnrateText("Charging")
   elseif designCap / cur_amh > 10 then
-    setBurnrateText("Burnrate: Unbelievably Low (Probably an error)")
+    setBurnrateText("BR: N/A / " .. burnrateRounded)
   elseif designCap / cur_amh > 7 then
-    setBurnrateText("Burnrate: Low")
+    setBurnrateText("BR: Low / " .. burnrateRounded)
   elseif designCap / cur_amh > 4 then
-    setBurnrateText("Burnrate: Medium")
+    setBurnrateText("BR: Med / " .. burnrateRounded)
   else
-    setBurnrateText("Burnrate: Worrisome")
+    setBurnrateText("BR: Hi / " .. burnrateRounded)
   end
 end
 

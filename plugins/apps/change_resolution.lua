@@ -38,8 +38,11 @@ local resolutions = {}
 local choices = {}
 local dropdownOptions = {}
 
--- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
+local res_color = {red=1,blue=1,green=1,alpha=1} -- Default?
+local res_color2 = {red=255/255,blue=120/255,green=120/255,alpha=1} -- light red?
 
+
+-- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
 -- find out which set we need
 if hostname == "iMac" then
   resolutions = desktopResolutions
@@ -62,7 +65,9 @@ function setupResModal()
     -- inserts resolutions width in to choices table so we can iterate through them easily later
     table.insert(choices, resolutions[i].w)
     -- also creates a table to pass to init our dropdown menu with menuitem title and callback (this is fucking ugly)
-    table.insert(dropdownOptions, {title = tostring(i) .. ": " .. tostring(choices[i]), fn = function() return processKey(i) end, checked = false })
+    local titlestr = tostring(choices[i])
+    local styledtitle = hs.styledtext.new(titlestr,{font={size=14},color=res_color,paragraphStyle={alignment="left"}})
+    table.insert(dropdownOptions, {title = styledtitle, fn = function() return processKey(i) end, checked = false })
     k:bind({}, tostring(i), function () processKey(i) end)
   end
 

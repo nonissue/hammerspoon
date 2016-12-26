@@ -31,7 +31,6 @@
 -- require('apw-lib')
 require('init-plugins')
 
-
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
@@ -40,9 +39,6 @@ apw_go({
   "battery.burnrate",
   "skunkworks.demomodal",
 })
-
--- skunkworks.demomodal.init()
--- print_r(apw.plugin_cache)
 
 -- init grid
 hs.grid.MARGINX 	= 0
@@ -59,9 +55,9 @@ hs.window.animationDuration = 0
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
-local mash = {"cmd", "alt", "ctrl"}
-local hyper = {"cmd", "alt"}
-local alt = {"alt"}
+local mash =    {"cmd", "alt", "ctrl" }
+local hyper =   {"cmd", "alt"         }
+local alt =     {"alt"                }
 
 local display_laptop = "Color LCD"
 
@@ -93,10 +89,12 @@ local desktop = {
 local numberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
+-- I don't really think I care about this anymore?
+-- disabling to see if I care
 if current_screen_name == display_desktop_main then
-  hs.layout.apply(desktop)
+  -- hs.layout.apply(desktop)
 elseif current_screen_name == display_laptop then
-  hs.layout.apply(notebook)
+  -- hs.layout.apply(notebook)
 end
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
