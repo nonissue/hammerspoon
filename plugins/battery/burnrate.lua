@@ -91,7 +91,7 @@ function mod.init()
     check_burnrate()
   else
     logger.i('Not enabling burnrate on iMac')
-    
+  end
 end
 
 return mod
