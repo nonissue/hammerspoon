@@ -6,7 +6,7 @@ local mod = {}
 
 mod.config = {
   display_modal_key = {{"cmd", "alt", "ctrl"}, "l"},
-  display_modal_exit = {{""}, "escape"},
+  display_modal_exit = {{''}, "escape"},
   modal_choices = {"Choice 1", "Choice 2", "Choice 3", "Choice 4"}
 }
 
@@ -29,8 +29,11 @@ function mod.init()
 
 
     -- bind our exit modal mode key to esc
-    -- e:bind('', 'escape', function() hs.alert.closeAll() e:exit() end)
-    apw.bind(mod.config.display_modal_exit, hs.alert.closeAll)
+    e:bind('', 'escape', function() hs.alert.closeAll() e:exit() end)
+
+    -- Don't want the following as I don't want it to be global
+    -- This was fucking with the escape key everywhere.
+    -- apw.bind(mod.config.display_modal_exit, hs.alert.closeAll)
 
     -- For loop goes through our choices in our modalChoices table
     -- and for each item in table, binds a corresponding number
