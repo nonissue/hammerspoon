@@ -31,10 +31,6 @@ function mod.init()
     -- bind our exit modal mode key to esc
     e:bind('', 'escape', function() hs.alert.closeAll() e:exit() end)
 
-    -- Don't want the following as I don't want it to be global
-    -- This was fucking with the escape key everywhere.
-    -- apw.bind(mod.config.display_modal_exit, hs.alert.closeAll)
-
     -- For loop goes through our choices in our modalChoices table
     -- and for each item in table, binds a corresponding number
     -- By binding only these specific keys, other input is ignored except for
