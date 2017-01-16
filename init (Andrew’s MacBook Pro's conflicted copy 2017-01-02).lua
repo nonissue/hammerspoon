@@ -38,15 +38,15 @@ apw_go({
   "apps.change_resolution",
   "battery.burnrate",
   "skunkworks.demomodal",
-  "skunkworks.redshift",
-  --"skunkworks.capslockfix",
+  "skunkworks.toolbartest",
+  "skunkworks.capslockfix",
 })
 
 -- init grid
-hs.grid.MARGINX         = 0
-hs.grid.MARGINY         = 0
-hs.grid.GRIDWIDTH       = 7
-hs.grid.GRIDHEIGHT      = 7
+hs.grid.MARGINX 	= 0
+hs.grid.MARGINY 	= 0
+hs.grid.GRIDWIDTH 	= 7
+hs.grid.GRIDHEIGHT 	= 7
 
 -- disable animation
 hs.window.animationDuration = 0

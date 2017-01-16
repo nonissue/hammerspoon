@@ -27,7 +27,7 @@ local desktopResolutions = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
   {w = 1920, h = 1080, s = 2},
-  -- {w = 1920, h = 1080, s = 1}, -- this 1920 is for non-retina @ 30hz
+  {w = 1920, h = 1080, s = 1}, -- this 1920 is for non-retina @ 30hz
   {w = 2048, h = 1152, s = 2},
   {w = 2304, h = 1296, s = 2},
   {w = 2560, h = 1440, s = 2}
@@ -127,9 +127,7 @@ end
 
 -- sets callback and calls settitle function
 if resolutionMenu then
-  print("Attempting to set displayResMenu initial value")
   local currentRes = hs.screen.primaryScreen():currentMode().w
-  print("current res = ", currentRes)
   setResolutionDisplay(currentRes)
 end
 
