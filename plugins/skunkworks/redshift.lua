@@ -5,7 +5,7 @@ local mod = {}
 mod.config = {
   times = {
     -- These aren't accurate
-    sunrise = "0:700",
+    sunrise = "07:00",
     sunset = "20:00",
   }
 }
