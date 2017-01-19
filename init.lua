@@ -39,7 +39,7 @@ apw_go({
   "battery.burnrate",
   "skunkworks.demomodal",
   "skunkworks.redshift",
-  --"skunkworks.capslockfix",
+  -- "skunkworks.capslockfix",
 })
 
 -- init grid

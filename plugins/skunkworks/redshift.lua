@@ -23,7 +23,7 @@ hs.timer.doAfter(1, function()
       end
   end
 
-  hs.redshift.start(4000, mod.config.times.sunset, mod.config.times.sunrise, "3h")
+  hs.redshift.start(3500, mod.config.times.sunset, mod.config.times.sunrise, "3h")
 end)
 
 return mod

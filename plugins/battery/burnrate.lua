@@ -69,16 +69,28 @@ function check_burnrate()
   elseif designCap / cur_amh > 10 then
     setBurnrateText("BR: N/A / " .. burnrateRounded)
   elseif designCap / cur_amh > 7 then
-    setBurnrateText("BR: Low / " .. burnrateRounded)
+    setBurnrateText("BR:/GOOD")
+    -- setBurnrateText("BR: Low / " .. burnrateRounded)
   elseif designCap / cur_amh > 4 then
-    setBurnrateText("BR: Med / " .. burnrateRounded)
+    -- setBurnrateIcon()
+    setBurnrateText("BR://MED")
+    -- setBurnrateText("BR: Med / " .. burnrateRounded)
   else
-    setBurnrateText("BR: Hi / " .. burnrateRounded)
+    setBurnrateText("BR:///BAD")
+    -- setBurnrateText("BR: Hi / " .. burnrateRounded)
   end
 end
 
+-- show burnrate as graphic
+
 hs.battery.watcher.new(check_burnrate):start()
 local burnrateMenu = hs.menubar.new()
+
+function setBurnrateIcon(rate)
+  -- burnrateMenu:setIcon("test.pdf")
+  burnrateMenu:setTitle(tostring("|"))
+  -- burnrateMenu:setIcon(rate)
+end
 
 function setBurnrateText(amperage)
   burnrateMenu:setTitle(tostring(amperage))
