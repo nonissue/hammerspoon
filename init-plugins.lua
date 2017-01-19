@@ -1,5 +1,5 @@
 -- code to init plugins
-
+-- Entirely copied from oh-my-hammerspoon
 -- require this code from init.lua
 
 package.path = package.path .. ';plugins/?.lua'
