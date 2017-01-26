@@ -38,7 +38,7 @@ apw_go({
   "apps.change_resolution",
   "battery.burnrate",
   "skunkworks.demomodal",
-  "skunkworks.redshift",
+  -- "skunkworks.redshift",
   -- "skunkworks.capslockfix",
 })
 
@@ -310,9 +310,7 @@ end
 -- eventually should unmount disks and perform other functions?
 function home_departed()
   -- set volume to 0
-  -- 2016/12/22: Disabled set volume to zero as it's annoying when changing
-  -- HS config when not at home.
-  -- hs.audiodevice.defaultOutputDevice():setMuted(true)
+  hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
   notify("OnLocation: ", "Away settings enabled")
   hs.alert("Away settings enabled!")
