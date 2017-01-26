@@ -1,5 +1,10 @@
 -- from here:
 -- https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/redshift.lua
+
+-- Made redundant by upcoming features in 10.12.4, was going to keep working on this
+-- so I could enable/disable/adjust redshift level easily but probably not worthwhile
+-- unless I find the new implemntation lacking.
+
 local mod = {}
 
 mod.config = {
@@ -14,7 +19,6 @@ hs.location.start()
 hs.timer.doAfter(1, function()
   loc = hs.location.get()
   hs.location.stop()
-
 
   if loc then
       local tzOffset = tonumber(string.sub(os.date("%z"), 1, -3))
