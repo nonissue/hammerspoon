@@ -64,4 +64,5 @@ if not status then
    end
 end
 
-notify("APW Hammerspoon loaded", "Config loaded")
+hs.alert("Config Loaded!", 1)
+-- notify("APW Hammerspoon loaded", "Config loaded")

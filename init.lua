@@ -13,7 +13,7 @@
 -- [ ] really should create objects with the properties of laptop and desktop / EDIT: ADD TO apw-lib.lua
 -- [ ] right now, if something changes, multiple references are scattered
 -- in the code in a bunch of places (like if display type for desktop changes)
--- [ ] Energy Activity Use Indicator for Mobile
+-- [ ] Energy Activity Use Indicator while mobile
 -- [ ] Plugin-ify non-standard config
 -- [ ] Move plugins to plugins folder, load dynamically?
 
@@ -301,8 +301,8 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
-  notify("OnLocation:", "Home settings enabled")
-  hs.alert("Home settings enabled!")
+  -- notify("OnLocation:", "Home settings enabled")
+  hs.alert("Home settings enabled!", 1)
   -- TODO: set audiodevice to speakers
 end
 
@@ -313,7 +313,7 @@ function home_departed()
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
   notify("OnLocation: ", "Away settings enabled")
-  hs.alert("Away settings enabled!")
+  hs.alert("Away settings enabled!", 1)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
