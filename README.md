@@ -26,10 +26,10 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * Stolen from hammerspoon intro
 * Modified to switch between default and iPad
 
-
 ## Todo
 * [x] Laptop resolution changing
-* [ ] Battery alerts on laptop
+* [x] Battery alerts on laptop *kind* *of* see burnrate plugin
 * [x] Change settings based on location (wifi ssid?)
 * [ ] Better display of resolution options (ala hs.hints)
 * [ ] grab active url from safari, send to clipboard?
+* [ ] move other modules from init to plugins
