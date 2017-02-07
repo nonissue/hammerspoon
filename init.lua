@@ -167,6 +167,9 @@ hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 ------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- SAFARI STUFF STARTS
+------------------------------------------------------------------------------
 -- cycle_safari_agents
 ------------------------------------------------------------------------------
 -- Taken from: http://www.hammerspoon.org/go/#applescript
@@ -255,7 +258,52 @@ end
 hs.hotkey.bind(mash, 'T', tabToNewWindow)
 
 ------------------------------------------------------------------------------
--- Location based functions to change system settings (not finished)
+-- mergeAllWindows
+------------------------------------------------------------------------------
+-- Merges all separate windows into one window
+------------------------------------------------------------------------------
+function mergeAllWindows()
+  hs.application.launchOrFocus("Safari")
+  local safari = hs.appfinder.appFromName("Safari")
+
+  local target_item_in_menu = {"Window", "Merge All Windows"}
+  safari:selectMenuItem(target_item_in_menu)
+
+  hs.alert.show("Merging all windows")
+end
+
+hs.hotkey.bind(mash, 'M', mergeAllWindows)
+
+------------------------------------------------------------------------------
+-- pinOrUnpinTab
+------------------------------------------------------------------------------
+-- Pins or unpins current tab
+------------------------------------------------------------------------------
+function pinOrUnpinTab()
+  hs.application.launchOrFocus("Safari")
+  local safari = hs.appfinder.appFromName("Safari")
+
+  local pin_tab = {"Window", "Pin Tab"}
+  local unpin_tab = {"Window", "Unpin Tab"}
+
+  if (safari:findMenuItem(pin_tab)) then
+    hs.alert.show("Pinning current tab")
+    safari:selectMenuItem(pin_tab)
+  else
+    hs.alert.show("Unpinning current tab")
+    safari:selectMenuItem(unpin_tab)
+  end
+end
+
+hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
+
+------------------------------------------------------------------------------
+-- End of safari stuff
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+-- Location based functions to change system settings
 ------------------------------------------------------------------------------
 -- functions for different locations
 -- configure things like drive mounts, display sleep (for security), etc.
