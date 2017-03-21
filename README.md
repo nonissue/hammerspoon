@@ -33,3 +33,17 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * [ ] Better display of resolution options (ala hs.hints)
 * [ ] grab active url from safari, send to clipboard?
 * [ ] move other modules from init to plugins
+  * [ ] window management
+  * [ ] safari stuff
+  * [ ] application management?
+
+* [ ] Make specific system functions into modal hotkeys
+  * Some ideas:
+    * [ ] DND on/off
+    * [ ] Bluetooth on/off
+    * [ ] Bluetooth connect specific headphones
+    * [ ] VPN on/off
+    * [ ] Nightshift/flux on/off
+    * [ ] Sleep timer (possibly need to break this out to own module)
+* [ ] Make a display (similar to hs.hints) for these system hotkeys
+  * [ ] Or maybe something similar to cheatsheets?
