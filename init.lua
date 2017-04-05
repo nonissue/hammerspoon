@@ -38,6 +38,7 @@ apw_go({
   "apps.change_resolution",
   "battery.burnrate",
   "skunkworks.demomodal",
+  "skunkworks.kellan",
   -- "skunkworks.redshift",
   -- "skunkworks.capslockfix",
 })

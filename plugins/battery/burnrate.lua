@@ -69,14 +69,14 @@ function check_burnrate()
   elseif designCap / cur_amh > 10 then
     setBurnrateText("BR: N/A / " .. burnrateRounded)
   elseif designCap / cur_amh > 7 then
-    setBurnrateText("BR:/GOOD")
+    setBurnrateText("BR:" .. burnrateRounded)
     -- setBurnrateText("BR: Low / " .. burnrateRounded)
   elseif designCap / cur_amh > 4 then
     -- setBurnrateIcon()
-    setBurnrateText("BR://MED")
+    setBurnrateText("BR:" .. burnrateRounded)
     -- setBurnrateText("BR: Med / " .. burnrateRounded)
   else
-    setBurnrateText("BR:///BAD")
+    setBurnrateText("BR:" .. burnrateRounded)
     -- setBurnrateText("BR: Hi / " .. burnrateRounded)
   end
 end
