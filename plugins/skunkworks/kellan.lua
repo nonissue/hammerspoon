@@ -1,7 +1,10 @@
--- Kellan.lua aka media controls
+local mod = {}
 
+local supermash = {"cmd", "alt", "ctrl", "shift"}
 
-local newmash =    {"cmd", "alt", "ctrl", "shift"}
+-- hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 
-hs.hotkey.bind(newmash, "right", hs.itunes.next())
-hs.hotkey.bind(newmash, "left", hs.itunes.previous())
+hs.hotkey.bind(supermash, 'right', hs.itunes.next)
+hs.hotkey.bind(supermash, 'left', hs.itunes.previous)
+
+return mod
