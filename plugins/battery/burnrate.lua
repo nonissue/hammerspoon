@@ -65,7 +65,7 @@ function check_burnrate()
   local burnrateActual = designCap / cur_amh
   local burnrateRounded = round(burnrateActual, 1)
   if hs.battery.isCharging() then
-    setBurnrateText("Charging")
+    setBurnrateText("BR:+")
   elseif designCap / cur_amh > 10 then
     setBurnrateText("BR: N/A / " .. burnrateRounded)
   elseif designCap / cur_amh > 7 then

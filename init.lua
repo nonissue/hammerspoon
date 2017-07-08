@@ -1,4 +1,4 @@
-------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------
 -- VERY VERY early hammerspoon init.lua
 ------------------------------------------------------------------------------
 -- By: Andrew Williams / andy@nonissue.org
@@ -42,6 +42,8 @@ apw_go({
   -- "skunkworks.redshift",
   -- "skunkworks.capslockfix",
 })
+
+-- hs.Seal.show()
 
 -- init grid
 hs.grid.MARGINX         = 0
@@ -239,6 +241,15 @@ end
 
 -- mails current url to myself using mailtoself function
 hs.hotkey.bind(mash, 'U', mailToSelf)
+
+------------------------------------------------------------------------------
+-- siteSpecificSearch
+------------------------------------------------------------------------------
+-- take current root of url (eg. if url is www.example.com/directory), 
+-- the root is example.com. Then prompt user for keyword(s), and do a
+-- google site-specific search on that domain. 
+-- eg: (google: query site:example.com)
+------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 -- tabToNewWindow

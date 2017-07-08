@@ -32,6 +32,7 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * [x] Change settings based on location (wifi ssid?)
 * [ ] Better display of resolution options (ala hs.hints)
 * [ ] grab active url from safari, send to clipboard?
+  * [ ] site-specific search from current url
 * [ ] move other modules from init to plugins
   * [ ] window management
   * [ ] safari stuff
