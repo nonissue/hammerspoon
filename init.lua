@@ -55,7 +55,6 @@ local wifiicon = hs.image.imageFromPath('media/airport.png')
 
 
 
-
 -- init grid
 hs.grid.MARGINX         = 0
 hs.grid.MARGINY         = 0
