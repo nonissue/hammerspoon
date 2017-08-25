@@ -31,6 +31,7 @@
 -- require('apw-lib')
 require('init-plugins')
 
+
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
@@ -43,6 +44,18 @@ apw_go({
   -- "skunkworks.capslockfix",
 })
 
+
+---------
+-- Changing hs.notify contentImage test
+------------------------------------------------------------------------------
+-- Started playing with hs.notify images
+-- all files in media folder taken from https://github.com/scottcs/dot_hammerspoon
+------------------------------------------------------------------------------
+local wifiicon = hs.image.imageFromPath('media/airport.png')
+
+
+
+
 -- init grid
 hs.grid.MARGINX         = 0
 hs.grid.MARGINY         = 0
@@ -54,7 +67,7 @@ hs.window.animationDuration = 0
 
 ---------
 -- Vars
----------
+------------------------------------------------------------------------------
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
@@ -352,8 +365,16 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
-  -- notify("OnLocation:", "Home settings enabled")
-  hs.alert("Home settings enabled!", 1)
+  -- notify("Location Change Detected:", "Home settings enabled")
+  hs.notify.new({
+        title = 'Wi-Fi Status',
+        subTitle = "Home Detected",
+        informativeText = "Home Settings Enabled",
+        -- contentImage = wifiicon,
+        autoWithdraw = true,
+        hasActionButton = false,
+      }):send()
+  -- hs.alert("Home settings enabled!", 1)
   -- TODO: set audiodevice to speakers
 end
 
@@ -363,8 +384,8 @@ function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
-  notify("OnLocation: ", "Away settings enabled")
-  hs.alert("Away settings enabled!", 1)
+  notify("Location Change Detected: ", "Away settings enabled")
+  -- hs.alert("Away settings enabled!", 1)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
