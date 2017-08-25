@@ -217,7 +217,9 @@ function mailToSelf()
     set currentURL to URL of document 1
     end tell
     return currentURL
-  ]]
+]]
+
+  -- hs.alert("current url is" .. hs.applescript(script))
 
 ok, result = hs.applescript(script)
 if (ok) then
@@ -233,7 +235,7 @@ if (ok) then
     end tell
     end tell
   ]])
-hs.alert("Page successfully emailed to self")
+hs.notify.new({title="Page Emailed", informativeText="URL:\n" .. result}):send()
 end
 end
 
