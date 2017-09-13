@@ -31,6 +31,7 @@
 require('apw-lib')
 require('init-plugins')
 
+
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
@@ -43,7 +44,18 @@ apw_go({
   -- "skunkworks.capslockfix",
 })
 
+
+local custom_alerts = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
+
+---------
+-- Changing hs.notify contentImage test
+------------------------------------------------------------------------------
+-- Started playing with hs.notify images
+-- all files in media folder taken from https://github.com/scottcs/dot_hammerspoon
+------------------------------------------------------------------------------
+local wifiicon = hs.image.imageFromPath('media/airport.png')
+
 
 -- init grid
 hs.grid.MARGINX         = 0
@@ -56,7 +68,7 @@ hs.window.animationDuration = 0
 
 ---------
 -- Vars
----------
+------------------------------------------------------------------------------
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
@@ -212,15 +224,17 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
 -- mailToSelf
 ------------------------------------------------------------------------------
 -- Gets current url from active safari tab and mails it to specified address
+-- problem is, no alert when DND is on. hmmm.
 ------------------------------------------------------------------------------
 function mailToSelf()
   script = [[
     tell application "Safari"
-    set currentURL to URL of document 1
+      set currentURL to URL of document 1
     end tell
     return currentURL
   ]]
 
+  -- hs.alert("current url is" .. hs.applescript(script))
   ok, result = hs.applescript(script)
   if (ok) then
     hs.applescript.applescript([[
@@ -235,9 +249,15 @@ function mailToSelf()
       end tell
       end tell
     ]])
-  hs.alert("Page successfully emailed to self")
-  end
+    
+  -- hs.notify.new({title="Page Emailed", informativeText="URL:\n" .. result}):send()
+  -- hs.alert.show("📩", {fillColor = { white = 0, alpha = 0 }, strokeWidth = 0})
+  hs.alert.show("Saved 📥", custom_alerts, 0.7)
 end
+end
+
+
+
 
 -- mails current url to myself using mailtoself function
 hs.hotkey.bind(mash, 'U', mailToSelf)
@@ -361,8 +381,16 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
-  -- notify("OnLocation:", "Home settings enabled")
-  hs.alert("Home settings enabled!", 1)
+  -- notify("Location Change Detected:", "Home settings enabled")
+  hs.notify.new({
+        title = 'Wi-Fi Status',
+        subTitle = "Home Detected",
+        informativeText = "Home Settings Enabled",
+        -- contentImage = wifiicon,
+        autoWithdraw = true,
+        hasActionButton = false,
+      }):send()
+  -- hs.alert("Home settings enabled!", 1)
   -- TODO: set audiodevice to speakers
 end
 
@@ -372,8 +400,8 @@ function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
-  notify("OnLocation: ", "Away settings enabled")
-  hs.alert("Away settings enabled!", 1)
+  notify("Location Change Detected: ", "Away settings enabled")
+  -- hs.alert("Away settings enabled!", 1)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
