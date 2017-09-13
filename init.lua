@@ -28,15 +28,15 @@
 -- WinWin
 -- OnLocation
 -- UsefulUtilites
--- require('apw-lib')
+require('apw-lib')
 require('init-plugins')
 
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
-  "apps.change_resolution",
-  "battery.burnrate",
+  -- "apps.change_resolution",
+  -- "battery.burnrate",
   "skunkworks.demomodal",
   "skunkworks.kellan",
   -- "skunkworks.redshift",
@@ -221,22 +221,22 @@ function mailToSelf()
     return currentURL
   ]]
 
-ok, result = hs.applescript(script)
-if (ok) then
-  hs.applescript.applescript([[
-    tell application "Safari"
-    set result to URL of document 1
-    end tell
-    tell application "Mail"
-    set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
-    tell theMessage
-    make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-    send
-    end tell
-    end tell
-  ]])
-hs.alert("Page successfully emailed to self")
-end
+  ok, result = hs.applescript(script)
+  if (ok) then
+    hs.applescript.applescript([[
+      tell application "Safari"
+      set result to URL of document 1
+      end tell
+      tell application "Mail"
+      set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
+      tell theMessage
+      make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+      send
+      end tell
+      end tell
+    ]])
+  hs.alert("Page successfully emailed to self")
+  end
 end
 
 -- mails current url to myself using mailtoself function
@@ -245,9 +245,9 @@ hs.hotkey.bind(mash, 'U', mailToSelf)
 ------------------------------------------------------------------------------
 -- siteSpecificSearch
 ------------------------------------------------------------------------------
--- take current root of url (eg. if url is www.example.com/directory), 
+-- take current root of url (eg. if url is www.example.com/directory),
 -- the root is example.com. Then prompt user for keyword(s), and do a
--- google site-specific search on that domain. 
+-- google site-specific search on that domain.
 -- eg: (google: query site:example.com)
 ------------------------------------------------------------------------------
 

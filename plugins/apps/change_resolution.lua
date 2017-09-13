@@ -58,7 +58,10 @@ end
 function setupResModal()
   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'l')
   k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
-
+  -- Hide / Show Resolution menu
+  -- Handle this with isInMenuBar()
+  k:bind('', 'h', function() hideResolutionMenu() k:exit() end)
+  k:bind('', 's', function() showResolutionMenu() k:exit() end)
   -- choices table is for storing the widths to display with hs.alert later
   -- this is necessary because possible resolutions vary based on display
   for i = 1, #resolutions do
@@ -124,6 +127,16 @@ function setResolutionDisplay(w)
   resolutionMenu:setTitle(tostring(w))
   resolutionMenu:setMenu(dropdownOptions)
 end
+
+function hideResolutionMenu()
+  resolutionMenu:removeFromMenuBar()
+end
+
+function showResolutionMenu()
+  resolutionMenu:returnToMenuBarw()
+end
+
+
 
 -- sets callback and calls settitle function
 if resolutionMenu then
