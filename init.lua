@@ -284,8 +284,7 @@ function tabToNewWindow()
 
   local target_item_in_menu = {"Window", "Move Tab to New Window"}
   safari:selectMenuItem(target_item_in_menu)
-  -- union set notation to represent new window from all
-  -- hs.alert.show("⟕", alerts_nobg, 0.7)
+
   hs.alert.show(" ⎘ ", alerts_nobg, 1.5)
 end
 
@@ -303,8 +302,6 @@ function mergeAllWindows()
   local target_item_in_menu = {"Window", "Merge All Windows"}
   safari:selectMenuItem(target_item_in_menu)
   hs.alert.show(" ⎗ ", alerts_nobg, 1.5)
-  
-  -- hs.alert.show("⤵️", alerts_standard, 0.7)
 end
 
 hs.hotkey.bind(mash, 'M', mergeAllWindows)
@@ -322,23 +319,15 @@ function pinOrUnpinTab()
   local unpin_tab = {"Window", "Unpin Tab"}
 
   if (safari:findMenuItem(pin_tab)) then
-    -- hs.alert.show("Pinning current tab")
     -- new pin tab
-    hs.alert.show(" ⍇ ", alerts_nobg, 1)
+    hs.alert.show(" ⍇ ", alerts_nobg, 1.5)
     safari:selectMenuItem(pin_tab)
   else
-    -- hs.alert.show("Unpinning current tab")
-    -- new unpin tab
-    -- hs.alert.show(" ⏠ ", alerts_standard, 1)
-    hs.alert.show(" ⍈ ", alerts_nobg, 1)
-    -- hs.alert.show(" ⏡ ", alerts_standard, 1)
+    hs.alert.show(" ⍈ ", alerts_nobg, 1.5)
     safari:selectMenuItem(unpin_tab)
   end
 end
 
-    -- hs.alert.show(" ⏠ ", alerts_nobg, 1)
-    -- hs.alert.show(" ⍈ ", alerts_nobg, 1)
-    -- hs.alert.show(" ⏡ ", alerts_nobg, 1)
 
 hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
 
@@ -390,39 +379,30 @@ end
 
 
 
-function new_alert_style()
+function kirby()
   
 
-  -- test = hs.alert.show(" ⏠ ", alerts_large, 1.5)
-  test1 = hs.alert.show("BR𝛀", alerts_medium, 0.5)
-  -- test2 = hs.alert.show(" ⏡ ", alerts_large, 1.7)
-
-  -- hs.alert.closeSpecific(test, 1)
-  -- test3 = hs.alert.show("You're", alerts_medium, 1.2)
-  -- hs.alert.closeSpecific(test1, 2)
-  -- test4 = hs.alert.show("home", alerts_medium, 1.2)
-  -- hs.alert.closeSpecific(test2, 3)
-  -- test5 = hs.alert.show("now", alerts_medium, 1.2)
+  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
   
 end
+
+hs.hotkey.bind(mash, 'K', kirby)
 
 function alert_repeat(text, style, interval, start, stop)
   -- kind of a cool little affect, not sure if i love it 
   -- but i can kind of tile alerts overthemselves
   -- another idea would be to have variable sizes using some random 
   -- gen for alert style table
-  -- hs.alert.closeAll()
+  hs.alert.closeAll()
   local cur_dur = start
   for i=start,stop,interval do
     cur_dur = cur_dur + interval
     hs.alert.show(text, style, cur_dur)
   end
 end
+-- test1 = hs.alert.show("BR𝛀", alerts_nobg, 1.5)
 
--- alert_repeat("heyo", alerts_nobg, 0.5, 2, 3)
-
--- new_alert_style()
--- new_alert_style()
 
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
@@ -441,11 +421,7 @@ function home_arrived()
         hasActionButton = false,
       }):send()
   -- new arrive home alert
-  -- hs.alert.show("🏚🏃🏻", alerts_standard, 1)
-  hs.alert.show("=⌂", alerts_nobg, 3)
-
-  -- alert_repeat("BR𝛀!", alerts_standard, 0.05, 0.5,1)
-    -- alert_repeat("BR𝛀", alerts_large, 0.2, 0.6, 6)
+  hs.alert.show(" =⌂ ", alerts_nobg, 1.5)
   -- TODO: set audiodevice to speakers
 end
 
@@ -458,9 +434,7 @@ function home_departed()
   hs.alert.show("Away Settings Enabled", alerts_standard, 0.7)
   -- notify("Location Change Detected: ", "Away settings enabled")
   -- new leave home alert
-  -- hs.alert("🏃⌂", alerts_standard, 1)
-  hs.alert.show("≠⌂", alerts_nobg, 3)
-  -- hs.alert.show("N𝛀", alerts_nobg, 2)
+  hs.alert.show(" ≠⌂ ", alerts_nobg, 1.5)
   
 end
 
@@ -472,6 +446,3 @@ if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROM
 else
   home_departed()
 end
--- alert_repeat("N𝛀", alerts_standard, 1, 2, 6)
--- alert_repeat("Going...", alerts_large, 0.5, 1.5, 6)
--- alert_repeat("HOME!", alerts_standard, 0.05, 0,1.5)
