@@ -4,7 +4,7 @@
 
 package.path = package.path .. ';plugins/?.lua'
 require('apw-lib')
-local custom_alerts = {fillColor = { white = 0, alpha = 0.1 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
+-- local custom_alerts = {fillColor = { white = 0, alpha = 0.1 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 
 -- apw = {}
 
@@ -65,7 +65,8 @@ if not status then
    end
 end
 
-hs.alert.show("✔", custom_alerts, 1)
+notify("Config Loaded ✔")
+-- hs.alert.show("✔", alerts_standard, 1)
 
 -- hs.alert("Config Loaded!", 1)
 -- notify("APW Hammerspoon loaded", "Config loaded")

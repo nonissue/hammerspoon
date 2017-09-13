@@ -5,6 +5,9 @@ apw = {}
 
 hostname = hs.host.localizedName()
 logger = hs.logger.new('apw-hs')
+alerts_standard = {fillColor = { white = 0.2, alpha = 0.2}, radius = 40, strokeColor = { white = 0, alpha = 0.1}, strokeWidth = 10, textSize = 50, textColor = { white = 1, alpha = 1}}
+alerts_nobg = {fillColor = { white = 1, alpha = 0 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 20, textSize = 150, textColor = { white = 1, alpha = 1}}
+
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 function notify(title, message)

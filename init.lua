@@ -45,7 +45,7 @@ apw_go({
 })
 
 
-local custom_alerts = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
+-- local alerts_standard = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
 
 ---------
@@ -210,11 +210,12 @@ function cycle_safari_agents()
 
   if (default and default["ticked"]) then
     safari:selectMenuItem(str_iPad)
-    hs.alert.show("iPad")
+    
+    hs.alert.show("iPad", alerts_standard, 0.7)
   end
   if (iPad and iPad["ticked"]) then
     safari:selectMenuItem(str_default)
-    hs.alert.show("Default")
+    hs.alert.show("Default", alerts_standard, 0.7)
   end
 end
 
@@ -252,7 +253,7 @@ function mailToSelf()
     
   -- hs.notify.new({title="Page Emailed", informativeText="URL:\n" .. result}):send()
   -- hs.alert.show("📩", {fillColor = { white = 0, alpha = 0 }, strokeWidth = 0})
-  hs.alert.show("Saved 📥", custom_alerts, 0.7)
+  hs.alert.show("Saved 📥", alerts_standard, 0.7)
 end
 end
 
@@ -283,8 +284,9 @@ function tabToNewWindow()
 
   local target_item_in_menu = {"Window", "Move Tab to New Window"}
   safari:selectMenuItem(target_item_in_menu)
-
-  hs.alert.show("making new window from tab")
+  -- union set notation to represent new window from all
+  -- hs.alert.show("⟕", alerts_nobg, 0.7)
+  hs.alert.show("〈⎘〉", alerts_standard, 1)
 end
 
 hs.hotkey.bind(mash, 'T', tabToNewWindow)
@@ -300,8 +302,9 @@ function mergeAllWindows()
 
   local target_item_in_menu = {"Window", "Merge All Windows"}
   safari:selectMenuItem(target_item_in_menu)
-
-  hs.alert.show("Merging all windows")
+  hs.alert.show("〈⎗〉", alerts_standard, 1)
+  
+  -- hs.alert.show("⤵️", alerts_standard, 0.7)
 end
 
 hs.hotkey.bind(mash, 'M', mergeAllWindows)
@@ -319,10 +322,12 @@ function pinOrUnpinTab()
   local unpin_tab = {"Window", "Unpin Tab"}
 
   if (safari:findMenuItem(pin_tab)) then
-    hs.alert.show("Pinning current tab")
+    -- hs.alert.show("Pinning current tab")
+    hs.alert.show("〈 ⍇ 〉", alerts_standard, 1)
     safari:selectMenuItem(pin_tab)
   else
-    hs.alert.show("Unpinning current tab")
+    -- hs.alert.show("Unpinning current tab")
+    hs.alert.show("〈 ⍈ 〉", alerts_standard, 1)
     safari:selectMenuItem(unpin_tab)
   end
 end
@@ -390,7 +395,7 @@ function home_arrived()
         autoWithdraw = true,
         hasActionButton = false,
       }):send()
-  -- hs.alert("Home settings enabled!", 1)
+  hs.alert.show("🏚🏃🏻", alerts_standard, 1)
   -- TODO: set audiodevice to speakers
 end
 
@@ -400,8 +405,9 @@ function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
+  hs.alert.show("Away Settings Enabled", alerts_standard, 0.7)
   notify("Location Change Detected: ", "Away settings enabled")
-  -- hs.alert("Away settings enabled!", 1)
+  hs.alert("🏃🏻🏚", 1)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
