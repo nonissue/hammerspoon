@@ -211,11 +211,11 @@ function cycle_safari_agents()
   if (default and default["ticked"]) then
     safari:selectMenuItem(str_iPad)
     
-    hs.alert.show("iPad", alerts_standard, 0.7)
+    hs.alert.show("UA: iPad", alerts_standard, 0.7)
   end
   if (iPad and iPad["ticked"]) then
     safari:selectMenuItem(str_default)
-    hs.alert.show("Default", alerts_standard, 0.7)
+    hs.alert.show("UA: Default", alerts_nobg, 2)
   end
 end
 
@@ -253,7 +253,7 @@ function mailToSelf()
     
   -- hs.notify.new({title="Page Emailed", informativeText="URL:\n" .. result}):send()
   -- hs.alert.show("📩", {fillColor = { white = 0, alpha = 0 }, strokeWidth = 0})
-  hs.alert.show("Saved 📥", alerts_standard, 0.7)
+  hs.alert.show(" ↧ ", alerts_nobg, 1.2)
 end
 end
 
@@ -286,7 +286,7 @@ function tabToNewWindow()
   safari:selectMenuItem(target_item_in_menu)
   -- union set notation to represent new window from all
   -- hs.alert.show("⟕", alerts_nobg, 0.7)
-  hs.alert.show("〈⎘〉", alerts_standard, 1)
+  hs.alert.show(" ⎘ ", alerts_nobg, 1.5)
 end
 
 hs.hotkey.bind(mash, 'T', tabToNewWindow)
@@ -302,7 +302,7 @@ function mergeAllWindows()
 
   local target_item_in_menu = {"Window", "Merge All Windows"}
   safari:selectMenuItem(target_item_in_menu)
-  hs.alert.show("〈⎗〉", alerts_standard, 1)
+  hs.alert.show(" ⎗ ", alerts_nobg, 1.5)
   
   -- hs.alert.show("⤵️", alerts_standard, 0.7)
 end
@@ -323,14 +323,22 @@ function pinOrUnpinTab()
 
   if (safari:findMenuItem(pin_tab)) then
     -- hs.alert.show("Pinning current tab")
-    hs.alert.show("〈 ⍇ 〉", alerts_standard, 1)
+    -- new pin tab
+    hs.alert.show(" ⍇ ", alerts_nobg, 1)
     safari:selectMenuItem(pin_tab)
   else
     -- hs.alert.show("Unpinning current tab")
-    hs.alert.show("〈 ⍈ 〉", alerts_standard, 1)
+    -- new unpin tab
+    -- hs.alert.show(" ⏠ ", alerts_standard, 1)
+    hs.alert.show(" ⍈ ", alerts_nobg, 1)
+    -- hs.alert.show(" ⏡ ", alerts_standard, 1)
     safari:selectMenuItem(unpin_tab)
   end
 end
+
+    -- hs.alert.show(" ⏠ ", alerts_nobg, 1)
+    -- hs.alert.show(" ⍈ ", alerts_nobg, 1)
+    -- hs.alert.show(" ⏡ ", alerts_nobg, 1)
 
 hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
 
@@ -379,6 +387,43 @@ function ssidChangedCallback()
   lastSSID = newSSID
 end
 
+
+
+
+function new_alert_style()
+  
+
+  -- test = hs.alert.show(" ⏠ ", alerts_large, 1.5)
+  test1 = hs.alert.show("BR𝛀", alerts_medium, 0.5)
+  -- test2 = hs.alert.show(" ⏡ ", alerts_large, 1.7)
+
+  -- hs.alert.closeSpecific(test, 1)
+  -- test3 = hs.alert.show("You're", alerts_medium, 1.2)
+  -- hs.alert.closeSpecific(test1, 2)
+  -- test4 = hs.alert.show("home", alerts_medium, 1.2)
+  -- hs.alert.closeSpecific(test2, 3)
+  -- test5 = hs.alert.show("now", alerts_medium, 1.2)
+  
+end
+
+function alert_repeat(text, style, interval, start, stop)
+  -- kind of a cool little affect, not sure if i love it 
+  -- but i can kind of tile alerts overthemselves
+  -- another idea would be to have variable sizes using some random 
+  -- gen for alert style table
+  -- hs.alert.closeAll()
+  local cur_dur = start
+  for i=start,stop,interval do
+    cur_dur = cur_dur + interval
+    hs.alert.show(text, style, cur_dur)
+  end
+end
+
+-- alert_repeat("heyo", alerts_nobg, 0.5, 2, 3)
+
+-- new_alert_style()
+-- new_alert_style()
+
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
@@ -395,7 +440,12 @@ function home_arrived()
         autoWithdraw = true,
         hasActionButton = false,
       }):send()
-  hs.alert.show("🏚🏃🏻", alerts_standard, 1)
+  -- new arrive home alert
+  -- hs.alert.show("🏚🏃🏻", alerts_standard, 1)
+  hs.alert.show("=⌂", alerts_nobg, 3)
+
+  -- alert_repeat("BR𝛀!", alerts_standard, 0.05, 0.5,1)
+    -- alert_repeat("BR𝛀", alerts_large, 0.2, 0.6, 6)
   -- TODO: set audiodevice to speakers
 end
 
@@ -406,11 +456,15 @@ function home_departed()
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
   hs.alert.show("Away Settings Enabled", alerts_standard, 0.7)
-  notify("Location Change Detected: ", "Away settings enabled")
-  hs.alert("🏃🏻🏚", 1)
+  -- notify("Location Change Detected: ", "Away settings enabled")
+  -- new leave home alert
+  -- hs.alert("🏃⌂", alerts_standard, 1)
+  hs.alert.show("≠⌂", alerts_nobg, 3)
+  -- hs.alert.show("N𝛀", alerts_nobg, 2)
+  
 end
 
-wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
+wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
 wifiWatcher:start()
 
 if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" or hostName == "iMac" then
@@ -418,3 +472,6 @@ if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROM
 else
   home_departed()
 end
+-- alert_repeat("N𝛀", alerts_standard, 1, 2, 6)
+-- alert_repeat("Going...", alerts_large, 0.5, 1.5, 6)
+-- alert_repeat("HOME!", alerts_standard, 0.05, 0,1.5)

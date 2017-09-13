@@ -59,7 +59,7 @@ function setupResModal()
   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'l')
   k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
   -- Hide / Show Resolution menu
-  -- Handle this with isInMenuBar()
+  -- Handle this with isInMenuBar()  
   k:bind('', 'h', function() hideResolutionMenu() k:exit() end)
   k:bind('', 's', function() showResolutionMenu() k:exit() end)
   -- choices table is for storing the widths to display with hs.alert later
