@@ -36,10 +36,10 @@ apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
-  -- "apps.change_resolution",
+  "apps.change_resolution",
   -- "battery.burnrate",
   "skunkworks.demomodal",
-  "skunkworks.kellan",
+  -- "skunkworks.kellan",
   -- "skunkworks.redshift",
   -- "skunkworks.capslockfix",
 })
@@ -404,6 +404,35 @@ end
 -- test1 = hs.alert.show("BR𝛀", alerts_nobg, 1.5)
 
 
+function alert_test()
+  -- Attemtpign to figure out the padding problem with 
+  -- hs.alerts.
+  local test_string = "⌂"
+  local test_color = {red=255/255,blue=120/255,green=120/255,alpha=1}
+  local text_style = hs.styledtext.new(test_string, { font = { size=80 }, color=test_color })
+  print_r(text_style)
+  local text_style1 = hs.styledtext.new(
+    test_string,
+      {
+        font={size=14},
+        color=test_color,
+        -- paragraphStyle={alignment="left"}
+      }
+    )
+  
+  local test_alert_style = {
+    fillColor = { white = 0, alpha = 0.2}, 
+    -- radius = 60, 
+    strokeColor = { white = 0, alpha = 0.2 }, 
+    strokeWidth = 10, 
+    -- textSize = 55, 
+    -- textColor = { white = 0, alpha = 1}, 
+    textStyle = text_style,
+  }
+
+  hs.alert.show("⌂", test_alert_style, 3)
+end
+
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
@@ -421,7 +450,7 @@ function home_arrived()
         hasActionButton = false,
       }):send()
   -- new arrive home alert
-  hs.alert.show(" =⌂ ", alerts_nobg, 1.5)
+  hs.alert.show(" = ⌂ ", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
 
@@ -434,7 +463,7 @@ function home_departed()
   hs.alert.show("Away Settings Enabled", alerts_standard, 0.7)
   -- notify("Location Change Detected: ", "Away settings enabled")
   -- new leave home alert
-  hs.alert.show(" ≠⌂ ", alerts_nobg, 1.5)
+  hs.alert.show(" ≠ ⌂ ", alerts_nobg, 1.5)
   
 end
 

@@ -37,6 +37,10 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
   * [ ] window management
   * [ ] safari stuff
   * [ ] application management?
+* [x] KIRBY SHRUG ¯\_(ツ)_/¯
+* [ ] !!
+* [ ] Connect to airpods?
+* [ ] Disconnect from airpods?
 
 * [ ] Make specific system functions into modal hotkeys
   * Some ideas:

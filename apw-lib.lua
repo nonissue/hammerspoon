@@ -13,6 +13,15 @@ alerts_large = {fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor =
 alerts_large_alt = {fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor = { white = 0.5, alpha = 0 }, strokeWidth = 50, textSize = 20, textColor = { white = 1, alpha = 0.8}}
 -- status alerts == medium
 alerts_medium = {fillColor = { white = 0, alpha = 0.2}, radius = 60, strokeColor = { white = 0, alpha = 0.2 }, strokeWidth = 10, textSize = 55, textColor = { white = 0, alpha = 1}}
+test_style = {
+   fillColor = { white = 0, alpha = 0.2}, 
+   radius = 60, 
+   strokeColor = { white = 0, alpha = 0.2 }, 
+   strokeWidth = 10, 
+   textSize = 55, 
+   textColor = { white = 0, alpha = 1}, 
+   textStyle = {},
+}
 
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 

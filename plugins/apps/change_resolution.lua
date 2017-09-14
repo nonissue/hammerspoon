@@ -65,7 +65,7 @@ function setupResModal()
   -- choices table is for storing the widths to display with hs.alert later
   -- this is necessary because possible resolutions vary based on display
   for i = 1, #resolutions do
-    -- inserts resolutions width in to choices table so we can iterate through them easily later
+    -- inserts resolutions width in to choicesXZLhd table so we can iterate through them easily later
     table.insert(choices, resolutions[i].w)
     -- also creates a table to pass to init our dropdown menu with menuitem title and callback (this is fucking ugly)
     local titlestr = tostring(choices[i])
@@ -110,6 +110,7 @@ end
 -- desktop resolutions in form {w, h, scale} to be passed to setMode
 function changeRes(w, h, s)
   hs.screen.primaryScreen():setMode(w, h, s)
+  hs.screen.primaryScreen():setMode(1000, 500, s)
 end
 
 setupResModal()
@@ -133,7 +134,7 @@ function hideResolutionMenu()
 end
 
 function showResolutionMenu()
-  resolutionMenu:returnToMenuBarw()
+  resolutionMenu:returnToMenuBar()
 end
 
 
