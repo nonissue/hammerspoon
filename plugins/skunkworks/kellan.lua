@@ -3,7 +3,7 @@
 
 local mod = {}
 
-local supermash = {"cmd", "alt", "ctrl", "shift"}
+local supermash = {"cmd", "alt", "ctrl"}
 
 hs.hotkey.bind(supermash, 'right', hs.itunes.next)
 hs.hotkey.bind(supermash, 'left', hs.itunes.previous)

@@ -257,9 +257,6 @@ function mailToSelf()
 end
 end
 
-
-
-
 -- mails current url to myself using mailtoself function
 hs.hotkey.bind(mash, 'U', mailToSelf)
 
@@ -331,57 +328,8 @@ end
 
 hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
 
-------------------------------------------------------------------------------
--- End of safari stuff
-------------------------------------------------------------------------------
-
-
-------------------------------------------------------------------------------
--- Location based functions to change system settings
-------------------------------------------------------------------------------
--- functions for different locations
--- configure things like drive mounts, display sleep (for security), etc.
--- sets displaysleep to 90 minutes if at home
--- should be called based on ssid
--- not the most secure since someone could fake ssid I guess
--- might want some other level of verification-- makes new window from current tab in safari
--- could maybe send it to next monitor immediately if there is one?
--- differentiate between settings for laptop vs desktop
--- Mostly lifted from:
--- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
-------------------------------------------------------------------------------
--- Don't love the logic of how this is implemented
--- If computer is in between networks (say, woken from sleep in new location)
--- Then desired settings like volume mute are not applied until after a delay
--- Maybe implement a default setting that is applied when computer is 'in limbo'
-local homeSSID = "BROMEGA-5G"
-local homeSSID5G = "BROMEGA"
-local schoolSSID = "MacEwanSecure"
-local lastSSID = hs.wifi.currentNetwork()
-local hostName = hs.host.localizedName()
-
-function ssidChangedCallback()
-  newSSID = hs.wifi.currentNetwork()
-
-  if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
-    -- we are at home!
-    home_arrived()
-  elseif newSSID ~= homeSSID and lastSSID == homeSSID then
-    -- we are away from home!
-    -- why do we need the validation check for lastSSID?
-    -- We can infer from newSSID ~= homeSSID that we aren't home?
-    home_departed()
-  end
-
-  lastSSID = newSSID
-end
-
-
-
-
 function kirby()
   
-
   test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
   hs.pasteboard.setContents("¯\\_(ツ)_/¯")
   
@@ -433,6 +381,51 @@ function alert_test()
   hs.alert.show("⌂", test_alert_style, 3)
 end
 
+------------------------------------------------------------------------------
+-- End of safari stuff
+------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------
+-- Location based functions to change system settings
+------------------------------------------------------------------------------
+-- functions for different locations
+-- configure things like drive mounts, display sleep (for security), etc.
+-- sets displaysleep to 90 minutes if at home
+-- should be called based on ssid
+-- not the most secure since someone could fake ssid I guess
+-- might want some other level of verification-- makes new window from current tab in safari
+-- could maybe send it to next monitor immediately if there is one?
+-- differentiate between settings for laptop vs desktop
+-- Mostly lifted from:
+-- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
+------------------------------------------------------------------------------
+-- Don't love the logic of how this is implemented
+-- If computer is in between networks (say, woken from sleep in new location)
+-- Then desired settings like volume mute are not applied until after a delay
+-- Maybe implement a default setting that is applied when computer is 'in limbo'
+local homeSSID = "BROMEGA-5G"
+local homeSSID5G = "BROMEGA"
+local schoolSSID = "MacEwanSecure"
+local lastSSID = hs.wifi.currentNetwork()
+local hostName = hs.host.localizedName()
+
+function ssidChangedCallback()
+  newSSID = hs.wifi.currentNetwork()
+
+  if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
+    -- we are at home!
+    home_arrived()
+  elseif newSSID ~= homeSSID and lastSSID == homeSSID then
+    -- we are away from home!
+    -- why do we need the validation check for lastSSID?
+    -- We can infer from newSSID ~= homeSSID that we aren't home?
+    home_departed()
+  end
+
+  lastSSID = newSSID
+end
+
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
@@ -460,7 +453,7 @@ function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
-  hs.alert.show("Away Settings Enabled", alerts_standard, 0.7)
+  hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- notify("Location Change Detected: ", "Away settings enabled")
   -- new leave home alert
   hs.alert.show(" ≠ ⌂ ", alerts_nobg, 1.5)

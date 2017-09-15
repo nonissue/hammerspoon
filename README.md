@@ -37,7 +37,7 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
   * [ ] window management
   * [ ] safari stuff
   * [ ] application management?
-* [x] KIRBY SHRUG ¯\_(ツ)_/¯
+* [x] KIRBY SHRUG ¯\_(ツz  )_/¯
 * [ ] !!
 * [ ] Connect to airpods?
 * [ ] Disconnect from airpods?
