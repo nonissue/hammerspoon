@@ -60,10 +60,12 @@ local wifiicon = hs.image.imageFromPath('media/airport.png')
 -- init grid
 hs.grid.MARGINX         = 0
 hs.grid.MARGINY         = 0
-hs.grid.GRIDWIDTH       = 7
-hs.grid.GRIDHEIGHT      = 7
+hs.grid.GRIDWIDTH       = 10
+hs.grid.GRIDHEIGHT      = 10
 
--- disable animation
+
+
+-- disable animation 
 hs.window.animationDuration = 0
 
 ---------
@@ -178,7 +180,12 @@ hs.hotkey.bind(mash, "left", function()
   win:setFrame(f)
 end)
 
-hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
+hs.hotkey.bind(mash, "N", function()
+	hs.grid.maximizeWindow()
+	hs.grid.pushWindowNextScreen()
+end)
+
+-- hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 ------------------------------------------------------------------------------
@@ -355,7 +362,7 @@ end
 function alert_test()
   -- Attemtpign to figure out the padding problem with 
   -- hs.alerts.
-  local test_string = "⌂"
+  local test_string = " test ⌂ "
   local test_color = {red=255/255,blue=120/255,green=120/255,alpha=1}
   local text_style = hs.styledtext.new(test_string, { font = { size=80 }, color=test_color })
   print_r(text_style)
@@ -443,9 +450,13 @@ function home_arrived()
         hasActionButton = false,
       }):send()
   -- new arrive home alert
-  hs.alert.show(" = ⌂ ", alerts_nobg, 2)
+  hs.alert.show("☛ ⌂", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
+
+-- testCallbackFn = function(result) print("Callback Result: " .. result) end 
+-- hs.dialog.alert(400, 400, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle") 
+-- hs.dialog.alert(200, 200, testCallbackFn, "Message", "Informative Text", "Single Button")
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
@@ -456,7 +467,7 @@ function home_departed()
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- notify("Location Change Detected: ", "Away settings enabled")
   -- new leave home alert
-  hs.alert.show(" ≠ ⌂ ", alerts_nobg, 1.5)
+  hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
   
 end
 
