@@ -44,6 +44,15 @@ apw_go({
   -- "skunkworks.capslockfix",
 })
 
+-- For the lawlz
+function kirby()
+  
+  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
+  
+end
+
+hs.hotkey.bind(mash, 'K', kirby)
 
 -- local alerts_standard = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
@@ -332,17 +341,8 @@ function pinOrUnpinTab()
   end
 end
 
-
 hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
 
-function kirby()
-  
-  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
-  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-  
-end
-
-hs.hotkey.bind(mash, 'K', kirby)
 
 function alert_repeat(text, style, interval, start, stop)
   -- kind of a cool little affect, not sure if i love it 
@@ -453,10 +453,6 @@ function home_arrived()
   hs.alert.show("☛ ⌂", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
-
--- testCallbackFn = function(result) print("Callback Result: " .. result) end 
--- hs.dialog.alert(400, 400, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle") 
--- hs.dialog.alert(200, 200, testCallbackFn, "Message", "Informative Text", "Single Button")
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
