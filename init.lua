@@ -30,6 +30,10 @@
 -- UsefulUtilites
 require('apw-lib')
 require('init-plugins')
+-- require('SleepTimer')
+
+require 'sleeptimer'
+SleepTimer.new()
 
 
 apw_go({
@@ -44,6 +48,8 @@ apw_go({
   -- "skunkworks.redshift",
   -- "skunkworks.capslockfix",
 })
+
+-- SleepTimer()
 
 -- For the lawlz
 

@@ -9,6 +9,7 @@ SleepTimer.__index = Action
 local sleepTimerMenu = hs.menubar.new()
 
 function SleepTimer.new()
+    print("Starting sleepTImer")
     s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
     s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
 
@@ -31,6 +32,9 @@ function SleepTimer.new()
     s:bind({}, "y", function() SleepTimer.ProcessKey("y") end)
     s:bind({}, "n", function() SleepTimer.ProcessKey("n") end)
 
+    -- top secret janky dev
+    s:bind({}, "0", function() SleepTimer.ProcessKey("0") end)
+
     function s:entered() displaySleepOptions() end
     function s:exited() hs.alert.closeAll() end
 end
@@ -44,6 +48,14 @@ function SleepTimer.ProcessKey(i)
         sleepTimerMenu:delete()
         -- removes references to object as even though it is stopped it still exists
         newCountdown = nil
+        s:exit()
+    elseif i == 'n' then
+        s:exit()
+    elseif i == "0" then
+        --special dev case
+        countdown = 5
+        print("Secret dev stuff!" .. countdown)
+        newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
         s:exit()
     else
     -- take passsed parameter, multiply by 5 * 60 to get number of seconds
@@ -60,9 +72,12 @@ function SleepTimer.ProcessKey(i)
 end
 
 
--- I don't think this does anything.
 function SleepTimer.start(countdown)
 
 end
+
+-- I don't think this does anything.
+-- function SleepTimer.start(countdown)
+-- function SleepTimer.new()
 
 return SleepTimer
