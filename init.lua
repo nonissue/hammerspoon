@@ -57,7 +57,7 @@ apw_go({
 -- Started playing with hs.notify images
 -- all files in media folder taken from https://github.com/scottcs/dot_hammerspoon
 ------------------------------------------------------------------------------
-local wifiicon = hs.image.imageFromPath('media/airport.png')
+local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
 
 
 -- init grid

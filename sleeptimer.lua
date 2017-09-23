@@ -2,6 +2,7 @@
 -- [ ] Start/stop
 -- [ ] Custom times?
 -- [ ] Menu bar item
+-- [ ] Not sure if this even works
 
 SleepTimer = {}
 SleepTimer.__index = Action
