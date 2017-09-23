@@ -45,14 +45,7 @@ apw_go({
 })
 
 -- For the lawlz
-function kirby()
-  
-  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
-  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-  
-end
 
-hs.hotkey.bind(mash, 'K', kirby)
 
 -- local alerts_standard = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
@@ -196,6 +189,15 @@ end)
 
 -- hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
+
+function kirby()
+  
+  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
+  
+end
+
+hs.hotkey.bind(mash, 'K', kirby)
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
