@@ -4,6 +4,13 @@
 -- [ ] Menu bar item
 -- [ ] Not sure if this even works
 
+-- Basically:
+-- cmd + ctrl + opt + s brings up alert modals
+-- select a sleep time, its set on a delay
+-- eventually menu bar will show you time remaining
+-- simple proof of concept works (if you press zero when
+-- prompted for model, timer is set to 5 seconds and seems to work)
+
 SleepTimer = {}
 SleepTimer.__index = Action
 local sleepTimerMenu = hs.menubar.new()
