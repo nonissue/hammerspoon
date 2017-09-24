@@ -1,8 +1,11 @@
 -- Todo:
--- [ ] Start/stop
+-- [x] Start/stop
 -- [ ] Custom times?
--- [ ] Menu bar item
--- [ ] Not sure if this even works
+-- [x] Menu bar item
+-- [x] Not sure if this even works
+-- [x] Update Menubar icon with countdown
+-- [ ] convert this to a proper module or spoon
+-- Make menubar item a clickable list
 
 -- Basically:
 -- cmd + ctrl + opt + s brings up alert modals
@@ -11,19 +14,35 @@
 -- simple proof of concept works (if you press zero when
 -- prompted for model, timer is set to 5 seconds and seems to work)
 
+
 SleepTimer = {}
 SleepTimer.__index = Action
 local sleepTimerMenu = hs.menubar.new()
+sleepTimerMenu:setTitle("☾")
+
+function SecondsToClock(seconds)
+    -- from https://gist.github.com/jesseadams/791673
+    local seconds = tonumber(seconds)
+
+    if seconds <= 0 then
+        return "00:00:00";
+    elseif seconds > 3600 then
+        hs.alert("Timer must be lower than an hour")
+        return "error"
+    else
+        hours = string.format("%02.f", math.floor(seconds/3600));
+        mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
+        secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+        return "☾ " .. mins..":"..secs
+    end
+end
 
 function SleepTimer.new()
-    print("Starting sleepTImer")
     s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
     s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
 
     function displaySleepOptions()
         if newCountdown then
-            -- print(newCountdown)
-            -- print(newCountdown:nextTrigger())
             hs.alert("Countdown already started with: " .. newCountdown:nextTrigger() .. "s left", 5)
             hs.alert("Would you like to cancel the timer? (y/n)")
         else
@@ -49,8 +68,8 @@ end
 function SleepTimer.ProcessKey(i)
     -- does lua have switches? It's got to right....
     if i == 'y' then
-        print('stopping countdown')
         hs.alert('stopping countdown')
+        SleepTimer_active = false
         -- Stops the timer so we don't have a run away
         newCountdown:stop()
         sleepTimerMenu:delete()
@@ -60,32 +79,26 @@ function SleepTimer.ProcessKey(i)
     elseif i == 'n' then
         s:exit()
     elseif i == "0" then
-        --special dev case
+        -- top secret janky dev stuff
         countdown = 5
         print("Secret dev stuff!" .. countdown)
         newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
         s:exit()
     else
-    -- take passsed parameter, multiply by 5 * 60 to get number of seconds
+        -- take passsed parameter, multiply by 5 * 60 to get number of seconds
+        SleepTimer_active = true
 
         countdown = tonumber(i) * 5 * 60
-        sleepTimerMenu:setTitle(countdown)
-        print(countdown)
         newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
-    -- newCountdown = hs.timer.doAfter(countdown, function() print('sleeping in five seconds!') end)
-    -- hs.timer.doAfter(co)
+        counterDisplay = hs.timer.doEvery(1, 
+            function() 
+                countdown = countdown - 1
+                sleepTimerMenu:setTitle(SecondsToClock(countdown))
+            end
+         )       
+
         s:exit()
-        -- return newCountdown
     end
 end
-
-
-function SleepTimer.start(countdown)
-
-end
-
--- I don't think this does anything.
--- function SleepTimer.start(countdown)
--- function SleepTimer.new()
 
 return SleepTimer
