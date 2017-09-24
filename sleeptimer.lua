@@ -87,6 +87,14 @@ function SleepTimer.ProcessKey(i)
         s:exit()
     else
         -- take passsed parameter, multiply by 5 * 60 to get number of seconds
+
+        -- COULD technically use the same timer for both functions
+        -- just add an if branch to counterDisplay, and if countdown = 0, 
+        -- put computer to sleep
+
+        -- Also need to handle when a computer does go to sleep
+        -- should delete existing timer? could also write some kind of 
+        -- watcher to check for previous timer when computer wakes up from sleep
         SleepTimer_active = true
 
         countdown = tonumber(i) * 5 * 60
