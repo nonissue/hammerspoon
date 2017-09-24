@@ -47,6 +47,7 @@ function SleepTimer.new()
 end
 
 function SleepTimer.ProcessKey(i)
+    -- does lua have switches? It's got to right....
     if i == 'y' then
         print('stopping countdown')
         hs.alert('stopping countdown')

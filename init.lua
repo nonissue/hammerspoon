@@ -19,7 +19,7 @@
 
 -- Plugins (not finished):
 -- SleepTimer
--- BurnRate
+-- BurnRate 
 
 -- Plugins (to pluginify):
 -- DisplayRes
