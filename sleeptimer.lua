@@ -67,6 +67,7 @@ end
 
 function SleepTimer.ProcessKey(i)
     -- does lua have switches? It's got to right....
+    -- refactor later (too lazy now ¯\_(ツ)_/¯)
     if i == 'y' then
         hs.alert('stopping countdown')
         SleepTimer_active = false

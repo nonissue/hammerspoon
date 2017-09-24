@@ -31,7 +31,10 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * [x] Battery alerts on laptop *kind* *of* see burnrate plugin
 * [x] Change settings based on location (wifi ssid?)
 * [ ] Better display of resolution options (ala hs.hints)
+  * Don't really use this functionality anymore, so can probably
+    safely delete this item
 * [ ] grab active url from safari, send to clipboard?
+  * Done-ish. Currently mails to self.
   * [ ] site-specific search from current url
 * [ ] move other modules from init to plugins
   * [ ] window management
@@ -49,6 +52,6 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
     * [ ] Bluetooth connect specific headphones
     * [ ] VPN on/off
     * [ ] Nightshift/flux on/off
-    * [ ] Sleep timer (possibly need to break this out to own module)
+    * [x] Sleep timer (possibly need to break this out to own module)
 * [ ] Make a display (similar to hs.hints) for these system hotkeys
   * [ ] Or maybe something similar to cheatsheets?
