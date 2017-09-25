@@ -136,9 +136,7 @@ end
 function showResolutionMenu()
   resolutionMenu:returnToMenuBar()
 end
-
-
-
+ 
 -- sets callback and calls settitle function
 if resolutionMenu then
   print("Attempting to set displayResMenu initial value")

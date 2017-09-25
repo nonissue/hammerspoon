@@ -28,28 +28,28 @@
 -- WinWin
 -- OnLocation
 -- UsefulUtilites
+
 require('apw-lib')
 require('init-plugins')
--- require('SleepTimer')
 
 require 'sleeptimer'
+require 'DemoChooser'
+
 SleepTimer.new()
+DemoChooser.new()
 
 
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
-  "apps.change_resolution",
+  "DemoChooser",
+  -- "apps.change_resolution",
   -- "battery.burnrate",
-  "skunkworks.demomodal",
   "sounds.sounds",
-  -- "skunkworks.kellan",
-  -- "skunkworks.redshift",
-  -- "skunkworks.capslockfix",
 })
 
--- SleepTimer()
+
 
 -- For the lawlz
 
@@ -366,7 +366,7 @@ function alert_repeat(text, style, interval, start, stop)
   end
 end
 -- test1 = hs.alert.show("BR𝛀", alerts_nobg, 1.5)
-
+-- alert_repeat("BR𝛀", alerts_nobg, 0.2, 1, 3)
 
 function alert_test()
   -- Attemtpign to figure out the padding problem with 
@@ -394,7 +394,7 @@ function alert_test()
     textStyle = text_style,
   }
 
-  hs.alert.show("⌂", test_alert_style, 3)
+  hs.alert.show(" ⌂ ", test_alert_style, 3)
 end
 
 ------------------------------------------------------------------------------

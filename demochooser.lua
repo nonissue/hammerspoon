@@ -23,14 +23,13 @@ local chooserChoices = {
  },
 }
 
-
 function DemoChooser:new()
     -- test should be local, but just messing with this for now
     test = hs.chooser.new(function(input) print(hs.inspect(input)) end)
-        :rows(3)
+        :rows(5)
     test:choices(chooserChoices)
-    test:width(20)
-    test:subTextColor({red=0, green=0, blue=0, alpha=0.4})
+    test:width(30)
+    test:subTextColor({red=0, green=0, blue=0, alpha=0.1})
     -- test:bgDark(true)
     hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'd', function() test:show() end)
     -- print(test:query())
@@ -38,10 +37,7 @@ end
 
 function SiteSearchQuery(site)
   local site_search = hs.chooser.new(function(site, query) print(site) end)
--- function DemoChooser:displayTest()
---     hs.alert("It works!", 5)
 end
 
--- hs.hotkey.bind('cmd-alt-ctrl', 'd', test:show())
 
 return DemoChooser
