@@ -44,7 +44,7 @@ apw_go({
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
   "DemoChooser",
-  -- "apps.change_resolution",
+  "apps.change_resolution",
   -- "battery.burnrate",
   "sounds.sounds",
 })
@@ -228,7 +228,7 @@ function cycle_safari_agents()
   local safari = hs.appfinder.appFromName("Safari")
 
   local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-  local str_iPad = {"Develop", "User Agent", "Safari — iOS 10 — iPad"}
+  local str_iPad = {"Develop", "User Agent", "Safari — iOS 10.3 — iPad"}
 
   local default = safari:findMenuItem(str_default)
   local iPad = safari:findMenuItem(str_iPad)
