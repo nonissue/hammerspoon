@@ -27,6 +27,7 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * Modified to switch between default and iPad
 
 ## Todo
+* [ ] Tests?
 * [x] Laptop resolution changing
 * [x] Battery alerts on laptop *kind* *of* see burnrate plugin
 * [x] Change settings based on location (wifi ssid?)
@@ -40,7 +41,7 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
   * [ ] window management
   * [ ] safari stuff
   * [ ] application management?
-* [x] KIRBY SHRUG ¯\_(ツz  )_/¯
+* [x] KIRBY SHRUG ¯\_(ツ)_/¯
 * [ ] !!
 * [ ] Connect to airpods?
 * [ ] Disconnect from airpods?

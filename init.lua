@@ -32,6 +32,7 @@
 require('apw-lib')
 require('init-plugins')
 
+-- [ ] Move these to proper modules
 require 'sleeptimer'
 require 'DemoChooser'
 
@@ -51,8 +52,6 @@ apw_go({
 
 
 
--- For the lawlz
-
 
 -- local alerts_standard = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
@@ -65,14 +64,11 @@ apw_go({
 ------------------------------------------------------------------------------
 local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
 
-
 -- init grid
 hs.grid.MARGINX         = 0
 hs.grid.MARGINY         = 0
 hs.grid.GRIDWIDTH       = 10
 hs.grid.GRIDHEIGHT      = 10
-
-
 
 -- disable animation 
 hs.window.animationDuration = 0
