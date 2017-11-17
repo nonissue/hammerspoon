@@ -27,7 +27,6 @@ local desktopResolutions = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
   {w = 1920, h = 1080, s = 2},
-  -- {w = 1920, h = 1080, s = 1}, -- this 1920 is for non-retina @ 30hz
   {w = 2048, h = 1152, s = 2},
   {w = 2304, h = 1296, s = 2},
   {w = 2560, h = 1440, s = 2}
@@ -59,9 +58,9 @@ function setupResModal()
   k = hs.hotkey.modal.new('cmd-alt-ctrl', 'l')
   k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
   -- Hide / Show Resolution menu
-  -- Handle this with isInMenuBar()  
-  k:bind('', 'h', function() hideResolutionMenu() k:exit() end)
-  k:bind('', 's', function() showResolutionMenu() k:exit() end)
+
+  k:bind('', 'm', function() menuBarToggle() k:exit() end)
+  
   -- choices table is for storing the widths to display with hs.alert later
   -- this is necessary because possible resolutions vary based on display
   for i = 1, #resolutions do
@@ -110,7 +109,6 @@ end
 -- desktop resolutions in form {w, h, scale} to be passed to setMode
 function changeRes(w, h, s)
   hs.screen.primaryScreen():setMode(w, h, s)
-  hs.screen.primaryScreen():setMode(1000, 500, s)
 end
 
 setupResModal()
@@ -119,6 +117,12 @@ setupResModal()
 -- Declaration of menubar:
 ------------------------------------------------------------------------------
 
+-- Menubar items sometimes hang around after config reload creating dupes
+-- So this makes sure they are removed
+if resolutionMenu then
+  resolutionMenu:delete()
+end
+
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
 local resolutionMenu = hs.menubar.new()
@@ -126,23 +130,26 @@ local resolutionMenu = hs.menubar.new()
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
   resolutionMenu:setTitle(tostring(w))
-  resolutionMenu:setMenu(dropdownOptions)
 end
 
-function hideResolutionMenu()
-  resolutionMenu:removeFromMenuBar()
+function menuBarToggle()
+  if resolutionMenu:isInMenubar() then
+    resolutionMenu:removeFromMenuBar()
+  else
+    resolutionMenu:returnToMenuBar()
+  end
 end
 
-function showResolutionMenu()
-  resolutionMenu:returnToMenuBar()
-end
- 
--- sets callback and calls settitle function
 if resolutionMenu then
-  print("Attempting to set displayResMenu initial value")
+  -- set menu items
+  resolutionMenu:setMenu(dropdownOptions)
+  -- print("Attempting to set displayResMenu initial value")
   local currentRes = hs.screen.primaryScreen():currentMode().w
   print("current res = ", currentRes)
   setResolutionDisplay(currentRes)
+
+  -- I currently want to hide it by default
+  resolutionMenu:removeFromMenuBar()
 end
 
 return mod

@@ -33,10 +33,10 @@ require('apw-lib')
 require('init-plugins')
 
 -- [ ] Move these to proper modules
-require 'sleeptimer'
+-- require 'sleeptimer'
 require 'DemoChooser'
 
-SleepTimer.new()
+-- SleepTimer.new()
 DemoChooser.new()
 
 
@@ -50,10 +50,6 @@ apw_go({
   "sounds.sounds",
 })
 
-
-
-
--- local alerts_standard = {fillColor = { white = 0, alpha = 0.5 }, radius = 70, strokeColor = { white = 1, alpha = 0}, strokeWidth = 0, textSize = 80}
 -- hs.Seal.show()
 
 ---------
@@ -122,6 +118,7 @@ elseif current_screen_name == display_laptop then
 end
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
+
 hs.hotkey.bind(hyper, "H", function()
   hs.hints.windowHints()
 end)
@@ -190,14 +187,12 @@ hs.hotkey.bind(mash, "N", function()
 	hs.grid.pushWindowNextScreen()
 end)
 
--- hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
+hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 function kirby()
-  
   test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
   hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-  
 end
 
 hs.hotkey.bind(mash, 'K', kirby)
@@ -445,7 +440,6 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
-  -- notify("Location Change Detected:", "Home settings enabled")
   hs.notify.new({
         title = 'Wi-Fi Status',
         subTitle = "Home Detected",
@@ -466,7 +460,6 @@ function home_departed()
   hs.audiodevice.defaultOutputDevice():setMuted(true)
   os.execute("sudo pmset -a displaysleep 1 sleep 15")
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
-  -- notify("Location Change Detected: ", "Away settings enabled")
   -- new leave home alert
   hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
   
