@@ -219,7 +219,7 @@ function cycle_safari_agents()
   local safari = hs.appfinder.appFromName("Safari")
 
   local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-  local str_iPad = {"Develop", "User Agent", "Safari — iOS 10.3 — iPad"}
+  local str_iPad = {"Develop", "User Agent", "Safari — iOS 11.0 — iPad"}
 
   local default = safari:findMenuItem(str_default)
   local iPad = safari:findMenuItem(str_iPad)
