@@ -40,6 +40,8 @@ require 'DemoChooser'
 DemoChooser.new()
 
 
+-- require("hs-weather").start{ geolocation = true, units = "F" }
+
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
@@ -48,8 +50,11 @@ apw_go({
   "apps.change_resolution",
   -- "battery.burnrate",
   "sounds.sounds",
+  "apps.btc_menu",
 })
 
+
+-- apps.btc_menu.start
 -- hs.Seal.show()
 
 ---------

@@ -27,7 +27,14 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * Modified to switch between default and iPad
 
 ## Todo
+
+### 17/12/21
+
+* This is cool: 
+  https://github.com/ashfinal/awesome-hammerspoon#search-something---g
+
 * [ ] Tests?
+  * https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/hsluatests.lua
 * [x] Laptop resolution changing
 * [x] Battery alerts on laptop *kind* *of* see burnrate plugin
 * [x] Change settings based on location (wifi ssid?)
