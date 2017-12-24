@@ -5,30 +5,32 @@
 
 -- Todo:
 -- [x] Get API calls working
--- [ ] Verify timer functionality
--- [ ] Round results
+-- [x] Verify timer functionality / KINDA?
+-- [x] Round results / KINDA FIXED WITH MATh.FLOOR
 -- [ ] Use config file properly.
 -- [ ] Implement start/stop mod methods
 -- [ ] Click to refresh?
 -- [ ] Store results for trend analysis?
 -- [ ] Set up alerts
+-- [ ] Daily High / Low -- Or last 24hours?
+-- [ ] Show last update time on refresh
+-- [ ] Optionally pull current BTC balance from coinbase?
 
 -- https://api.coindesk.com/v1/bpi/currentprice/CAD.json
 -- https://www.coindesk.com/api/
 
 local mod = {}
 
--- local hammerDir = hs.fs.currentDir()
-
 local URLBASE = 'https://api.coindesk.com/v1/bpi/currentprice/'
 local APIURL = 'https://api.coindesk.com/v1/bpi/currentprice/CAD.json'
 
-
-local configFile = ('config.json')
+local hammerspoonDir = hs.fs.currentDir()
+local configFile = (hammerspoonDir .. '/plugins/apps/btc_config.json')
 
 local function readConfig(file)
   local f = io.open(file, "rb")
-  if not f then
+	if not f then
+		print("config file not found")
     return {}
   end
   local content = f:read("*all")
@@ -41,18 +43,19 @@ function setPriceTitle(app, price)
 	app:setTitle('BTC: ' .. math.floor(price + 0.5))
 end
 
-local function fetchPrice()
+local function fetchPrice(currency)
 	-- CUstomize in future to accept diff currencies
-	local bitcoinEndpoint = (APIURL)
+	local bitcoinEndpoint = (URLBASE .. currency .. '.json')
+
 	hs.http.asyncGet(bitcoinEndpoint, nil,
 	    function(code, body, table)
 	      if code ~= 200 then
-	        print('-- btc_menu: Could not get weather. Response code: ' .. code)
+	        print('-- btc_menu: Could not get price. Response code: ' .. code)
 	      else
-	        print('-- btc_menu: price')
+	        print('-- btc_menu: price returned')
 
 	        local response = hs.json.decode(body)
-	        local current_rate = response.bpi.USD.rate_float
+	        local current_rate = response.bpi[currency].rate_float
 
 	        print(current_rate)
 
@@ -75,16 +78,18 @@ function priceAlert()
 end
 
 function mod.init() 
-
 	mod.config = readConfig(configFile)
+	mod.config.refresh = mod.config.refresh or 240
+	mod.config.currency = mod.config.currency or 'USD'
 
-	mod.config.refresh = mod.config.refresh or 300
-
+	print(mod.config.currency)
+	
 	mod.btc_menu = hs.menubar.new()
-	fetchPrice()
+	
+	fetchPrice(mod.config.currency)
 
 	hs.timer.doEvery(
-		mod.config.refresh, function () fetchPrice() 
+		mod.config.refresh, function () fetchPrice(mod.config.currency) 
 	end)
 end
 
