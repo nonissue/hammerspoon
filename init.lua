@@ -16,6 +16,7 @@
 -- [ ] Energy Activity Use Indicator while mobile
 -- [ ] Plugin-ify non-standard config
 -- [ ] Move plugins to plugins folder, load dynamically?
+-- [ ] Use Spoons
 
 -- Plugins (not finished):
 -- SleepTimer
@@ -32,15 +33,11 @@
 require('apw-lib')
 require('init-plugins')
 
--- [ ] Move these to proper modules
 -- require 'sleeptimer'
 require 'DemoChooser'
 
--- SleepTimer.new()
+
 DemoChooser.new()
-
-
--- require("hs-weather").start{ geolocation = true, units = "F" }
 
 apw_go({
   "apps.utilities",
@@ -53,8 +50,6 @@ apw_go({
   "apps.btc_menu",
 })
 
-
--- apps.btc_menu.start
 -- hs.Seal.show()
 
 ---------

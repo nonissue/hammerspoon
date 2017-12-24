@@ -7,14 +7,20 @@
 -- [x] Get API calls working
 -- [x] Verify timer functionality / KINDA?
 -- [x] Round results / KINDA FIXED WITH MATh.FLOOR
--- [ ] Use config file properly.
+-- [x] Use config file properly.
 -- [ ] Implement start/stop mod methods
--- [ ] Click to refresh?
 -- [ ] Store results for trend analysis?
 -- [ ] Set up alerts
 -- [ ] Daily High / Low -- Or last 24hours?
 -- [ ] Show last update time on refresh
 -- [ ] Optionally pull current BTC balance from coinbase?
+-- [ ] Dropdown menu:
+-- * refresh
+-- * last update time
+-- * currency
+-- * daily highs/lows
+-- * current bitcoin holdings value
+-- [ ] properly log rather than print
 
 -- https://api.coindesk.com/v1/bpi/currentprice/CAD.json
 -- https://www.coindesk.com/api/
@@ -28,13 +34,16 @@ local hammerspoonDir = hs.fs.currentDir()
 local configFile = (hammerspoonDir .. '/plugins/apps/btc_config.json')
 
 local function readConfig(file)
-  local f = io.open(file, "rb")
+	local f = io.open(file, "rb")
+	
 	if not f then
-		print("config file not found")
     return {}
-  end
-  local content = f:read("*all")
-  f:close()
+	end
+	
+	local content = f:read("*all")
+	
+	f:close()
+	
   return hs.json.decode(content)
 end
 
@@ -57,16 +66,12 @@ local function fetchPrice(currency)
 	        local response = hs.json.decode(body)
 	        local current_rate = response.bpi[currency].rate_float
 
-	        print(current_rate)
-
 	        if response == nil then
 	          if mod.btc_menu:title() == '' then
 	            setPriceTitle(mod.btc_menu, current_rate)
 	          end
 	        else
-	        	-- Handle updates properly?
 	        	setPriceTitle(mod.btc_menu, current_rate)
-	        	print('Updating Price!')
 	        end
 	      end
 	    end
