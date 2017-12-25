@@ -53,7 +53,6 @@ function setPriceTitle(app, price)
 end
 
 local function fetchPrice(currency)
-	-- CUstomize in future to accept diff currencies
 	local bitcoinEndpoint = (URLBASE .. currency .. '.json')
 
 	hs.http.asyncGet(bitcoinEndpoint, nil,

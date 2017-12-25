@@ -34,10 +34,9 @@ require('apw-lib')
 require('init-plugins')
 
 -- require 'sleeptimer'
-require 'DemoChooser'
+-- require 'DemoChooser'
 
-
-DemoChooser.new()
+-- DemoChooser.new()
 
 apw_go({
   "apps.utilities",
@@ -49,8 +48,6 @@ apw_go({
   "sounds.sounds",
   "apps.btc_menu",
 })
-
--- hs.Seal.show()
 
 ---------
 -- Changing hs.notify contentImage test
@@ -251,7 +248,6 @@ function mailToSelf()
     return currentURL
   ]]
 
-  -- hs.alert("current url is" .. hs.applescript(script))
   ok, result = hs.applescript(script)
   if (ok) then
     hs.applescript.applescript([[
