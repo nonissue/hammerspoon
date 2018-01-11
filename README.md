@@ -52,6 +52,7 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * [ ] !!
 * [ ] Connect to airpods?
 * [ ] Disconnect from airpods?
+* [ ] Bind alert styles in a function so i don't have to keep repeating things
 
 * [ ] Make specific system functions into modal hotkeys
   * Some ideas:
