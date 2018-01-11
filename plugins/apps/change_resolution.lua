@@ -75,8 +75,10 @@ function setupResModal()
   -- called on hotkey modal entry
   function displayChoices()
     for i = 1, #choices do
-      hs.alert(tostring(i) .. ": " .. choices[i], 99)
+      hs.alert(tostring(i) .. ": " .. choices[i], alerts_nobg, 99)
     end
+    hs.alert("M: Hide", alerts_nobg, 99)
+    hs.alert("ESC: esc", alerts_nobg, 99)
   end
 
   -- on modal entry, display choices
