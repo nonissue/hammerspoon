@@ -43,12 +43,10 @@ local res_color2 = {red=255/255,blue=120/255,green=120/255,alpha=1} -- light red
 
 -- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
 -- find out which set we need
-if hostname == "iMac" then
+if hs.screen'acer' then
   resolutions = desktopResolutions
-elseif hostname == "apw@me.com" then
-  resolutions = laptopResolutions
 else
-  print('no resolutions available for this computer/monitor')
+  resolutions = laptopResolutions
 end
 
 -- configure the modal hotkeys
