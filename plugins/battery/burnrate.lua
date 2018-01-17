@@ -1,3 +1,5 @@
+-- UPDATE 18/01/10 : This was kind of dumb and is obsolete. 
+
 -- A status/menubarlet to reflect the current 'burnrate' for battery.
 
 --[[
