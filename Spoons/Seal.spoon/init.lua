@@ -25,6 +25,19 @@ local function script_path()
 end
 obj.spoonPath = script_path()
 
+function obj:bindHotkeys(mapping)
+    if (self.hotkeyShow) then
+        self.hotkeyShow:delete()
+    end
+    local showMods = mapping["show"][1]
+    local showKey = mapping["show"][2]
+    self.hotkeyShow = hs.hotkey.new(showMods, showKey, function() self:show() end)
+
+    return self
+end
+
+
+
 --- Seal:loadPlugins(plugins)
 --- Method
 --- Loads a list of Seal plugins

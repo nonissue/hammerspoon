@@ -1,4 +1,4 @@
- ------------------------------------------------------------------------------
+------------------------------------------------------------------------------
 -- VERY VERY early hammerspoon init.lua
 ------------------------------------------------------------------------------
 -- By: Andrew Williams / andy@nonissue.org
@@ -33,6 +33,16 @@
 require('apw-lib')
 require('init-plugins')
 
+hs.loadSpoon("AClock")
+hs.loadSpoon("SystemContexts")
+spoon.SystemContexts:moveDockLeft()
+spoon.SystemContexts:moveDockBottom()
+-- spoon.AClock:toggleShow()
+-- hs.loadSpoon("CircleClock")
+-- spoon.CircleClock:start()
+-- hs.spoons.isLoaded(spoon.AClock)
+-- AClock:start()
+
 -- require 'sleeptimer'
 -- require 'DemoChooser'
 
@@ -45,12 +55,13 @@ apw_go({
   "DemoChooser",
   "apps.change_resolution",
   -- "battery.burnrate",
-  "sounds.sounds",
-  "apps.btc_menu",
+  -- "sounds.sounds",
+  -- "apps.btc_menu",
 })
 
 
--- hs.loadSpoon(Seal)
+-- hs.spoons.isLoaded(AClock)
+-- hs.spoons.isInstalled("AClock")
 ---------
 -- Changing hs.notify contentImage test
 ------------------------------------------------------------------------------

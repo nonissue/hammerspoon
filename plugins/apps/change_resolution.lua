@@ -57,7 +57,8 @@ function setupResModal()
   k:bind('', 'escape', function() hs.alert.closeAll() k:exit() end)
   -- Hide / Show Resolution menu
 
-  k:bind('', 'm', function() menuBarToggle() k:exit() end)
+  -- if config is reloaded, it doesn't delete previously hidden instance properly.
+  -- k:bind('', 'm', function() menuBarToggle() k:exit() end)
   
   -- choices table is for storing the widths to display with hs.alert later
   -- this is necessary because possible resolutions vary based on display
@@ -125,7 +126,7 @@ end
 
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
-local resolutionMenu = hs.menubar.new()
+local resolutionMenu = hs.menubar.new(false)
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
@@ -135,21 +136,25 @@ end
 function menuBarToggle()
   if resolutionMenu:isInMenubar() then
     resolutionMenu:removeFromMenuBar()
-  else
+  elseif not resolutionMenu:isInMenubar() then
     resolutionMenu:returnToMenuBar()
+  else
+    hs.alert("Res Menu Error!")
   end
 end
 
-if resolutionMenu then
-  -- set menu items
-  resolutionMenu:setMenu(dropdownOptions)
-  -- print("Attempting to set displayResMenu initial value")
-  local currentRes = hs.screen.primaryScreen():currentMode().w
-  print("current res = ", currentRes)
-  setResolutionDisplay(currentRes)
+function menuInit()
+  if resolutionMenu then
+    -- set menu items
+    resolutionMenu:setMenu(dropdownOptions)
+    -- print("Attempting to set displayResMenu initial value")
+    local currentRes = hs.screen.primaryScreen():currentMode().w
+    print("current res = ", currentRes)
+    setResolutionDisplay(currentRes)
 
-  -- I currently want to hide it by default
-  resolutionMenu:removeFromMenuBar()
+    -- I currently want to hide it by default
+    -- resolutionMenu:removeFromMenuBar()
+  end
 end
 
 return mod
