@@ -73,22 +73,16 @@ end
 function obj:moveDockLeft() 
   hs.applescript.applescript(
     [[
-      tell application "System Events"
-        tell dock preferences
-          set properties to {dock size:0.2, animate:false, autohide:true, screen edge:left, class:dock preferences object}
-        end tell
-      end tell
+      tell application "System Events" to set the autohide of the dock preferences to true
+      tell application "System Events" to set the screen edge of the dock preferences to left
     ]])
 end
 
 function obj:moveDockBottom() 
   hs.applescript.applescript(
     [[
-      tell application "System Events"
-        tell dock preferences
-          set properties to {dock size:0.2, animate:false, autohide:true, screen edge:bottom, class:dock preferences object}
-        end tell
-      end tell
+      tell application "System Events" to set the autohide of the dock preferences to false
+      tell application "System Events" to set the screen edge of the dock preferences to bottom
     ]])
 end
 
