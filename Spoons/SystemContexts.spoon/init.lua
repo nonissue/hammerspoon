@@ -11,7 +11,11 @@ options as user env changes.
           like dock position, display arrangement, etc.
 
 
-
+tell application "System Events"
+  tell dock preferences
+    get properties
+  end tell
+end tell
 -----------------------------------------------------------
 --]]
 
@@ -66,14 +70,12 @@ function obj:stop()
     return self
 end
 
-
-
 function obj:moveDockLeft() 
   hs.applescript.applescript(
     [[
       tell application "System Events"
         tell dock preferences
-          set properties to {dock size:0.2, animate:false, screen edge:left, class:dock preferences object}
+          set properties to {dock size:0.2, animate:false, autohide:true, screen edge:left, class:dock preferences object}
         end tell
       end tell
     ]])
@@ -84,7 +86,7 @@ function obj:moveDockBottom()
     [[
       tell application "System Events"
         tell dock preferences
-          set properties to {dock size:0.2, animate:false, screen edge:bottom, class:dock preferences object}
+          set properties to {dock size:0.2, animate:false, autohide:true, screen edge:bottom, class:dock preferences object}
         end tell
       end tell
     ]])

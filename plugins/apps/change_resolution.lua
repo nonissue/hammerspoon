@@ -102,7 +102,7 @@ function processKey(i)
   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
   changeRes(res.w, res.h, res.s)
 
-  setResolutionDisplay(res.w)
+  -- setResolutionDisplay(res.w)
 
   k:exit()
 end
