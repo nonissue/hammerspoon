@@ -18,6 +18,19 @@ end
 
 obj.spoonPath = script_path()
 
+function obj:bindHotkeys(mapping)
+  local def = {
+    tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
+    mailToSelf = hs.fnutils.partial(self.mailToSelf, self),
+    mergeAllWindows = hs.fnutils.partial(self.mergeAllWindows, self),
+    pinOrUnpinTab = hs.fnutils.partial(self.pinOrUnpinTab, self),
+    cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self),
+   }
+
+   hs.spoons.bindHotkeysToSpec(def, mapping)
+end
+
+
 --- SafariKeys:start()
 --- Method
 --- Starts SafariKeys
@@ -61,7 +74,7 @@ end
 ------------------------------------------------------------------------------
 -- SAFARI STUFF STARTS
 ------------------------------------------------------------------------------
--- cycle_safari_agents
+-- cycleUserAgent
 ------------------------------------------------------------------------------
 -- Taken from: http://www.hammerspoon.org/go/#applescript
 -- modified to toggle between iOS and default
@@ -74,7 +87,7 @@ end
 --
 -- Probably a better way to do it.
 ------------------------------------------------------------------------------
-function obj:cycle_safari_agents()
+function obj:cycleUserAgent()
   hs.application.launchOrFocus("Safari")
   local safari = hs.appfinder.appFromName("Safari")
 
@@ -198,57 +211,6 @@ function obj:pinOrUnpinTab()
     safari:selectMenuItem(unpin_tab)
   end
 end
-  
-function obj:alert_repeat(text, style, interval, start, stop)
-  -- kind of a cool little affect, not sure if i love it 
-  -- but i can kind of tile alerts overthemselves
-  -- another idea would be to have variable sizes using some random 
-  -- gen for alert style table
-  hs.alert.closeAll()
-  local cur_dur = start
-  for i=start,stop,interval do
-    cur_dur = cur_dur + interval
-    hs.alert.show(text, style, cur_dur)
-  end
-end
--- test1 = hs.alert.show("BR𝛀", alerts_nobg, 1.5)
--- alert_repeat("BR𝛀", alerts_nobg, 0.2, 1, 3)
-  
-function obj:alert_test()
-  -- Attemtpign to figure out the padding problem with 
-  -- hs.alerts.
-  local test_string = " test ⌂ "
-  local test_color = {red=255/255,blue=120/255,green=120/255,alpha=1}
-  local text_style = hs.styledtext.new(test_string, { font = { size=80 }, color=test_color })
-  print_r(text_style)
-  local text_style1 = hs.styledtext.new(
-    test_string,
-      {
-        font={size=14},
-        color=test_color,
-        -- paragraphStyle={alignment="left"}
-      }
-    )
-  
-  local test_alert_style = {
-    fillColor = { white = 0, alpha = 0.2}, 
-    -- radius = 60, 
-    strokeColor = { white = 0, alpha = 0.2 }, 
-    strokeWidth = 10, 
-    -- textSize = 55, 
-    -- textColor = { white = 0, alpha = 1}, 
-    textStyle = text_style,
-  }
-
-  hs.alert.show(" ⌂ ", test_alert_style, 3)
-end
-
--- hs.hotkey.bind(mash, 'U', mailToSelf)
--- hs.hotkey.bind(mash, 'T', tabToNewWindow)
--- hs.hotkey.bind(mash, 'M', mergeAllWindows)
--- hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
--- hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
-
   
 return obj
 ------------------------------------------------------------------------------

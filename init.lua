@@ -37,6 +37,34 @@ hs.loadSpoon("AClock")
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 spoon.SystemContexts:moveDockLeft()
+
+---------
+-- Vars
+------------------------------------------------------------------------------
+-- var for hyper key and mash
+-- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
+-- Doesn't make any sense though both in terms of naming and use.
+local mash =    {"cmd", "alt", "ctrl" }
+local hyper =   {"cmd", "alt"         }
+local alt =     {"alt"                }
+
+local safariHotkeys =  {
+	tabToNewWin = {mash, "T"},
+	mailToSelf = {mash, "U"},
+	mergeAllWindows = {mash, "M"},
+	pinOrUnpinTab = {hyper, "P"},
+	cycleUserAgent = {mash, "7"},
+}
+
+-- hs.hotkey.bind(mash, 'U', mailToSelf)
+-- hs.hotkey.bind(mash, 'T', tabToNewWindow)
+-- hs.hotkey.bind(mash, 'M', mergeAllWindows)
+-- hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
+-- hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
+
+spoon.SafariKeys:bindHotkeys(safariHotkeys)
+
+
 -- spoon.SystemContexts:moveDockBottom()
 -- spoon.AClock:toggleShow()
 -- hs.loadSpoon("CircleClock")
@@ -79,16 +107,6 @@ hs.grid.GRIDHEIGHT      = 10
 
 -- disable animation 
 hs.window.animationDuration = 0
-
----------
--- Vars
-------------------------------------------------------------------------------
--- var for hyper key and mash
--- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
--- Doesn't make any sense though both in terms of naming and use.
-local mash =    {"cmd", "alt", "ctrl" }
-local hyper =   {"cmd", "alt"         }
-local alt =     {"alt"                }
 
 local display_laptop = "Color LCD"
 
