@@ -41,6 +41,18 @@ local function script_path()
 end
 obj.spoonPath = script_path()
 
+--- SystemContexts:start()
+--- Method
+--- Starts ___
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The ___ object
+---
+--- Notes:
+---  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
 function obj:start()
     print("-- Starting SystemContexts")
     if self.hotkeyShow then
@@ -70,6 +82,18 @@ function obj:stop()
     return self
 end
 
+--- SystemContexts:moveDockLeft()
+--- Method
+--- Stops ___
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The ___ object
+---
+--- Notes:
+---  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
 function obj:moveDockLeft() 
   hs.applescript.applescript(
     [[
@@ -78,7 +102,19 @@ function obj:moveDockLeft()
     ]])
 end
 
-function obj:moveDockBottom() 
+--- SystemContexts:moveDockDown()
+--- Method
+--- Stops ___
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The ___ object
+---
+--- Notes:
+---  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
+function obj:moveDockDown() 
   hs.applescript.applescript(
     [[
       tell application "System Events" to set the autohide of the dock preferences to false

@@ -36,7 +36,31 @@ require('init-plugins')
 hs.loadSpoon("AClock")
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
-spoon.SystemContexts:moveDockLeft()
+hs.loadSpoon("Countdown")
+hs.loadSpoon("SysInfo")
+
+-- spoon.SysInfo:setup()
+
+-- spoon.SystemContexts:moveDockLeft()
+
+-- spoon.Countdown:startFor(5)
+
+
+-- Conditional to multiple montior set up.
+spoon.SystemContexts:moveDockDown()
+
+-- Contexts in which computer can be used:
+--    At home, plugged in to monitors / egpu
+--    At home, not plugged in
+--    Away from home
+--
+-- settings to apply based on context:
+--    screen lock time
+--    volume
+--    dock position
+--    default app layouts
+
+
 
 ---------
 -- Vars
@@ -350,7 +374,7 @@ end
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" or hostName == "iMac" then
+if hs.wifi.currentNetwork() == "ComfortInn VIP" or hs.wifi.currentNetwork() == "ComfortInn Guest" or hostName == "apw@me.com" then
   home_arrived()
 else
   home_departed()
