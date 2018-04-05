@@ -133,39 +133,15 @@ hs.window.animationDuration = 0
 
 local display_laptop = "Color LCD"
 
-local notebook = {
-  {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"2Do",               nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Mail",              nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Slack",             nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"1Password",         nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Messages",          nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
-}
-
-local display_desktop_main = "Acer B286HK"
-
-local desktop = {
-  {"2Do",               nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
-  {"Dash",              nil,          display_desktop_aux,  hs.layout.left75,    nil, nil},
-  {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
-}
-
 local numberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
 -- Handles desktop set up if I'm using one monitor or two
 if current_screen_name == display_desktop_main or numberOfScreens == 2 then
-  -- hs.layout.apply(desktop)
   spoon.SystemContexts:moveDockDown()
 -- If I'm only using one monitor and it's laptop, then move that dock
 elseif current_screen_name == display_laptop and numberOfScreens == 1 then
 	spoon.SystemContexts:moveDockLeft()
- 	-- hs.layout.apply(notebook)
 end
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
