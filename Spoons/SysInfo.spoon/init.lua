@@ -3,7 +3,7 @@
 ---
 --- Forked from 
 -- "CountDown" -- "1.0" -- "ashfinal <ashfinal@gmail.com>"
---- Download: [https://github.com/Hammerspoon/Spoons/raw/master/Spoons/CountDown.spoon.zip](https://github.com/Hammerspoon/Spoons/raw/master/Spoons/CountDown.spoon.zip)
+--- Download: https://github.com/Hammerspoon/Spoons/raw/master/Spoons/CountDown.spoon.zip
 
 --- SysInfo 
 --- Display small graphical indicators to show current system config and stats

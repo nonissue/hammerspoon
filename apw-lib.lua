@@ -7,14 +7,44 @@ hostname = hs.host.localizedName()
 logger = hs.logger.new('apw-hs')
 
 -- alert styles
-alerts_standard = {fillColor = { white = 0.2, alpha = 0.2}, radius = 40, strokeColor = { white = 0, alpha = 0.1}, strokeWidth = 10, textSize = 50, textColor = { white = 1, alpha = 1}}
--- The following seems to have become my faovourite but it's naming is ridiculous as it has a bg
+alerts_standard = { 
+   fillColor = { white = 0.2, alpha = 0.2 }, 
+   radius = 40, 
+   strokeColor = { white = 0, alpha = 0.1}, 
+   strokeWidth = 10, 
+   textSize = 50, 
+   textColor = { white = 1, alpha = 1}
+}
+
+-- The following seems to have become my favourite but it's naming is ridiculous as it has a bg
 -- wtf.
-alerts_nobg = {fillColor = { white = 0, alpha = 1 }, radius = 20, strokeColor = { white = 1, alpha = 0.1}, strokeWidth = 10, textSize = 40, textColor = { white = 1, alpha = 1}}
-alerts_nobg_sml = {fillColor = { white = 0, alpha = 1 }, radius = 20, strokeColor = { white = 1, alpha = 0.1}, strokeWidth = 10, textSize = 28, textColor = { white = 1, alpha = 1}}
-alerts_large = {fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor = { white = 0.5, alpha = 0 }, strokeWidth = 50, textSize = 100, textColor = { blue = 1, alpha = 0.8}}
-alerts_large_alt = {fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor = { white = 0.5, alpha = 0 }, strokeWidth = 50, textSize = 20, textColor = { white = 1, alpha = 0.8}}
-alerts_medium = {fillColor = { white = 0, alpha = 0.2}, radius = 60, strokeColor = { white = 0, alpha = 0.2 }, strokeWidth = 10, textSize = 55, textColor = { white = 0, alpha = 1}}
+alerts_nobg = { 
+   fillColor = { white = 0, alpha = 1 }, radius = 20, 
+   strokeColor = { white = 1, alpha = 0.1}, strokeWidth = 10, textSize = 40, 
+   textColor = { white = 1, alpha = 1}
+}
+
+alerts_nobg_sml = { 
+   fillColor = { white = 0, alpha = 1 }, radius = 20, strokeColor = { white = 1, alpha = 0.1}, 
+   strokeWidth = 10, textSize = 28, textColor = { white = 1, alpha = 1}
+}
+
+alerts_large = { 
+   fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor = { white = 0.5, alpha = 0 }, 
+   strokeWidth = 50, textSize = 100, textColor = { blue = 1, alpha = 0.8}
+}
+
+alerts_large_alt = { 
+   fillColor = { white = 0, alpha = 0 }, radius = 50, strokeColor = { white = 0.5, alpha = 0 }, 
+   strokeWidth = 50, textSize = 20, textColor = { white = 1, alpha = 0.8}
+}
+
+alerts_medium = { 
+   fillColor = { white = 0, alpha = 0.2}, radius = 60, 
+   strokeColor = { white = 0, alpha = 0.2 }, strokeWidth = 10, 
+   textSize = 55, textColor = { white = 0, alpha = 1}
+}
+
 test_style = {
    fillColor = { white = 0, alpha = 0.2}, 
    radius = 60, 

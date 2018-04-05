@@ -11,6 +11,7 @@
 -- [ ] insure val in menu == actual val (on startup they differ sometimes)
 -- [ ] Fix redundant logic and simplify code.
 -- [ ] Delineate code between dropdown menu and actual modal and actual logic
+-- [ ] Doesn't work on both monitors if using two
 -- [ ] Not a true modal... fix that
 ------------------------------------------------------------------------------
 local mod = {}
@@ -40,7 +41,7 @@ local dropdownOptions = {}
 local res_color = {red=1,blue=1,green=1,alpha=1} -- Default?
 local res_color2 = {red=255/255,blue=120/255,green=120/255,alpha=1} -- light red?
 
-
+-- SYSTEM CONTEXTS LOGIC
 -- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
 -- find out which set we need
 if hs.screen'acer' then

@@ -42,12 +42,13 @@ hs.loadSpoon("SysInfo")
 -- spoon.SysInfo:setup()
 
 -- spoon.SystemContexts:moveDockLeft()
+-- spoon.SystemContexts:moveDockDown()
 
 -- spoon.Countdown:startFor(5)
 
 
 -- Conditional to multiple montior set up.
-spoon.SystemContexts:moveDockDown()
+
 
 -- Contexts in which computer can be used:
 --    At home, plugged in to monitors / egpu
@@ -88,7 +89,6 @@ local safariHotkeys =  {
 
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
-
 -- spoon.SystemContexts:moveDockBottom()
 -- spoon.AClock:toggleShow()
 -- hs.loadSpoon("CircleClock")
@@ -105,7 +105,6 @@ apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
-  "DemoChooser",
   "apps.change_resolution",
   -- "battery.burnrate",
   -- "sounds.sounds",
@@ -121,7 +120,7 @@ apw_go({
 -- Started playing with hs.notify images
 -- all files in media folder taken from https://github.com/scottcs/dot_hammerspoon
 ------------------------------------------------------------------------------
-local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
+-- local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
 
 -- init grid
 hs.grid.MARGINX         = 0
@@ -144,9 +143,6 @@ local notebook = {
   {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
 }
 
--- These are no longer correct display names
--- Also, I no longer have a second monitor for this computer
--- Both these monitors are gone...
 local display_desktop_main = "Acer B286HK"
 
 local desktop = {
@@ -162,12 +158,14 @@ local desktop = {
 local numberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
--- I don't really think I care about this anymore?
--- disabling to see if I care
-if current_screen_name == display_desktop_main then
+-- Handles desktop set up if I'm using one monitor or two
+if current_screen_name == display_desktop_main or numberOfScreens == 2 then
   -- hs.layout.apply(desktop)
-elseif current_screen_name == display_laptop then
-  -- hs.layout.apply(notebook)
+  spoon.SystemContexts:moveDockDown()
+-- If I'm only using one monitor and it's laptop, then move that dock
+elseif current_screen_name == display_laptop and numberOfScreens == 1 then
+	spoon.SystemContexts:moveDockLeft()
+ 	-- hs.layout.apply(notebook)
 end
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
@@ -317,8 +315,8 @@ end
 -- If computer is in between networks (say, woken from sleep in new location)
 -- Then desired settings like volume mute are not applied until after a delay
 -- Maybe implement a default setting that is applied when computer is 'in limbo'
-local homeSSID = "BROMEGA-5G"
-local homeSSID5G = "BROMEGA"
+local homeSSID = "ComfortInn VIP"
+-- local homeSSID5G = "BROMEGA"
 local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
 local hostName = hs.host.localizedName()
@@ -368,7 +366,6 @@ function home_departed()
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- new leave home alert
   hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
-  
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
