@@ -39,17 +39,7 @@ hs.loadSpoon("SafariKeys")
 hs.loadSpoon("Countdown")
 hs.loadSpoon("SysInfo")
 
--- spoon.SysInfo:setup()
-
--- spoon.SystemContexts:moveDockLeft()
--- spoon.SystemContexts:moveDockDown()
-
--- spoon.Countdown:startFor(5)
-
-
 -- Conditional to multiple montior set up.
-
-
 -- Contexts in which computer can be used:
 --    At home, plugged in to monitors / egpu
 --    At home, not plugged in
@@ -60,8 +50,6 @@ hs.loadSpoon("SysInfo")
 --    volume
 --    dock position
 --    default app layouts
-
-
 
 ---------
 -- Vars
@@ -81,25 +69,7 @@ local safariHotkeys =  {
 	cycleUserAgent = {mash, "7"},
 }
 
--- hs.hotkey.bind(mash, 'U', mailToSelf)
--- hs.hotkey.bind(mash, 'T', tabToNewWindow)
--- hs.hotkey.bind(mash, 'M', mergeAllWindows)
--- hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
--- hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
-
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
-
--- spoon.SystemContexts:moveDockBottom()
--- spoon.AClock:toggleShow()
--- hs.loadSpoon("CircleClock")
--- spoon.CircleClock:start()
--- hs.spoons.isLoaded(spoon.AClock)
--- AClock:start()
-
--- require 'sleeptimer'
--- require 'DemoChooser'
-
--- DemoChooser.new()
 
 apw_go({
   "apps.utilities",
@@ -110,17 +80,6 @@ apw_go({
   -- "sounds.sounds",
   -- "apps.btc_menu",
 })
-
-
--- hs.spoons.isLoaded(AClock)
--- hs.spoons.isInstalled("AClock")
----------
--- Changing hs.notify contentImage test
-------------------------------------------------------------------------------
--- Started playing with hs.notify images
--- all files in media folder taken from https://github.com/scottcs/dot_hammerspoon
-------------------------------------------------------------------------------
--- local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
 
 -- init grid
 hs.grid.MARGINX         = 0
@@ -224,55 +183,6 @@ end
 
 hs.hotkey.bind(mash, 'K', kirby)
 
-function alert_repeat(text, style, interval, start, stop)
-  -- kind of a cool little affect, not sure if i love it 
-  -- but i can kind of tile alerts overthemselves
-  -- another idea would be to have variable sizes using some random 
-  -- gen for alert style table
-  hs.alert.closeAll()
-  local cur_dur = start
-  for i=start,stop,interval do
-    cur_dur = cur_dur + interval
-    hs.alert.show(text, style, cur_dur)
-  end
-end
--- test1 = hs.alert.show("BR𝛀", alerts_nobg, 1.5)
--- alert_repeat("BR𝛀", alerts_nobg, 0.2, 1, 3)
-
-function alert_test()
-  -- Attemtpign to figure out the padding problem with 
-  -- hs.alerts.
-  local test_string = " test ⌂ "
-  local test_color = {red=255/255,blue=120/255,green=120/255,alpha=1}
-  local text_style = hs.styledtext.new(test_string, { font = { size=80 }, color=test_color })
-  print_r(text_style)
-  local text_style1 = hs.styledtext.new(
-    test_string,
-      {
-        font={size=14},
-        color=test_color,
-        -- paragraphStyle={alignment="left"}
-      }
-    )
-  
-  local test_alert_style = {
-    fillColor = { white = 0, alpha = 0.2}, 
-    -- radius = 60, 
-    strokeColor = { white = 0, alpha = 0.2 }, 
-    strokeWidth = 10, 
-    -- textSize = 55, 
-    -- textColor = { white = 0, alpha = 1}, 
-    textStyle = text_style,
-  }
-
-  hs.alert.show(" ⌂ ", test_alert_style, 3)
-end
-
-------------------------------------------------------------------------------
--- End of safari stuff
-------------------------------------------------------------------------------
-
-
 ------------------------------------------------------------------------------
 -- Location based functions to change system settings
 ------------------------------------------------------------------------------
@@ -338,7 +248,7 @@ end
 function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
-  os.execute("sudo pmset -a displaysleep 1 sleep 15")
+  os.execute("sudo pmset -a displaysleep 1 sleep 10")
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- new leave home alert
   hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
