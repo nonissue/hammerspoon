@@ -94,8 +94,8 @@ end
 -- resolution array is also passed so we can grab the corresponding resolution
 -- then calls changeRes function with hte values we want to change to
 function processKey(i)
-  -- would be cool to check the menu bar option that is currently selected,
-  -- but it seems like a bit of a pain in the ass, because I think I'd have to reinitialize
+  -- would be cool to check the menu bar option that is currently seleted,
+  -- but it seems like a bit of a pain in the ass, because I think I'dc have to reinitialize
   -- all the menubar items, since I'd have to change check to false for current,
   -- and true for new selection
   local res = resolutions[tonumber(i)]

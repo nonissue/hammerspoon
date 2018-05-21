@@ -61,6 +61,14 @@ local mash =    {"cmd", "alt", "ctrl" }
 local hyper =   {"cmd", "alt"         }
 local alt =     {"alt"                }
 
+hs.loadSpoon("MuteMic")
+spoon.MuteMic:bindHotkeys({toggle={mash, "f"}})
+spoon.MuteMic:start()
+
+hs.loadSpoon("AudioSwitch")
+spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
+spoon.AudioSwitch:start()
+
 local safariHotkeys =  {
 	tabToNewWin = {mash, "T"},
 	mailToSelf = {mash, "U"},
@@ -77,7 +85,7 @@ apw_go({
   "apps.hammerspoon_toggle_console",
   "apps.change_resolution",
   -- "battery.burnrate",
-  -- "sounds.sounds",
+  "sounds.sounds",
   -- "apps.btc_menu",
 })
 
@@ -90,18 +98,55 @@ hs.grid.GRIDHEIGHT      = 10
 -- disable animation 
 hs.window.animationDuration = 0
 
+local screens = #hs.screen.allScreens()
+
+local lastNumberOfScreens = #hs.screen.allScreens()
+-- local screenWatcher = hs.screen.watcher.new(function()
+-- 	newNumberOfScreens = #hs.screen.allScreens()
+-- 	if newNumberOfScreens == 1 then
+-- 		alerts_nobg("Screens changed to Internal Display")
+--     elseif newNumberOfScreens == 2 then
+--         alerts_nobg("Screens changed to Desk Display")
+--     end
+-- 	hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
+-- end)
+
+function screenWatcher()
+
+	newNumberOfScreens = #hs.screen.allScreens()
+	if newNumberOfScreens == 1 then
+		-- alerts_nobg("Screens changed to Internal Display")
+		hs.alert.show("Screens: internal display", alerts_nobg, 1.5)
+    elseif newNumberOfScreens == 2 then
+        hs.alerts.show("Screens: +1", alerts_nobg, 1.5)
+    end
+	hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
+
+	lastNumberOfScreens = newNumberOfScreens
+end
+
+hs.screen.watcher.new(screenWatcher):start()
+hs.hotkey.bind(mash, 'S', screenWatcher)
+-- screenWatcher:start()
+
+
+
+-- hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
+
 local display_laptop = "Color LCD"
 
-local numberOfScreens = #hs.screen.allScreens()
+-- local lastNumberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
 -- Handles desktop set up if I'm using one monitor or two
-if current_screen_name == display_desktop_main or numberOfScreens == 2 then
+if current_screen_name == display_desktop_main or lastNumberOfScreens == 2 then
   spoon.SystemContexts:moveDockDown()
 -- If I'm only using one monitor and it's laptop, then move that dock
-elseif current_screen_name == display_laptop and numberOfScreens == 1 then
+elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
 	spoon.SystemContexts:moveDockLeft()
 end
+
+
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 

@@ -19,6 +19,7 @@ end tell
 -----------------------------------------------------------
 --]]
 
+-- [ ] Migrate stuff from CHANGE_RES @ line 44
 
 local obj = {}
 obj.__index = obj
