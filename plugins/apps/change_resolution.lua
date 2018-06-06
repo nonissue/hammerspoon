@@ -79,7 +79,7 @@ function setupResModal()
     for i = 1, #choices do
       hs.alert(tostring(i) .. ": " .. choices[i], alerts_nobg_sml, 99)
     end
-    hs.alert("M: Hide", alerts_nobg_sml, 99)
+    -- hs.alert("M: Hide", alerts_nobg_sml, 99)
     hs.alert("ESC: esc", alerts_nobg_sml, 99)
   end
 
@@ -103,7 +103,7 @@ function processKey(i)
   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
   changeRes(res.w, res.h, res.s)
 
-  -- setResolutionDisplay(res.w)
+  setResolutionDisplay(res.w)
 
   k:exit()
 end
@@ -121,17 +121,21 @@ setupResModal()
 
 -- Menubar items sometimes hang around after config reload creating dupes
 -- So this makes sure they are removed
-if resolutionMenu then
-  resolutionMenu:delete()
-end
+-- if resolutionMenu then
+--   resolutionMenu:delete()
+-- end
+
 
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
-local resolutionMenu = hs.menubar.new(false)
+local resolutionMenu = hs.menubar.new()
+
+
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
   resolutionMenu:setTitle(tostring(w))
+  resolutionMenu:setMenu(dropdownOptions)
 end
 
 function menuBarToggle()
@@ -156,6 +160,15 @@ function menuInit()
     -- I currently want to hide it by default
     -- resolutionMenu:removeFromMenuBar()
   end
+end
+
+function showResolutionMenu()
+  resolutionMenu:returnToMenuBarw()
+end
+
+if resolutionMenu then
+  local currentRes = hs.screen.primaryScreen():currentMode().w
+  setResolutionDisplay(currentRes)
 end
 
 return mod

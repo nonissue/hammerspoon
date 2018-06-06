@@ -33,7 +33,7 @@
 require('apw-lib')
 require('init-plugins')
 
-hs.loadSpoon("AClock")
+-- hs.loadSpoon("AClock")
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 hs.loadSpoon("Countdown")
@@ -61,13 +61,13 @@ local mash =    {"cmd", "alt", "ctrl" }
 local hyper =   {"cmd", "alt"         }
 local alt =     {"alt"                }
 
-hs.loadSpoon("MuteMic")
-spoon.MuteMic:bindHotkeys({toggle={mash, "f"}})
-spoon.MuteMic:start()
+-- hs.loadSpoon("MuteMic")
+-- spoon.MuteMic:bindHotkeys({toggle={mash, "f"}})
+-- spoon.MuteMic:start()
 
-hs.loadSpoon("AudioSwitch")
-spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
-spoon.AudioSwitch:start()
+-- hs.loadSpoon("AudioSwitch")
+-- spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
+-- spoon.AudioSwitch:start()
 
 local safariHotkeys =  {
 	tabToNewWin = {mash, "T"},
@@ -89,6 +89,8 @@ apw_go({
   -- "apps.btc_menu",
 })
 
+-- apw.change_resolution:menuInit();
+
 -- init grid
 hs.grid.MARGINX         = 0
 hs.grid.MARGINY         = 0
@@ -98,6 +100,8 @@ hs.grid.GRIDHEIGHT      = 10
 -- disable animation 
 hs.window.animationDuration = 0
 
+-- Screen watcher stuff
+-- Seems buggy, affinity designer triggers screen change?
 local screens = #hs.screen.allScreens()
 
 local lastNumberOfScreens = #hs.screen.allScreens()
@@ -125,11 +129,9 @@ function screenWatcher()
 	lastNumberOfScreens = newNumberOfScreens
 end
 
-hs.screen.watcher.new(screenWatcher):start()
-hs.hotkey.bind(mash, 'S', screenWatcher)
+-- hs.screen.watcher.new(screenWatcher):start()
+-- hs.hotkey.bind(mash, 'S', screenWatcher)
 -- screenWatcher:start()
-
-
 
 -- hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
 
@@ -145,8 +147,6 @@ if current_screen_name == display_desktop_main or lastNumberOfScreens == 2 then
 elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
 	spoon.SystemContexts:moveDockLeft()
 end
-
-
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 
@@ -252,6 +252,8 @@ local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
 local hostName = hs.host.localizedName()
 
+local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
+
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()
 
@@ -276,15 +278,18 @@ function home_arrived()
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
   hs.notify.new({
-        title = 'Wi-Fi Status',
-        subTitle = "Home Detected",
+        title = 'Hammerspoon',
+        subTitle = "ENV: Home Detected",
         informativeText = "Home Settings Enabled",
-        -- contentImage = wifiicon,
-        autoWithdraw = true,
-        hasActionButton = false,
+        setIdImage = wifiicon,
+        -- hasReplyButton = true,
+        -- autoWithdraw = true,
+        -- hasActionButton = true,
+        -- actionButtonTitle = "Test",
       }):send()
   -- new arrive home alert
-  hs.alert.show("☛ ⌂", alerts_nobg, 2)
+  hs.alert("⌂", alerts_large_alt, 3)
+  -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
 
@@ -296,13 +301,19 @@ function home_departed()
   os.execute("sudo pmset -a displaysleep 1 sleep 10")
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- new leave home alert
-  hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
+  hs.alert("⏏︎", alerts_large_alt, 3)
+  -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "ComfortInn VIP" or hs.wifi.currentNetwork() == "ComfortInn Guest" or hostName == "apw@me.com" then
+if 
+  hs.wifi.currentNetwork() == "ComfortInn VIP" 
+  or hs.wifi.currentNetwork() == "ComfortInn Guest" 
+  or hostName == "apw@me.com" 
+  then
+
   home_arrived()
 else
   home_departed()
