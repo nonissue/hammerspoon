@@ -39,7 +39,8 @@ local choices = {}
 local dropdownOptions = {}
 
 local res_color = {red=1,blue=1,green=1,alpha=1} -- Default?
-local res_color2 = {red=255/255,blue=120/255,green=120/255,alpha=1} -- light red?
+-- local res_color2 = {red=255/255,blue=50/255,green=0/255,alpha=1}
+-- local real_color = {hex = "#ff0000", alpha = 1} -- light red?
 
 -- SYSTEM CONTEXTS LOGIC
 -- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
@@ -68,8 +69,18 @@ function setupResModal()
     table.insert(choices, resolutions[i].w)
     -- also creates a table to pass to init our dropdown menu with menuitem title and callback (this is fucking ugly)
     local titlestr = tostring(choices[i])
-    local styledtitle = hs.styledtext.new(titlestr,{font={size=14},color=res_color,paragraphStyle={alignment="left"}})
-    table.insert(dropdownOptions, {title = titlestr, fn = function() return processKey(i) end, checked = false })
+    -- currently not styling text, since it's easier to just manipulate the string in other places
+    -- like toggle checked
+    local styledtitle = hs.styledtext.new(
+      titlestr,
+      {
+        font={size=14},
+        color=res_color,
+        paragraphStyle={alignment="right"},
+        -- backgroundColor = res_color,
+      }
+    )
+    table.insert(dropdownOptions, {title = styledtitle, fn = function() return processKey(i) end, checked = false })
     k:bind({}, tostring(i), function () processKey(i) end)
   end
 
@@ -131,7 +142,7 @@ local resolutionMenu = hs.menubar.new()
 
 function toggleChecked(items, target)
   for k, v in pairs(items) do -- for every element in the table
-    if v['title'] == tostring(target) then
+    if v['title']:getString() == tostring(target) then
       v['checked'] = true
     else
       v['checked'] = false
