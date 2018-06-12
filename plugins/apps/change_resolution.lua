@@ -69,7 +69,7 @@ function setupResModal()
     -- also creates a table to pass to init our dropdown menu with menuitem title and callback (this is fucking ugly)
     local titlestr = tostring(choices[i])
     local styledtitle = hs.styledtext.new(titlestr,{font={size=14},color=res_color,paragraphStyle={alignment="left"}})
-    table.insert(dropdownOptions, {title = styledtitle, fn = function() return processKey(i) end, checked = false })
+    table.insert(dropdownOptions, {title = titlestr, fn = function() return processKey(i) end, checked = false })
     k:bind({}, tostring(i), function () processKey(i) end)
   end
 
@@ -77,10 +77,10 @@ function setupResModal()
   -- called on hotkey modal entry
   function displayChoices()
     for i = 1, #choices do
-      hs.alert(tostring(i) .. ": " .. choices[i], alerts_nobg_sml, 99)
+      hs.alert(tostring(i) .. ": " .. choices[i], alerts_large_alt, 99)
     end
     -- hs.alert("M: Hide", alerts_nobg_sml, 99)
-    hs.alert("ESC: esc", alerts_nobg_sml, 99)
+    hs.alert("ESC: esc", alerts_large_alt, 99)
   end
 
   -- on modal entry, display choices
@@ -100,7 +100,7 @@ function processKey(i)
   -- and true for new selection
   local res = resolutions[tonumber(i)]
 
-  hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, 5)
+  hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, alerts_large_alt, 5)
   changeRes(res.w, res.h, res.s)
 
   setResolutionDisplay(res.w)
@@ -125,16 +125,25 @@ setupResModal()
 --   resolutionMenu:delete()
 -- end
 
-
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
 local resolutionMenu = hs.menubar.new()
 
-
+function toggleChecked(items, target)
+  for k, v in pairs(items) do -- for every element in the table
+    if v['title'] == tostring(target) then
+      v['checked'] = true
+    else
+      v['checked'] = false
+    end
+    print_r(v)
+  end
+end
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
   resolutionMenu:setTitle(tostring(w))
+  toggleChecked(dropdownOptions, w)
   resolutionMenu:setMenu(dropdownOptions)
 end
 
@@ -148,27 +157,28 @@ function menuBarToggle()
   end
 end
 
-function menuInit()
-  if resolutionMenu then
-    -- set menu items
-    resolutionMenu:setMenu(dropdownOptions)
-    -- print("Attempting to set displayResMenu initial value")
-    local currentRes = hs.screen.primaryScreen():currentMode().w
-    print("current res = ", currentRes)
-    setResolutionDisplay(currentRes)
-
-    -- I currently want to hide it by default
-    -- resolutionMenu:removeFromMenuBar()
-  end
-end
-
 function showResolutionMenu()
   resolutionMenu:returnToMenuBarw()
 end
 
-if resolutionMenu then
-  local currentRes = hs.screen.primaryScreen():currentMode().w
-  setResolutionDisplay(currentRes)
+function mod.init()
+  -- if resolutionMenu then
+    -- set menu items
+    resolutionMenu:setMenu(dropdownOptions)
+    local currentRes = hs.screen.primaryScreen():currentMode().w
+    print("current res = ", currentRes)
+    setResolutionDisplay(currentRes)
+    -- I currently want to hide it by default
+    -- resolutionMenu:removeFromMenuBar()
+  -- end
 end
+
+-- menuInit()
+
+-- resolutionMenu:setMenu(dropdownOptions)
+-- if resolutionMenu then
+--   local currentRes = hs.screen.primaryScreen():currentMode().w
+--   setResolutionDisplay(currentRes)
+-- end
 
 return mod

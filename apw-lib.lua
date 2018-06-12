@@ -30,12 +30,32 @@ alerts_nobg_sml = {
 }
 
 notificationFont = {
+   font = {name = "National 2", size = 40},
+   underlineColor = {blue = 1, alpha = 0.5},
+
+   -- backgroundColor = {white = 1, alpha = 0.2},
+   -- strokeWidth = -5,
+   strokeColor = {black = 1, alpha = 0.2},
+   -- kerning = -2,
+   underlineStyle = 1,
+   -- lineStyles = double,
+   -- lineStyles = { lineStyles.single | linePatterns.dash | lineAppliesToWord },   -- linePatterns = dot,
+   lineAppliesTo = word,
+   -- baselineOffset = 0.5,
+   -- shadow = 1,
+   -- fontTraits = Poster,
+
+   color = {blue = 1, alpha = 1}
+}
+
+alertFont = {
    font = {name = "New Grotesk Square seven", size = 50},
    underlineColor = {blue = 1, alpha = 0.5},
 
    -- backgroundColor = {white = 1, alpha = 0.2},
    -- strokeWidth = -5,
    strokeColor = {black = 1, alpha = 0.2},
+   paragraphStyle = { },
    -- kerning = -2,
    underlineStyle = 1,
    -- lineStyles = double,
@@ -58,7 +78,7 @@ alerts_large = {
 alerts_large_alt = {
    atScreenEdge = 0,
    fillColor = { white = 1, alpha = 0.8 }, 
-   radius = 3, 
+   radius = 10, 
    strokeColor = { blue = 1, alpha = 0.2 }, 
    strokeWidth = 5, 
    -- textSize = 125, textColor = { blue = 1, alpha = 1},

@@ -8,7 +8,7 @@ local airhorn = hs.sound.getByFile(sounds_dir .. "mlg-airhorn.mp3")
 
 hs.hotkey.bind(supermash, 'A', function() 
 	-- alert_repeat("🚨📢", alerts_nobg, 0.5, 1, 3)
-	-- alert("🚨📢")
+	alert("🚨📢")
 	airhorn:play() 
 end)
 

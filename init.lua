@@ -30,6 +30,8 @@
 -- OnLocation
 -- UsefulUtilites
 
+
+
 require('apw-lib')
 require('init-plugins')
 
@@ -288,7 +290,7 @@ function home_arrived()
         -- actionButtonTitle = "Test",
       }):send()
   -- new arrive home alert
-  hs.alert("⌂", alerts_large_alt, 3)
+  hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
   -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
@@ -301,7 +303,7 @@ function home_departed()
   os.execute("sudo pmset -a displaysleep 1 sleep 10")
   hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
   -- new leave home alert
-  hs.alert("⏏︎", alerts_large_alt, 3)
+  hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
   -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
 end
 
