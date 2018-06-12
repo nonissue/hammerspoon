@@ -29,46 +29,37 @@ alerts_nobg_sml = {
    strokeWidth = 10, textSize = 28, textColor = { white = 1, alpha = 1}
 }
 
-notificationFont = {
+alert_font_lrg = {
    font = {name = "National 2", size = 40},
    underlineColor = {blue = 1, alpha = 0.5},
-
-   -- backgroundColor = {white = 1, alpha = 0.2},
-   -- strokeWidth = -5,
    strokeColor = {black = 1, alpha = 0.2},
-   -- kerning = -2,
    underlineStyle = 1,
-   -- lineStyles = double,
-   -- lineStyles = { lineStyles.single | linePatterns.dash | lineAppliesToWord },   -- linePatterns = dot,
    lineAppliesTo = word,
-   -- baselineOffset = 0.5,
-   -- shadow = 1,
-   -- fontTraits = Poster,
+   color = {blue = 1, alpha = 1}
+}
 
+alert_font_med = {
+   font = {name = "National 2", size = 20},
+   underlineColor = {blue = 1, alpha = 0.5},
+   strokeColor = {black = 1, alpha = 0.2},
+   lineAppliesTo = word,
    color = {blue = 1, alpha = 1}
 }
 
 alertFont = {
    font = {name = "New Grotesk Square seven", size = 50},
    underlineColor = {blue = 1, alpha = 0.5},
-
-   -- backgroundColor = {white = 1, alpha = 0.2},
-   -- strokeWidth = -5,
    strokeColor = {black = 1, alpha = 0.2},
    paragraphStyle = { },
-   -- kerning = -2,
    underlineStyle = 1,
-   -- lineStyles = double,
-   -- lineStyles = { lineStyles.single | linePatterns.dash | lineAppliesToWord },   -- linePatterns = dot,
    lineAppliesTo = word,
-   -- baselineOffset = 0.5,
-   -- shadow = 1,
-   -- fontTraits = Poster,
 
    color = {blue = 1, alpha = 1}
 }
 
-alertFont = hs.styledtext.new(notificationFont)
+function bindStyle(textStyle)
+   return hs.styledtext.new(textStyle)
+end
 
 alerts_large = { 
    fillColor = { white = 0, alpha = 0.2 }, radius = 100, strokeColor = { white = 1, alpha = 1 }, 
@@ -82,13 +73,16 @@ alerts_large_alt = {
    strokeColor = { blue = 1, alpha = 0.2 }, 
    strokeWidth = 5, 
    -- textSize = 125, textColor = { blue = 1, alpha = 1},
-   textStyle = notificationFont
+   textStyle = alert_font_lrg
 }
 
 alerts_medium = { 
-   fillColor = { white = 0, alpha = 0.2}, radius = 60, 
-   strokeColor = { white = 0, alpha = 0.2 }, strokeWidth = 10, 
-   textSize = 55, textColor = { white = 0, alpha = 1}
+   atScreenEdge = 0,
+   fillColor = { white = 1, alpha = 0.8 }, 
+   radius = 3, 
+   strokeColor = { blue = 1, alpha = 0.2 }, 
+   strokeWidth = 2, 
+   textStyle = alert_font_med
 }
 
 test_style = {
@@ -102,35 +96,27 @@ test_style = {
 }
 
 function alerts_display()
-  -- hs.alert("test_style", test_style, 99)
-  -- hs.alert("alerts_nobg_sml", alerts_nobg_sml, 99)
-  -- hs.alert("alerts_large", alerts_large, 4)
   hs.alert("Important Alert!", alerts_large_alt, 5)
-  -- hs.alert("Important Two!", alerts_large_alt, 5)
-  -- hs.alert("alerts_large_alt", alerts_large_alt, 99)
-  -- hs.alert("alerts_medium", alerts_medium, 99)
+  hs.alert("Important Alert!", alerts_medium, 5)
 end
 
 -- alerts_display()
--- alerts_display()
-
--- testCallbackFn = function(result) print("Callback Result: " .. result) end 
--- hs.dialog.alert(100, 100, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle") hs.dialog.alert(200, 200, testCallbackFn, "Message", "Informative Text", "Single Button")
--- hs.dialog.blockAlert("Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle")
-
--- testCallbackFn = function(result) print("Callback Result: " .. result) end testWebviewA = hs.webview.newBrowser(hs.geometry.rect(250, 250, 250, 250)):show() testWebviewB = hs.webview.newBrowser(hs.geometry.rect(450, 450, 450, 450)):show() hs.dialog.webviewAlert(testWebviewA, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "warning") hs.dialog.webviewAlert(testWebviewB, testCallbackFn, "Message", "Informative Text", "Single Button")
 
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 function notify(title, message)
-  -- hs.notify.new({title=title, informativeText=message, hasActionButton=false}):send()
+   hs.notify.new({title=title, informativeText=message, hasActionButton=false}):send()
 end
 
 function alert(message)
-   hs.alert.show(message, alerts_nobg, 1.5)
+   -- stupid, but default style
+   hs.alert.show(message, alerts_medium, 2.5)
 end
 
-
+function alert_lrg(message)
+   -- stupid, but default style
+   hs.alert.show(message, alerts_large_alt, 2.5)
+end
 
 function chooseContrastingColor(c)
    local L = 0.2126*(c.red*c.red) + 0.7152*(c.green*c.green) + 0.0722*(c.blue*c.blue)

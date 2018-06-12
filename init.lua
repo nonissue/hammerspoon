@@ -30,8 +30,6 @@
 -- OnLocation
 -- UsefulUtilites
 
-
-
 require('apw-lib')
 require('init-plugins')
 
@@ -254,7 +252,7 @@ local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
 local hostName = hs.host.localizedName()
 
-local wifiicon = hs.image.imageFromPath('media/Misc Assets/airport.png')
+local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()

@@ -180,16 +180,6 @@ function mod.init()
     print("current res = ", currentRes)
     setResolutionDisplay(currentRes)
     -- I currently want to hide it by default
-    -- resolutionMenu:removeFromMenuBar()
-  -- end
 end
-
--- menuInit()
-
--- resolutionMenu:setMenu(dropdownOptions)
--- if resolutionMenu then
---   local currentRes = hs.screen.primaryScreen():currentMode().w
---   setResolutionDisplay(currentRes)
--- end
 
 return mod
