@@ -16,10 +16,11 @@
 -- [ ] Energy Activity Use Indicator while mobile
 -- [ ] Plugin-ify non-standard config
 -- [ ] Move plugins to plugins folder, load dynamically?
+-- [ ] Use Spoons
 
 -- Plugins (not finished):
 -- SleepTimer
--- BurnRate
+-- BurnRate 
 
 -- Plugins (to pluginify):
 -- DisplayRes
@@ -28,33 +29,31 @@
 -- WinWin
 -- OnLocation
 -- UsefulUtilites
--- require('apw-lib')
+
+require('apw-lib')
 require('init-plugins')
 
-apw_go({
-  "apps.utilities",
-  "apps.hammerspoon_config_reload",
-  "apps.hammerspoon_toggle_console",
-  "apps.change_resolution",
-  "battery.burnrate",
-  "skunkworks.demomodal",
-  "skunkworks.kellan",
-  -- "skunkworks.redshift",
-  -- "skunkworks.capslockfix",
-})
+-- hs.loadSpoon("AClock")
+hs.loadSpoon("SystemContexts")
+hs.loadSpoon("SafariKeys")
+hs.loadSpoon("Countdown")
+hs.loadSpoon("SysInfo")
 
--- init grid
-hs.grid.MARGINX         = 0
-hs.grid.MARGINY         = 0
-hs.grid.GRIDWIDTH       = 7
-hs.grid.GRIDHEIGHT      = 7
-
--- disable animation
-hs.window.animationDuration = 0
+-- Conditional to multiple montior set up.
+-- Contexts in which computer can be used:
+--    At home, plugged in to monitors / egpu
+--    At home, not plugged in
+--    Away from home
+--
+-- settings to apply based on context:
+--    screen lock time
+--    volume
+--    dock position
+--    default app layouts
 
 ---------
 -- Vars
----------
+------------------------------------------------------------------------------
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
@@ -62,45 +61,95 @@ local mash =    {"cmd", "alt", "ctrl" }
 local hyper =   {"cmd", "alt"         }
 local alt =     {"alt"                }
 
+-- hs.loadSpoon("MuteMic")
+-- spoon.MuteMic:bindHotkeys({toggle={mash, "f"}})
+-- spoon.MuteMic:start()
+
+-- hs.loadSpoon("AudioSwitch")
+-- spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
+-- spoon.AudioSwitch:start()
+
+local safariHotkeys =  {
+	tabToNewWin = {mash, "T"},
+	mailToSelf = {mash, "U"},
+	mergeAllWindows = {mash, "M"},
+	pinOrUnpinTab = {hyper, "P"},
+	cycleUserAgent = {mash, "7"},
+}
+
+spoon.SafariKeys:bindHotkeys(safariHotkeys)
+
+apw_go({
+  "apps.utilities",
+  "apps.hammerspoon_config_reload",
+  "apps.hammerspoon_toggle_console",
+  "apps.change_resolution",
+  -- "battery.burnrate",
+  "sounds.sounds",
+  -- "apps.btc_menu",
+})
+
+-- apw.change_resolution:menuInit();
+
+-- init grid
+hs.grid.MARGINX         = 0
+hs.grid.MARGINY         = 0
+hs.grid.GRIDWIDTH       = 10
+hs.grid.GRIDHEIGHT      = 10
+
+-- disable animation 
+hs.window.animationDuration = 0
+
+-- Screen watcher stuff
+-- Seems buggy, affinity designer triggers screen change?
+local screens = #hs.screen.allScreens()
+
+local lastNumberOfScreens = #hs.screen.allScreens()
+-- local screenWatcher = hs.screen.watcher.new(function()
+-- 	newNumberOfScreens = #hs.screen.allScreens()
+-- 	if newNumberOfScreens == 1 then
+-- 		alerts_nobg("Screens changed to Internal Display")
+--     elseif newNumberOfScreens == 2 then
+--         alerts_nobg("Screens changed to Desk Display")
+--     end
+-- 	hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
+-- end)
+
+function screenWatcher()
+
+	newNumberOfScreens = #hs.screen.allScreens()
+	if newNumberOfScreens == 1 then
+		-- alerts_nobg("Screens changed to Internal Display")
+		hs.alert.show("Screens: internal display", alerts_nobg, 1.5)
+    elseif newNumberOfScreens == 2 then
+        hs.alerts.show("Screens: +1", alerts_nobg, 1.5)
+    end
+	hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
+
+	lastNumberOfScreens = newNumberOfScreens
+end
+
+-- hs.screen.watcher.new(screenWatcher):start()
+-- hs.hotkey.bind(mash, 'S', screenWatcher)
+-- screenWatcher:start()
+
+-- hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
+
 local display_laptop = "Color LCD"
 
-local notebook = {
-  {"Safari",            nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"2Do",               nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Mail",              nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Slack",             nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"1Password",         nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"Messages",          nil,          display_laptop, hs.layout.maximized, nil, nil},
-  {"iTunes",            "iTunes",     display_laptop, hs.layout.maximized, nil, nil},
-}
-
--- These are no longer correct display names
--- Also, I no longer have a second monitor for this computer
--- Both these monitors are gone...
-local display_desktop_main = "Acer B286HK"
-
-local desktop = {
-  {"2Do",               nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Slack",             nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Emacs",             nil,          display_desktop_main, hs.layout.maximized, nil, nil},
-  {"Dash",              nil,          display_desktop_aux,  hs.layout.left75,    nil, nil},
-  {"iTunes",            "iTunes",     display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Fantastical",       nil,          display_desktop_aux,  hs.layout.maximized, nil, nil},
-  {"Messages",          nil,          display_desktop_aux,  hs.layout.maximized, nil, nil}
-}
-
-local numberOfScreens = #hs.screen.allScreens()
+-- local lastNumberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
--- I don't really think I care about this anymore?
--- disabling to see if I care
-if current_screen_name == display_desktop_main then
-  -- hs.layout.apply(desktop)
-elseif current_screen_name == display_laptop then
-  -- hs.layout.apply(notebook)
+-- Handles desktop set up if I'm using one monitor or two
+if current_screen_name == display_desktop_main or lastNumberOfScreens == 2 then
+  spoon.SystemContexts:moveDockDown()
+-- If I'm only using one monitor and it's laptop, then move that dock
+elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
+	spoon.SystemContexts:moveDockLeft()
 end
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
+
 hs.hotkey.bind(hyper, "H", function()
   hs.hints.windowHints()
 end)
@@ -164,144 +213,20 @@ hs.hotkey.bind(mash, "left", function()
   win:setFrame(f)
 end)
 
+hs.hotkey.bind(mash, "N", function()
+	hs.grid.maximizeWindow()
+	hs.grid.pushWindowNextScreen()
+end)
+
 hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
--- SAFARI STUFF STARTS
-------------------------------------------------------------------------------
--- cycle_safari_agents
-------------------------------------------------------------------------------
--- Taken from: http://www.hammerspoon.org/go/#applescript
--- modified to toggle between iOS and default
--- Useful for sites that insist on flash installations
--- Tricking them into thinking device is mobile is
-
--- This is pretty brittle (it breaks when safari is updated)
--- and I do it largely to force sites to present
--- HTML5 video when flash is offered by default
---
--- Probably a better way to do it.
-------------------------------------------------------------------------------
-function cycle_safari_agents()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
-
-  local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-  local str_iPad = {"Develop", "User Agent", "Safari — iOS 10 — iPad"}
-
-  local default = safari:findMenuItem(str_default)
-  local iPad = safari:findMenuItem(str_iPad)
-
-  if (default and default["ticked"]) then
-    safari:selectMenuItem(str_iPad)
-    hs.alert.show("iPad")
-  end
-  if (iPad and iPad["ticked"]) then
-    safari:selectMenuItem(str_default)
-    hs.alert.show("Default")
-  end
+function kirby()
+  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, '7', cycle_safari_agents)
-
-------------------------------------------------------------------------------
--- mailToSelf
-------------------------------------------------------------------------------
--- Gets current url from active safari tab and mails it to specified address
-------------------------------------------------------------------------------
-function mailToSelf()
-  script = [[
-    tell application "Safari"
-    set currentURL to URL of document 1
-    end tell
-    return currentURL
-  ]]
-
-ok, result = hs.applescript(script)
-if (ok) then
-  hs.applescript.applescript([[
-    tell application "Safari"
-    set result to URL of document 1
-    end tell
-    tell application "Mail"
-    set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
-    tell theMessage
-    make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-    send
-    end tell
-    end tell
-  ]])
-hs.alert("Page successfully emailed to self")
-end
-end
-
--- mails current url to myself using mailtoself function
-hs.hotkey.bind(mash, 'U', mailToSelf)
-
-------------------------------------------------------------------------------
--- tabToNewWindow
-------------------------------------------------------------------------------
--- makes new window from current tab in safari
--- could maybe send it to next monitor immediately if there is one?
-------------------------------------------------------------------------------
-function tabToNewWindow()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
-
-  local target_item_in_menu = {"Window", "Move Tab to New Window"}
-  safari:selectMenuItem(target_item_in_menu)
-
-  hs.alert.show("making new window from tab")
-end
-
-hs.hotkey.bind(mash, 'T', tabToNewWindow)
-
-------------------------------------------------------------------------------
--- mergeAllWindows
-------------------------------------------------------------------------------
--- Merges all separate windows into one window
-------------------------------------------------------------------------------
-function mergeAllWindows()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
-
-  local target_item_in_menu = {"Window", "Merge All Windows"}
-  safari:selectMenuItem(target_item_in_menu)
-
-  hs.alert.show("Merging all windows")
-end
-
-hs.hotkey.bind(mash, 'M', mergeAllWindows)
-
-------------------------------------------------------------------------------
--- pinOrUnpinTab
-------------------------------------------------------------------------------
--- Pins or unpins current tab
-------------------------------------------------------------------------------
-function pinOrUnpinTab()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
-
-  local pin_tab = {"Window", "Pin Tab"}
-  local unpin_tab = {"Window", "Unpin Tab"}
-
-  if (safari:findMenuItem(pin_tab)) then
-    hs.alert.show("Pinning current tab")
-    safari:selectMenuItem(pin_tab)
-  else
-    hs.alert.show("Unpinning current tab")
-    safari:selectMenuItem(unpin_tab)
-  end
-end
-
-hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
-
-------------------------------------------------------------------------------
--- End of safari stuff
-------------------------------------------------------------------------------
-
+hs.hotkey.bind(mash, 'K', kirby)
 
 ------------------------------------------------------------------------------
 -- Location based functions to change system settings
@@ -321,11 +246,13 @@ hs.hotkey.bind(mash, 'P', pinOrUnpinTab)
 -- If computer is in between networks (say, woken from sleep in new location)
 -- Then desired settings like volume mute are not applied until after a delay
 -- Maybe implement a default setting that is applied when computer is 'in limbo'
-local homeSSID = "BROMEGA-5G"
-local homeSSID5G = "BROMEGA"
+local homeSSID = "ComfortInn VIP"
+-- local homeSSID5G = "BROMEGA"
 local schoolSSID = "MacEwanSecure"
 local lastSSID = hs.wifi.currentNetwork()
 local hostName = hs.host.localizedName()
+
+local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()
@@ -350,8 +277,19 @@ function home_arrived()
   os.execute("sudo pmset -b displaysleep 5 sleep 10")
   os.execute("sudo pmset -c displaysleep 5 sleep 10")
   hs.audiodevice.defaultOutputDevice():setMuted(false)
-  -- notify("OnLocation:", "Home settings enabled")
-  hs.alert("Home settings enabled!", 1)
+  hs.notify.new({
+        title = 'Hammerspoon',
+        subTitle = "ENV: Home Detected",
+        informativeText = "Home Settings Enabled",
+        setIdImage = wifiicon,
+        -- hasReplyButton = true,
+        -- autoWithdraw = true,
+        -- hasActionButton = true,
+        -- actionButtonTitle = "Test",
+      }):send()
+  -- new arrive home alert
+  hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
+  -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
   -- TODO: set audiodevice to speakers
 end
 
@@ -360,15 +298,22 @@ end
 function home_departed()
   -- set volume to 0
   hs.audiodevice.defaultOutputDevice():setMuted(true)
-  os.execute("sudo pmset -a displaysleep 1 sleep 15")
-  notify("OnLocation: ", "Away settings enabled")
-  hs.alert("Away settings enabled!", 1)
+  os.execute("sudo pmset -a displaysleep 1 sleep 10")
+  hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
+  -- new leave home alert
+  hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
+  -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
 end
 
-wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
+wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
 wifiWatcher:start()
 
-if hs.wifi.currentNetwork() == "BROMEGA-5G" or hs.wifi.currentNetwork() == "BROMEGA" or hostName == "iMac" then
+if 
+  hs.wifi.currentNetwork() == "ComfortInn VIP" 
+  or hs.wifi.currentNetwork() == "ComfortInn Guest" 
+  or hostName == "apw@me.com" 
+  then
+
   home_arrived()
 else
   home_departed()

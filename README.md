@@ -27,15 +27,34 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
 * Modified to switch between default and iPad
 
 ## Todo
+
+### 17/12/21
+
+* This is cool: 
+  https://github.com/ashfinal/awesome-hammerspoon#search-something---g
+
+* [ ] Tests?
+  * https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/hsluatests.lua
 * [x] Laptop resolution changing
 * [x] Battery alerts on laptop *kind* *of* see burnrate plugin
 * [x] Change settings based on location (wifi ssid?)
 * [ ] Better display of resolution options (ala hs.hints)
+  * Don't really use this functionality anymore, so can probably
+    safely delete this item
 * [ ] grab active url from safari, send to clipboard?
+  * Done-ish. Currently mails to self.
+  * [ ] site-specific search from current url
 * [ ] move other modules from init to plugins
   * [ ] window management
   * [ ] safari stuff
   * [ ] application management?
+* [x] KIRBY SHRUG ¯\_(ツ)_/¯
+* [ ] !!
+* [ ] Connect to airpods?
+* [ ] Disconnect from airpods?
+* [ ] Bind alert styles in a function so i don't have to keep repeating things
+* [ ] Combine multiple functions into one menubar app
+  * [ ] Display res / 
 
 * [ ] Make specific system functions into modal hotkeys
   * Some ideas:
@@ -44,6 +63,6 @@ Comments/questions can be sent to hammerspoon [at] nonissue.org
     * [ ] Bluetooth connect specific headphones
     * [ ] VPN on/off
     * [ ] Nightshift/flux on/off
-    * [ ] Sleep timer (possibly need to break this out to own module)
+    * [x] Sleep timer (possibly need to break this out to own module)
 * [ ] Make a display (similar to hs.hints) for these system hotkeys
   * [ ] Or maybe something similar to cheatsheets?

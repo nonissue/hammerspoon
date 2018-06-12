@@ -1,3 +1,5 @@
+-- UPDATE 18/01/10 : This was kind of dumb and is obsolete. 
+
 -- A status/menubarlet to reflect the current 'burnrate' for battery.
 
 --[[
@@ -65,7 +67,7 @@ function check_burnrate()
   local burnrateActual = designCap / cur_amh
   local burnrateRounded = round(burnrateActual, 1)
   if hs.battery.isCharging() then
-    setBurnrateText("Charging")
+    setBurnrateText("BR:+")
   elseif designCap / cur_amh > 10 then
     setBurnrateText("BR: N/A / " .. burnrateRounded)
   elseif designCap / cur_amh > 7 then

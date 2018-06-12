@@ -5,8 +5,6 @@
 package.path = package.path .. ';plugins/?.lua'
 require('apw-lib')
 
--- apw = {}
-
 hostname = hs.host.localizedName()
 
 apw.plugin_cache={}
@@ -64,5 +62,8 @@ if not status then
    end
 end
 
-hs.alert("Config Loaded!", 1)
+notify("Config Loaded ✔")
+-- hs.alert.show("✔", alerts_standard, 1)
+
+-- hs.alert("Config Loaded!", 1)
 -- notify("APW Hammerspoon loaded", "Config loaded")

@@ -20,6 +20,6 @@ a = t.new("myConsole", {
                         print("a", inspect(table.pack(...)))
                    end)
 
-t.attachToolbar(a)
+-- t.attachToolbar(a)
 
 return mod
