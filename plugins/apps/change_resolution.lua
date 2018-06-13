@@ -87,18 +87,14 @@ function setupResModal()
         -- backgroundColor = res_color,
       }
     )
-    table.insert(dropdownOptions, {title = styledtitle, fn = function() return processKey(i) end, checked = false })
+    -- table.insert(dropdownOptions, {title = styledtitle, fn = function() return processKey(i) end, checked = false })
     k:bind({}, tostring(i), function () processKey(i) end)
   end
 
   -- function to display the choices as an alert
   -- called on hotkey modal entry
   function displayChoices()
-    for i = 1, #choices do
-      hs.alert(tostring(i) .. ": " .. choices[i], alerts_large_alt, 99)
-    end
-    -- hs.alert("M: Hide", alerts_nobg_sml, 99)
-    hs.alert("ESC: esc", alerts_large_alt, 99)
+    hs.alert("1: Smaller / 2: Normal / 3: Bigger / ESC: cancel", alerts_medium, 5)
   end
 
   -- on modal entry, display choices
@@ -117,12 +113,15 @@ function processKey(i)
   -- all the menubar items, since I'd have to change check to false for current,
   -- and true for new selection
   local res = resolutions[tonumber(i)]
-  local icon = resIcons[tonumber(i)]
-
-  hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, alerts_large_alt, 5)
+  local menuTitle = hs.styledtext.new(
+    resIcons[tonumber(i)],
+    {
+      font={size=16 + ((i - 1) * 2)}, -- resize icon based on screenres
+    }
+  )
+  setResolutionDisplay(menuTitle)
   changeRes(res.w, res.h, res.s)
-
-  setResolutionDisplay(icon)
+  hs.alert.closeAll()
 
   k:exit()
 end
@@ -140,14 +139,12 @@ setupResModal()
 
 -- Menubar items sometimes hang around after config reload creating dupes
 -- So this makes sure they are removed
--- if resolutionMenu then
---   resolutionMenu:delete()
--- end
 
 -- Initializes a menubar item that displays the current resolution of display
 -- And when clicked, toggles between two most commonly used resolutions
 local resolutionMenu = hs.menubar.new()
 
+-- superfluous
 function toggleChecked(items, target)
   for k, v in pairs(items) do -- for every element in the table
     if v['title']:getString() == tostring(target) then
@@ -159,6 +156,7 @@ function toggleChecked(items, target)
   end
 end
 
+-- superflous
 function getIcon(items, w)
   for i = 1, #items do
     if items[i]['title']:getString() == w then
@@ -169,17 +167,10 @@ end
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
-  -- resolutionMenu:setTitle("-⃞")
-  -- alert(getIcon(dropdownOptions, w))
-  -- resolutionMenu:setTitle(w)
-  -- alert(tostring(w))
-  -- local icon = getIcon(dropdownOptions, tostring(w))
-  -- alert(icon)
   resolutionMenu:setTitle(w)
-  -- toggleChecked(dropdownOptions, w)
-  -- resolutionMenu:setMenu(dropdownOptions)
 end
 
+-- superfluous
 function menuBarToggle()
   if resolutionMenu:isInMenubar() then
     resolutionMenu:removeFromMenuBar()
@@ -190,30 +181,21 @@ function menuBarToggle()
   end
 end
 
+-- superfluous
 function showResolutionMenu()
   resolutionMenu:returnToMenuBarw()
 end
 
 function mod.init()
-  -- if resolutionMenu then
-    -- set menu items
-    -- resolutionMenu:setMenu(dropdownOptions)
-    local currentRes = hs.screen.primaryScreen():currentMode().w
-    -- local icon = getIcon(dropdownOptions, tostring(currentRes))
+  local currentRes = hs.screen.primaryScreen():currentMode().w
 
-    local menuTitle = hs.styledtext.new(
-      currentRes,
-      {
-        font={size=13},
-        -- color=real_color,
-        paragraphStyle={alignment="center"},
-        -- backgroundColor = res_color,
-      }
-    )
-
-    setResolutionDisplay(resIcons[2])
-    -- setResolutionDisplay(menuTitle:getString())
-    -- I currently want to hide it by default
+  local menuTitle = hs.styledtext.new(
+    resIcons[2],
+    {
+      font={ size = 18 },
+    }
+  )
+    setResolutionDisplay(menuTitle)
 end
 
 return mod
