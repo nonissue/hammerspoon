@@ -113,13 +113,15 @@ function processKey(i)
   -- all the menubar items, since I'd have to change check to false for current,
   -- and true for new selection
   local res = resolutions[tonumber(i)]
-  local menuTitle = hs.styledtext.new(
-    resIcons[tonumber(i)],
-    {
-      font={size=16 + ((i - 1) * 2)}, -- resize icon based on screenres
-    }
-  )
-  setResolutionDisplay(menuTitle)
+  -- local icon = resIcons[tonumber(i)]
+  -- local menuTitle = hs.styledtext.new(
+  --   -- resIcons[tonumber(i)],
+  --   resIcons[1],
+  --   {
+  --     -- font = { size = 18 },-- + ((i - 1) * 2) }, -- resize icon based on screenres
+  --   }
+  -- )
+  setResolutionDisplay(resIcons[tonumber(i)])
   changeRes(res.w, res.h, res.s)
   hs.alert.closeAll()
 
@@ -167,7 +169,13 @@ end
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
-  resolutionMenu:setTitle(w)
+    local menuTitle = hs.styledtext.new(
+    w,
+    {
+      font = { size = 18 },-- + ((i - 1) * 2) }, -- resize icon based on screenres
+    }
+  )
+  resolutionMenu:setTitle(menuTitle)
 end
 
 -- superfluous
@@ -189,13 +197,13 @@ end
 function mod.init()
   local currentRes = hs.screen.primaryScreen():currentMode().w
 
-  local menuTitle = hs.styledtext.new(
-    resIcons[2],
-    {
-      font={ size = 18 },
-    }
-  )
-    setResolutionDisplay(menuTitle)
+  -- local menuTitle = hs.styledtext.new(
+  --   resIcons[2],
+  --   {
+  --     font={ size = 18 },
+  --   }
+  -- )
+    setResolutionDisplay(resIcons[2])
 end
 
 return mod
