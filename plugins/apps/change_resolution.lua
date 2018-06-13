@@ -33,6 +33,13 @@ local desktopResolutions = {
   {w = 2560, h = 1440, s = 2}
 }
 
+local resIcons = {
+  "-⃞", -- 1440 / should be: - ⃞ (- in a square)"
+   "⃞", -- DEFAULT / just the square 
+  "+⃞", -- 1920 / square with plus sign in it
+}
+
+
 -- initialize variable to ultimately store the correct set of resolutions
 local resolutions = {}
 local choices = {}
@@ -110,12 +117,12 @@ function processKey(i)
   -- all the menubar items, since I'd have to change check to false for current,
   -- and true for new selection
   local res = resolutions[tonumber(i)]
+  local icon = resIcons[tonumber(i)]
 
   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, alerts_large_alt, 5)
   changeRes(res.w, res.h, res.s)
 
-  local icon = getIcon(dropdownOptions, tostring(res.w))
-  setResolutionDisplay(res.w)
+  setResolutionDisplay(icon)
 
   k:exit()
 end
@@ -152,20 +159,12 @@ function toggleChecked(items, target)
   end
 end
 
-local resIcons = {
-  "-⃞", -- 1440 / should be: - ⃞ (- in a square)"
-   "⃞", -- DEFAULT / just the square 
-  "+⃞", -- 1920 / square with plus sign in it
-}
-
 function getIcon(items, w)
-
   for i = 1, #items do
     if items[i]['title']:getString() == w then
-      return resIcons[i - 1]
+      return resIcons[i]
     end
   end
-  return "Error!"
 end
 
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
@@ -177,8 +176,8 @@ function setResolutionDisplay(w)
   -- local icon = getIcon(dropdownOptions, tostring(w))
   -- alert(icon)
   resolutionMenu:setTitle(w)
-  toggleChecked(dropdownOptions, w)
-  resolutionMenu:setMenu(dropdownOptions)
+  -- toggleChecked(dropdownOptions, w)
+  -- resolutionMenu:setMenu(dropdownOptions)
 end
 
 function menuBarToggle()
@@ -198,8 +197,9 @@ end
 function mod.init()
   -- if resolutionMenu then
     -- set menu items
-    resolutionMenu:setMenu(dropdownOptions)
+    -- resolutionMenu:setMenu(dropdownOptions)
     local currentRes = hs.screen.primaryScreen():currentMode().w
+    -- local icon = getIcon(dropdownOptions, tostring(currentRes))
 
     local menuTitle = hs.styledtext.new(
       currentRes,
@@ -211,7 +211,8 @@ function mod.init()
       }
     )
 
-    setResolutionDisplay(menuTitle:getString())
+    setResolutionDisplay(resIcons[2])
+    -- setResolutionDisplay(menuTitle:getString())
     -- I currently want to hide it by default
 end
 
