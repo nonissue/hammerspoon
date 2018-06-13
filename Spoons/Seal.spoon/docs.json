@@ -15,27 +15,24 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "Pluggable launch bar",
     "type" : "Module",
     "Deprecated" : [
 
     ],
+    "desc" : "Pluggable launch bar",
     "Constructor" : [
 
     ],
     "doc" : "Pluggable launch bar",
     "Method" : [
       {
-        "def" : "Seal:loadPlugins(plugins)",
+        "doc" : "Loads a list of Seal plugins\n\nParameters:\n * plugins - A list containing the names of plugins to load\n\nReturns:\n * The Seal object\n\nNotes:\n * The plugins live inside the Seal.spoon directory\n * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end\n * Some plugins may immediately begin doing background work (e.g. Spotlight searches)",
         "stripped_doc" : [
           "Loads a list of Seal plugins",
           ""
         ],
-        "doc" : "Loads a list of Seal plugins\n\nParameters:\n * plugins - A list containing the names of plugins to load\n\nReturns:\n * The Seal object\n\nNotes:\n * The plugins live inside the Seal.spoon directory\n * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end\n * Some plugins may immediately begin doing background work (e.g. Spotlight searches)",
-        "parameters" : [
-          " * plugins - A list containing the names of plugins to load",
-          ""
-        ],
+        "def" : "Seal:loadPlugins(plugins)",
+        "name" : "loadPlugins",
         "notes" : [
           " * The plugins live inside the Seal.spoon directory",
           " * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end",
@@ -48,20 +45,19 @@
           ""
         ],
         "desc" : "Loads a list of Seal plugins",
-        "name" : "loadPlugins"
+        "parameters" : [
+          " * plugins - A list containing the names of plugins to load",
+          ""
+        ]
       },
       {
-        "def" : "Seal:bindHotkeys(mapping)",
+        "doc" : "Binds hotkeys for Seal\n\nParameters:\n * mapping - A table containing hotkey modifier\/key details for the following items:\n  * show - This will cause Seal's UI to be shown\n\nReturns:\n * The Seal object",
         "stripped_doc" : [
           "Binds hotkeys for Seal",
           ""
         ],
-        "doc" : "Binds hotkeys for Seal\n\nParameters:\n * mapping - A table containing hotkey modifier\/key details for the following items:\n  * show - This will cause Seal's UI to be shown\n\nReturns:\n * The Seal object",
-        "parameters" : [
-          " * mapping - A table containing hotkey modifier\/key details for the following items:",
-          "  * show - This will cause Seal's UI to be shown",
-          ""
-        ],
+        "def" : "Seal:bindHotkeys(mapping)",
+        "name" : "bindHotkeys",
         "notes" : [
 
         ],
@@ -71,19 +67,20 @@
           " * The Seal object"
         ],
         "desc" : "Binds hotkeys for Seal",
-        "name" : "bindHotkeys"
+        "parameters" : [
+          " * mapping - A table containing hotkey modifier\/key details for the following items:",
+          "  * show - This will cause Seal's UI to be shown",
+          ""
+        ]
       },
       {
-        "def" : "Seal:start()",
+        "doc" : "Starts Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object",
         "stripped_doc" : [
           "Starts Seal",
           ""
         ],
-        "doc" : "Starts Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:start()",
+        "name" : "start",
         "notes" : [
 
         ],
@@ -93,19 +90,19 @@
           " * The Seal object"
         ],
         "desc" : "Starts Seal",
-        "name" : "start"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       },
       {
-        "def" : "Seal:stop()",
+        "doc" : "Stops Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object\n\nNotes:\n * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)",
         "stripped_doc" : [
           "Stops Seal",
           ""
         ],
-        "doc" : "Stops Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object\n\nNotes:\n * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:stop()",
+        "name" : "stop",
         "notes" : [
           " * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -116,19 +113,19 @@
           ""
         ],
         "desc" : "Stops Seal",
-        "name" : "stop"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       },
       {
-        "def" : "Seal:show()",
+        "doc" : "Shows the Seal UI\n\nParameters:\n * None\n\nReturns:\n * None\n\nNotes:\n * This may be useful if you wish to show Seal in response to something other than its hotkey",
         "stripped_doc" : [
           "Shows the Seal UI",
           ""
         ],
-        "doc" : "Shows the Seal UI\n\nParameters:\n * None\n\nReturns:\n * None\n\nNotes:\n * This may be useful if you wish to show Seal in response to something other than its hotkey",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:show()",
+        "name" : "show",
         "notes" : [
           " * This may be useful if you wish to show Seal in response to something other than its hotkey"
         ],
@@ -139,25 +136,27 @@
           ""
         ],
         "desc" : "Shows the Seal UI",
-        "name" : "show"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       }
     ],
     "Command" : [
 
     ],
+    "Field" : [
+
+    ],
     "items" : [
       {
-        "def" : "Seal:bindHotkeys(mapping)",
+        "doc" : "Binds hotkeys for Seal\n\nParameters:\n * mapping - A table containing hotkey modifier\/key details for the following items:\n  * show - This will cause Seal's UI to be shown\n\nReturns:\n * The Seal object",
         "stripped_doc" : [
           "Binds hotkeys for Seal",
           ""
         ],
-        "doc" : "Binds hotkeys for Seal\n\nParameters:\n * mapping - A table containing hotkey modifier\/key details for the following items:\n  * show - This will cause Seal's UI to be shown\n\nReturns:\n * The Seal object",
-        "parameters" : [
-          " * mapping - A table containing hotkey modifier\/key details for the following items:",
-          "  * show - This will cause Seal's UI to be shown",
-          ""
-        ],
+        "def" : "Seal:bindHotkeys(mapping)",
+        "name" : "bindHotkeys",
         "notes" : [
 
         ],
@@ -167,19 +166,20 @@
           " * The Seal object"
         ],
         "desc" : "Binds hotkeys for Seal",
-        "name" : "bindHotkeys"
+        "parameters" : [
+          " * mapping - A table containing hotkey modifier\/key details for the following items:",
+          "  * show - This will cause Seal's UI to be shown",
+          ""
+        ]
       },
       {
-        "def" : "Seal:loadPlugins(plugins)",
+        "doc" : "Loads a list of Seal plugins\n\nParameters:\n * plugins - A list containing the names of plugins to load\n\nReturns:\n * The Seal object\n\nNotes:\n * The plugins live inside the Seal.spoon directory\n * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end\n * Some plugins may immediately begin doing background work (e.g. Spotlight searches)",
         "stripped_doc" : [
           "Loads a list of Seal plugins",
           ""
         ],
-        "doc" : "Loads a list of Seal plugins\n\nParameters:\n * plugins - A list containing the names of plugins to load\n\nReturns:\n * The Seal object\n\nNotes:\n * The plugins live inside the Seal.spoon directory\n * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end\n * Some plugins may immediately begin doing background work (e.g. Spotlight searches)",
-        "parameters" : [
-          " * plugins - A list containing the names of plugins to load",
-          ""
-        ],
+        "def" : "Seal:loadPlugins(plugins)",
+        "name" : "loadPlugins",
         "notes" : [
           " * The plugins live inside the Seal.spoon directory",
           " * The plugin names in the list, should not have `seal_` at the start, or `.lua` at the end",
@@ -192,19 +192,19 @@
           ""
         ],
         "desc" : "Loads a list of Seal plugins",
-        "name" : "loadPlugins"
+        "parameters" : [
+          " * plugins - A list containing the names of plugins to load",
+          ""
+        ]
       },
       {
-        "def" : "Seal:show()",
+        "doc" : "Shows the Seal UI\n\nParameters:\n * None\n\nReturns:\n * None\n\nNotes:\n * This may be useful if you wish to show Seal in response to something other than its hotkey",
         "stripped_doc" : [
           "Shows the Seal UI",
           ""
         ],
-        "doc" : "Shows the Seal UI\n\nParameters:\n * None\n\nReturns:\n * None\n\nNotes:\n * This may be useful if you wish to show Seal in response to something other than its hotkey",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:show()",
+        "name" : "show",
         "notes" : [
           " * This may be useful if you wish to show Seal in response to something other than its hotkey"
         ],
@@ -215,19 +215,19 @@
           ""
         ],
         "desc" : "Shows the Seal UI",
-        "name" : "show"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       },
       {
-        "def" : "Seal:start()",
+        "doc" : "Starts Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object",
         "stripped_doc" : [
           "Starts Seal",
           ""
         ],
-        "doc" : "Starts Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:start()",
+        "name" : "start",
         "notes" : [
 
         ],
@@ -237,19 +237,19 @@
           " * The Seal object"
         ],
         "desc" : "Starts Seal",
-        "name" : "start"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       },
       {
-        "def" : "Seal:stop()",
+        "doc" : "Stops Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object\n\nNotes:\n * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)",
         "stripped_doc" : [
           "Stops Seal",
           ""
         ],
-        "doc" : "Stops Seal\n\nParameters:\n * None\n\nReturns:\n * The Seal object\n\nNotes:\n * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)",
-        "parameters" : [
-          " * None",
-          ""
-        ],
+        "def" : "Seal:stop()",
+        "name" : "stop",
         "notes" : [
           " * Some Seal plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -260,11 +260,11 @@
           ""
         ],
         "desc" : "Stops Seal",
-        "name" : "stop"
+        "parameters" : [
+          " * None",
+          ""
+        ]
       }
-    ],
-    "Field" : [
-
     ],
     "name" : "Seal"
   }

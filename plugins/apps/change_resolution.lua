@@ -40,7 +40,7 @@ local dropdownOptions = {}
 
 local res_color = {red=1,blue=1,green=1,alpha=1} -- Default?
 -- local res_color2 = {red=255/255,blue=50/255,green=0/255,alpha=1}
--- local real_color = {hex = "#ff0000", alpha = 1} -- light red?
+local real_color = {hex = "#ff0000", alpha = 1} -- light red?
 
 -- SYSTEM CONTEXTS LOGIC
 -- Must set hostname in System Prefs -> Sharing to "iMac" or "apw@me.com"
@@ -114,6 +114,7 @@ function processKey(i)
   hs.alert("Setting resolution to: " .. res.w .. " x " .. res.h, alerts_large_alt, 5)
   changeRes(res.w, res.h, res.s)
 
+  local icon = getIcon(dropdownOptions, tostring(res.w))
   setResolutionDisplay(res.w)
 
   k:exit()
@@ -151,9 +152,31 @@ function toggleChecked(items, target)
   end
 end
 
+local resIcons = {
+  "-⃞", -- 1440 / should be: - ⃞ (- in a square)"
+   "⃞", -- DEFAULT / just the square 
+  "+⃞", -- 1920 / square with plus sign in it
+}
+
+function getIcon(items, w)
+
+  for i = 1, #items do
+    if items[i]['title']:getString() == w then
+      return resIcons[i - 1]
+    end
+  end
+  return "Error!"
+end
+
 -- sets title to be displayed in menubar (really doesn't have to be own func?)
 function setResolutionDisplay(w)
-  resolutionMenu:setTitle(tostring(w))
+  -- resolutionMenu:setTitle("-⃞")
+  -- alert(getIcon(dropdownOptions, w))
+  -- resolutionMenu:setTitle(w)
+  -- alert(tostring(w))
+  -- local icon = getIcon(dropdownOptions, tostring(w))
+  -- alert(icon)
+  resolutionMenu:setTitle(w)
   toggleChecked(dropdownOptions, w)
   resolutionMenu:setMenu(dropdownOptions)
 end
@@ -177,8 +200,18 @@ function mod.init()
     -- set menu items
     resolutionMenu:setMenu(dropdownOptions)
     local currentRes = hs.screen.primaryScreen():currentMode().w
-    print("current res = ", currentRes)
-    setResolutionDisplay(currentRes)
+
+    local menuTitle = hs.styledtext.new(
+      currentRes,
+      {
+        font={size=13},
+        -- color=real_color,
+        paragraphStyle={alignment="center"},
+        -- backgroundColor = res_color,
+      }
+    )
+
+    setResolutionDisplay(menuTitle:getString())
     -- I currently want to hide it by default
 end
 
