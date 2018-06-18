@@ -84,7 +84,7 @@ apw_go({
   "apps.hammerspoon_config_reload",
   "apps.hammerspoon_toggle_console",
   "apps.change_resolution",
-  -- "battery.burnrate",
+  "battery.burnrate",
   "sounds.sounds",
   -- "apps.btc_menu",
 })

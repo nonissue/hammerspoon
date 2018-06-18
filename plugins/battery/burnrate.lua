@@ -56,6 +56,12 @@ mod.config = {
   allScreens = false,
 }
 
+local green = {color = {green = 1, alpha = 1}}
+local yellow = {color = {red = 1, green = 1, alpha = 1}}
+local orange = {color = {red = 1, green = 0.64, blue = 0, alpha = 1}}
+local red = {color = {red = 1, alpha = 1}}
+
+
 --------------------------------------------------
 -- Handler directly called by the "low-level" watcher API.
 --------------------------------------------------
@@ -67,18 +73,18 @@ function check_burnrate()
   local burnrateActual = designCap / cur_amh
   local burnrateRounded = round(burnrateActual, 1)
   if hs.battery.isCharging() then
-    setBurnrateText("BR:+")
+    setBurnrateText("⚡︎", green)
   elseif designCap / cur_amh > 10 then
-    setBurnrateText("BR: N/A / " .. burnrateRounded)
+    setBurnrateText("⚡︎: " .. burnrateRounded, red)
   elseif designCap / cur_amh > 7 then
-    setBurnrateText("BR:" .. burnrateRounded)
+    setBurnrateText("⚡︎: " .. burnrateRounded, green)
     -- setBurnrateText("BR: Low / " .. burnrateRounded)
   elseif designCap / cur_amh > 4 then
     -- setBurnrateIcon()
-    setBurnrateText("BR:" .. burnrateRounded)
+    setBurnrateText("⚡︎: ".. burnrateRounded, orange)
     -- setBurnrateText("BR: Med / " .. burnrateRounded)
   else
-    setBurnrateText("BR:" .. burnrateRounded)
+    setBurnrateText("⚡︎: " .. burnrateRounded, red)
     -- setBurnrateText("BR: Hi / " .. burnrateRounded)
   end
 end
@@ -94,8 +100,10 @@ function setBurnrateIcon(rate)
   -- burnrateMenu:setIcon(rate)
 end
 
-function setBurnrateText(amperage)
-  burnrateMenu:setTitle(tostring(amperage))
+function setBurnrateText(amperage, color)
+  local title = hs.styledtext.new(tostring(amperage), color)
+  -- burnrateMenu:setIcon("1.pdf")
+  burnrateMenu:setTitle(title)
 end
 
 function mod.init()
