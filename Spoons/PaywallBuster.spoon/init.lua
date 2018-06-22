@@ -27,6 +27,7 @@ end
 
 obj.spoonPath = script_path()
 
+-- hotkey binding not working
 function obj:bindHotkeys(mapping)
   local def = {
     showPaywallBuster = hs.fnutils.partial(self:show(), self),
@@ -99,13 +100,11 @@ function obj.concatURL(baseURL)
 end
 
 function obj.busterChooserCallback(input)
-  if not input then focusLastFocused(); return end
+  if not inputz then focusLastFocused(); return end
   if input.id == 1 then
-    print("Choice 1!")
     hs.osascript.applescript(privateBrowsing)
   elseif input.id == 2 then
     ok, originalURL = hs.osascript._osascript(getURL, "AppleScript")
-    print("\"" .. originalURL .."\"")
     newURL = obj.concatURL(input.baseURL)
     hs.application.launchOrFocus("Safari")
     obj.createWindow(originalURL, newURL)
@@ -113,8 +112,6 @@ function obj.busterChooserCallback(input)
     hs.osascript.applescript(privateBrowsing)
   end
 end
-
--- chooser:show()
 
 
 --- PaywallBuster:start()
@@ -141,9 +138,6 @@ end
 
 function obj:start()
   print("-- Starting PaywallBuster")
-  -- if self.hotkeyShow then
-  --     self.hotkeyShow:enable()
-  -- end
   return self
 end
 
