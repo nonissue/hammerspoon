@@ -80,6 +80,18 @@ local safariHotkeys =  {
 
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
+-- local paywallBusterKey = {
+--   showPaywallBuster = {mash, "B"}
+-- }
+
+hs.hotkey.bind(mash, "B", function()
+  spoon.PaywallBuster:show()
+end)
+
+-- spoon.PaywallBuster:bindHotkeys(paywallBusterKey)
+
+
+
 apw_go({
   "apps.utilities",
   "apps.hammerspoon_config_reload",

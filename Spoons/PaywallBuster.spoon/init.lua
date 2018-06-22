@@ -11,11 +11,28 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
+obj.chooser = nil
+obj.hotkeyShow = nil
+
 -- check if safari is in foreground
 -- hs.application.launchOrFocus("Safari")
 -- hs.application.frontmostApplication()
-if not hs.application.frontmostApplication():name() == "Safari" then
+-- if not hs.application.frontmostApplication():name() == "Safari" then
+-- end
 
+local function script_path()
+  local str = debug.getinfo(2, "S").source:sub(2)
+  return str:match("(.*/)")
+end
+
+obj.spoonPath = script_path()
+
+function obj:bindHotkeys(mapping)
+  local def = {
+    showPaywallBuster = hs.fnutils.partial(self:show(), self),
+   }
+
+   hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
 local chooserTable = {
@@ -57,17 +74,22 @@ setURL = [[
 end tell
 ]]
 
-function createWindow(originalURL, newURL)
+local function focusLastFocused()
+  local wf = hs.window.filter
+  local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+  if #lastFocused > 0 then lastFocused[1]:focus() end
+end
+
+function obj.createWindow(originalURL, newURL)
   hs.osascript.applescript("tell application \"Safari\" to make new document with properties {URL:" .. '"'..originalURL..'"' .. "}")
-  -- hs.osascript.applescript("tell application \"Safari\" to make new document with properties {URL: .. originalURL .. }")
   hs.osascript.applescript("tell window 1 of application \"Safari\" to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
 end
 
-function setURL(newURL)
+function obj:setURL(newURL)
   hs.osascript.applescript("tell application \"Safari\" to set the URL of the front document to \"" .. newURL .."\"")
 end
 
-function concatURL(baseURL)
+function obj.concatURL(baseURL)
   ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
   if (ok) then
     return baseURL .. hs.http.encodeForQuery(currentURL)
@@ -76,44 +98,23 @@ function concatURL(baseURL)
   end
 end
 
-function buster(baseUrl)
-
-end
-
-function busterChooserCallback(input)
-  print_r(input)
+function obj.busterChooserCallback(input)
+  if not input then focusLastFocused(); return end
   if input.id == 1 then
+    print("Choice 1!")
     hs.osascript.applescript(privateBrowsing)
   elseif input.id == 2 then
     ok, originalURL = hs.osascript._osascript(getURL, "AppleScript")
     print("\"" .. originalURL .."\"")
-    newURL = concatURL(input.baseURL)
+    newURL = obj.concatURL(input.baseURL)
     hs.application.launchOrFocus("Safari")
-    createWindow(originalURL, newURL)
+    obj.createWindow(originalURL, newURL)
   elseif input.id == 3 then
     hs.osascript.applescript(privateBrowsing)
   end
 end
 
-local chooser = hs.chooser.new(busterChooserCallback)
-chooser:choices(chooserTable)
-chooser:show()
-
-
-local function script_path()
-  local str = debug.getinfo(2, "S").source:sub(2)
-  return str:match("(.*/)")
-end
-
-obj.spoonPath = script_path()
-
-function obj:bindHotkeys(mapping)
-  local def = {
-    tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
-   }
-
-   hs.spoons.bindHotkeysToSpec(def, mapping)
-end
+-- chooser:show()
 
 
 --- PaywallBuster:start()
@@ -125,11 +126,24 @@ end
 ---
 --- Returns:
 ---  * The PaywallBuster object
+function obj:init()
+  print("-- Starting PaywallBuster")
+  self.chooser = hs.chooser.new(self.busterChooserCallback)
+  self.chooser:choices(chooserTable)
+
+  return self
+end
+
+function obj:show()
+  obj.chooser:show()
+  return self
+end
+
 function obj:start()
   print("-- Starting PaywallBuster")
-  if self.hotkeyShow then
-      self.hotkeyShow:enable()
-  end
+  -- if self.hotkeyShow then
+  --     self.hotkeyShow:enable()
+  -- end
   return self
 end
 
