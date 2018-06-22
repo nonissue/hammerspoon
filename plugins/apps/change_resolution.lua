@@ -33,10 +33,22 @@ local desktopResolutions = {
   {w = 2560, h = 1440, s = 2}
 }
 
-local resIcons = {
-  "-⃞", -- 1440 / should be: - ⃞ (- in a square)"
-   "⃞", -- DEFAULT / just the square 
-  "+⃞", -- 1920 / square with plus sign in it
+local acer4k = {
+  -- first 1920 is for retina resolution @ 30hz
+  -- might not be neede as 2048 looks pretty good
+  {w = 1920, h = 1080, s = 2},
+  {w = 2048, h = 1152, s = 2},
+  {w = 2304, h = 1296, s = 2},
+  {w = 2560, h = 1440, s = 2}
+}
+
+local cinemaDisplay = {
+  -- first 1920 is for retina resolution @ 30hz
+  -- might not be neede as 2048 looks pretty good
+  {w = 1920, h = 1080, s = 2},
+  {w = 2048, h = 1152, s = 2},
+  {w = 2304, h = 1296, s = 2},
+  {w = 2560, h = 1440, s = 2}
 }
 
 
@@ -44,6 +56,40 @@ local resIcons = {
 local resolutions = {}
 local choices = {}
 local dropdownOptions = {}
+
+-- probably should set up a watcher to update this?
+-- just create a watcher that makes sure that acer gets set to 1920x1080?
+
+
+
+--[1] Cinema HD - ID 69489838
+--[2] Acer B286HK - ID 478199161
+
+local displayCount = #hs.screen.allScreens()
+
+function screenWarden()
+  if hs.screen.find("acer") then
+    hs.screen.find("acer"):setMode(1920, 1080, 2)
+    hs.alert("Acer Res Set", alerts_medium, 5)
+  elseif hs.screen.find(69489838) then
+    hs.screen.find(69489838):setMode(2560, 1600, 1)
+    hs.alert("Cinema Res Set", alerts_medium, 5)
+  end
+end
+
+local screens = hs.screen.allScreens()
+local screenwatcher = hs.screen.watcher.new(screenWarden)
+screenwatcher:start()
+
+-- if displayCount == 1 then
+--   if hs.screen.primaryScreen() == "Color LCD" then
+--     resolutions = laptopResolutions
+
+local resIcons = {
+  "-⃞", -- 1440 / should be: - ⃞ (- in a square)"
+   "⃞", -- DEFAULT / just the square 
+  "+⃞", -- 1920 / square with plus sign in it
+}
 
 local res_color = {red=1,blue=1,green=1,alpha=1} -- Default?
 -- local res_color2 = {red=255/255,blue=50/255,green=0/255,alpha=1}
@@ -57,6 +103,8 @@ if hs.screen'acer' then
 else
   resolutions = laptopResolutions
 end
+
+
 
 -- configure the modal hotkeys
 -- has some entered/exit options, mainly to show/hide available options on
