@@ -38,6 +38,7 @@ hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 hs.loadSpoon("Countdown")
 hs.loadSpoon("SysInfo")
+hs.loadSpoon("PaywallBuster")
 
 -- Conditional to multiple montior set up.
 -- Contexts in which computer can be used:
