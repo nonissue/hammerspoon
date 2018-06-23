@@ -100,7 +100,7 @@ function obj.concatURL(baseURL)
 end
 
 function obj.busterChooserCallback(input)
-  if not inputz then focusLastFocused(); return end
+  -- if not inputz then focusLastFocused(); return end
   if input.id == 1 then
     hs.osascript.applescript(privateBrowsing)
   elseif input.id == 2 then
@@ -127,6 +127,9 @@ function obj:init()
   print("-- Starting PaywallBuster")
   self.chooser = hs.chooser.new(self.busterChooserCallback)
   self.chooser:choices(chooserTable)
+  self.chooser:rows(#chooserTable)
+  self.chooser:width(20)
+  self.chooser:bgDark(false)
 
   return self
 end
