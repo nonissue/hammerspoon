@@ -48,7 +48,7 @@ privateBrowsing = [[
 tell application "Safari"
   activate
   tell application "Safari"
-    set currentURL to URL of document 1
+    set currentURL to URL of document 0
   end tell
 	delay 0.1
 	tell application "System Events"
@@ -61,14 +61,14 @@ end tell
 
 getURL = [[
 tell application "Safari"
-	set currentURL to URL of document 1
+	set currentURL to URL of document 0
 end tell
 return currentURL
 ]]
 
 setURL = [[
-  tell application "Safari"
-	make new document with properties {URL:"http://www.macosxhints.com"}
+tell application "Safari"
+	make new document at end of documents with properties {URL:"http://www.macosxhints.com"}
 	tell window 1
 		set current tab to (make new tab with properties {URL:"http://www.stackoverflow.com"})
 	end tell
@@ -91,7 +91,7 @@ function obj:setURL(newURL)
 end
 
 function obj.concatURL(baseURL)
-  ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
+  local ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
   if (ok) then
     return baseURL .. hs.http.encodeForQuery(currentURL)
   else 
@@ -128,6 +128,7 @@ function obj:init()
   self.chooser = hs.chooser.new(self.busterChooserCallback)
   self.chooser:choices(chooserTable)
   self.chooser:rows(#chooserTable)
+  -- self.chooser:rows(0)
   self.chooser:width(20)
   self.chooser:bgDark(false)
 
@@ -135,7 +136,7 @@ function obj:init()
 end
 
 function obj:show()
-  obj.chooser:show()
+  self.chooser:show()
   return self
 end
 
