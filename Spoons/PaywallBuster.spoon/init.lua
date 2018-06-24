@@ -48,7 +48,7 @@ privateBrowsing = [[
 tell application "Safari"
   activate
   tell application "Safari"
-    set currentURL to URL of document 0
+    set currentURL to URL of front document
   end tell
 	delay 0.1
 	tell application "System Events"
@@ -61,7 +61,7 @@ end tell
 
 getURL = [[
 tell application "Safari"
-	set currentURL to URL of document 0
+  set currentURL to URL of front document
 end tell
 return currentURL
 ]]
