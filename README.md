@@ -3,25 +3,59 @@
 This is super messy, intend to clean it up and improve commenting soon
 Comments/questions can be sent to hammerspoon [at] nonissue.org
 
-## Functions:
+## QUICK OVERVIEW
+
+* OVERALL: THIS IS NOT STABLE
+  * Feel free to grab ideas / copy code, but there's a lot of cruft
+  * things change all the time
+  * things may break
+* init.lua -> main init
+* apw-lib.lua, init-plugins.lua ->
+  * before spoons existed, I copied the plugin system from oh-my-hammerspoon. 
+  * these files largely handle that
+  * I also now use spoons
+* spoons -> spoons i've written (SafariKeys, SystemContexts, PaywallBuster) and some I didn't
+  * mostly a work in progress, probably stay away from using any of these
+  * SafariKeys -> Hotkeys for common tasks I want to do in safari
+    * Change user agent
+    * Merge all windows
+    * Pull tab to new window
+    * mail current page to self
+  * SystemContexts -> not finished
+  * PaywallBuster -> a modal plugin that provides a variety of options for skirting paywalls
+    * Currently takes the frontmost URL in safari
+      * Uses:
+        * Facebook outlinking
+        * Google Cache
+        * Wayback machine
+* plugins -> aforementioned custom plugins for custom plugin system (deprecated)
+
+## OUTDATED DOCS
+
+## Functions
 
 ### Window resizing/movement
+
 * Resizes windows (fullscreen/halfscreen/75/25)
 * Throws windows between monitors if there are two
 
 ### Resolution modification
+
 * Can set resolution using modal hotkey
 * Currently, possible resolutions are passed in manually from table of tables
 * Creates a menubar item that displays current resolution width and when clicked, toggles between two most common for me to use
 
 ### Mail-to-self
+
 * Hotkey bound to mail current Safari url to my email
 * I use it for reading stuff later
 
 ### Pull current tab from safari
+
 * Pulls current tab from safari and creates a new window with it
 
 ### User agent toggle
+
 * Toggles user agent for safari for iOS dev
 * Stolen from hammerspoon intro
 * Modified to switch between default and iPad
