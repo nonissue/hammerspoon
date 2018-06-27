@@ -44,18 +44,14 @@ local chooserTable = {
   {["id"] = 5, ["text"] = "Outline.com", subText="sends current url to outline.com"}
 }
 
+-- create new private browsing window
 privateBrowsing = [[
 tell application "Safari"
   activate
-  tell application "Safari"
-    set currentURL to URL of front document
-  end tell
-	delay 0.1
 	tell application "System Events"
 		keystroke "n" using {command down, shift down}
 	end tell
 	delay 0.1
-	tell application "Safari" to set the URL of the front document to currentURL
 end tell
 ]]
 
@@ -83,14 +79,24 @@ end
 
 function obj.createWindow(originalURL, newURL)
   hs.osascript.applescript("tell application \"Safari\" to make new document with properties {URL:" .. '"'..originalURL..'"' .. "}")
-  hs.osascript.applescript("tell window 1 of application \"Safari\" to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
+  hs.osascript.applescript("tell window 1 of application \"Safari\" to set current tab to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
 end
 
 function obj:setURL(newURL)
   hs.osascript.applescript("tell application \"Safari\" to set the URL of the front document to \"" .. newURL .."\"")
 end
 
-function obj.concatURL(baseURL)
+function obj:getURL()
+  local ok, currentURL, err = hs.osascript._osascript(getURL, "AppleScript")
+  if (ok) then
+    return hs.http.encodeForQuery(currentURL)
+  else
+    hs.alert("Error Busting Paywall!")
+    return nil
+  end
+end
+
+function obj:concatURL(baseURL)
   local ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
   if (ok) then
     return baseURL .. hs.http.encodeForQuery(currentURL)
@@ -99,16 +105,20 @@ function obj.concatURL(baseURL)
   end
 end
 
-function obj.busterChooserCallback(input)
+function obj:busterChooserCallback(input)
   -- if not inputz then focusLastFocused(); return end
-  if input.id == 1 then
+  print_r(input)
+  if input['id'] == 1 then
+    -- seems to have fixed the binding problem?
+    local frontmostURL = obj:getURL()
     hs.osascript.applescript(privateBrowsing)
-  elseif input.id == 2 then
-    ok, originalURL = hs.osascript._osascript(getURL, "AppleScript")
-    newURL = obj.concatURL(input.baseURL)
+    obj:setURL(frontmostURL)
+  elseif input['id'] == 2 then
+    originalURL = self:getURL()
+    newURL = self:concatURL(input['baseURL'])
     hs.application.launchOrFocus("Safari")
-    obj.createWindow(originalURL, newURL)
-  elseif input.id == 3 then
+    self.createWindow(originalURL, newURL)
+  elseif input['id'] == 3 then
     hs.osascript.applescript(privateBrowsing)
   end
 end
@@ -125,7 +135,10 @@ end
 ---  * The PaywallBuster object
 function obj:init()
   print("-- Starting PaywallBuster")
-  self.chooser = hs.chooser.new(self.busterChooserCallback)
+  self.chooser = hs.chooser.new(function(choice)
+    self:busterChooserCallback(choice)
+  end)
+  -- self.chooser = hs.chooser.new(self.busterChooserCallback)
   self.chooser:choices(chooserTable)
   self.chooser:rows(#chooserTable)
   -- self.chooser:rows(0)

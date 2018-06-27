@@ -74,18 +74,17 @@ function check_burnrate()
   local burnrateRounded = round(burnrateActual, 1)
   if hs.battery.isCharging() then
     setBurnrateText("⚡︎", green)
+  elseif designCap / cur_amh > 15 then
+    setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)
   elseif designCap / cur_amh > 10 then
-    setBurnrateText("⚡︎: " .. burnrateRounded, red)
-  elseif designCap / cur_amh > 7 then
     setBurnrateText("⚡︎: " .. burnrateRounded, green)
-    -- setBurnrateText("BR: Low / " .. burnrateRounded)
+  elseif designCap / cur_amh > 6 then
+    setBurnrateText("⚡︎: " .. burnrateRounded, green)
   elseif designCap / cur_amh > 4 then
-    -- setBurnrateIcon()
+    -- notify("High Power Usage")
     setBurnrateText("⚡︎: ".. burnrateRounded, orange)
-    -- setBurnrateText("BR: Med / " .. burnrateRounded)
   else
     setBurnrateText("⚡︎: " .. burnrateRounded, red)
-    -- setBurnrateText("BR: Hi / " .. burnrateRounded)
   end
 end
 
@@ -95,14 +94,11 @@ hs.battery.watcher.new(check_burnrate):start()
 local burnrateMenu = hs.menubar.new()
 
 function setBurnrateIcon(rate)
-  -- burnrateMenu:setIcon("test.pdf")
   burnrateMenu:setTitle(tostring("|"))
-  -- burnrateMenu:setIcon(rate)
 end
 
 function setBurnrateText(amperage, color)
   local title = hs.styledtext.new(tostring(amperage), color)
-  -- burnrateMenu:setIcon("1.pdf")
   burnrateMenu:setTitle(title)
 end
 
