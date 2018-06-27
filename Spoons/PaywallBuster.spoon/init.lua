@@ -36,6 +36,9 @@ function obj:bindHotkeys(mapping)
    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
+-- Private Browsing mode is special / doesnt require baseURL
+-- for the other entries, you specify their name, subtext, and then the baseURL of the 
+-- URL we wish to call
 local chooserTable = {
   {["id"] = 1, ["text"] = "Private Browsing", subText="Opens current url in private browsing mode"},
   {["id"] = 2, ["text"] = "Facebook Outlinking", subText="Passes URL to Facebook handler for outgoing requests", ["baseURL"] = "https://www.facebook.com/flx/warn/?u="},
@@ -60,15 +63,6 @@ tell application "Safari"
   set currentURL to URL of front document
 end tell
 return currentURL
-]]
-
-setURL = [[
-tell application "Safari"
-	make new document at end of documents with properties {URL:"http://www.macosxhints.com"}
-	tell window 1
-		set current tab to (make new tab with properties {URL:"http://www.stackoverflow.com"})
-	end tell
-end tell
 ]]
 
 local function focusLastFocused()
@@ -96,30 +90,43 @@ function obj:getURL()
   end
 end
 
-function obj:concatURL(baseURL)
-  local ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
-  if (ok) then
-    return baseURL .. hs.http.encodeForQuery(currentURL)
+function obj:bust(baseURL)
+  local currentURL = obj:getURL()
+  if (currentURL) then
+    local newURL = baseURL .. hs.http.encodeForQuery(currentURL)
+    hs.application.launchOrFocus("Safari")
+    self.createWindow(currentURL, newURL)
   else 
     hs.alert("Error busting paywall!")
   end
+  -- local ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
+  -- if (ok) then
+
+  --   return baseURL .. hs.http.encodeForQuery(currentURL)
+  -- else 
+  --   hs.alert("Error busting paywall!")
+  -- end
 end
 
 function obj:busterChooserCallback(input)
   -- if not inputz then focusLastFocused(); return end
   print_r(input)
   if input['id'] == 1 then
-    -- seems to have fixed the binding problem?
+    -- seems to have fixed the binding problem [FIXED?]
     local frontmostURL = obj:getURL()
     hs.osascript.applescript(privateBrowsing)
     obj:setURL(frontmostURL)
   elseif input['id'] == 2 then
-    originalURL = self:getURL()
-    newURL = self:concatURL(input['baseURL'])
-    hs.application.launchOrFocus("Safari")
-    self.createWindow(originalURL, newURL)
+    obj:bust(input['baseURL'])
+    -- definitely need to make the below a function...
+    -- originalURL = self:getURL()
+    -- newURL = self:concatURL(input['baseURL'])
+    -- hs.application.launchOrFocus("Safari")
+    -- self.createWindow(originalURL, newURL)
   elseif input['id'] == 3 then
     hs.osascript.applescript(privateBrowsing)
+
+
   end
 end
 
