@@ -103,7 +103,6 @@ function setBurnrateText(amperage, color)
 end
 
 function mod.init()
-
   if hostname ~= "iMac" then
     logger.i('Enablng burnrate plugin on laptop')
     check_burnrate()

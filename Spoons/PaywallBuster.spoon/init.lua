@@ -1,6 +1,6 @@
 --- TODO:
 --- [ ] add bindhoykeys method
-
+-- ideas: https://github.com/Hammerspoon/hammerspoon/issues/782
 local obj = {}
 obj.__index = obj
 
@@ -19,7 +19,6 @@ obj.hotkeyShow = nil
 -- hs.application.frontmostApplication()
 -- if not hs.application.frontmostApplication():name() == "Safari" then
 -- end
-
 local function script_path()
   local str = debug.getinfo(2, "S").source:sub(2)
   return str:match("(.*/)")
@@ -42,9 +41,9 @@ end
 local chooserTable = {
   {["id"] = 1, ["text"] = "Private Browsing", subText="Opens current url in private browsing mode"},
   {["id"] = 2, ["text"] = "Facebook Outlinking", subText="Passes URL to Facebook handler for outgoing requests", ["baseURL"] = "https://www.facebook.com/flx/warn/?u="},
-  {["id"] = 3, ["text"] = "Google as Referrer", subText="Reloads URL with Google as referrer"},
-  {["id"] = 4, ["text"] = "WBM / Cache", subText="Attempts to find URL on wayback machine"},
-  {["id"] = 5, ["text"] = "Outline.com", subText="sends current url to outline.com"}
+  {["id"] = 3, ["text"] = "Google as Referrer", subText="Reloads URL with Google as referrer", ["baseURL"] = "http://webcache.googleusercontent.com/search?q=cache:"},
+  {["id"] = 4, ["text"] = "WBM / Cache", subText="Attempts to find URL on wayback machine", ["baseURL"] = "https://web.archive.org/web/"},
+  {["id"] = 5, ["text"] = "Outline.com", subText="sends current url to outline.com", ["baseURL"] = "https://outline.com/"}
 }
 
 -- create new private browsing window
@@ -76,6 +75,15 @@ function obj.createWindow(originalURL, newURL)
   hs.osascript.applescript("tell window 1 of application \"Safari\" to set current tab to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
 end
 
+-- User can pass in custom URL rather than safari attempting to process the frontmost tab
+-- once user pastes URL in chooser modal, they only have one option, which will call 
+-- this method :D
+function obj:createCustom(URL)
+  print_r(URL)
+  local newURL = "https://outline.com/" .. hs.http.encodeForQuery(URL)
+  hs.osascript.applescript("tell window 0 of application \"Safari\" to set current tab to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
+end
+
 function obj:setURL(newURL)
   hs.osascript.applescript("tell application \"Safari\" to set the URL of the front document to \"" .. newURL .."\"")
 end
@@ -83,7 +91,7 @@ end
 function obj:getURL()
   local ok, currentURL, err = hs.osascript._osascript(getURL, "AppleScript")
   if (ok) then
-    return hs.http.encodeForQuery(currentURL)
+    return currentURL--hs.http.encodeForQuery(currentURL)
   else
     hs.alert("Error Busting Paywall!")
     return nil
@@ -99,34 +107,32 @@ function obj:bust(baseURL)
   else 
     hs.alert("Error busting paywall!")
   end
-  -- local ok, currentURL = hs.osascript._osascript(getURL, "AppleScript")
-  -- if (ok) then
-
-  --   return baseURL .. hs.http.encodeForQuery(currentURL)
-  -- else 
-  --   hs.alert("Error busting paywall!")
-  -- end
 end
 
-function obj:busterChooserCallback(input)
-  -- if not inputz then focusLastFocused(); return end
-  print_r(input)
-  if input['id'] == 1 then
+function obj:busterChooserCallback(choice)
+  -- if not (choice) then
+  --   self.chooser:cancel()
+  --   print(self.chooser:query())
+  -- --   -- hs.alert("No choice made")
+  --   return
+  -- end
+  -- if not choicez then focusLastFocused(); return end
+  if choice['id'] == 1 then
     -- seems to have fixed the binding problem [FIXED?]
     local frontmostURL = obj:getURL()
     hs.osascript.applescript(privateBrowsing)
     obj:setURL(frontmostURL)
-  elseif input['id'] == 2 then
-    obj:bust(input['baseURL'])
-    -- definitely need to make the below a function...
-    -- originalURL = self:getURL()
-    -- newURL = self:concatURL(input['baseURL'])
-    -- hs.application.launchOrFocus("Safari")
-    -- self.createWindow(originalURL, newURL)
-  elseif input['id'] == 3 then
-    hs.osascript.applescript(privateBrowsing)
-
-
+  elseif choice['id'] == 2 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 3 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 4 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 5 then
+    obj:bust(choice['baseURL'])
+  else
+    local URL = self.chooser:query()
+    obj:createCustom(URL)
   end
 end
 
@@ -142,13 +148,33 @@ end
 ---  * The PaywallBuster object
 function obj:init()
   print("-- Starting PaywallBuster")
-  self.chooser = hs.chooser.new(function(choice)
-    self:busterChooserCallback(choice)
-  end)
-  -- self.chooser = hs.chooser.new(self.busterChooserCallback)
+  self.chooser = hs.chooser.new(
+    function(choice)
+    if not (choice) then
+      print(self.chooser:query())
+      self.chooser:hide()
+    else
+      self:busterChooserCallback(choice)
+    
+    --   hs.alert("No choice made?")
+    --   return
+
+    end
+    end)
+    
   self.chooser:choices(chooserTable)
   self.chooser:rows(#chooserTable)
-  -- self.chooser:rows(0)
+    
+  self.chooser:queryChangedCallback(function(query)
+    if query == '' then
+      self.chooser:choices(chooserTable)
+    else
+      local choices = {
+        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom url to open with default method"},
+      }
+      self.chooser:choices(choices)
+    end
+  end)
   self.chooser:width(20)
   self.chooser:bgDark(false)
 
