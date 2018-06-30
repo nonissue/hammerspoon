@@ -39,6 +39,9 @@ hs.loadSpoon("SafariKeys")
 hs.loadSpoon("Countdown")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
+hs.loadSpoon("zzz")
+
+spoon.zzz:init()
 
 -- Conditional to multiple montior set up.
 -- Contexts in which computer can be used:
