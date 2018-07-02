@@ -27,6 +27,8 @@ obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.chooser = nil
+obj.timerDisplay = nil
+obj.timerEvent = nil
 obj.hotkeyShow = nil
 
 local function script_path()
@@ -44,14 +46,8 @@ function obj:bindHotkeys(mapping)
 
         hs.spoons.bindHotkeysToSpec(def, mapping)
 end
-  
 
--- mod = {}
--- SleepTimer.__index = Action
-local sleepTimerMenu = hs.menubar.new()
-sleepTimerMenu:setTitle("☾")
-
-function obj:SecondsToClock(seconds)
+function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(seconds)
 
@@ -61,22 +57,31 @@ function obj:SecondsToClock(seconds)
         hs.alert("Timer must be lower than an hour")
         return "error"
     else
-        hours = string.format("%02.f", math.floor(seconds/3600));
-        mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
-        secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+        hours = string.format("%02.f", math.floor(seconds / 3600));
+        mins = string.format("%02.f", math.floor(seconds / 60 - (hours*60)));
+        secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins *60));
         return "☾ " .. mins..":"..secs
     end
+end
+
+function obj:secondsLeft()
+    local seconds = self:formatSeconds(
+        self.timerEvent:nextTrigger()
+    )
+    return seconds
 end
 
 -- change this to chooser with custom time setting
 -- which can be copied from paywall buster
 function obj:init()
+    local sleepTimerMenu = hs.menubar.new()
+    sleepTimerMenu:setTitle("☾")
     s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
     s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
 
     function displaySleepOptions()
-        if newCountdown then
-            hs.alert("Countdown already started with: " .. newCountdown:nextTrigger() .. "s left", 5)
+        if self.timerEvent then
+            hs.alert("Countdown already started with: " .. obj:secondsLeft() .. " left", 5)
             hs.alert("Would you like to cancel the timer? (y/n)")
         else
             hs.alert("Choose your sleep time: ", 99)
@@ -103,21 +108,20 @@ function obj:ProcessKey(i)
     -- refactor later (too lazy now ¯\_(ツ)_/¯)
     if i == 'y' then
         hs.alert('stopping countdown')
-        SleepTimer_active = false
-        -- Stops the timer so we don't have a run away
-        newCountdown:stop()
-        obj:delete()
-        -- removes references to object as even though it is stopped it still exists
-        newCountdown = nil
+        self.timerDisplay:stop()
+        self.timerEvent:stop()
+        sleepTimerMenu:setTitle("☾")
+        self.timerEvent = nil
+        self.timerDisplay = nil
         s:exit()
     elseif i == 'n' then
         s:exit()
     elseif i == "0" then
         -- top secret janky dev stuff
         countdown = 10
-        sleepTimerMenu:setTitle(obj:SecondsToClock(countdown))
+        sleepTimerMenu:setTitle(obj:formatSeconds(countdown))
         print("Secret dev stuff!" .. countdown)
-        newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
+        self.timerEvent = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
         s:exit()
     else
         -- GODDAMN ABSTRACT THIS OUTTA THIS HUGE FUNCTION
@@ -130,17 +134,19 @@ function obj:ProcessKey(i)
         -- Also need to handle when a computer does go to sleep
         -- should delete existing timer? could also write some kind of 
         -- watcher to check for previous timer when computer wakes up from sleep
-        SleepTimer_active = true
 
         countdown = tonumber(i) * 5 * 60
-        newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
-        counterDisplay = hs.timer.doEvery(1, 
+        self.timerEvent = hs.timer.doAfter(
+            countdown, 
+            function() 
+                hs.caffeinate.systemSleep() 
+            end)
+        self.timerDisplay = hs.timer.doEvery(
+            1, 
             function()
-                -- hs.alert("countdown: " .. countdown, 1)
                 countdown = countdown - 1
-                sleepTimerMenu:setTitle(obj:SecondsToClock(countdown))
-            end
-         )       
+                sleepTimerMenu:setTitle(obj:formatSeconds(countdown))
+            end)       
 
         s:exit()
     end
