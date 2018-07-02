@@ -39,9 +39,11 @@ hs.loadSpoon("SafariKeys")
 hs.loadSpoon("Countdown")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
+hs.loadSpoon("Resolute")
 hs.loadSpoon("zzz")
 
 spoon.zzz:init()
+spoon.Resolute:init()
 
 -- Conditional to multiple montior set up.
 -- Contexts in which computer can be used:
@@ -86,6 +88,10 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys)
 -- local paywallBusterKey = {
 --   showPaywallBuster = {mash, "B"}
 -- }
+
+hs.hotkey.bind(mash, "J", function()
+  spoon.Resolute:show()
+end)
 
 hs.hotkey.bind(mash, "B", function()
   spoon.PaywallBuster:show()

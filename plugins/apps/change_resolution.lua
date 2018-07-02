@@ -16,6 +16,12 @@
 ------------------------------------------------------------------------------
 local mod = {}
 
+local obj = {} -- obj
+obj.__index = obj
+
+-- acerChooser.chooser = nil
+obj.acerChooser = nil
+
 -- possible resolutions for 15 MBPr
 local laptopResolutions = {
   {w = 1440, h = 900, s = 2},
@@ -33,7 +39,7 @@ local desktopResolutions = {
   {w = 2560, h = 1440, s = 2}
 }
 
-local acer4k = {
+local acer4kres = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
   {w = 1920, h = 1080, s = 2},
@@ -67,10 +73,97 @@ local dropdownOptions = {}
 
 local displayCount = #hs.screen.allScreens()
 
+---------------------------------------------------------------------------
+-- some dumb late night refactoring below
+---------------------------------------------------------------------------
+
+function obj:acerCallback(choice)
+  if choice['id'] == 1 then
+    -- seems to have fixed the binding problem [FIXED?]
+    local frontmostURL = obj:getURL()
+    hs.osascript.applescript(privateBrowsing)
+    obj:setURL(frontmostURL)
+  elseif choice['id'] == 2 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 3 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 4 then
+    obj:bust(choice['baseURL'])
+  elseif choice['id'] == 5 then
+    obj:bust(choice['baseURL'])
+  else
+    local URL = self.chooser:query()
+    obj:createCustom(URL)
+  end
+end
+
+function obj:init()
+
+  self.acerChooser = hs.chooser.new(
+    function(choice)
+      if not (choice) then
+        print(self.acerChooser:query())
+        self.acerChooser:hide()
+      else
+        self.acerChooser:acerCallback(choice)
+      end
+  end)
+
+  self.acerChooser:choices(acer4kres)
+  self.acerChooser:rows(#acer4kres)
+
+  self.acerChooser:queryChangedCallback(function(query)
+    if query == '' then
+      self.acerChooser:choices(acer4kres)
+    else
+      local choices = {
+        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution that basically won't work"},
+      }
+      self.acerChooser:choices(choices)
+    end
+  end)
+
+  self.acerChooser:width(20)
+  self.acerChooser:bgDark(false)
+
+  return self
+end
+
+function obj:show()
+  self.acerChooser:show()
+  return self
+end
+
+function obj:start()
+  print("-- Starting acerChooser")
+  return self
+end
+
+function obj:stop()
+  print("-- Stopping PaywallBuster")
+  self.acerChooser:hide()
+  if self.hotkeyShow then
+      self.hotkeyShow:disable()
+  end
+  return self
+end
+
+-- hs.hotkey.bind(mash, "i", function()
+--   obj:start()
+--   obj:show()
+--   print("Show?")
+-- end)
+
+
+---------------------------------------------------------------------------
+-- some dumb late night refactoring above
+---------------------------------------------------------------------------
+
 function screenWarden()
   if hs.screen.find("acer") then
-    hs.screen.find("acer"):setMode(1920, 1080, 2)
-    hs.alert("Acer Res Set", alerts_medium, 5)
+    -- hs.screen.find("acer"):setMode(1920, 1080, 2)
+
+    -- hs.alert("Acer Res Set", alerts_medium, 5)
   elseif hs.screen.find(69489838) then
     hs.screen.find(69489838):setMode(2560, 1600, 1)
     hs.alert("Cinema Res Set", alerts_medium, 5)
@@ -254,4 +347,4 @@ function mod.init()
     setResolutionDisplay(resIcons[2])
 end
 
-return mod
+return mod, obj

@@ -9,6 +9,7 @@
 
 -- countdowns should persist between hammerspoon loads, it's annoying to klose them. 
 -- also find a better way to display the countdown timer, I think menubar isnt best
+-- decrease volume over time ?s
 
 -- Basically:
 -- cmd + ctrl + opt + s brings up alert modals
@@ -38,11 +39,11 @@ obj.spoonPath = script_path()
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
     local def = {
-      showPaywallBuster = hs.fnutils.partial(self:show(), self),
-     }
-  
-     hs.spoons.bindHotkeysToSpec(def, mapping)
-  end
+        showPaywallBuster = hs.fnutils.partial(self:show(), self),
+        }
+
+        hs.spoons.bindHotkeysToSpec(def, mapping)
+end
   
 
 -- mod = {}
@@ -55,7 +56,7 @@ function obj:SecondsToClock(seconds)
     local seconds = tonumber(seconds)
 
     if seconds <= 0 then
-        return "00:00:00";
+        return "☾"
     elseif seconds > 3600 then
         hs.alert("Timer must be lower than an hour")
         return "error"
@@ -67,6 +68,8 @@ function obj:SecondsToClock(seconds)
     end
 end
 
+-- change this to chooser with custom time setting
+-- which can be copied from paywall buster
 function obj:init()
     s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
     s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
@@ -111,11 +114,13 @@ function obj:ProcessKey(i)
         s:exit()
     elseif i == "0" then
         -- top secret janky dev stuff
-        countdown = 5
+        countdown = 10
+        sleepTimerMenu:setTitle(obj:SecondsToClock(countdown))
         print("Secret dev stuff!" .. countdown)
         newCountdown = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
         s:exit()
     else
+        -- GODDAMN ABSTRACT THIS OUTTA THIS HUGE FUNCTION
         -- take passsed parameter, multiply by 5 * 60 to get number of seconds
 
         -- COULD technically use the same timer for both functions
