@@ -18,16 +18,9 @@
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "desc" : "UNKNOWN DESC",
+    "type" : "Module",
     "Constructor" : [
-
-    ],
-    "doc" : "",
-    "Method" : [
-
-    ],
-    "Command" : [
 
     ],
     "Field" : [
@@ -36,6 +29,13 @@
     "items" : [
 
     ],
+    "Command" : [
+
+    ],
+    "Method" : [
+
+    ],
+    "doc" : "",
     "name" : "Zzz"
   }
 ]

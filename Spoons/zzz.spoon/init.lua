@@ -2,6 +2,8 @@
 ---
 -- Sleep timer for macs
 
+-- [x] stop timer may not be working [ fixed 18-07-03 ]
+
 local obj = {}
 obj.__index = obj
 
@@ -159,10 +161,14 @@ end
 function obj:timerChooserCallback(choice)
     -- switch on action
     if choice['action'] == 'stop' then
-        if not self.timerEvent == nil then
+        -- if not self.timerEvent == nil then
+        if self.timerEvent then
             self:deleteTimer()
+            -- return
         else
+            print(choice['action'])
             hs.alert("No timer to stop")
+            -- return
         end
     elseif choice['m'] == nil then
         -- should do a check to see if customCountdown is a number
