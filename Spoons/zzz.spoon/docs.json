@@ -15,27 +15,27 @@
     "stripped_doc" : [
 
     ],
-    "type" : "Module",
     "Deprecated" : [
 
     ],
-    "desc" : "Plugin for initializing system and hammerspoon settings based on location, computer and whether or not computer is docked",
+    "type" : "Module",
+    "desc" : "UNKNOWN DESC",
     "Constructor" : [
 
     ],
-    "Field" : [
-
-    ],
+    "doc" : "",
     "Method" : [
 
     ],
     "Command" : [
 
     ],
-    "doc" : "",
+    "Field" : [
+
+    ],
     "items" : [
 
     ],
-    "name" : "SysInfo"
+    "name" : "Zzz"
   }
 ]

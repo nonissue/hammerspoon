@@ -19,7 +19,7 @@
     "Deprecated" : [
 
     ],
-    "desc" : "Plugin for initializing system and hammerspoon settings based on location, computer and whether or not computer is docked",
+    "desc" : "Multiple-monitor-aware resolution changing modal",
     "Constructor" : [
 
     ],
@@ -36,6 +36,6 @@
     "items" : [
 
     ],
-    "name" : "SysInfo"
+    "name" : "Resolute"
   }
 ]

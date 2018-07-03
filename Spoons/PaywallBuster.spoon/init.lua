@@ -1,6 +1,7 @@
---- TODO:
---- [ ] add bindhoykeys method
--- ideas: https://github.com/Hammerspoon/hammerspoon/issues/782
+--- === PaywallBuster ===
+---
+-- PaywallBuster
+
 local obj = {}
 obj.__index = obj
 
@@ -14,11 +15,6 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.chooser = nil
 obj.hotkeyShow = nil
 
--- check if safari is in foreground
--- hs.application.launchOrFocus("Safari")
--- hs.application.frontmostApplication()
--- if not hs.application.frontmostApplication():name() == "Safari" then
--- end
 local function script_path()
   local str = debug.getinfo(2, "S").source:sub(2)
   return str:match("(.*/)")
@@ -79,7 +75,7 @@ end
 -- once user pastes URL in chooser modal, they only have one option, which will call 
 -- this method :D
 function obj:createCustom(URL)
-  print_r(URL)
+  -- print_r(URL)
   local newURL = "https://outline.com/" .. hs.http.encodeForQuery(URL)
   hs.osascript.applescript("tell window 0 of application \"Safari\" to set current tab to (make new tab with properties {URL:" .. '"'..newURL..'"' .. "})")
 end
@@ -110,12 +106,6 @@ function obj:bust(baseURL)
 end
 
 function obj:busterChooserCallback(choice)
-  -- if not (choice) then
-  --   self.chooser:cancel()
-  --   print(self.chooser:query())
-  -- --   -- hs.alert("No choice made")
-  --   return
-  -- end
   -- if not choicez then focusLastFocused(); return end
   if choice['id'] == 1 then
     -- seems to have fixed the binding problem [FIXED?]
@@ -150,17 +140,18 @@ function obj:init()
   print("-- Starting PaywallBuster")
   self.chooser = hs.chooser.new(
     function(choice)
-    if not (choice) then
-      print(self.chooser:query())
-      self.chooser:hide()
-    else
-      self:busterChooserCallback(choice)
-    
-    --   hs.alert("No choice made?")
-    --   return
+      if not (choice) then
+        print(self.chooser:query())
+        self.chooser:hide()
+      else
+        self:busterChooserCallback(choice)
+      
+      --   hs.alert("No choice made?")
+      --   return
 
+      end
     end
-    end)
+  )
     
   self.chooser:choices(chooserTable)
   self.chooser:rows(#chooserTable)
@@ -213,6 +204,3 @@ function obj:stop()
 end
   
 return obj
-------------------------------------------------------------------------------
--- End of safari stuff
-------------------------------------------------------------------------------
