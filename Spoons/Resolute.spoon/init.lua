@@ -1,9 +1,4 @@
 
-
-
---- TODO:
---- [ ] add bindhoykeys method
--- ideas: https://github.com/Hammerspoon/hammerspoon/issues/782
 local obj = {}
 obj.__index = obj
 

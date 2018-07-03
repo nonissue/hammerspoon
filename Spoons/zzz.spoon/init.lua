@@ -20,7 +20,7 @@
 local obj = {}
 obj.__index = obj
 
-obj.name = "zzz"
+obj.name = "Zzz"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
@@ -38,10 +38,31 @@ end
   
 obj.spoonPath = script_path()
 
+-- moving this into init causes duplicates in menubar
+-- during dev when we are constantly reloading
+local sleepTimerMenu = hs.menubar.new()
+sleepTimerMenu:setTitle("☾")
+
+-- Interval between sleep times
+-- 15, 25, 45, custom, add five, remove five
+local sleepInterval = 15
+local presetCount = 3
+local sleepTimes = {1, 2, 3}
+local sleepTable = {}
+
+for i = 1, presetCount do
+    -- inserts resolutions width in to choicesXZLhd table so we can iterate through them easily later
+    table.insert(sleepTable, {
+        ["id"] = i,
+        ["m"] = i * sleepInterval,
+        ["text"] = i * sleepInterval .. " minutes"
+    })
+end
+
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
     local def = {
-        showPaywallBuster = hs.fnutils.partial(self:show(), self),
+        showTimerMenu = hs.fnutils.partial(self:show(), self),
         }
 
         hs.spoons.bindHotkeysToSpec(def, mapping)
@@ -64,24 +85,105 @@ function obj:formatSeconds(seconds)
     end
 end
 
-function obj:secondsLeft()
-    local seconds = self:formatSeconds(
-        self.timerEvent:nextTrigger()
+-- simple method to get time remaining 
+-- in easily readable form
+function obj:timeRemaining()
+    if self.timerEvent == nil then
+        return "Error: No timer event found to print"
+    else 
+        local seconds = self:formatSeconds(
+            self.timerEvent:nextTrigger()
+        )
+        return seconds
+        
+    end
+end
+
+-- hs.timer interval is in seconds
+function obj:newTimer(timerInMins)
+    -- print("newtimer: " .. minutes)
+    interval = tonumber(timerInMins) * 60
+    self.timerEvent = hs.timer.doAfter(
+        interval, 
+        function() 
+            hs.caffeinate.systemSleep() 
+        end
     )
-    return seconds
+    self.timerDisplay = hs.timer.doEvery(
+        1, 
+        function()
+            interval = interval - 1
+            sleepTimerMenu:setTitle(obj:formatSeconds(interval))
+        end
+    )
+end
+
+
+function obj:timerChooserCallback(choice)
+
+    if choice['m'] == nil then
+        -- should do a check to see if customCountdown is a number
+        local customCountdown = tonumber(self.chooser:query())
+        if customCountdown < 200 and customCountdown > 0 then
+            self:newTimer(customCountdown)
+        else 
+            hs.alert("Specified value is too big or too small or nonsensical")
+        end
+    else
+        local mins = tonumber(choice['m'])
+        if choice['id'] > 0 and choice['id'] < 5 then
+            print("timerChooserCallback mins: " .. mins)
+            self:newTimer(mins)
+        else
+            hs.alert("Invalid option, error", 3)
+        end
+    end
+end
+
+function obj:init()
+    self.chooser = hs.chooser.new(
+        function(choice)
+            if not (choice) then
+                print(self.chooser:query())
+            else
+                self:timerChooserCallback(choice)
+            end
+        end
+    )
+
+    self.chooser:choices(sleepTable)
+    self.chooser:rows(#sleepTable)
+
+    self.chooser:queryChangedCallback(
+        function(query)
+            if query == '' then
+                self.chooser:choices(sleepTable)
+            else
+                local choices = {
+                {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
+                }
+                self.chooser:choices(choices)
+            end
+        end
+    )
+
+    self.chooser:width(15)
+    self.chooser:bgDark(false)
+
+    return self
 end
 
 -- change this to chooser with custom time setting
--- which can be copied from paywall buster
-function obj:init()
-    local sleepTimerMenu = hs.menubar.new()
-    sleepTimerMenu:setTitle("☾")
+function obj:initOld()
+
+
+  
     s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
     s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
 
     function displaySleepOptions()
         if self.timerEvent then
-            hs.alert("Countdown already started with: " .. obj:secondsLeft() .. " left", 5)
+            hs.alert("Countdown already started with: " .. obj:timeRemaining() .. " left", 5)
             hs.alert("Would you like to cancel the timer? (y/n)")
         else
             hs.alert("Choose your sleep time: ", 99)
@@ -90,51 +192,31 @@ function obj:init()
     end
 
     for i = 1,5 do
-        s:bind({}, tostring(i), function() obj:ProcessKey(i) end)
+        s:bind({}, tostring(i), function() obj:processKey(i) end)
     end
 
-    s:bind({}, "y", function() obj:ProcessKey("y") end)
-    s:bind({}, "n", function() obj:ProcessKey("n") end)
+    s:bind({}, "y", function() obj:processKey("y") end)
+    s:bind({}, "n", function() obj:processKey("n") end)
 
     -- top secret janky dev
-    s:bind({}, "0", function() obj:ProcessKey("0") end)
+    s:bind({}, "0", function() obj:processKey("0") end)
 
     function s:entered() displaySleepOptions() end
     function s:exited() hs.alert.closeAll() end
 end
 
-function obj:ProcessKey(i)
+function obj:processKey(i)
     -- does lua have switches? It's got to right....
     -- refactor later (too lazy now ¯\_(ツ)_/¯)
     if i == 'y' then
         hs.alert('stopping countdown')
-        self.timerDisplay:stop()
-        self.timerEvent:stop()
-        sleepTimerMenu:setTitle("☾")
-        self.timerEvent = nil
-        self.timerDisplay = nil
+        self:deleteTimer()
         s:exit()
     elseif i == 'n' then
-        s:exit()
-    elseif i == "0" then
-        -- top secret janky dev stuff
-        countdown = 10
-        sleepTimerMenu:setTitle(obj:formatSeconds(countdown))
-        print("Secret dev stuff!" .. countdown)
-        self.timerEvent = hs.timer.doAfter(countdown, function() hs.caffeinate.systemSleep() end)
         s:exit()
     else
         -- GODDAMN ABSTRACT THIS OUTTA THIS HUGE FUNCTION
         -- take passsed parameter, multiply by 5 * 60 to get number of seconds
-
-        -- COULD technically use the same timer for both functions
-        -- just add an if branch to counterDisplay, and if countdown = 0, 
-        -- put computer to sleep
-
-        -- Also need to handle when a computer does go to sleep
-        -- should delete existing timer? could also write some kind of 
-        -- watcher to check for previous timer when computer wakes up from sleep
-
         countdown = tonumber(i) * 5 * 60
         self.timerEvent = hs.timer.doAfter(
             countdown, 
@@ -150,6 +232,33 @@ function obj:ProcessKey(i)
 
         s:exit()
     end
+end
+
+function obj:deleteTimer()
+    self.timerDisplay:stop()
+    self.timerEvent:stop()
+    sleepTimerMenu:setTitle("☾")
+    self.timerEvent = nil
+    self.timerDisplay = nil
+end
+
+function obj:show()
+    self.chooser:show()
+    return self
+end
+
+function obj:start()
+    print("-- Starting Zzz")
+    return self
+end
+
+function obj:stop()
+    print("-- Stopping Zzz")
+    self.chooser:hide()
+    if self.hotkeyShow then
+        self.hotkeyShow:disable()
+    end
+    return self
 end
 
 return obj

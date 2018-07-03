@@ -19,7 +19,7 @@
     "Deprecated" : [
 
     ],
-    "desc" : "A circleclock inset into the desktop",
+    "desc" : "Plugin for initializing system and hammerspoon settings based on location, computer and whether or not computer is docked",
     "Constructor" : [
 
     ],
@@ -32,10 +32,10 @@
     "Command" : [
 
     ],
-    "doc" : "A circleclock inset into the desktop\n\nDownload: [https:\/\/github.com\/Hammerspoon\/Spoons\/raw\/master\/Spoons\/CircleClock.spoon.zip](https:\/\/github.com\/Hammerspoon\/Spoons\/raw\/master\/Spoons\/CircleClock.spoon.zip)",
+    "doc" : "",
     "items" : [
 
     ],
-    "name" : "CircleClock"
+    "name" : "SystemContexts"
   }
 ]

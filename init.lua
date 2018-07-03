@@ -33,17 +33,13 @@
 require('apw-lib')
 require('init-plugins')
 
--- hs.loadSpoon("AClock")
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
-hs.loadSpoon("Countdown")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Resolute")
-hs.loadSpoon("zzz")
+hs.loadSpoon("Zzz")
 
-spoon.zzz:init()
-spoon.Resolute:init()
 
 -- Conditional to multiple montior set up.
 -- Contexts in which computer can be used:
@@ -75,6 +71,27 @@ local alt =     {"alt"                }
 -- spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
 -- spoon.AudioSwitch:start()
 
+
+
+
+-- spoon.PaywallBuster:bindHotkeys(paywallBusterKey)
+
+
+
+apw_go({
+  "apps.utilities",
+  "apps.hammerspoon_config_reload",
+  "apps.hammerspoon_toggle_console",
+  "apps.change_resolution",
+  "battery.burnrate",
+  "sounds.sounds",
+  -- "apps.btc_menu",
+})
+
+
+spoon.Zzz:init()
+spoon.Resolute:init()
+
 local safariHotkeys =  {
 	tabToNewWin = {mash, "T"},
 	mailToSelf = {mash, "U"},
@@ -97,19 +114,9 @@ hs.hotkey.bind(mash, "B", function()
   spoon.PaywallBuster:show()
 end)
 
--- spoon.PaywallBuster:bindHotkeys(paywallBusterKey)
-
-
-
-apw_go({
-  "apps.utilities",
-  "apps.hammerspoon_config_reload",
-  "apps.hammerspoon_toggle_console",
-  "apps.change_resolution",
-  "battery.burnrate",
-  "sounds.sounds",
-  -- "apps.btc_menu",
-})
+hs.hotkey.bind(mash, "S", function()
+  spoon.Zzz:show()
+end)
 
 -- apw.change_resolution:menuInit();
 

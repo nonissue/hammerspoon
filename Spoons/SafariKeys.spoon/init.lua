@@ -1,5 +1,6 @@
---- TODO:
---- [ ] add bindhoykeys method
+--- === SafariKeys ===
+---
+-- SafariKeys
 
 local obj = {}
 obj.__index = obj
@@ -107,9 +108,7 @@ function obj:cycleUserAgent()
     hs.alert.show("UA: Default", alerts_nobg, 2)
   end
 end
-  
-  
-  
+
   ------------------------------------------------------------------------------
   -- mailToSelf
   ------------------------------------------------------------------------------
