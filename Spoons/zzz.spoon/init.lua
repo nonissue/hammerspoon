@@ -56,10 +56,36 @@ for i = 1, presetCount do
     -- inserts resolutions width in to choicesXZLhd table so we can iterate through them easily later
     table.insert(sleepTable, {
         ["id"] = i,
-        ["action"] = "create",
+        ["action"] = "start",
         ["m"] = i * sleepInterval,
         ["text"] = i * sleepInterval .. " minutes",
     })
+end
+
+-- literally a bad way to write a switch in lua
+function obj:garbageSwitch(case)
+
+    local switch = {
+        ["start"] = function()	-- for case 1
+            hs.alert("start")
+        end,
+        ["stop"] = function()	-- for case 2
+            hs.alert("stop")
+        end,
+        ["inc"] = function()	-- for case 3
+            hs.alert("inc")
+        end,
+        ["dec"] = function()	-- for case 3
+            hs.alert("dec")
+        end
+    }
+
+    local f = switch[case]
+    if(f) then
+        f()
+    else
+        hs.alert("fell through")
+    end
 end
 
 -- static chooser entries
@@ -72,24 +98,22 @@ local staticOptions = {
         ["text"] = "Stop current timer"
     },
     {
-        ["id"] = #sleepTable + 1, 
+        ["id"] = #sleepTable + 1, -- doesn't currently work
         ["action"] = "inc",
         ["m"] = 5,
-        ["text"] = "increments the current timer by 5 mins"
+        ["text"] = "+5 minutes"
     },
     {
-        ["id"] = #sleepTable + 1, 
+        ["id"] = #sleepTable + 1, -- doesn't currently work
         ["action"] = "dec",
         ["m"] = 5,
-        ["text"] = "decrements the current timer by 5 mins"
+        ["text"] = "-5 minutes"
     },
-
 }
 
 for i = 1, #staticOptions do
     table.insert(sleepTable, staticOptions[i])
 end
--- table.insert(sleepTable, staticOptions)
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -126,14 +150,13 @@ function obj:timeRemaining()
         local seconds = self:formatSeconds(
             self.timerEvent:nextTrigger()
         )
+
         return seconds
-        
     end
 end
 
 -- hs.timer interval is in seconds
 function obj:newTimer(timerInMins)
-    -- print("newtimer: " .. minutes)
     interval = tonumber(timerInMins) * 60
     self.timerEvent = hs.timer.doAfter(
         interval, 
@@ -152,11 +175,11 @@ end
 
 
 function obj:timerChooserCallback(choice)
+    -- switch on action
     if choice['action'] == 'stop' then
-        if not tonumber(self.timerEvent == 0) then
+        if not self.timerEvent == nil then
             self:deleteTimer()
         else
-            hs.alert("timer: " .. tonumber(self.timerEvent))
             hs.alert("No timer to stop")
         end
     elseif choice['m'] == nil then
@@ -170,7 +193,6 @@ function obj:timerChooserCallback(choice)
     else
         local mins = tonumber(choice['m'])
         if choice['id'] > 0 and choice['id'] < 5 then
-            print("timerChooserCallback mins: " .. mins)
             self:newTimer(mins)
         else
             hs.alert("Invalid option, error", 3)
@@ -205,43 +227,13 @@ function obj:init()
         end
     )
 
-    self.chooser:width(15)
-    self.chooser:bgDark(false)
+    self.chooser:width(20)
+    self.chooser:bgDark(true)
 
     return self
 end
 
 -- change this to chooser with custom time setting
-function obj:initOld()
-
-
-  
-    s = hs.hotkey.modal.new('cmd-alt-ctrl', 's')
-    s:bind('', 'escape', function() hs.alert.closeAll() s:exit() end)
-
-    function displaySleepOptions()
-        if self.timerEvent then
-            hs.alert("Countdown already started with: " .. obj:timeRemaining() .. " left", 5)
-            hs.alert("Would you like to cancel the timer? (y/n)")
-        else
-            hs.alert("Choose your sleep time: ", 99)
-            hs.alert("1: 5m / 2: 10m / 3: 15m / 4: 20m / 5: 25m / 6: 30m", 99)
-        end
-    end
-
-    for i = 1,5 do
-        s:bind({}, tostring(i), function() obj:processKey(i) end)
-    end
-
-    s:bind({}, "y", function() obj:processKey("y") end)
-    s:bind({}, "n", function() obj:processKey("n") end)
-
-    -- top secret janky dev
-    s:bind({}, "0", function() obj:processKey("0") end)
-
-    function s:entered() displaySleepOptions() end
-    function s:exited() hs.alert.closeAll() end
-end
 
 function obj:processKey(i)
     -- does lua have switches? It's got to right....
