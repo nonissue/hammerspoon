@@ -29,7 +29,6 @@
 -- WinWin
 -- OnLocation
 -- UsefulUtilites
-
 require('apw-lib')
 require('init-plugins')
 
@@ -39,6 +38,8 @@ hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Resolute")
 hs.loadSpoon("Zzz")
+
+-- hs.console.clearConsole()
 
 
 -- Conditional to multiple montior set up.
@@ -63,29 +64,14 @@ local mash =    {"cmd", "alt", "ctrl" }
 local hyper =   {"cmd", "alt"         }
 local alt =     {"alt"                }
 
--- hs.loadSpoon("MuteMic")
--- spoon.MuteMic:bindHotkeys({toggle={mash, "f"}})
--- spoon.MuteMic:start()
-
--- hs.loadSpoon("AudioSwitch")
--- spoon.AudioSwitch:bindHotkeys({toggle={mash, "a"}})
--- spoon.AudioSwitch:start()
-
-
-
-
--- spoon.PaywallBuster:bindHotkeys(paywallBusterKey)
-
-
-
 apw_go({
-  "apps.utilities",
-  "apps.hammerspoon_config_reload",
-  "apps.hammerspoon_toggle_console",
-  "apps.change_resolution",
-  "battery.burnrate",
-  "sounds.sounds",
-  -- "apps.btc_menu",
+    "apps.utilities",
+    "apps.hammerspoon_config_reload",
+    "apps.hammerspoon_toggle_console",
+    "apps.change_resolution",
+    "battery.burnrate",
+    "sounds.sounds",
+    -- "apps.btc_menu",
 })
 
 
@@ -93,29 +79,25 @@ spoon.Zzz:init()
 spoon.Resolute:init()
 
 local safariHotkeys =  {
-	tabToNewWin = {mash, "T"},
-	mailToSelf = {mash, "U"},
-	mergeAllWindows = {mash, "M"},
-	pinOrUnpinTab = {hyper, "P"},
-	cycleUserAgent = {mash, "7"},
+    tabToNewWin = {mash, "T"},
+    mailToSelf = {mash, "U"},
+    mergeAllWindows = {mash, "M"},
+    pinOrUnpinTab = {hyper, "P"},
+    cycleUserAgent = {mash, "7"},
 }
 
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
--- local paywallBusterKey = {
---   showPaywallBuster = {mash, "B"}
--- }
-
 hs.hotkey.bind(mash, "J", function()
-  spoon.Resolute:show()
+    spoon.Resolute:show()
 end)
 
 hs.hotkey.bind(mash, "B", function()
-  spoon.PaywallBuster:show()
+    spoon.PaywallBuster:show()
 end)
 
 hs.hotkey.bind(mash, "S", function()
-  spoon.Zzz:show()
+    spoon.Zzz:show()
 end)
 
 -- apw.change_resolution:menuInit();
@@ -129,58 +111,48 @@ hs.grid.GRIDHEIGHT      = 10
 -- disable animation 
 hs.window.animationDuration = 0
 
+----------------------------------------------------------
+-- WHY IS THIS HERE?
+----------------------------------------------------------
 -- Screen watcher stuff
 -- Seems buggy, affinity designer triggers screen change?
 local screens = #hs.screen.allScreens()
 
 local lastNumberOfScreens = #hs.screen.allScreens()
--- local screenWatcher = hs.screen.watcher.new(function()
--- 	newNumberOfScreens = #hs.screen.allScreens()
--- 	if newNumberOfScreens == 1 then
--- 		alerts_nobg("Screens changed to Internal Display")
---     elseif newNumberOfScreens == 2 then
---         alerts_nobg("Screens changed to Desk Display")
---     end
--- 	hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
--- end)
 
 function screenWatcher()
-
-	newNumberOfScreens = #hs.screen.allScreens()
-	if newNumberOfScreens == 1 then
-		-- alerts_nobg("Screens changed to Internal Display")
-		hs.alert.show("Screens: internal display", alerts_nobg, 1.5)
+    newNumberOfScreens = #hs.screen.allScreens()
+  
+    if newNumberOfScreens == 1 then
+        hs.alert.show("Screens: internal display", alerts_nobg, 1.5)
     elseif newNumberOfScreens == 2 then
         hs.alerts.show("Screens: +1", alerts_nobg, 1.5)
     end
-	hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
-
-	lastNumberOfScreens = newNumberOfScreens
+    
+    hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
+    lastNumberOfScreens = newNumberOfScreens
 end
-
--- hs.screen.watcher.new(screenWatcher):start()
--- hs.hotkey.bind(mash, 'S', screenWatcher)
--- screenWatcher:start()
-
--- hs.alert.show("Number of screens: " .. newNumberOfScreens, alerts_nobg, 1.5)
 
 local display_laptop = "Color LCD"
 
--- local lastNumberOfScreens = #hs.screen.allScreens()
 local current_screen_name = hs.screen.mainScreen():name()
 
 -- Handles desktop set up if I'm using one monitor or two
 if current_screen_name == display_desktop_main or lastNumberOfScreens == 2 then
-  spoon.SystemContexts:moveDockDown()
+    spoon.SystemContexts:moveDockDown()
 -- If I'm only using one monitor and it's laptop, then move that dock
 elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
-	spoon.SystemContexts:moveDockLeft()
+    spoon.SystemContexts:moveDockLeft()
 end
+
+----------------------------------------------------------
+-- /end of WHY IS THIS HERE?
+----------------------------------------------------------
 
 hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
 
 hs.hotkey.bind(hyper, "H", function()
-  hs.hints.windowHints()
+    hs.hints.windowHints()
 end)
 
 ------------------------------------------------------------------------------
@@ -192,67 +164,67 @@ end)
 ------------------------------------------------------------------------------
 -- Moves window to left half of screen
 hs.hotkey.bind(hyper, "left", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    f.x = max.x
+    f.y = max.y
+    f.w = max.w / 2
+    f.h = max.h
+    win:setFrame(f)
 end)
 
 -- Moves window/sets width to right half of screen
 hs.hotkey.bind(hyper, "right", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-  f.x = max.x + (max.w / 2)
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    f.x = max.x + (max.w / 2)
+    f.y = max.y
+    f.w = max.w / 2
+    f.h = max.h
+    win:setFrame(f)
 end)
 
 -- Moves window to right, sets to 1/4 width
 hs.hotkey.bind(mash, "right", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-  f.x = max.x + (max.w * 0.75)
-  f.y = max.y
-  f.w = max.w * 0.25
-  f.h = max.h
-  win:setFrame(f)
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    f.x = max.x + (max.w * 0.75)
+    f.y = max.y
+    f.w = max.w * 0.25
+    f.h = max.h
+    win:setFrame(f)
 end)
 
 --Moves window to left, sets to 3/4 width
 hs.hotkey.bind(mash, "left", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-  f.x = max.x
-  f.w = max.w * 0.75
-  f.h = max.h
-  f.y = max.y
-  win:setFrame(f)
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    f.x = max.x
+    f.w = max.w * 0.75
+    f.h = max.h
+    f.y = max.y
+    win:setFrame(f)
 end)
 
 hs.hotkey.bind(mash, "N", function()
-	hs.grid.maximizeWindow()
-	hs.grid.pushWindowNextScreen()
+    hs.grid.maximizeWindow()
+    hs.grid.pushWindowNextScreen()
 end)
 
 hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 function kirby()
-  test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
-  hs.pasteboard.setContents("¯\\_(ツ)_/¯")
+    test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 
 hs.hotkey.bind(mash, 'K', kirby)
@@ -286,27 +258,27 @@ local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 function ssidChangedCallback()
   newSSID = hs.wifi.currentNetwork()
 
-  if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
-    -- we are at home!
-    home_arrived()
-  elseif newSSID ~= homeSSID and lastSSID == homeSSID then
-    -- we are away from home!
-    -- why do we need the validation check for lastSSID?
-    -- We can infer from newSSID ~= homeSSID that we aren't home?
-    home_departed()
-  end
+    if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
+        -- we are at home!
+        home_arrived()
+    elseif newSSID ~= homeSSID and lastSSID == homeSSID then
+        -- we are away from home!
+        -- why do we need the validation check for lastSSID?
+        -- We can infer from newSSID ~= homeSSID that we aren't home?
+        home_departed()
+    end
 
-  lastSSID = newSSID
+    lastSSID = newSSID
 end
 
 function home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
   -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
-  os.execute("sudo pmset -b displaysleep 5 sleep 10")
-  os.execute("sudo pmset -c displaysleep 5 sleep 10")
-  hs.audiodevice.defaultOutputDevice():setMuted(false)
-  hs.notify.new({
+    os.execute("sudo pmset -b displaysleep 5 sleep 10")
+    os.execute("sudo pmset -c displaysleep 5 sleep 10")
+    hs.audiodevice.defaultOutputDevice():setMuted(false)
+    hs.notify.new({
         title = 'Hammerspoon',
         subTitle = "ENV: Home Detected",
         informativeText = "Home Settings Enabled",
@@ -315,44 +287,49 @@ function home_arrived()
         -- autoWithdraw = true,
         -- hasActionButton = true,
         -- actionButtonTitle = "Test",
-      }):send()
+    }):send()
   -- new arrive home alert
-  hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
-  -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
-  -- TODO: set audiodevice to speakers
+    hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
+    -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
+    -- TODO: set audiodevice to speakers
 end
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
 function home_departed()
-  -- set volume to 0
-  hs.audiodevice.defaultOutputDevice():setMuted(true)
-  os.execute("sudo pmset -a displaysleep 1 sleep 10")
-  hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
-  -- new leave home alert
-  hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
-  -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
+    -- set volume to 0
+    hs.audiodevice.defaultOutputDevice():setMuted(true)
+    os.execute("sudo pmset -a displaysleep 1 sleep 10")
+    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
+    -- new leave home alert
+    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
+    -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)    hs.audiodevice.defaultOutputDevice():setMuted(true)
+    os.execute("sudo pmset -a displaysleep 1 sleep 10")
+    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
+    -- new leave home alert
+    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
+    -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
 end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
 wifiWatcher:start()
 
 if 
-  hs.wifi.currentNetwork() == "ComfortInn VIP" 
-  or hs.wifi.currentNetwork() == "ComfortInn Guest" 
-  or hostName == "apw@me.com" 
-  then
-
-  home_arrived()
+    hs.wifi.currentNetwork() == "ComfortInn VIP" 
+    or hs.wifi.currentNetwork() == "ComfortInn Guest" 
+    or hostName == "apw@me.com" 
+then
+    home_arrived()
 else
-  home_departed()
+    home_departed()
 end
 
+-- not responsible for uaskin hs.shutdownCallback error
 function muteOnWake(eventType)
-  if (eventType == hs.caffeinate.watcher.systemDidWake) then
-    local output = hs.audiodevice.defaultOutputDevice()
-    output:setMuted(true)
-  end
+    if (eventType == hs.caffeinate.watcher.systemDidWake) then
+        local output = hs.audiodevice.defaultOutputDevice()
+        output:setMuted(true)
+    end
 end
 caffeinateWatcher = hs.caffeinate.watcher.new(muteOnWake)
 caffeinateWatcher:start()

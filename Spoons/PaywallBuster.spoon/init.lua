@@ -106,12 +106,6 @@ function obj:bust(baseURL)
 end
 
 function obj:busterChooserCallback(choice)
-  -- if not (choice) then
-  --   self.chooser:cancel()
-  --   print(self.chooser:query())
-  -- --   -- hs.alert("No choice made")
-  --   return
-  -- end
   -- if not choicez then focusLastFocused(); return end
   if choice['id'] == 1 then
     -- seems to have fixed the binding problem [FIXED?]
@@ -210,6 +204,3 @@ function obj:stop()
 end
   
 return obj
-------------------------------------------------------------------------------
--- End of safari stuff
-------------------------------------------------------------------------------
