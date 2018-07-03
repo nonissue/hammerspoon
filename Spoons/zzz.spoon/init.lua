@@ -50,14 +50,46 @@ local presetCount = 3
 local sleepTimes = {1, 2, 3}
 local sleepTable = {}
 
+-- dynamic chooser options
+-- maybe eventually have these user configurable with persistence?
 for i = 1, presetCount do
     -- inserts resolutions width in to choicesXZLhd table so we can iterate through them easily later
     table.insert(sleepTable, {
         ["id"] = i,
+        ["action"] = "create",
         ["m"] = i * sleepInterval,
-        ["text"] = i * sleepInterval .. " minutes"
+        ["text"] = i * sleepInterval .. " minutes",
     })
 end
+
+-- static chooser entries
+-- increase timer by 5 / decrease timer by 5 / stop timer
+local staticOptions = {
+    {
+        ["id"] = #sleepTable + 1, 
+        ["action"] = "stop",
+        ["m"] = 0,
+        ["text"] = "Stop current timer"
+    },
+    {
+        ["id"] = #sleepTable + 1, 
+        ["action"] = "inc",
+        ["m"] = 5,
+        ["text"] = "increments the current timer by 5 mins"
+    },
+    {
+        ["id"] = #sleepTable + 1, 
+        ["action"] = "dec",
+        ["m"] = 5,
+        ["text"] = "decrements the current timer by 5 mins"
+    },
+
+}
+
+for i = 1, #staticOptions do
+    table.insert(sleepTable, staticOptions[i])
+end
+-- table.insert(sleepTable, staticOptions)
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -120,8 +152,14 @@ end
 
 
 function obj:timerChooserCallback(choice)
-
-    if choice['m'] == nil then
+    if choice['action'] == 'stop' then
+        if not tonumber(self.timerEvent == 0) then
+            self:deleteTimer()
+        else
+            hs.alert("timer: " .. tonumber(self.timerEvent))
+            hs.alert("No timer to stop")
+        end
+    elseif choice['m'] == nil then
         -- should do a check to see if customCountdown is a number
         local customCountdown = tonumber(self.chooser:query())
         if customCountdown < 200 and customCountdown > 0 then
