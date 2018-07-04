@@ -70,19 +70,19 @@ print(hs.inspect(createTimerChoices))
 -- increase timer by 5 / decrease timer by 5 / stop timer
 obj.modifyTimerChoices = {
     {
-        ["id"] = #sleepTable + 1,
+        ["id"] = 1,
         ["action"] = "stop",
         ["m"] = 0,
         ["text"] = "Stop current timer"
     },
     {
-        ["id"] = #sleepTable + 1, -- doesn't currently work
+        ["id"] = 2, -- doesn't currently work
         ["action"] = "inc",
         ["m"] = 5,
         ["text"] = "+5 minutes"
     },
     {
-        ["id"] = #sleepTable + 1, -- doesn't currently work
+        ["id"] = 3, -- doesn't currently work
         ["action"] = "dec",
         ["m"] = 5,
         ["text"] = "-5 minutes"

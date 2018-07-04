@@ -7,3 +7,5 @@
 - [ ] Spoon: App context switcher (using chooser)?
     - eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
     - eg. 'scratchjs' -> opens javascript sandbox?
+- [ ] update Zzz so it can do the opposte (keep computer awale for a certain amount of time)
+- [ ] finish inc/dec
