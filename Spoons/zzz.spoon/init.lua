@@ -18,6 +18,13 @@ obj.timerDisplay = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
 
+-- I should probably just normalize everything to seconds?
+local minMins = 0
+local minSecs = minMins / 60
+
+local maxMins = 300
+local maxSecs = maxMins * 60
+
 local function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
@@ -27,8 +34,6 @@ obj.spoonPath = script_path()
 
 -- moving this into init causes duplicates in menubar
 -- during dev when we are constantly reloading
-local sleepTimerMenu = hs.menubar.new()
-sleepTimerMenu:setTitle("☾")
 
 -- Interval between sleep times
 local sleepInterval = 15
@@ -113,10 +118,10 @@ function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(seconds)
 
-    if seconds <= 0 then
-        return "☾"
-    elseif seconds > 7500 then -- not really the place to check this??
-        hs.alert("Timer must be lower than an hour")
+    if seconds <= minSecs then
+        return "Error: timer less than or eq to 0"
+    elseif seconds > maxSecs then -- not really the place to check this??
+        hs.alert("Timer must be lower than two hours?")
         return "error"
     else
         hours = string.format("%02.f", math.floor(seconds / 3600));
@@ -142,20 +147,25 @@ end
 
 -- hs.timer interval is in seconds
 function obj:newTimer(timerInMins)
-    interval = tonumber(timerInMins) * 60
-    self.timerEvent = hs.timer.doAfter(
-        interval, 
-        function() 
-            hs.caffeinate.systemSleep() 
-        end
-    )
-    self.timerDisplay = hs.timer.doEvery(
-        1, 
-        function()
-            interval = interval - 1
-            sleepTimerMenu:setTitle(obj:formatSeconds(interval))
-        end
-    )
+    self.sleepTimerMenu:returnToMenuBar()
+    if self.timerEvent then
+        hs.alert("Timer already started")
+    else 
+        interval = tonumber(timerInMins) * 60
+        self.timerEvent = hs.timer.doAfter(
+            interval, 
+            function() 
+                hs.caffeinate.systemSleep() 
+            end
+        )
+        self.timerDisplay = hs.timer.doEvery(
+            1, 
+            function()
+                interval = interval - 1
+                self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
+            end
+        )
+    end
 end
 
 function obj:timerChooserCallback(choice)
@@ -173,10 +183,13 @@ function obj:timerChooserCallback(choice)
     elseif choice['m'] == nil then
         -- should do a check to see if customCountdown is a number
         local customCountdown = tonumber(self.chooser:query())
-        if customCountdown < 200 and customCountdown > 0 then
+        -- Make sure the specified minutes are a reasonable amount
+        if customCountdown < maxMins and customCountdown > minMins then
             self:newTimer(customCountdown)
         else 
-            hs.alert("Specified value is too big or too small or nonsensical")
+            hs.alert("Specified value is too big or too small or nonsensical, try again")
+            self.chooser:cancel()
+            self.chooser:show()
         end
     else
         local mins = tonumber(choice['m'])
@@ -188,45 +201,28 @@ function obj:timerChooserCallback(choice)
     end
 end
 
-function obj:init()
-    self.chooser = hs.chooser.new(
-        function(choice)
-            if not (choice) then
-                print(self.chooser:query())
-            else
-                self:timerChooserCallback(choice)
-            end
-        end
-    )
-
-    self.chooser:choices(sleepTable)
-    self.chooser:rows(#sleepTable)
-
-    self.chooser:queryChangedCallback(
-        function(query)
-            if query == '' then
-                self.chooser:choices(sleepTable)
-            else
-                local choices = {
-                {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
-                }
-                self.chooser:choices(choices)
-            end
-        end
-    )
-
-    self.chooser:width(20)
-    self.chooser:bgDark(true)
-
-    return self
-end
-
 function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
-    sleepTimerMenu:setTitle("☾")
+    self.sleepTimerMenu:setTitle("☾")
+    self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
+end
+
+function obj:toggleMenubar()
+    if self.sleepTimerMenu then
+        if self.sleepTimerMenu:isInMenubar() then
+            self.sleepTimerMenu:removeFromMenuBar()
+        else
+            self.sleepTimerMenu:returnToMenuBar()
+        end
+    end
+end
+
+function obj:hide()
+    self.chooser:hide()
+    return self
 end
 
 function obj:show()
@@ -240,12 +236,92 @@ function obj:start()
 end
 
 function obj:stop()
-    print("-- Stopping Zzz")
+    hs.alert("-- Stopping Zzz.spoon")
     self.chooser:hide()
     if self.hotkeyShow then
         self.hotkeyShow:disable()
     end
+
+    obj:deleteTimer()
+    self.sleepTimerMenu:delete()
     return self
 end
+
+function obj:init()
+
+    -- if statement to prevent dupes especially during dev
+    -- We check to see if our menu already exists, and if so
+    -- we delete it. Then we create a new one from scratch
+    if self.sleepTimerMenu then
+        self.sleepTimerMenu:delete()
+    end
+    self.sleepTimerMenu = hs.menubar.new()
+    -- self.sleepTimerMenu:setTitle("☾")
+    self.sleepTimerMenu:removeFromMenuBar()
+        -- the menubar isnt set by default by the menubar.new call
+        -- with the parameter "false", but because we set the title 
+        -- right after, it ends up being shown
+
+    -- Initialize our chooser
+    -- we use a work around here to capture to capture user input that 
+    -- doesnt match any of our preset options by checking <if (choice)>
+    -- If the user 'query' doesn't match an option, we provide them with
+    -- a new option that appears to let them set a custom timer!
+    -- See queryChangeCallback() call below for more info
+    self.chooser = hs.chooser.new(
+        function(choice)
+            if not (choice) then
+                print(self.chooser:query())
+            else
+                self:timerChooserCallback(choice)
+            end
+        end
+    )
+
+    -- Initialize chooser choices from sleepTable & rows
+    self.chooser:choices(sleepTable)
+    self.chooser:rows(#sleepTable)
+
+    -- QueryChangedCallback
+    -- User hasn't entered any input, we show default options
+    -- if they start entering input, we immediately replace the 
+    -- preset options with a new option to set a custom timer
+    -- the premise is that: the user will only enter text
+    -- if they dont want a default option, otherwise they will
+    -- user arrow keys/hotkeys to select option
+    self.chooser:queryChangedCallback(
+        function(query)
+            local queryNum = tonumber(query)
+            if query == ''  then
+                self.chooser:choices(sleepTable)
+            elseif queryNum then
+            -- elseif queryNum > minSecs and queryNum < maxMins then
+                local choices = {
+                    {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
+                }
+                self.chooser:choices(choices)
+            else
+                self.chooser:choices(sleepTable)
+            end
+        end
+    )
+        -- function(query)
+        --     if query == '' then
+        --         self.chooser:choices(sleepTable)
+        --     elseif query > 0 and query < 300 then
+        --         local choices = {
+        --         {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
+        --         }
+        --         self.chooser:choices(choices)
+        --     end
+        -- end
+    
+
+    self.chooser:width(20)
+    self.chooser:bgDark(true)
+
+    return self
+end
+
 
 return obj
