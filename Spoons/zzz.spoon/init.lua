@@ -17,6 +17,7 @@ obj.chooser = nil
 obj.timerDisplay = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
+obj.timerActive = false
 
 -- I should probably just normalize everything to seconds?
 local minMins = 0
@@ -38,51 +39,38 @@ obj.spoonPath = script_path()
 -- Interval between sleep times
 local sleepInterval = 15
 -- Number of sleep times displayed in chooser
-local presetCount = 5
+local presetCount = 3
 local sleepTable = {}
+obj.createTimerChoices = {}
+obj.modifyTimerChoices = {}
+-- chooser optinos should be two distinct tables
+-- createTimerChoices:
+    -- Preset intervals
+-- timerModify
+    -- timerStop
+    -- timerInc
+    -- timerDec
+
 
 -- dynamic chooser options
 -- maybe eventually have these user configurable with persistence?
+-- could add a timer running variable so i could modify displayed options
 for i = 1, presetCount do
-    table.insert(sleepTable, {
+    table.insert(obj.createTimerChoices, {
         ["text"] = i * sleepInterval .. " minutes",
         ["id"] = i,
-        ["action"] = "start",
-        ["m"] = i * sleepInterval,        
+        ["action"] = "create",
+        ["m"] = i * sleepInterval,
     })
 end
 
--- literally a bad way to write a switch in lua
-function obj:garbageSwitch(case)
-
-    local switch = {
-        ["start"] = function()	-- for case 1
-            hs.alert("start")
-        end,
-        ["stop"] = function()	-- for case 2
-            hs.alert("stop")
-        end,
-        ["inc"] = function()	-- for case 3
-            hs.alert("inc")
-        end,
-        ["dec"] = function()	-- for case 3
-            hs.alert("dec")
-        end
-    }
-
-    local f = switch[case]
-    if(f) then
-        f()
-    else
-        hs.alert("fell through")
-    end
-end
+print(hs.inspect(createTimerChoices))
 
 -- static chooser entries
 -- increase timer by 5 / decrease timer by 5 / stop timer
-local staticOptions = {
+obj.modifyTimerChoices = {
     {
-        ["id"] = #sleepTable + 1, 
+        ["id"] = #sleepTable + 1,
         ["action"] = "stop",
         ["m"] = 0,
         ["text"] = "Stop current timer"
@@ -101,9 +89,17 @@ local staticOptions = {
     },
 }
 
-for i = 1, #staticOptions do
-    table.insert(sleepTable, staticOptions[i])
-end
+local timerStarted = {["group"] = "timerStarted"}
+local timerStopped = {["group"] = "timerStopped"}
+-- IDEA
+-- Only show these if timer is running?
+-- for i = 1, #modifyTimerChoices do
+    -- modifyTimer[i]["group"] = "timerStarted"
+    -- table.insert(sleepTable, modifyTimer[i])
+    -- table.insert(sleepTable[i], timerStarted[0])
+-- end
+
+print(hs.inspect(modifyTimerChoices))
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -165,6 +161,7 @@ function obj:newTimer(timerInMins)
                 self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
             end
         )
+        self.timerActive = true
     end
 end
 
@@ -201,6 +198,10 @@ function obj:timerChooserCallback(choice)
     end
 end
 
+function obj:incTimer(minutes)
+    local incrementSecs = minutes * 60
+end
+
 function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
@@ -208,16 +209,7 @@ function obj:deleteTimer()
     self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
-end
-
-function obj:toggleMenubar()
-    if self.sleepTimerMenu then
-        if self.sleepTimerMenu:isInMenubar() then
-            self.sleepTimerMenu:removeFromMenuBar()
-        else
-            self.sleepTimerMenu:returnToMenuBar()
-        end
-    end
+    self.timerActive = false
 end
 
 function obj:hide()
@@ -246,6 +238,15 @@ function obj:stop()
     self.sleepTimerMenu:delete()
     return self
 end
+
+function obj:getCurrentChoices()
+    if self.timerActive then 
+        return self.modifyTimerChoices
+    elseif self.timerActive == false then
+        return self.createTimerChoices
+    end
+end
+
 
 function obj:init()
 
@@ -279,8 +280,9 @@ function obj:init()
     )
 
     -- Initialize chooser choices from sleepTable & rows
-    self.chooser:choices(sleepTable)
-    self.chooser:rows(#sleepTable)
+
+    self.chooser:choices(self:getCurrentChoices())
+    self.chooser:rows(#self:getCurrentChoices())
 
     -- QueryChangedCallback
     -- User hasn't entered any input, we show default options
@@ -293,7 +295,7 @@ function obj:init()
         function(query)
             local queryNum = tonumber(query)
             if query == ''  then
-                self.chooser:choices(sleepTable)
+                self.chooser:choices(self:getCurrentChoices())
             elseif queryNum then
             -- elseif queryNum > minSecs and queryNum < maxMins then
                 local choices = {
@@ -301,7 +303,7 @@ function obj:init()
                 }
                 self.chooser:choices(choices)
             else
-                self.chooser:choices(sleepTable)
+                self.chooser:choices(self:getCurrentChoices())
             end
         end
     )
