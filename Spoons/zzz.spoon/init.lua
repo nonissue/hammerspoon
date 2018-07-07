@@ -17,7 +17,7 @@ obj.chooser = nil
 obj.timerDisplay = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
-obj.timerActive = false
+-- obj.timerActive = false
 
 -- I should probably just normalize everything to seconds?
 local minMins = 0
@@ -91,15 +91,8 @@ obj.modifyTimerChoices = {
 
 local timerStarted = {["group"] = "timerStarted"}
 local timerStopped = {["group"] = "timerStopped"}
--- IDEA
--- Only show these if timer is running?
--- for i = 1, #modifyTimerChoices do
-    -- modifyTimer[i]["group"] = "timerStarted"
-    -- table.insert(sleepTable, modifyTimer[i])
-    -- table.insert(sleepTable[i], timerStarted[0])
--- end
 
-print(hs.inspect(modifyTimerChoices))
+-- print(hs.inspect(modifyTimerChoices))
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -110,11 +103,14 @@ function obj:bindHotkeys(mapping)
         hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
+-- why not just deal with minutes?
 function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(seconds)
 
     if seconds <= minSecs then
+        self:deleteTimer()
+        -- it fiish
         return "Error: timer less than or eq to 0"
     elseif seconds > maxSecs then -- not really the place to check this??
         hs.alert("Timer must be lower than two hours?")
@@ -146,7 +142,9 @@ function obj:newTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
         hs.alert("Timer already started")
-    else 
+    else
+        -- i don't like having two functions for this
+        -- and setting to variables
         interval = tonumber(timerInMins) * 60
         self.timerEvent = hs.timer.doAfter(
             interval, 
@@ -161,7 +159,8 @@ function obj:newTimer(timerInMins)
                 self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
             end
         )
-        self.timerActive = true
+        -- why do i need this?
+        -- self.timerActive = true
     end
 end
 
@@ -200,6 +199,7 @@ end
 
 function obj:incTimer(minutes)
     local incrementSecs = minutes * 60
+
 end
 
 function obj:deleteTimer()
@@ -209,7 +209,7 @@ function obj:deleteTimer()
     self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
-    self.timerActive = false
+    -- self.timerActive = false
 end
 
 function obj:hide()
@@ -240,13 +240,12 @@ function obj:stop()
 end
 
 function obj:getCurrentChoices()
-    if self.timerActive then 
+    if self.timerEvent then
         return self.modifyTimerChoices
-    elseif self.timerActive == false then
+    else
         return self.createTimerChoices
     end
 end
-
 
 function obj:init()
 
@@ -280,7 +279,6 @@ function obj:init()
     )
 
     -- Initialize chooser choices from sleepTable & rows
-
     self.chooser:choices(self:getCurrentChoices())
     self.chooser:rows(#self:getCurrentChoices())
 
@@ -307,18 +305,7 @@ function obj:init()
             end
         end
     )
-        -- function(query)
-        --     if query == '' then
-        --         self.chooser:choices(sleepTable)
-        --     elseif query > 0 and query < 300 then
-        --         local choices = {
-        --         {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
-        --         }
-        --         self.chooser:choices(choices)
-        --     end
-        -- end
     
-
     self.chooser:width(20)
     self.chooser:bgDark(true)
 
