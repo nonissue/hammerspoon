@@ -24,16 +24,16 @@
 
     ],
     "doc" : "",
-    "Field" : [
-
-    ],
-    "Command" : [
+    "items" : [
 
     ],
     "Method" : [
 
     ],
-    "items" : [
+    "Command" : [
+
+    ],
+    "Field" : [
 
     ],
     "name" : "Zzz"

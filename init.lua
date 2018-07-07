@@ -38,6 +38,10 @@ hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Resolute")
 hs.loadSpoon("Zzz")
+-- hs.loadSpoon("SpoonInstall")
+-- hs.loadSpoon("MenubarTimer")
+
+-- spoon.MenubarTimer:start()
 
 -- hs.console.clearConsole()
 

@@ -77,14 +77,14 @@ obj.modifyTimerChoices = {
     },
     {
         ["id"] = 2, -- doesn't currently work
-        ["action"] = "inc",
+        ["action"] = "adjust",
         ["m"] = 5,
         ["text"] = "+5 minutes"
     },
     {
         ["id"] = 3, -- doesn't currently work
-        ["action"] = "dec",
-        ["m"] = 5,
+        ["action"] = "adjust",
+        ["m"] = -5,
         ["text"] = "-5 minutes"
     },
 }
@@ -125,15 +125,15 @@ end
 
 -- simple method to get time remaining 
 -- in easily readable form
+-- this is really dumb, 
 function obj:timeRemaining()
     if self.timerEvent == nil then
         return "Error: No timer event found to print"
     else 
-        local seconds = self:formatSeconds(
-            self.timerEvent:nextTrigger()
-        )
+        local minsRemaining = self.timerEvent:nextTrigger() / 60.0
+        mins = string.format("%02.1f", self.timerEvent:nextTrigger() / 60);
 
-        return seconds
+        return mins
     end
 end
 
@@ -156,6 +156,9 @@ function obj:newTimer(timerInMins)
             1, 
             function()
                 interval = interval - 1
+                if interval == 5 then 
+                    hs.alert("PUTH THIS SHIT TO SLEEP")
+                end
                 self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
             end
         )
@@ -176,6 +179,8 @@ function obj:timerChooserCallback(choice)
             hs.alert("No timer to stop")
             -- return
         end
+    elseif choice['action'] == 'adjust' and self.timerEvent then
+        self:adjustTimer(choice['m'])
     elseif choice['m'] == nil then
         -- should do a check to see if customCountdown is a number
         local customCountdown = tonumber(self.chooser:query())
@@ -197,9 +202,22 @@ function obj:timerChooserCallback(choice)
     end
 end
 
-function obj:incTimer(minutes)
-    local incrementSecs = minutes * 60
-
+function obj:adjustTimer(minutes)
+    if minutes < 0 then
+        local currentDuration = self.timerEvent:nextTrigger() / 60
+        if currentDuration - minutes < 3 then
+            hs.alert("nah that doesn't make sense")
+            return
+        else
+            local newTimerTime = self.timerEvent:nextTrigger() / 60 + minutes
+            self:deleteTimer()
+            self:newTimer(newTimerTime)
+        end
+    elseif minutes > 0 then
+        local newTimerTime = self.timerEvent:nextTrigger() / 60 + minutes
+        self:deleteTimer()
+        self:newTimer(newTimerTime)
+    end
 end
 
 function obj:deleteTimer()
