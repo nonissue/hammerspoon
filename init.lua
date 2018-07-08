@@ -42,6 +42,7 @@ hs.loadSpoon("Zzz")
 -- hs.loadSpoon("MenubarTimer")
 
 -- spoon.MenubarTimer:start()
+-- spoon.SystemContexts:start()
 
 -- hs.console.clearConsole()
 

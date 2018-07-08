@@ -1,4 +1,4 @@
---[[ 
+--[[
 
 ===========================================================
 SystemContexts Spoon
@@ -10,16 +10,8 @@ options as user env changes.
         * Autoconfig layout for mobile vs at desk. Things
           like dock position, display arrangement, etc.
 
-
-tell application "System Events"
-  tell dock preferences
-    get properties
-  end tell
-end tell
 -----------------------------------------------------------
---]]
-
--- [ ] Migrate stuff from CHANGE_RES @ line 44
+]]--
 
 local obj = {}
 obj.__index = obj
@@ -31,11 +23,16 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
-obj.chooser = nil
 obj.hotkeyShow = nil
-obj.plugins = {}
-obj.commands = {}
 
+obj.wifiWatcher = nil
+obj.cafWatcher = nil
+obj.currentSSID = nil
+local homeSSID = "ComfortInn VIP"
+local schoolSSID = "MacEwanSecure"
+local hostName = hs.host.localizedName() -- maybe not needed?
+
+-- not needed but included
 local function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
@@ -62,133 +59,66 @@ obj.spoonPath = script_path()
 -- If computer is in between networks (say, woken from sleep in new location)
 -- Then desired settings like volume mute are not applied until after a delay
 -- Maybe implement a default setting that is applied when computer is 'in limbo'
-local homeSSID = "ComfortInn VIP"
--- local homeSSID5G = "BROMEGA"
-local schoolSSID = "MacEwanSecure"
-local lastSSID = hs.wifi.currentNetwork()
-local hostName = hs.host.localizedName()
 
-local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
+-- Move to env variable / .env?
 
-function ssidChangedCallback()
-  newSSID = hs.wifi.currentNetwork()
+-- local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 
-    if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
+function obj.ssidChangedCallback()
+    local newSSID = hs.wifi.currentNetwork()
+
+    if (newSSID == homeSSID) and (obj.currentSSID ~= homeSSID) then
         -- we are at home!
-        home_arrived()
-    elseif newSSID ~= homeSSID and lastSSID == homeSSID then
-        -- we are away from home!
-        -- why do we need the validation check for lastSSID?
-        -- We can infer from newSSID ~= homeSSID that we aren't home?
-        home_departed()
+        obj.home_arrived()
+    elseif newSSID ~= homeSSID then
+        obj.home_departed()
     end
 
-    lastSSID = newSSID
+    obj.currentSSID = newSSID
 end
 
-function home_arrived()
+function obj.home_arrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
   -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
     os.execute("sudo pmset -b displaysleep 5 sleep 10")
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
-    hs.notify.new({
-        title = 'Hammerspoon',
-        subTitle = "ENV: Home Detected",
-        informativeText = "Home Settings Enabled",
-        setIdImage = wifiicon,
-        -- hasReplyButton = true,
-        -- autoWithdraw = true,
-        -- hasActionButton = true,
-        -- actionButtonTitle = "Test",
-    }):send()
   -- new arrive home alert
     hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
-    -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
-    -- TODO: set audiodevice to speakers
+
 end
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
-function home_departed()
+function obj.home_departed()
     -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
-    os.execute("sudo pmset -a displaysleep 1 sleep 10")
-    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
     -- new leave home alert
     hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
-    os.execute("sudo pmset -a displaysleep 1 sleep 10")
-    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
-    -- new leave home alert
-    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
-
+    os.execute("sudo pmset -a displaysleep 1 sleep 5")
 end
 
-wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
-wifiWatcher:start()
+function obj.initWifiWatcher()
+    if not obj.currentNetwork then
+        obj.ssidChangedCallback()
+    end
 
-if 
-    hs.wifi.currentNetwork() == "ComfortInn VIP" 
-    or hs.wifi.currentNetwork() == "ComfortInn Guest" 
-    or hostName == "apw@me.com" 
-then
-    home_arrived()
-else
-    home_departed()
+    obj.wifiWatcher = hs.wifi.watcher.new(obj.ssidChangedCallback)  
 end
 
--- generalize this for systemcontexts so we can check
--- several things when we wake from sleep?
--- not responsible for uaskin hs.shutdownCallback error
-function muteOnWake(eventType)
-    if (eventType == hs.caffeinate.watcher.systemDidWake) then
-        local output = hs.audiodevice.defaultOutputDevice()
-        output:setMuted(true)
+-- this catches situations where we get somewhere, computer wakes from sleep, 
+-- but doesn't connect to a network automatically. I still want things set
+function obj.muteOnWake(eventType)
+    if (eventType == hs.caffeinate.watcher.systemDidWake and hs.wifi.currentNetwork() ~= homeSSID) then
+        obj.home_departed()
     end
 end
 
-caffeinateWatcher = hs.caffeinate.watcher.new(muteOnWake)
-caffeinateWatcher:start()
---- SystemContexts:start()
---- Method
---- Starts ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
-function obj:start()
-    print("-- Starting SystemContexts")
-    if self.hotkeyShow then
-        self.hotkeyShow:enable()
-    end
-    return self
+function obj:initCafWatcher()
+    obj.cafWatcher = hs.caffeinate.watcher.new(obj.muteOnWake)
 end
 
---- SystemContexts:stop()
---- Method
---- Stops ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
-function obj:stop()
-    print("-- Stopping SystemContexts")
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
-    end
-    return self
-end
 
 --- SystemContexts:moveDockLeft()
 --- Method
@@ -230,7 +160,66 @@ function obj:moveDockDown()
     ]])
 end
 
+function obj:init()
+    obj.initWifiWatcher()
+    obj.initCafWatcher()
+    obj.wifiWatcher:start()
+    obj.cafWatcher:start()
 
+    return self
+end
+
+--- SystemContexts:start()
+--- Method
+--- Starts ___
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The ___ object
+---
+--- Notes:
+---  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
+
+-- start watchers
+function obj:start()
+  print("-- Starting SystemContexts")
+  if self.hotkeyShow then
+      self.hotkeyShow:enable()
+  end
+
+  obj.initWifiWatcher()
+  obj.wifiWatcher:start()
+  obj.cafWatcher:start()
+  return self
+end
+
+--- SystemContexts:stop()
+--- Method
+--- Stops ___
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The ___ object
+---
+--- Notes:
+---  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
+
+-- stop watchers
+function obj:stop()
+  print("-- Stopping SystemContexts")
+  if self.hotkeyShow then
+      self.hotkeyShow:disable()
+  end
+
+  obj.wifiWatcher:stop()
+  obj.cafWatcher:stop()
+  obj.currentSSID = nil
+  return self
+end
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
