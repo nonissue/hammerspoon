@@ -17,7 +17,6 @@ obj.chooser = nil
 obj.timerDisplay = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
--- obj.timerActive = false
 
 -- I should probably just normalize everything to seconds?
 local minMins = 0
@@ -51,20 +50,17 @@ obj.modifyTimerChoices = {}
     -- timerInc
     -- timerDec
 
-
 -- dynamic chooser options
 -- maybe eventually have these user configurable with persistence?
 -- could add a timer running variable so i could modify displayed options
 for i = 1, presetCount do
     table.insert(obj.createTimerChoices, {
-        ["text"] = i * sleepInterval .. " minutes",
         ["id"] = i,
         ["action"] = "create",
         ["m"] = i * sleepInterval,
+        ["text"] = i * sleepInterval .. " minutes",
     })
 end
-
-print(hs.inspect(createTimerChoices))
 
 -- static chooser entries
 -- increase timer by 5 / decrease timer by 5 / stop timer
@@ -92,15 +88,13 @@ obj.modifyTimerChoices = {
 local timerStarted = {["group"] = "timerStarted"}
 local timerStopped = {["group"] = "timerStopped"}
 
--- print(hs.inspect(modifyTimerChoices))
-
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
     local def = {
         showTimerMenu = hs.fnutils.partial(self:show(), self),
-        }
+    }
 
-        hs.spoons.bindHotkeysToSpec(def, mapping)
+    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
 -- why not just deal with minutes?
@@ -156,28 +150,26 @@ function obj:newTimer(timerInMins)
             1, 
             function()
                 interval = interval - 1
-                if interval == 5 then 
+                if interval == 11 then
+                    hs.alert("Sleeping in 10 seconds...")
                     hs.alert("PUTH THIS SHIT TO SLEEP")
                 end
                 self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
             end
         )
         -- why do i need this?
-        -- self.timerActive = true
     end
 end
 
 function obj:timerChooserCallback(choice)
     -- switch on action
     if choice['action'] == 'stop' then
-        -- if not self.timerEvent == nil then
+
         if self.timerEvent then
             self:deleteTimer()
-            -- return
         else
             print(choice['action'])
             hs.alert("No timer to stop")
-            -- return
         end
     elseif choice['action'] == 'adjust' and self.timerEvent then
         self:adjustTimer(choice['m'])
@@ -227,7 +219,6 @@ function obj:deleteTimer()
     self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
-    -- self.timerActive = false
 end
 
 function obj:hide()

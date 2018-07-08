@@ -8,4 +8,6 @@
     - eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
     - eg. 'scratchjs' -> opens javascript sandbox?
 - [ ] update Zzz so it can do the opposte (keep computer awale for a certain amount of time)
-- [ ] finish inc/dec
+- [x] finish inc/dec
+- [ ] make all menubarlets enable/disableable through the same interface (chooser?)
+- [ ] provde them with config options through chooser as well

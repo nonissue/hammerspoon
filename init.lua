@@ -36,7 +36,7 @@ hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
-hs.loadSpoon("Resolute")
+-- hs.loadSpoon("Resolute")
 hs.loadSpoon("Zzz")
 -- hs.loadSpoon("SpoonInstall")
 -- hs.loadSpoon("MenubarTimer")
@@ -75,12 +75,11 @@ apw_go({
     "apps.change_resolution",
     "battery.burnrate",
     "sounds.sounds",
-    -- "apps.btc_menu",
 })
 
 
 spoon.Zzz:init()
-spoon.Resolute:init()
+-- spoon.Resolute:init()
 
 local safariHotkeys =  {
     tabToNewWin = {mash, "T"},
@@ -103,8 +102,6 @@ end)
 hs.hotkey.bind(mash, "S", function()
     spoon.Zzz:show()
 end)
-
--- apw.change_resolution:menuInit();
 
 -- init grid
 hs.grid.MARGINX         = 0
@@ -233,107 +230,3 @@ end
 
 hs.hotkey.bind(mash, 'K', kirby)
 
-------------------------------------------------------------------------------
--- Location based functions to change system settings
-------------------------------------------------------------------------------
--- functions for different locations
--- configure things like drive mounts, display sleep (for security), etc.
--- sets displaysleep to 90 minutes if at home
--- should be called based on ssid
--- not the most secure since someone could fake ssid I guess
--- might want some other level of verification-- makes new window from current tab in safari
--- could maybe send it to next monitor immediately if there is one?
--- differentiate between settings for laptop vs desktop
--- Mostly lifted from:
--- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
-------------------------------------------------------------------------------
--- Don't love the logic of how this is implemented
--- If computer is in between networks (say, woken from sleep in new location)
--- Then desired settings like volume mute are not applied until after a delay
--- Maybe implement a default setting that is applied when computer is 'in limbo'
-local homeSSID = "ComfortInn VIP"
--- local homeSSID5G = "BROMEGA"
-local schoolSSID = "MacEwanSecure"
-local lastSSID = hs.wifi.currentNetwork()
-local hostName = hs.host.localizedName()
-
-local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
-
-function ssidChangedCallback()
-  newSSID = hs.wifi.currentNetwork()
-
-    if (newSSID == homeSSID or newSSID == homeSSID5G) and (lastSSID ~= homeSSID) then
-        -- we are at home!
-        home_arrived()
-    elseif newSSID ~= homeSSID and lastSSID == homeSSID then
-        -- we are away from home!
-        -- why do we need the validation check for lastSSID?
-        -- We can infer from newSSID ~= homeSSID that we aren't home?
-        home_departed()
-    end
-
-    lastSSID = newSSID
-end
-
-function home_arrived()
-  -- Should really have device specific settings (desktop vs laptop)
-  -- requires modified sudoers file
-  -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
-    os.execute("sudo pmset -b displaysleep 5 sleep 10")
-    os.execute("sudo pmset -c displaysleep 5 sleep 10")
-    hs.audiodevice.defaultOutputDevice():setMuted(false)
-    hs.notify.new({
-        title = 'Hammerspoon',
-        subTitle = "ENV: Home Detected",
-        informativeText = "Home Settings Enabled",
-        setIdImage = wifiicon,
-        -- hasReplyButton = true,
-        -- autoWithdraw = true,
-        -- hasActionButton = true,
-        -- actionButtonTitle = "Test",
-    }):send()
-  -- new arrive home alert
-    hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
-    -- hs.alert.show("☛ ⌂", alerts_nobg, 2)
-    -- TODO: set audiodevice to speakers
-end
-
--- sets displaysleep to lowervalue
--- eventually should unmount disks and perform other functions?
-function home_departed()
-    -- set volume to 0
-    hs.audiodevice.defaultOutputDevice():setMuted(true)
-    os.execute("sudo pmset -a displaysleep 1 sleep 10")
-    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
-    -- new leave home alert
-    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
-    -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)    hs.audiodevice.defaultOutputDevice():setMuted(true)
-    os.execute("sudo pmset -a displaysleep 1 sleep 10")
-    hs.alert.show("Away Settings Enabled", alerts_nobg, 0.7)
-    -- new leave home alert
-    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
-    -- hs.alert.show("☛ ≠ ⌂", alerts_nobg, 1.5)
-end
-
-wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)  
-wifiWatcher:start()
-
-if 
-    hs.wifi.currentNetwork() == "ComfortInn VIP" 
-    or hs.wifi.currentNetwork() == "ComfortInn Guest" 
-    or hostName == "apw@me.com" 
-then
-    home_arrived()
-else
-    home_departed()
-end
-
--- not responsible for uaskin hs.shutdownCallback error
-function muteOnWake(eventType)
-    if (eventType == hs.caffeinate.watcher.systemDidWake) then
-        local output = hs.audiodevice.defaultOutputDevice()
-        output:setMuted(true)
-    end
-end
-caffeinateWatcher = hs.caffeinate.watcher.new(muteOnWake)
-caffeinateWatcher:start()
