@@ -1,8 +1,22 @@
 --- === Zzz ===
 ---
--- Sleep timer for macs
+-- Sleep timer for mac
 
--- [x] stop timer may not be working [ fixed 18-07-03 ]
+--[[
+    TODO:
+    * [ ] remove unused/functions vars
+    * [ ] proper spoon docs
+    * [ ] proper spoon-style key binding
+    * [ ] fix lag with timer inc/dec actions
+        * timer has to be deleted then recreated which looks bad
+    * [ ] refactor so only one timer object needed
+        * currently using two: 
+            doAt for sysleep
+            doEvery for menubar display
+    * [ ] verify choice['m'] is only being set as num
+        * so I can remove tonumber() casts which shouldn't be reqd
+    * [ ] simplify timerChooserCallback() logic
+]]--
 
 local obj = {}
 obj.__index = obj
@@ -37,22 +51,32 @@ obj.spoonPath = script_path()
 
 -- Interval between sleep times
 local sleepInterval = 15
+
 -- Number of sleep times displayed in chooser
 local presetCount = 3
-local sleepTable = {}
+
+--[[ 
+    init our empty chooser choice tables
+    each item is a row in the table with the following structure:
+    {
+        ['id'] = <number>,
+            id number for row, 
+        ['action'] = <string>,
+            "create" OR "stop" OR "adjust" to describe intent
+        ['m'] = <number>,
+            number of minutes for action (only matters if create/adjust),
+            i think i might cast this as string by mistake sometimes,
+            but should be num
+        ['text'] = <string>,
+            text to appear in chooser
+    }
+
+]]--
+
 obj.createTimerChoices = {}
 obj.modifyTimerChoices = {}
--- chooser optinos should be two distinct tables
--- createTimerChoices:
-    -- Preset intervals
--- timerModify
-    -- timerStop
-    -- timerInc
-    -- timerDec
 
--- dynamic chooser options
--- maybe eventually have these user configurable with persistence?
--- could add a timer running variable so i could modify displayed options
+-- generate presets dynamically based on sleepInterval/presentCount
 for i = 1, presetCount do
     table.insert(obj.createTimerChoices, {
         ["id"] = i,
@@ -63,7 +87,8 @@ for i = 1, presetCount do
 end
 
 -- static chooser entries
--- increase timer by 5 / decrease timer by 5 / stop timer
+-- increase timer by X minutes decrease timer by Y minutes / stop timer
+-- In order to change the timer modifier, change ['m'] below
 obj.modifyTimerChoices = {
     {
         ["id"] = 1,
@@ -72,21 +97,18 @@ obj.modifyTimerChoices = {
         ["text"] = "Stop current timer"
     },
     {
-        ["id"] = 2, -- doesn't currently work
+        ["id"] = 2,
         ["action"] = "adjust",
         ["m"] = 5,
         ["text"] = "+5 minutes"
     },
     {
-        ["id"] = 3, -- doesn't currently work
+        ["id"] = 3,
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5 minutes"
     },
 }
-
-local timerStarted = {["group"] = "timerStarted"}
-local timerStopped = {["group"] = "timerStopped"}
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -119,7 +141,7 @@ end
 
 -- simple method to get time remaining 
 -- in easily readable form
--- this is really dumb, 
+-- this is really dumb
 function obj:timeRemaining()
     if self.timerEvent == nil then
         return "Error: No timer event found to print"
@@ -138,7 +160,7 @@ function obj:newTimer(timerInMins)
         hs.alert("Timer already started")
     else
         -- i don't like having two functions for this
-        -- and setting to variables
+        -- and setting two variables
         interval = tonumber(timerInMins) * 60
         self.timerEvent = hs.timer.doAfter(
             interval, 
@@ -152,19 +174,16 @@ function obj:newTimer(timerInMins)
                 interval = interval - 1
                 if interval == 11 then
                     hs.alert("Sleeping in 10 seconds...")
-                    hs.alert("PUTH THIS SHIT TO SLEEP")
                 end
                 self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
             end
         )
-        -- why do i need this?
     end
 end
 
 function obj:timerChooserCallback(choice)
     -- switch on action
     if choice['action'] == 'stop' then
-
         if self.timerEvent then
             self:deleteTimer()
         else
@@ -186,7 +205,7 @@ function obj:timerChooserCallback(choice)
         end
     else
         local mins = tonumber(choice['m'])
-        if choice['id'] > 0 and choice['id'] < 5 then
+        if choice['id'] > 0 and choice['id'] <= #obj.createTimerChoices then
             self:newTimer(mins)
         else
             hs.alert("Invalid option, error", 3)
@@ -202,6 +221,7 @@ function obj:adjustTimer(minutes)
             return
         else
             local newTimerTime = self.timerEvent:nextTrigger() / 60 + minutes
+            self.timerEvent:setNextTrigger(newTimerTime)
             self:deleteTimer()
             self:newTimer(newTimerTime)
         end
@@ -221,13 +241,13 @@ function obj:deleteTimer()
     self.timerDisplay = nil
 end
 
-function obj:hide()
-    self.chooser:hide()
+function obj:show()
+    self.chooser:show()
     return self
 end
 
-function obj:show()
-    self.chooser:show()
+function obj:hide()
+    self.chooser:hide()
     return self
 end
 
@@ -281,11 +301,10 @@ function obj:init()
     end
     self.sleepTimerMenu = hs.menubar.new()
     self.sleepTimerMenu:setTitle("☾")
-    -- self.sleepTimerMenu:removeFromMenuBar()
     
-        -- the menubar isnt set by default by the menubar.new call
-        -- with the parameter "false", but because we set the title 
-        -- right after, it ends up being shown
+    -- the menubar isnt set by default by the menubar.new call
+    -- with the parameter "false", but because we set the title 
+    -- right after, it ends up being shown
 
     -- Initialize our chooser
     -- we use a work around here to capture to capture user input that 
@@ -331,9 +350,11 @@ function obj:init()
         end
     )
     
-    self.chooser:width(19)
-    self.chooser:bgDark(true)
+    self.chooser:width(20)
+    self.chooser:bgDark(false)
 
+    -- adds a menubar click callback to invoke show/hide chooser
+    -- so sleep timer can be set with mouse only
     self.sleepTimerMenu:setClickCallback(function() self:chooserToggle() end)
 
     return self

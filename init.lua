@@ -69,7 +69,6 @@ local alt =     {"alt"                }
 apw_go({
     "apps.utilities",
     "apps.hammerspoon_config_reload",
-    "apps.hammerspoon_toggle_console",
     "apps.change_resolution",
     "battery.burnrate",
     "sounds.sounds",
@@ -100,6 +99,12 @@ end)
 hs.hotkey.bind(mash, "S", function()
     spoon.Zzz:show()
 end)
+
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'y', 
+    function()
+        hs.toggleConsole()
+    end
+)
 
 -- init grid
 hs.grid.MARGINX         = 0

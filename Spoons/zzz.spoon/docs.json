@@ -23,8 +23,7 @@
     "Constructor" : [
 
     ],
-    "doc" : "",
-    "Method" : [
+    "Field" : [
 
     ],
     "items" : [
@@ -33,9 +32,10 @@
     "Command" : [
 
     ],
-    "Field" : [
+    "Method" : [
 
     ],
+    "doc" : "",
     "name" : "Zzz"
   }
 ]
