@@ -1,4 +1,4 @@
---- === PaywallBuster ===
+ --- === PaywallBuster ===
 ---
 -- PaywallBuster
 

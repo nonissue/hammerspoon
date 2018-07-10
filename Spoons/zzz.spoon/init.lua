@@ -105,7 +105,7 @@ function obj:formatSeconds(seconds)
     if seconds <= minSecs then
         self:deleteTimer()
         -- it fiish
-        return "Error: timer less than or eq to 0"
+        return "☾ "
     elseif seconds > maxSecs then -- not really the place to check this??
         hs.alert("Timer must be lower than two hours?")
         return "error"
@@ -216,7 +216,7 @@ function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
     self.sleepTimerMenu:setTitle("☾")
-    self.sleepTimerMenu:removeFromMenuBar()
+    -- self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
 end
@@ -238,7 +238,7 @@ end
 
 function obj:stop()
     hs.alert("-- Stopping Zzz.spoon")
-    self.chooser:hide()
+    self.chooser:cancel()
     if self.hotkeyShow then
         self.hotkeyShow:disable()
     end
@@ -256,6 +256,21 @@ function obj:getCurrentChoices()
     end
 end
 
+function obj:chooserToggle()
+    self.chooser:choices(self:getCurrentChoices())
+    self.chooser:rows(#self:getCurrentChoices())
+    
+    if self.chooser:isVisible() then
+        -- cancel rather than hide
+        -- hide persists entered text in the search field
+        -- which i dont want
+        self.chooser:cancel()
+    else 
+
+        self.chooser:show()
+    end
+end
+
 function obj:init()
 
     -- if statement to prevent dupes especially during dev
@@ -265,8 +280,9 @@ function obj:init()
         self.sleepTimerMenu:delete()
     end
     self.sleepTimerMenu = hs.menubar.new()
-    -- self.sleepTimerMenu:setTitle("☾")
-    self.sleepTimerMenu:removeFromMenuBar()
+    self.sleepTimerMenu:setTitle("☾")
+    -- self.sleepTimerMenu:removeFromMenuBar()
+    
         -- the menubar isnt set by default by the menubar.new call
         -- with the parameter "false", but because we set the title 
         -- right after, it ends up being shown
@@ -315,8 +331,10 @@ function obj:init()
         end
     )
     
-    self.chooser:width(20)
+    self.chooser:width(19)
     self.chooser:bgDark(true)
+
+    self.sleepTimerMenu:setClickCallback(function() self:chooserToggle() end)
 
     return self
 end

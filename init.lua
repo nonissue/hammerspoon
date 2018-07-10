@@ -24,10 +24,10 @@
 
 -- Plugins (to pluginify):
 -- DisplayRes
--- CasualSafari
 -- WarmKeys
 -- WinWin
--- OnLocation
+-- [x] OnLocation
+-- [x] SafariKeys
 -- UsefulUtilites
 require('apw-lib')
 require('init-plugins')
@@ -40,9 +40,6 @@ hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Zzz")
 -- hs.loadSpoon("SpoonInstall")
 -- hs.loadSpoon("MenubarTimer")
-
--- spoon.MenubarTimer:start()
--- spoon.SystemContexts:start()
 
 -- hs.console.clearConsole()
 
