@@ -11,3 +11,7 @@
 - [x] finish inc/dec
 - [ ] make all menubarlets enable/disableable through the same interface (chooser?)
 - [ ] provde them with config options through chooser as well
+- [ ] migrate remaining plugins to spoons
+- [ ] implement better reloading? may be a spoon already for this
+- [ ] finish implementing Resolute
+- [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)
