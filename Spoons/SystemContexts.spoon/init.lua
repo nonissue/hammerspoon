@@ -16,6 +16,26 @@ options as user env changes.
 local obj = {}
 obj.__index = obj
 
+--[[
+    Outline of:
+    - Properties to init
+    - How it's computed
+    - Effect of properties
+
+    - Docked: Bool
+        - Computed from:
+            - number of screens
+            - names of displays
+            - name of SSID
+        - Effect:
+            - movedock
+            - provide correct 'changeres' options
+            - set window layout?
+    * Location
+    
+
+]]
+
 -- Metadata
 obj.name = "SystemContexts"
 obj.version = "1.0"
