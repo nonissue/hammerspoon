@@ -72,7 +72,10 @@ function check_burnrate()
   designCap = hs.battery.designCapacity()
   local burnrateActual = designCap / cur_amh
   local burnrateRounded = round(burnrateActual, 1)
-  if hs.battery.isCharging() then
+  -- egpu only provides 60w which is enough to charge
+  -- most of the time, but hs/system doesnt consider 
+  -- it to be charging
+  if hs.battery.isCharging() or cur_amh == 0 then
     setBurnrateText("⚡︎", green)
   elseif designCap / cur_amh > 15 then
     setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)

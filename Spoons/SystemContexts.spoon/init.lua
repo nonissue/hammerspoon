@@ -28,7 +28,7 @@ obj.__index = obj
             - names of displays
             - name of SSID
         - Effect:
-            - movedock
+            - dock position
             - provide correct 'changeres' options
             - set window layout?
     * Location

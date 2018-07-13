@@ -69,7 +69,7 @@ local alt =     {"alt"                }
 apw_go({
     "apps.utilities",
     "apps.hammerspoon_config_reload",
-    "apps.change_resolution",
+    -- "apps.change_resolution",
     "battery.burnrate",
     "sounds.sounds",
 })
