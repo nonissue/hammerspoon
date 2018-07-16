@@ -75,10 +75,17 @@ function check_burnrate()
   -- egpu only provides 60w which is enough to charge
   -- most of the time, but hs/system doesnt consider 
   -- it to be charging
+
+
+  -- THIS BRANCHING SUCKS
+  setBurnrateText("ERR: ⚡", red)
+
   if hs.battery.isCharging() or cur_amh == 0 then
     setBurnrateText("⚡︎", green)
-  elseif designCap / cur_amh > 15 then
+  elseif designCap / cur_amh > 30 then
     setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)
+  -- elseif designCap / cur_amh > 15 then
+  --   setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)
   elseif designCap / cur_amh > 10 then
     setBurnrateText("⚡︎: " .. burnrateRounded, green)
   elseif designCap / cur_amh > 6 then
