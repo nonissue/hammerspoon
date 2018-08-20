@@ -140,18 +140,6 @@ function obj:initCafWatcher()
 end
 
 
---- SystemContexts:moveDockLeft()
---- Method
---- Stops ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
 function obj:moveDockLeft() 
   hs.applescript.applescript(
     [[
@@ -160,18 +148,6 @@ function obj:moveDockLeft()
     ]])
 end
 
---- SystemContexts:moveDockDown()
---- Method
---- Stops ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
 function obj:moveDockDown() 
   hs.applescript.applescript(
     [[
@@ -189,19 +165,6 @@ function obj:init()
     return self
 end
 
---- SystemContexts:start()
---- Method
---- Starts ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
-
 -- start watchers
 function obj:start()
   print("-- Starting SystemContexts")
@@ -214,19 +177,6 @@ function obj:start()
   obj.cafWatcher:start()
   return self
 end
-
---- SystemContexts:stop()
---- Method
---- Stops ___
----
---- Parameters:
----  * None
----
---- Returns:
----  * The ___ object
----
---- Notes:
----  * Some ___ plugins will continue performing background work even after this call (e.g. Spotlight searches)
 
 -- stop watchers
 function obj:stop()

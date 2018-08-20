@@ -125,6 +125,7 @@ local screens = #hs.screen.allScreens()
 local lastNumberOfScreens = #hs.screen.allScreens()
 
 function screenWatcher()
+    print_r(hs.screen.allScreens(), "allScreens")
     newNumberOfScreens = #hs.screen.allScreens()
   
     if newNumberOfScreens == 1 then
@@ -134,6 +135,7 @@ function screenWatcher()
     end
     
     hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
+    print("Screen change detected")
     lastNumberOfScreens = newNumberOfScreens
 end
 
@@ -149,6 +151,7 @@ elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
     spoon.SystemContexts:moveDockLeft()
 end
 
+hs.screen.watcher.new(screenWatcher):start()
 ----------------------------------------------------------
 -- /end of WHY IS THIS HERE?
 ----------------------------------------------------------
