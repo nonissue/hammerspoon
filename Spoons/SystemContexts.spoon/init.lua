@@ -139,22 +139,87 @@ function obj:initCafWatcher()
     obj.cafWatcher = hs.caffeinate.watcher.new(obj.muteOnWake)
 end
 
-
 function obj:moveDockLeft() 
-  hs.applescript.applescript(
-    [[
-      tell application "System Events" to set the autohide of the dock preferences to true
-      tell application "System Events" to set the screen edge of the dock preferences to left
-    ]])
+    hs.applescript.applescript(
+      [[
+        tell application "System Events" to set the autohide of the dock preferences to true
+        tell application "System Events" to set the screen edge of the dock preferences to left
+      ]])
+  end
+  
+  function obj:moveDockDown() 
+    hs.applescript.applescript(
+      [[
+        tell application "System Events" to set the autohide of the dock preferences to false
+        tell application "System Events" to set the screen edge of the dock preferences to bottom
+      ]])
+  end
+----------------------------------------------------------
+-- screenWatcher
+----------------------------------------------------------
+-- Screen watcher stuff
+-- Seems buggy, affinity designer triggers screen change?
+-- Cinema Display Name: "Cinema HD"
+-- Cinema Display ID: 69489838
+-- local screens = #hs.screen.allScreens()
+local lastNumberOfScreens = #hs.screen.allScreens()
+local display_laptop = "Color LCD"
+local current_screen_name = hs.screen.mainScreen():name()
+
+function obj.screenWatcher()
+    -- print_r(hs.screen.allScreens(), "allScreens")
+    local newNumberOfScreens = #hs.screen.allScreens()
+    -- print("\nFirst\nnewNumberOfScreens: " .. newNumberOfScreens)
+    -- print("lastNumberOfScreens: " .. lastNumberOfScreens)
+    -- -- hs.screen.allScreens()
+    -- if #hs.screen.allScreens() == lastNumberOfScreens then 
+    --     print("\n\nSCREEN NUMBER IS SAME?")
+    -- else 
+    --     print("\n\nSCREEN NUMBER NOT THE SAME: " .. newNumberOfScreens .. " / " .. lastNumberOfScreens)
+    --     print("\nnewNumberOfScreens: " .. type(newNumberOfScreens))
+    --     print("lastNumberOfScreens: " .. type(lastNumberOfScreens))
+    --     print("\n" .. newNumberOfScreens - lastNumberOfScreens)
+    -- end
+    -- if hs.screen.find("Color LCD") ~= nil then
+    --     print("\nWE FIND THE DISPLAY?!")
+    -- end
+  
+    if #hs.screen.allScreens() == lastNumberOfScreens and hs.screen.find("Color LCD") ~= nil then
+        hs.alert.show("Screen Arrangement Change Detected")
+        hs.alert.show("But no new monitors connected")
+    else
+        if newNumberOfScreens == 1 and hs.screen.find("Color LCD") then
+            hs.alert.show("Screens: internal display ONLY", alerts_nobg, 1.5)
+            obj:moveDockLeft()
+            if hs.fs.volume.eject("/Volumes/ExternalSSD") then
+                hs.alert.show("eGPU disconnect assumed, ejected ExternalSSD", alerts_large_alt, 5)
+            else
+                hs.alert.show("eGPU disconnect assumed, unable to eject ExternalSSD", alerts_large_alt, 5)
+            end
+            -- eject ssds?
+        elseif hs.screen.find(69489838) then
+            hs.alert.show("Docked", alerts_nobg, 1.5)
+            obj:moveDockDown()
+        end
+    end
+
+    -- hs.alert.show("Screens count: " .. newNumberOfScreens, alerts_nobg, 1.5)
+    -- print("Screen change detected")
+    lastNumberOfScreens = newNumberOfScreens
 end
 
-function obj:moveDockDown() 
-  hs.applescript.applescript(
-    [[
-      tell application "System Events" to set the autohide of the dock preferences to false
-      tell application "System Events" to set the screen edge of the dock preferences to bottom
-    ]])
-end
+-- -- Handles desktop set up if I'm using one monitor or two
+-- if current_screen_name == display_desktop_main or lastNumberOfScreens == 2 then
+--     obj:moveDockDown()
+-- -- If I'm only using one monitor and it's laptop, then move that dock
+-- elseif current_screen_name == display_laptop and lastNumberOfScreens == 1 then
+--     obj:moveDockLeft()
+-- end
+
+obj.screenWatcher()
+hs.screen.watcher.new(obj.screenWatcher):start()
+
+
 
 function obj:init()
     obj.initWifiWatcher()
