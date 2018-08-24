@@ -13,6 +13,10 @@ options as user env changes.
 -----------------------------------------------------------
 ]]--
 
+-- todo:
+-- invoke do not disturb on when not at home 
+
+
 local obj = {}
 obj.__index = obj
 
@@ -32,7 +36,6 @@ obj.__index = obj
             - provide correct 'changeres' options
             - set window layout?
     * Location
-    
 
 ]]
 
@@ -157,10 +160,14 @@ function obj:moveDockLeft()
 ----------------------------------------------------------
 -- screenWatcher
 ----------------------------------------------------------
--- Screen watcher stuff
--- Seems buggy, affinity designer triggers screen change?
 -- Cinema Display Name: "Cinema HD"
 -- Cinema Display ID: 69489838
+
+-- Issues: 
+-- affinity designer triggers screen change?
+-- gets called multiple times as sometimes add multiple displays
+-- figure out how to batch the updates?
+
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 
 function obj.screenWatcher()

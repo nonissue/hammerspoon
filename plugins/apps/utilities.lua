@@ -1,6 +1,7 @@
 local mod = {}
 
 -- I find it a little more flexible than hs.inspect for developing
+-- i like this, but it's not used many places. hmm.
 function print_r ( t )
   local print_r_cache={}
   local function sub_print_r(t,indent)
@@ -35,6 +36,8 @@ function print_r ( t )
   print()
 end
 
+-- only used one place? 
+-- plugins/battery/burnrate.lua
 function round(num, numDecimalPlaces)
     local mult = 10^(numDecimalPlaces or 0)
     if num >= 0 then return math.floor(num * mult + 0.5) / mult

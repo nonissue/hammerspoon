@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 -- VERY VERY early hammerspoon init.lua
-------------------------------------------------------------------------------
+--------------------------------f----------------------------------------------
 -- By: Andrew Williams / andy@nonissue.org
 ------------------------------------------------------------------------------
 -- Still a goddamn mess, but may be useful to someone
@@ -31,6 +31,10 @@
 -- UsefulUtilites
 require('apw-lib')
 require('init-plugins')
+
+package.path = package.path .. ';lib/?.lua'
+alerts = require('alerts')
+alerts.test()
 
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")

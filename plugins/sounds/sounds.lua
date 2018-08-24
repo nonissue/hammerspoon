@@ -7,10 +7,10 @@ local inception = hs.sound.getByFile(sounds_dir .. "inception.mp3")
 local airhorn = hs.sound.getByFile(sounds_dir .. "mlg-airhorn.mp3")
 
 -- was too easy to hit as A
--- hs.hotkey.bind(supermash, 'A', function() 
-	-- alert_repeat("🚨📢", alerts_nobg, 0.5, 1, 3)
-	-- alert_lrg(" 🚨 📢 ")
-	-- airhorn:play() 
--- end)
+hs.hotkey.bind(supermash, 'A', function() 
+	alert_repeat("🚨📢", alerts_nobg, 0.5, 1, 3)
+	alert_lrg(" 🚨 📢 ")
+	airhorn:play() 
+end)
 
 return mod

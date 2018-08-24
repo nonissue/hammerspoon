@@ -57,10 +57,6 @@ alertFont = {
    color = {blue = 1, alpha = 1}
 }
 
-function bindStyle(textStyle)
-   return hs.styledtext.new(textStyle)
-end
-
 alerts_large = { 
    fillColor = { white = 0, alpha = 0.2 }, radius = 100, strokeColor = { white = 1, alpha = 1 }, 
    strokeWidth = 50, textSize = 100, textColor = { black = 1, alpha = 0.8}
@@ -99,8 +95,6 @@ function alerts_display()
   hs.alert("Important Alert!", alerts_large_alt, 5)
   hs.alert("Important Alert!", alerts_medium, 5)
 end
-
--- alerts_display()
 
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
