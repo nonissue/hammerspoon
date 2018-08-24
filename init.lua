@@ -1,40 +1,41 @@
 ------------------------------------------------------------------------------
--- VERY VERY early hammerspoon init.lua
---------------------------------f----------------------------------------------
+-- init.lua
+------------------------------------------------------------------------------
 -- By: Andrew Williams / andy@nonissue.org
 ------------------------------------------------------------------------------
--- Still a goddamn mess, but may be useful to someone
--- Haven't done much of anything, most of it is just experimenting
+-- A messy hammerspoon config
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
 
 -- TODO:
--- [ ] really should create objects with the properties of laptop and desktop / EDIT: ADD TO apw-lib.lua
--- [ ] right now, if something changes, multiple references are scattered
--- in the code in a bunch of places (like if display type for desktop changes)
--- [ ] Energy Activity Use Indicator while mobile
--- [ ] Plugin-ify non-standard config
--- [ ] Move plugins to plugins folder, load dynamically?
--- [ ] Use Spoons
+-- [ ] Load utilities module immediately
+-- [ ] Overwrite default alert styles
 
 -- Plugins (not finished):
 -- SleepTimer
 -- BurnRate 
 
 -- Plugins (to pluginify):
--- DisplayRes
+-- [x] DisplayRes
 -- WarmKeys
--- WinWin
+-- [ ] Window Management
 -- [x] OnLocation
 -- [x] SafariKeys
--- UsefulUtilites
+-- [ ] UsefulUtilites
+
+
 require('apw-lib')
 require('init-plugins')
 
 package.path = package.path .. ';lib/?.lua'
 alerts = require('alerts')
 alerts.test()
+
+function alert(text, duration)
+    duration = duration or 1.5
+    hs.alert.show(text, alerts.std, duration)
+end
 
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
@@ -197,7 +198,7 @@ hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
 
 function kirby()
-    test = hs.alert.show(" ¯\\_(ツ)_/¯ ", alerts_nobg, 1.5)
+    test = alert(" ¯\\_(ツ)_/¯ ", 1.5)
     hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 
