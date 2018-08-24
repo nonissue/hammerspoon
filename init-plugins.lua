@@ -2,7 +2,7 @@
 -- Entirely copied from oh-my-hammerspoon
 -- require this code from init.lua
 
-package.path = package.path .. ';plugins/?.lua'
+package.path = package.path .. ';lib/?.lua'
 require('apw-lib')
 
 hostname = hs.host.localizedName()
@@ -62,7 +62,7 @@ if not status then
    end
 end
 
-notify("Config Loaded ✔")
+-- notify("Config Loaded ✔")
 -- hs.alert.show("✔", alerts_standard, 1)
 
 -- hs.alert("Config Loaded!", 1)

@@ -6,6 +6,9 @@
 * [ ] move hotkey binding from spoons to main init!
 * [ ] make sure hammerspoon is calling obj:init() in spoons
 * [ ] resolve capslock issue with this: https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e
+* [ ] get proper reload config working and remove custom thingy
+* [ ] remove init-plugins and apw-lib
+
 
 - [ ] Cheatsheet style overlay to show all the things my config does
     - [ ] Alternate idea/addon: A chooser that lists/calls all choosers?

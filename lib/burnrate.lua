@@ -1,3 +1,4 @@
+
 -- UPDATE 18/01/10 : This was kind of dumb and is obsolete. 
 
 -- A status/menubarlet to reflect the current 'burnrate' for battery.
@@ -71,7 +72,7 @@ function check_burnrate()
   cur_amh = math.abs(hs.battery.amperage())
   designCap = hs.battery.designCapacity()
   local burnrateActual = designCap / cur_amh
-  local burnrateRounded = round(burnrateActual, 1)
+  local burnrateRounded = utils.round(burnrateActual, 1)
   -- egpu only provides 60w which is enough to charge
   -- most of the time, but hs/system doesnt consider 
   -- it to be charging

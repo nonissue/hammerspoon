@@ -24,31 +24,25 @@
 -- [x] SafariKeys
 -- [ ] UsefulUtilites
 
+package.path = package.path .. ";lib/?.lua"
+styles = require("styles")
+utils = require("utilities")
+
+
 require("apw-lib")
 require("init-plugins")
 
-package.path = package.path .. ";lib/?.lua"
-styles = require("styles")
 
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end 
 
--- function alert(text, duration)
---     duration = duration or 1.5
---     hs.alert.show(text, alerts.std, duration)
--- end
-
--- hs.alert.defaultStyle = {alerts.std}
-
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
--- hs.loadSpoon("Resolute")
 hs.loadSpoon("Zzz")
--- hs.loadSpoon("SpoonInstall")
--- hs.loadSpoon("MenubarTimer")
+-- hs.loadSpoon("Resolute")
 
 -- hs.console.clearConsole()
 
@@ -76,11 +70,8 @@ local alt = {"alt"}
 
 apw_go(
     {
-        "apps.utilities",
-        "apps.hammerspoon_config_reload",
-        -- "apps.change_resolution",
-        "battery.burnrate",
-        "sounds.sounds"
+        "lib.hammerspoon_config_reload",
+        "lib.burnrate",
     }
 )
 
@@ -240,7 +231,7 @@ hs.hotkey.bind(mash, "N", hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, "P", hs.grid.pushWindowPrevScreen)
 
 function kirby()
-    hs.alert(" ¯\\_(ツ)_/¯ ", 1.5)
+    hs.alert(" ¯\\_(ツ)_/¯ ", styles.alert_lrg, 1.5)
     hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 

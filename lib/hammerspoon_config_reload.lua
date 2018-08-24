@@ -3,14 +3,13 @@
 ---- Configuration file management
 ---- Original code from http://www.hammerspoon.org/go/#fancyreload
 
-require('apw-lib')
+-- utils = require('utilies')
 
 local mod={}
 local configFileWatcher = nil
 
 mod.config = {
    auto_reload = true,
-   manual_reload_key = {{"cmd", "alt", "ctrl"}, "R"}
 }
 
 -- Automatic config reload if any files in ~/.hammerspoon change
@@ -34,7 +33,7 @@ function mod.init()
    end
 
   --  Manual config reload
-   apw.bind(mod.config.manual_reload_key, hs.reload)
+--    utils.bind(mod.config.manual_reload_key, hs.reload)
 end
 
 return mod

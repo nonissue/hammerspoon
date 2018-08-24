@@ -101,11 +101,11 @@ function obj:cycleUserAgent()
   if (default and default["ticked"]) then
     safari:selectMenuItem(str_iPad)
     
-    hs.alert.show("UA: iPad", alerts_standard, 0.7)
+    hs.alert.show("UA: iPad", 1.5)
   end
   if (iPad and iPad["ticked"]) then
     safari:selectMenuItem(str_default)
-    hs.alert.show("UA: Default", alerts_nobg, 2)
+    hs.alert.show("UA: Default", 2)
   end
 end
 
@@ -139,9 +139,7 @@ function obj:mailToSelf()
       end tell
     ]])
     
-    -- hs.notify.new({title="Page Emailed", informativeText="URL:\n" .. result}):send()
-    -- hs.alert.show("📩", {fillColor = { white = 0, alpha = 0 }, strokeWidth = 0})
-    hs.alert.show(" ↧ ", alerts_nobg, 1.2)
+    hs.alert.show(" ↧ ", 2)
   end
 end
 
@@ -170,7 +168,7 @@ function obj:tabToNewWindow()
   local target_item_in_menu = {"Window", "Move Tab to New Window"}
   safari:selectMenuItem(target_item_in_menu)
 
-  hs.alert.show(" ⎘ ", alerts_nobg, 1.5)
+  hs.alert.show(" ⎘ ", 1.5)
 end
   
 ------------------------------------------------------------------------------
@@ -184,7 +182,7 @@ function obj:mergeAllWindows()
 
   local target_item_in_menu = {"Window", "Merge All Windows"}
   safari:selectMenuItem(target_item_in_menu)
-  hs.alert.show(" ⎗ ", alerts_nobg, 1.5)
+  hs.alert.show(" ⎗ ", 1.5)
 end
 
 ------------------------------------------------------------------------------
@@ -201,10 +199,10 @@ function obj:pinOrUnpinTab()
 
   if (safari:findMenuItem(pin_tab)) then
     -- new pin tab
-    hs.alert.show(" ⍇ ", alerts_nobg, 1.5)
+    hs.alert.show(" ⍇ ", 1.5)
     safari:selectMenuItem(pin_tab)
   else
-    hs.alert.show(" ⍈ ", alerts_nobg, 1.5)
+    hs.alert.show(" ⍈ ", 1.5)
     safari:selectMenuItem(unpin_tab)
   end
 end
