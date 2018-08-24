@@ -74,10 +74,6 @@ obj.alert.defaults = {
     atScreenEdge = 0,
     fadeInDuration = 0.5,
     fadeoOutDuration = 0.5,
-    -- textStyle = {
-    --     underlineStyle = hs.styledtext.lineStyles["single"] or hs.styledtext.linePatterns["dot"] or hs.styledtext.lineAppliesTo["line"],
-    --     underlineColor = {blue = 1, alpha = 0.5},
-    -- }
 }
 
 -- CREATE DEFAULT STYLE WITH ALL FIELDS
@@ -86,11 +82,5 @@ obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.
 -- should only update fields i want to change rather than regenerating default style every time
 obj.alert_lrg = obj.createStyle(obj.alert.sizes[5])
 obj.alert_warning = obj.createStyle(obj.alert.sizes[3], obj.alert.colors.warning)
-
--- Concats a list of unordered tables containing key = value pairs
--- the value of a pair can also be another table, and it is preserved.
-
--- The following seems to have become my favourite but it's naming is ridiculous as it has a bg
--- wtf.
 
 return obj

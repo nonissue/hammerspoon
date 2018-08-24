@@ -33,7 +33,7 @@ function mod.init()
    end
 
   --  Manual config reload
---    utils.bind(mod.config.manual_reload_key, hs.reload)
+    -- apw.bind(mod.config.manual_reload_key, hs.reload)
 end
 
 return mod
