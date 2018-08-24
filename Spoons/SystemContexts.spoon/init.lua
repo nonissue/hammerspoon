@@ -20,6 +20,10 @@ options as user env changes.
 local obj = {}
 obj.__index = obj
 
+-- hs.alert.defaultStyle = { textSize = 60}
+local alert = require("hs.alert")
+-- alert.defaultStyle.textSize = 60
+
 --[[
     Outline of:
     - Properties to init
@@ -108,7 +112,7 @@ function obj.home_arrived()
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
   -- new arrive home alert
-    hs.alert(" ☛ ⌂ ", alerts_large_alt, 5)
+    hs.alert(" ☛ ⌂ ", 3)
 
 end
 
@@ -118,7 +122,7 @@ function obj.home_departed()
     -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
     -- new leave home alert
-    hs.alert("~(☛ ⌂)", alerts_large_alt, 3)
+    hs.alert("~(☛ ⌂)", 3)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 end
 
@@ -180,24 +184,24 @@ function obj.screenWatcher()
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and hs.screen.find("Color LCD") ~= nil then
         -- check to see if new number of screens is what we had before
         -- and that color LCD is working (so we aren't in clamshell mode)
-        hs.alert.show("Screen Arrangement Change Detected OR RELOAD")
-        hs.alert.show("But no new monitors connected")
+        hs.alert("Screen Arrangement Change Detected OR RELOAD", 3)
+        -- hs.alert.show("But no new monitors connected")
     else
         if newNumberOfScreens == 1 and hs.screen.find("Color LCD") then
             -- if we've had a display change, and our only screen is color LCD
             -- then ExternalSSD should be ejected, so we may as well try
             -- but we will move dock left first
             obj:moveDockLeft()
-            hs.alert.show("Screens: internal display ONLY", alerts_nobg, 1.5)
+            -- hs.alert.show("Screens: internal display ONLY")
             if hs.fs.volume.eject("/Volumes/ExternalSSD") then
-                hs.alert.show("eGPU disconnect assumed, ejected ExternalSSD", alerts_large_alt, 5)
+                hs.alert.show("eGPU disconnect assumed, ejected ExternalSSD", 3)
             else
-                hs.alert.show("eGPU disconnect assumed, unable to eject ExternalSSD", alerts_large_alt, 5)
+                hs.alert.show("eGPU disconnect assumed, unable to eject ExternalSSD", 3)
             end
         elseif hs.screen.find(69489838) then
             -- if we can find our Cineema Display (id: 69489838) 
             -- then we should move the dock to the bottom if it isnt there already
-            hs.alert.show("Docked", alerts_nobg, 1.5)
+            -- hs.alert.show("Docked")
             obj:moveDockDown()
         end
     end

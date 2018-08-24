@@ -1,5 +1,12 @@
 # TODO
 
+## NEXT
+
+* [ ] move any timers/watchers/etc from spoons to main init!
+* [ ] move hotkey binding from spoons to main init!
+* [ ] make sure hammerspoon is calling obj:init() in spoons
+* [ ] resolve capslock issue with this: https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e
+
 - [ ] Cheatsheet style overlay to show all the things my config does
     - [ ] Alternate idea/addon: A chooser that lists/calls all choosers?
 - [ ] Use menubar hotkey options for simple ideas?
@@ -13,5 +20,5 @@
 - [ ] provde them with config options through chooser as well
 - [ ] migrate remaining plugins to spoons
 - [ ] implement better reloading? may be a spoon already for this
-- [ ] finish implementing Resolute
+- [x] finish implementing Resolute
 - [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)

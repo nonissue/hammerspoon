@@ -14,7 +14,7 @@
 
 -- Plugins (not finished):
 -- SleepTimer
--- BurnRate 
+-- BurnRate
 
 -- Plugins (to pluginify):
 -- [x] DisplayRes
@@ -24,18 +24,22 @@
 -- [x] SafariKeys
 -- [ ] UsefulUtilites
 
+require("apw-lib")
+require("init-plugins")
 
-require('apw-lib')
-require('init-plugins')
+package.path = package.path .. ";lib/?.lua"
+styles = require("styles")
 
-package.path = package.path .. ';lib/?.lua'
-alerts = require('alerts')
-alerts.test()
+for k, v in pairs(styles.alert_default) do
+    hs.alert.defaultStyle[k] = v
+end 
 
-function alert(text, duration)
-    duration = duration or 1.5
-    hs.alert.show(text, alerts.std, duration)
-end
+-- function alert(text, duration)
+--     duration = duration or 1.5
+--     hs.alert.show(text, alerts.std, duration)
+-- end
+
+-- hs.alert.defaultStyle = {alerts.std}
 
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
@@ -47,7 +51,6 @@ hs.loadSpoon("Zzz")
 -- hs.loadSpoon("MenubarTimer")
 
 -- hs.console.clearConsole()
-
 
 -- Conditional to multiple montior set up.
 -- Contexts in which computer can be used:
@@ -67,68 +70,87 @@ hs.loadSpoon("Zzz")
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
-local mash =    {"cmd", "alt", "ctrl" }
-local hyper =   {"cmd", "alt"         }
-local alt =     {"alt"                }
+local mash = {"cmd", "alt", "ctrl"}
+local hyper = {"cmd", "alt"}
+local alt = {"alt"}
 
-apw_go({
-    "apps.utilities",
-    "apps.hammerspoon_config_reload",
-    -- "apps.change_resolution",
-    "battery.burnrate",
-    "sounds.sounds",
-})
-
+apw_go(
+    {
+        "apps.utilities",
+        "apps.hammerspoon_config_reload",
+        -- "apps.change_resolution",
+        "battery.burnrate",
+        "sounds.sounds"
+    }
+)
 
 spoon.Zzz:init()
 -- spoon.Resolute:init()
 
-local safariHotkeys =  {
+local safariHotkeys = {
     tabToNewWin = {mash, "T"},
     mailToSelf = {mash, "U"},
     mergeAllWindows = {mash, "M"},
     pinOrUnpinTab = {hyper, "P"},
-    cycleUserAgent = {mash, "7"},
+    cycleUserAgent = {mash, "7"}
 }
 
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
-hs.hotkey.bind(mash, "J", function()
-    spoon.Resolute:show()
-end)
+hs.hotkey.bind(
+    mash,
+    "J",
+    function()
+        spoon.Resolute:show()
+    end
+)
 
-hs.hotkey.bind(mash, "B", function()
-    spoon.PaywallBuster:show()
-end)
+hs.hotkey.bind(
+    mash,
+    "B",
+    function()
+        spoon.PaywallBuster:show()
+    end
+)
 
-hs.hotkey.bind(mash, "S", function()
-    spoon.Zzz:show()
-end)
+hs.hotkey.bind(
+    mash,
+    "S",
+    function()
+        spoon.Zzz:show()
+    end
+)
 
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, 'y', 
+hs.hotkey.bind(
+    {"cmd", "alt", "ctrl"},
+    "y",
     function()
         hs.toggleConsole()
     end
 )
 
 -- init grid
-hs.grid.MARGINX         = 0
-hs.grid.MARGINY         = 0
-hs.grid.GRIDWIDTH       = 10
-hs.grid.GRIDHEIGHT      = 10
+hs.grid.MARGINX = 0
+hs.grid.MARGINY = 0
+hs.grid.GRIDWIDTH = 10
+hs.grid.GRIDHEIGHT = 10
 
--- disable animation 
+-- disable animation
 hs.window.animationDuration = 0
 
 ----------------------------------------------------------
 -- /end of WHY IS THIS HERE?
 ----------------------------------------------------------
 
-hs.hotkey.bind(alt, 'space', hs.grid.maximizeWindow)
+hs.hotkey.bind(alt, "space", hs.grid.maximizeWindow)
 
-hs.hotkey.bind(hyper, "H", function()
-    hs.hints.windowHints()
-end)
+hs.hotkey.bind(
+    hyper,
+    "H",
+    function()
+        hs.hints.windowHints()
+    end
+)
 
 ------------------------------------------------------------------------------
 -- Layout stuff
@@ -138,69 +160,88 @@ end)
 -- wrote for hammerspoon
 ------------------------------------------------------------------------------
 -- Moves window to left half of screen
-hs.hotkey.bind(hyper, "left", function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    f.x = max.x
-    f.y = max.y
-    f.w = max.w / 2
-    f.h = max.h
-    win:setFrame(f)
-end)
+hs.hotkey.bind(
+    hyper,
+    "left",
+    function()
+        local win = hs.window.focusedWindow()
+        local f = win:frame()
+        local screen = win:screen()
+        local max = screen:frame()
+        f.x = max.x
+        f.y = max.y
+        f.w = max.w / 2
+        f.h = max.h
+        win:setFrame(f)
+    end
+)
 
 -- Moves window/sets width to right half of screen
-hs.hotkey.bind(hyper, "right", function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    f.x = max.x + (max.w / 2)
-    f.y = max.y
-    f.w = max.w / 2
-    f.h = max.h
-    win:setFrame(f)
-end)
+hs.hotkey.bind(
+    hyper,
+    "right",
+    function()
+        local win = hs.window.focusedWindow()
+        local f = win:frame()
+        local screen = win:screen()
+        local max = screen:frame()
+        f.x = max.x + (max.w / 2)
+        f.y = max.y
+        f.w = max.w / 2
+        f.h = max.h
+        win:setFrame(f)
+    end
+)
 
 -- Moves window to right, sets to 1/4 width
-hs.hotkey.bind(mash, "right", function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    f.x = max.x + (max.w * 0.75)
-    f.y = max.y
-    f.w = max.w * 0.25
-    f.h = max.h
-    win:setFrame(f)
-end)
+hs.hotkey.bind(
+    mash,
+    "right",
+    function()
+        local win = hs.window.focusedWindow()
+        local f = win:frame()
+        local screen = win:screen()
+        local max = screen:frame()
+        f.x = max.x + (max.w * 0.75)
+        f.y = max.y
+        f.w = max.w * 0.25
+        f.h = max.h
+        win:setFrame(f)
+    end
+)
 
 --Moves window to left, sets to 3/4 width
-hs.hotkey.bind(mash, "left", function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    f.x = max.x
-    f.w = max.w * 0.75
-    f.h = max.h
-    f.y = max.y
-    win:setFrame(f)
-end)
+hs.hotkey.bind(
+    mash,
+    "left",
+    function()
+        local win = hs.window.focusedWindow()
+        local f = win:frame()
+        local screen = win:screen()
+        local max = screen:frame()
+        f.x = max.x
+        f.w = max.w * 0.75
+        f.h = max.h
+        f.y = max.y
+        win:setFrame(f)
+    end
+)
 
-hs.hotkey.bind(mash, "N", function()
-    hs.grid.maximizeWindow()
-    hs.grid.pushWindowNextScreen()
-end)
+hs.hotkey.bind(
+    mash,
+    "N",
+    function()
+        hs.grid.maximizeWindow()
+        hs.grid.pushWindowNextScreen()
+    end
+)
 
-hs.hotkey.bind(mash, 'N', hs.grid.pushWindowNextScreen)
-hs.hotkey.bind(mash, 'P', hs.grid.pushWindowPrevScreen)
+hs.hotkey.bind(mash, "N", hs.grid.pushWindowNextScreen)
+hs.hotkey.bind(mash, "P", hs.grid.pushWindowPrevScreen)
 
 function kirby()
-    test = alert(" ¯\\_(ツ)_/¯ ", 1.5)
+    hs.alert(" ¯\\_(ツ)_/¯ ", 1.5)
     hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 
-hs.hotkey.bind(mash, 'K', kirby)
-
+hs.hotkey.bind(mash, "K", kirby)

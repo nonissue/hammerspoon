@@ -91,10 +91,10 @@ test_style = {
    textStyle = {},
 }
 
-function alerts_display()
-  hs.alert("Important Alert!", alerts_large_alt, 5)
-  hs.alert("Important Alert!", alerts_medium, 5)
-end
+-- function alerts_display()
+--   hs.alert("Important Alert!", alerts_large_alt, 5)
+--   hs.alert("Important Alert!", alerts_medium, 5)
+-- end
 
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
@@ -102,10 +102,10 @@ function notify(title, message)
    hs.notify.new({title=title, informativeText=message, hasActionButton=false}):send()
 end
 
-function alert(message)
-   -- stupid, but default style
-   hs.alert.show(message, alerts_medium, 2.5)
-end
+-- function alert(message)
+--    -- stupid, but default style
+--    hs.alert.show(message, alerts_medium, 2.5)
+-- end
 
 function alert_lrg(message)
    -- stupid, but default style
