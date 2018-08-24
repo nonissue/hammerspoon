@@ -6,3 +6,5 @@
 SCRATCH.lua
 .vs/
 totest/
+.vs
+.vscode
