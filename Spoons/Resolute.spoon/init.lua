@@ -116,7 +116,7 @@ function obj:init()
       self.acerChooser:choices(acer4kres)
     else
       local choices = {
-        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution that basically won't work"},
+        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution that almost certainly won't work"},
       }
       self.acerChooser:choices(choices)
     end

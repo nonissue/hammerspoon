@@ -3,13 +3,21 @@
 ## NEXT
 
 * [ ] move any timers/watchers/etc from spoons to main init!
+    * [ ] not really possible for Zzz?
 * [ ] move hotkey binding from spoons to main init!
 * [ ] make sure hammerspoon is calling obj:init() in spoons
 * [ ] resolve capslock issue with this: https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e
-* [ ] get proper reload config working and remove custom thingy
+* [ ] get proper reload config working and remove custom thingy'
+* [ ] proper window management https://github.com/binesiyu/hammerspoon/blob/c47456e6d1eef0b161fe6784cab9a648eab83b51/ws.lua
 * [ ] remove init-plugins and apw-lib
 * [ ] SPEED UP RELOAD
 
+## IDEAS
+
+* [ ] marquee/animated ticker with updates in menubar
+    * [ ] like battery status, current weather?
+
+## Other
 - [ ] Cheatsheet style overlay to show all the things my config does
     - [ ] Alternate idea/addon: A chooser that lists/calls all choosers?
 - [ ] Use menubar hotkey options for simple ideas?

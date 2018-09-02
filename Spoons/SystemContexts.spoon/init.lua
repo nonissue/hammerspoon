@@ -13,9 +13,17 @@ options as user env changes.
 -----------------------------------------------------------
 ]]--
 
--- todo:
--- invoke do not disturb on when not at home 
+--[[ todo:
+* invoke do not disturb on when not at home
+* store state in an object?
+    * eg: 
+        * state.location
+            * vals: home, school, other
+        * state.docked
 
+
+
+]]
 
 local obj = {}
 obj.__index = obj
@@ -185,6 +193,7 @@ function obj.screenWatcher()
         -- check to see if new number of screens is what we had before
         -- and that color LCD is working (so we aren't in clamshell mode)
         hs.alert("Screen Arrangement Change Detected OR RELOAD", 3)
+        obj:moveDockLeft()
         -- hs.alert.show("But no new monitors connected")
     else
         if newNumberOfScreens == 1 and hs.screen.find("Color LCD") then
