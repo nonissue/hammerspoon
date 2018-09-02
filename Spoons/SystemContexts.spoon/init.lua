@@ -21,8 +21,6 @@ options as user env changes.
             * vals: home, school, other
         * state.docked
 
-
-
 ]]
 
 local obj = {}
@@ -178,41 +176,61 @@ function obj:moveDockLeft()
 -- Issues: 
 -- affinity designer triggers screen change?
 -- gets called multiple times as sometimes add multiple displays
+  -- if called multiple times, our conditional logic is broken?
 -- figure out how to batch the updates?
 
+--[[ display contexts:
+    @desk:
+        * cinema display detected
+        * wifi: home
+        * display count: 1-3
+        * actions:
+            * entry: 
+                moveDockDown()
+                audioOn()
+                applyLayouts?
+            * exit: 
+
+    @duet:
+        * display count: 2
+        * wifi: any
+        * ipad display detected?
+        * actions:spo
+    @else:
+        * display count: 1
+        * wifi: any
+]]
+
 obj.lastNumberOfScreens = #hs.screen.allScreens()
+obj.currentScreens = hs.screen.allScreens()
+
+function obj.checkAndEject(target)
+    target = "/Volumes/" .. target
+    if hs.fs.volume.eject(target) then
+        hs.alert.show("SUCCESS: Ejected " .. target, 3)
+    else
+        hs.alert.show("ERROR: Unable to eject " .. target, 3)
+    end
+end
 
 function obj.screenWatcher()
-    -- print_r(hs.screen.allScreens(), "allScreens")x
     local newNumberOfScreens = #hs.screen.allScreens()
   
-    -- we detected display arrangement change!
-
-
-    if #hs.screen.allScreens() == obj.lastNumberOfScreens and hs.screen.find("Color LCD") ~= nil then
-        -- check to see if new number of screens is what we had before
-        -- and that color LCD is working (so we aren't in clamshell mode)
-        hs.alert("Screen Arrangement Change Detected OR RELOAD", 3)
+    if #hs.screen.allScreens() == obj.lastNumberOfScreens then
+        -- if we have same amount of displays do nothing
+        hs.alert("Screen Watcher Fired but display count hasn't changed", 3)
+    elseif hs.screen.find(69489838) then
+        -- if we have a different amount of displays and one of them is 
+        -- our cinema display, we are @desk
+        hs.alert("Docked @ desk?")
+        obj:moveDockDown()
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
+        hs.alert("Undocking from desk!", 3)
+        print("\nUndocking from desk!\n")
         obj:moveDockLeft()
-        -- hs.alert.show("But no new monitors connected")
-    else
-        if newNumberOfScreens == 1 and hs.screen.find("Color LCD") then
-            -- if we've had a display change, and our only screen is color LCD
-            -- then ExternalSSD should be ejected, so we may as well try
-            -- but we will move dock left first
-            obj:moveDockLeft()
-            -- hs.alert.show("Screens: internal display ONLY")
-            if hs.fs.volume.eject("/Volumes/ExternalSSD") then
-                hs.alert.show("eGPU disconnect assumed, ejected ExternalSSD", 3)
-            else
-                hs.alert.show("eGPU disconnect assumed, unable to eject ExternalSSD", 3)
-            end
-        elseif hs.screen.find(69489838) then
-            -- if we can find our Cineema Display (id: 69489838) 
-            -- then we should move the dock to the bottom if it isnt there already
-            -- hs.alert.show("Docked")
-            obj:moveDockDown()
-        end
+        obj:checkAndEject("ExternalSSD")
+    else 
+        hs.alert("ERROR: Unhandled screenWatcher case")
     end
 
     obj.lastNumberOfScreens = newNumberOfScreens
