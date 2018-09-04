@@ -24,13 +24,20 @@
 -- [x] SafariKeys
 -- [ ] UsefulUtilites
 
+require("apw-lib")
+
 package.path = package.path .. ";lib/?.lua"
 styles = require("styles")
 utils = require("utilities")
+hs_reload = require("hammerspoon_config_reload")
+burnrate = require("burnrate")
+
+burnrate.init()
+hs_reload.init()
 
 
-require("apw-lib")
-require("init-plugins")
+
+-- require("init-plugins")
 
 
 for k, v in pairs(styles.alert_default) do
@@ -42,15 +49,7 @@ hs.loadSpoon("SafariKeys")
 hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Zzz")
--- hs.loadSpoon("Resolute")
-
--- hs.console.clearConsole()
-
--- Conditional to multiple montior set up.
--- Contexts in which computer can be used:
---    At home, plugged in to monitors / egpu
---    At home, not plugged in
---    Away from home
+hs.loadSpoon("Resolute")
 --
 -- settings to apply based on context:
 --    screen lock time
@@ -68,15 +67,15 @@ local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
-apw_go(
-    {
-        "lib.hammerspoon_config_reload",
-        "lib.burnrate",
-    }
-)
+-- apw_go(
+--     {
+--         "lib.hammerspoon_config_reload",
+--         "lib.burnrate",
+--     }
+-- )
 
 spoon.Zzz:init()
--- spoon.Resolute:init()
+spoon.Resolute:init()
 
 local safariHotkeys = {
     tabToNewWin = {mash, "T"},

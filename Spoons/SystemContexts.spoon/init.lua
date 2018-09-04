@@ -203,6 +203,7 @@ function obj:moveDockLeft()
 
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 obj.currentScreens = hs.screen.allScreens()
+obj.currentScreens = nil
 
 function obj.checkAndEject(target)
     target = "/Volumes/" .. target
@@ -216,21 +217,27 @@ end
 function obj.screenWatcher()
     local newNumberOfScreens = #hs.screen.allScreens()
   
-    if #hs.screen.allScreens() == obj.lastNumberOfScreens then
-        -- if we have same amount of displays do nothing
-        hs.alert("Screen Watcher Fired but display count hasn't changed", 3)
+    if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
+        -- handle unnecessary/redundant screenWatcher callbacks
+        hs.alert("screenwatcher: fired, state: " .. obj.currentScreens, 3)
     elseif hs.screen.find(69489838) then
         -- if we have a different amount of displays and one of them is 
         -- our cinema display, we are @desk
-        hs.alert("Docked @ desk?")
+        hs.alert("@desk")
+        obj.currentScreens = "@desk"
         obj:moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
-        hs.alert("Undocking from desk!", 3)
-        print("\nUndocking from desk!\n")
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.currentScreens == "@desk" then
+        hs.alert("@undocking", 3)
+        obj.currentScreens = "@mobile"
         obj:moveDockLeft()
-        obj:checkAndEject("ExternalSSD")
-    else 
+        obj.checkAndEject("ExternalSSD")
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
+        hs.alert("@mobile", 3)
+        obj.currentScreens = "@mobile"
+        obj:moveDockLeft()
+    else
         hs.alert("ERROR: Unhandled screenWatcher case")
+        obj.currentState = "@error"
     end
 
     obj.lastNumberOfScreens = newNumberOfScreens
