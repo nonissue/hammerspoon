@@ -35,11 +35,7 @@ burnrate = require("burnrate")
 burnrate.init()
 hs_reload.init()
 
-
-
--- require("init-plugins")
-
-
+-- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end 
@@ -50,12 +46,6 @@ hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Zzz")
 hs.loadSpoon("Resolute")
---
--- settings to apply based on context:
---    screen lock time
---    volume
---    dock position
---    default app layouts
 
 ---------
 -- Vars

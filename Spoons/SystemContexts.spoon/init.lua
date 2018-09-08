@@ -13,13 +13,17 @@ options as user env changes.
 -----------------------------------------------------------
 ]]--
 
---[[ todo:
+--[[ 
+todo:
+* make this whole thing a proper state machine!
+
 * invoke do not disturb on when not at home
 * store state in an object?
     * eg: 
         * state.location
             * vals: home, school, other
         * state.docked
+
 
 ]]
 
@@ -73,6 +77,14 @@ end
 
 obj.spoonPath = script_path()
 
+--
+-- settings to apply based on context:
+--    screen lock time
+--    volume
+--    dock position
+--    default app layouts
+
+
 
 ------------------------------------------------------------------------------
 -- Location based functions to change system settings
@@ -98,6 +110,7 @@ obj.spoonPath = script_path()
 -- local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 
 function obj.ssidChangedCallback()
+    print("\nWifi CB fired\n")
     local newSSID = hs.wifi.currentNetwork()
 
     if (newSSID == homeSSID) and (obj.currentSSID ~= homeSSID) then
