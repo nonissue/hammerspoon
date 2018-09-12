@@ -26,9 +26,6 @@
 
 -- lib stuff
 hostname = hs.host.localizedName()
--- hs.logger.setGlobalLogLevel(5)
--- logger = hs.logger.new("hs-log\n", "info")
--- logger.defaultLogLevel = "info"
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 -- hotkey groups
@@ -41,7 +38,6 @@ local alt = {"alt"}
 package.path = package.path .. ";lib/?.lua"
 styles = require("styles")
 utils = require("utilities")
--- logger:v("\n\n~~~~~~~Test Update~~~~~~~~~\n\n")
 
 -- i feel like these two should be spoons
 -- because they rely on watchers
