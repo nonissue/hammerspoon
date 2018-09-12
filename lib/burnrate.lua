@@ -115,10 +115,10 @@ end
 
 function mod.init()
   if hostname ~= "iMac" then
-    logger.i('Enablng burnrate plugin on laptop')
+    print('Enablng burnrate plugin on laptop')
     check_burnrate()
   else
-    logger.i('Not enabling burnrate on iMac')
+    print('Not enabling burnrate on iMac')
   end
 end
 

@@ -24,22 +24,41 @@
 -- [x] SafariKeys
 -- [ ] UsefulUtilites
 
-require("apw-lib")
+-- lib stuff
+hostname = hs.host.localizedName()
+-- hs.logger.setGlobalLogLevel(5)
+-- logger = hs.logger.new("hs-log\n", "info")
+-- logger.defaultLogLevel = "info"
+hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
+-- hotkey groups
+local mash = {"cmd", "alt", "ctrl"}
+local hyper = {"cmd", "alt"}
+local alt = {"alt"}
+
+-- load basic modules 
+-- that don't need to be spoons
 package.path = package.path .. ";lib/?.lua"
 styles = require("styles")
 utils = require("utilities")
+-- logger:v("\n\n~~~~~~~Test Update~~~~~~~~~\n\n")
+
+-- i feel like these two should be spoons
+-- because they rely on watchers
 hs_reload = require("hammerspoon_config_reload")
 burnrate = require("burnrate")
 
+-- and they have to be inited
 burnrate.init()
 hs_reload.init()
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
-end 
+end
 
+
+-- Load our spoons
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 hs.loadSpoon("SysInfo")
@@ -47,25 +66,19 @@ hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Zzz")
 hs.loadSpoon("Resolute")
 
+-- Init spins that require it
+spoon.Zzz:init()
+spoon.Resolute:init()
+
+
 ---------
 -- Vars
 ------------------------------------------------------------------------------
 -- var for hyper key and mash
 -- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
 -- Doesn't make any sense though both in terms of naming and use.
-local mash = {"cmd", "alt", "ctrl"}
-local hyper = {"cmd", "alt"}
-local alt = {"alt"}
 
--- apw_go(
---     {
---         "lib.hammerspoon_config_reload",
---         "lib.burnrate",
---     }
--- )
 
-spoon.Zzz:init()
-spoon.Resolute:init()
 
 local safariHotkeys = {
     tabToNewWin = {mash, "T"},
@@ -108,6 +121,8 @@ hs.hotkey.bind(
         hs.toggleConsole()
     end
 )
+
+--
 
 -- init grid
 hs.grid.MARGINX = 0

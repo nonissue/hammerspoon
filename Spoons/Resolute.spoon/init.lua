@@ -88,7 +88,7 @@ function obj:start()
 end
   
 function obj:stop()
-  print("-- Stopping PaywallBuster")
+  print("-- Stopping acerChooser?")
   self.acerChooser:hide()
   if self.hotkeyShow then
       self.hotkeyShow:disable()

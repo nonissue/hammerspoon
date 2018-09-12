@@ -11,9 +11,7 @@ options as user env changes.
           like dock position, display arrangement, etc.
 
 -----------------------------------------------------------
-]]--
 
---[[ 
 todo:
 * make this whole thing a proper state machine!
 
@@ -24,17 +22,6 @@ todo:
             * vals: home, school, other
         * state.docked
 
-
-]]
-
-local obj = {}
-obj.__index = obj
-
--- hs.alert.defaultStyle = { textSize = 60}
-local alert = require("hs.alert")
--- alert.defaultStyle.textSize = 60
-
---[[
     Outline of:
     - Properties to init
     - How it's computed
@@ -52,6 +39,8 @@ local alert = require("hs.alert")
     * Location
 
 ]]
+local obj = {}
+obj.__index = obj
 
 -- Metadata
 obj.name = "SystemContexts"
@@ -104,10 +93,7 @@ obj.spoonPath = script_path()
 -- If computer is in between networks (say, woken from sleep in new location)
 -- Then desired settings like volume mute are not applied until after a delay
 -- Maybe implement a default setting that is applied when computer is 'in limbo'
-
 -- Move to env variable / .env?
-
--- local wifiicon = hs.image.imageFromPath('media/assets/airport.png')
 
 function obj.ssidChangedCallback()
     print("\nWifi CB fired\n")
@@ -115,15 +101,15 @@ function obj.ssidChangedCallback()
 
     if (newSSID == homeSSID) and (obj.currentSSID ~= homeSSID) then
         -- we are at home!
-        obj.home_arrived()
+        obj.homeArrived()
     elseif newSSID ~= homeSSID then
-        obj.home_departed()
+        obj.homeDeparted()
     end
 
     obj.currentSSID = newSSID
 end
 
-function obj.home_arrived()
+function obj.homeArrived()
   -- Should really have device specific settings (desktop vs laptop)
   -- requires modified sudoers file
   -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
@@ -132,12 +118,11 @@ function obj.home_arrived()
     hs.audiodevice.defaultOutputDevice():setMuted(false)
   -- new arrive home alert
     hs.alert(" ☛ ⌂ ", 3)
-
 end
 
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
-function obj.home_departed()
+function obj.homeDeparted()
     -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
     -- new leave home alert
@@ -157,7 +142,7 @@ end
 -- but doesn't connect to a network automatically. I still want things set
 function obj.muteOnWake(eventType)
     if (eventType == hs.caffeinate.watcher.systemDidWake and hs.wifi.currentNetwork() ~= homeSSID) then
-        obj.home_departed()
+        obj.homeDeparted()
     end
 end
 

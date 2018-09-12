@@ -27,7 +27,7 @@ end
 
 function mod.init()
    if mod.config.auto_reload then
-      logger.df("Setting up config auto-reload watcher on %s", hs_config_dir)
+      print("Setting up config auto-reload watcher on %s", hs_config_dir)
       configFileWatcher = hs.pathwatcher.new(hs_config_dir, reloadConfig)
       configFileWatcher:start()
    end
