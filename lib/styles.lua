@@ -38,7 +38,7 @@ function obj.createSizes(size_base, size_count)
     local size_count = size_count or 3
 
     for x = 1, size_count do
-        table.insert(sizes, 
+        table.insert(sizes,
         {
                 textSize = size_base * 2,
                 radius = size_base / 2,

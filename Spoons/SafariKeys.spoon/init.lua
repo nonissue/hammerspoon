@@ -86,7 +86,7 @@ end
 -- and I do it largely to force sites to present
 -- HTML5 video when flash is offered by default
 --
--- Probably a better way to do it.
+-- Probably a better way tn o do it.
 ------------------------------------------------------------------------------
 function obj:cycleUserAgent()
   hs.application.launchOrFocus("Safari")
