@@ -50,8 +50,7 @@ function obj.createSizes(size_base, size_count)
     return sizes
 end
 
-
-obj.alert.sizes = obj.createSizes(10, 5)
+obj.alert.sizes = obj.createSizes(10, 7)
 
 obj.alert.colors = {
     default = {
@@ -61,10 +60,23 @@ obj.alert.colors = {
     },
     warning = {
         fillColor = {red = 1, alpha = 1},
-        strokeColor = {white = 1, alpha = 0.5},
+        strokeColor = {white = 1, alpha = 0.25},
         textColor = {red = 1, alpha = 1},
         textStyle = {
             color = {white = 1, alpha = 1},
+        }
+    },
+    tomfoolery = {
+        fillColor = {white = 1, alpha = 0},
+        strokeColor = {white = 1, alpha = 0},
+        textColor = {red = 1, alpha = 1},
+        textStyle = {
+            color = {black = 1, alpha = 0},
+            font = {name = "PragmataPro Bold", size = 100},
+            -- textSize = 200,
+            strokeColor = {red = 1, alpha = 1},
+            strokeWidth = -15,
+            shadow = {offset = {w = 2, h = -2}, blurRadius = 5, color = {black = 0.6, alpha= 0.3}}
         }
     }
 }
@@ -73,7 +85,12 @@ obj.alert.defaults = {
     textFont = ".AppleSystemUIFont",
     atScreenEdge = 0,
     fadeInDuration = 0.5,
-    fadeoOutDuration = 0.5,
+    fadeOutDuration = 0.5,
+}
+
+obj.alert.slow = {
+    fadeInDuration = 2,
+    fadeOutDuration = 2,
 }
 
 -- CREATE DEFAULT STYLE WITH ALL FIELDS
@@ -82,5 +99,7 @@ obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.
 -- should only update fields i want to change rather than regenerating default style every time
 obj.alert_lrg = obj.createStyle(obj.alert.sizes[5])
 obj.alert_warning = obj.createStyle(obj.alert.sizes[3], obj.alert.colors.warning)
+obj.alert_warning_lrg = obj.createStyle(obj.alert.sizes[5], obj.alert.colors.warning, obj.alert.slow)
+obj.alert_tomfoolery = obj.createStyle(obj.alert.sizes[7], obj.alert.colors.tomfoolery, obj.alert.slow)
 
 return obj
