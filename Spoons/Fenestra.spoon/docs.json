@@ -1,0 +1,41 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "Deprecated" : [
+
+    ],
+    "desc" : "Window Manipulaiton",
+    "type" : "Module",
+    "Constructor" : [
+
+    ],
+    "doc" : "Window Manipulaiton",
+    "Field" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "items" : [
+
+    ],
+    "Method" : [
+
+    ],
+    "name" : "Fenestra"
+  }
+]
