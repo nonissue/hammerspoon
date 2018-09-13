@@ -1,30 +1,18 @@
 ------------------------------------------------------------------------------
 -- init.lua
 ------------------------------------------------------------------------------
--- By: Andrew Williams / andy@nonissue.org
+-- By: Andy Williams / hammerspoon [ at ] nonissue dot org
 ------------------------------------------------------------------------------
 -- A messy hammerspoon config
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
 
--- TODO:
--- [ ] Load utilities module immediately
--- [ ] Overwrite default alert styles
-
--- Plugins (not finished):
--- BurnRate
-
--- Plugins (to pluginify):
--- [x] DisplayRes
--- [ ] Window Management
--- [x] OnLocation
--- [x] SafariKeys
-
--- lib stuff
+-- yada yada
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
+-- recall hist
 hs.shutdownCallback = function() hs.settings.set('history', hs.console.getHistory()) end
 hs.console.setHistory(hs.settings.get('history'))
 
@@ -180,7 +168,4 @@ hs.hotkey.bind(
         win:setFrame(f)
     end
 )
-
-hs.hotkey.bind(mash, "N", hs.grid.pushWindowNextScreen)
-hs.hotkey.bind(mash, "P", hs.grid.pushWindowPrevScreen)
 

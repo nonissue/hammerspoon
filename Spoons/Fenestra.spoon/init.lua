@@ -15,20 +15,23 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 -- init logger
 obj.logger = hs.logger.new('Fenestra')
+obj.history = {}
 
--- init grid
+-- grid size
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
 hs.grid.GRIDWIDTH = 8
 hs.grid.GRIDHEIGHT = 4
+
+-- grid ui
 hs.grid.ui.textSize = 25
 hs.grid.ui.cellStrokeColor = {0,0,0}
 hs.grid.ui.highlightColor = {0,1,0,0.3}
 hs.grid.ui.highlightStrokeColor = {0,1,0,1}
 hs.grid.ui.cellStrokeColor = {1,1,1,0.3}
 
--- custom hints because i dont want to have to use function keys
--- also have to dupe first line otherwise the order gets fucked?
+-- custom grid hints
+-- because i dont want to use fn keys
 hs.grid.HINTS={
     { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }, 
     { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
@@ -36,9 +39,6 @@ hs.grid.HINTS={
     { "A", "S", "D", "F", "G", "H", "J", "K", "L", ";" }, 
     { "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/" },
 }
-
--- init obj history for undo
-obj.history = {}
 
 -- these are the basics i want for now
 -- but im going to reevaliate them in future
@@ -49,8 +49,9 @@ obj.defaultHotkeys = {
     rightHalf =             { {"cmd", "alt"},               "right"},
     left75 =                { {"cmd", "alt", "ctrl"},       "left"},
     right25 =               { {"cmd", "alt", "ctrl"},       "right"},
-    pushWindowNext =        { {"cmd", "alt", "ctrl"},       "N"},
-    pushwindowPrevious =    { {"cmd", "alt", "ctrl"},       "P"},
+    pushWin =               { {"cmd", "alt", "ctrl"},       "N"},
+    pullWin =               { {"cmd", "alt", "ctrl"},       "P"},
+    undo =                  { {"cmd", "alt", "ctrl"},       "Z"},
 }
 
 -- hotkey binding not working
@@ -77,16 +78,26 @@ function obj:bindHotkeys(keys)
             self:leftHalf()
         end
     )
+    hs.hotkey.bindSpec(
+        keys["undo"],
+        "Undoing last layout change",
+        function()
+            undo:pop() 
+        end
+    )
 end
 
--- init grid
-
-
--- disable animation
-hs.window.animationDuration = 0
-
 function obj:maxWin()
+    undo:push()
     hs.grid.maximizeWindow()
+end
+
+function obj:pushWin()
+    hs.grid.pushWindowNextScreen()
+end
+
+function obj:pullWin()
+    hs.grid.pushWindowPrevScreen()
 end
 
 -- how do i easily replicate this shit with grid?
@@ -102,16 +113,31 @@ function obj:leftHalf()
     win:setFrame(f)
 end
 
--- Fenestra:undo()
-function obj:undo()
-    local cwin = hs.window.focusedWindow()
-    local cwinid = cwin:id()
-    for idx,val in ipairs(obj.history) do
-        -- Has this window been stored previously?
-        if val[1] == cwinid then
-            cwin:setFrame(val[2])
-        end
+
+-- undo for window operations
+local function rect(rect)
+    return function()
+      undo:push()
+      local win = fw()
+      if win then win:move(rect) end
     end
+end
+
+undo = {}
+
+function undo:push()
+  local win = fw()
+  if win and not undo[win:id()] then
+    self[win:id()] = win:frame()
+  end
+end
+
+function undo:pop()
+  local win = fw()
+  if win and self[win:id()] then
+    win:setFrame(self[win:id()])
+    self[win:id()] = nil
+  end
 end
 
 function obj:start()
