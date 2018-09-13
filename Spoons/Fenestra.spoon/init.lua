@@ -16,33 +16,41 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- init logger
 obj.logger = hs.logger.new('Fenestra')
 
+-- figure out how to show hotkeys to user
+obj.hotkeyShow = nil
+
 -- init obj history for undo
 obj.history = {}
 
--- Fenestra.defaultHotkeys
---
--- Table containing a sample set of hotkeys that can be
--- assigned to the different operations. These are not bound
--- by default - if you want to use them you have to call:
--- `spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)`
--- after loading the spoon. Value:
--- ```
---  {
---     screen_left = { {"ctrl", "alt", "cmd"}, "Left" },
---     screen_right= { {"ctrl", "alt", "cmd"}, "Right" },
---  }
--- ```
+-- these are the basics i want for now
+-- but im going to reevaliate them in future
 obj.defaultHotkeys = {
-    maxWin = { {"alt"}, "Space" },
- }
-
-obj.hotkeyShow = nil
+    maxWin =                { {"alt"},                      "Space"},
+    leftHalf =              { {"cmd", "alt"},               "left"},
+    rightHalf =             { {"cmd", "alt"},               "right"},
+    left75 =                { {"cmd", "alt", "ctrl"},       "left"},
+    right25 =               { {"cmd", "alt", "ctrl"},       "right"},
+    pushWindowNext =        { {"cmd", "alt", "ctrl"},       "N"},
+    pushwindowPrevious =    { {"cmd", "alt", "ctrl"},       "P"},
+}
 
 -- hotkey binding not working
 function obj:bindHotkeys(keys)
-    hs.hotkey.bindSpec(keys["maxWin"], function()
-        self:maxWin()
-    end)
+    assert(keys['maxWin'], "Hotkey variable is 'maxWin'")
+    assert(keys['leftHalf'], "Hotkey variable is 'leftHalf'")
+
+    hs.hotkey.bindSpec(
+        keys["maxWin"],
+        function()
+            self:maxWin()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["leftHalf"],
+        function()
+            self:leftHalf()
+        end
+    )
 end
 
 -- init grid
@@ -58,9 +66,19 @@ function obj:maxWin()
     hs.grid.maximizeWindow()
 end
 
---- WinWin:undo()
---- Method
---- Undo the last window manipulation. Only those "moveAndResize" manipulations can be undone.
+function obj:leftHalf()
+    local win = hs.window.focusedWindow()
+    local f = win:frame()
+    local screen = win:screen()
+    local max = screen:frame()
+    f.x = max.x
+    f.y = max.y
+    f.w = max.w / 2
+    f.h = max.h
+    win:setFrame(f)
+end
+
+-- Fenestra:undo()
 function obj:undo()
     local cwin = hs.window.focusedWindow()
     local cwinid = cwin:id()

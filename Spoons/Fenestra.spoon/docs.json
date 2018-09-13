@@ -15,25 +15,25 @@
     "stripped_doc" : [
 
     ],
+    "type" : "Module",
+    "desc" : "Window Manipulaiton",
     "Deprecated" : [
 
     ],
-    "desc" : "Window Manipulaiton",
-    "type" : "Module",
     "Constructor" : [
-
-    ],
-    "doc" : "Window Manipulaiton",
-    "Field" : [
-
-    ],
-    "Command" : [
 
     ],
     "items" : [
 
     ],
     "Method" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "doc" : "Window Manipulaiton",
+    "Field" : [
 
     ],
     "name" : "Fenestra"

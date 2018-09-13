@@ -61,6 +61,14 @@ hs.loadSpoon("PaywallBuster")
 hs.loadSpoon("Zzz")
 hs.loadSpoon("Resolute")
 
+FenestraKeys = {
+    maxWin = {{"alt"}, "space"},
+    leftHalf = {hyper, "left"},
+}
+
+hs.loadSpoon("Fenestra")
+spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
+
 -- Init spins that require it
 spoon.Zzz:init()
 spoon.Resolute:init()
@@ -122,7 +130,7 @@ hs.window.animationDuration = 0
 -- /end of WHY IS THIS HERE?
 ----------------------------------------------------------
 
-hs.hotkey.bind(alt, "space", hs.grid.maximizeWindow)
+-- hs.hotkey.bind(alt, "space", hs.grid.maximizeWindow)
 
 hs.hotkey.bind(
     hyper,
@@ -140,21 +148,21 @@ hs.hotkey.bind(
 -- wrote for hammerspoon
 ------------------------------------------------------------------------------
 -- Moves window to left half of screen
-hs.hotkey.bind(
-    hyper,
-    "left",
-    function()
-        local win = hs.window.focusedWindow()
-        local f = win:frame()
-        local screen = win:screen()
-        local max = screen:frame()
-        f.x = max.x
-        f.y = max.y
-        f.w = max.w / 2
-        f.h = max.h
-        win:setFrame(f)
-    end
-)
+-- hs.hotkey.bind(
+--     hyper,
+--     "left",
+--     function()
+--         local win = hs.window.focusedWindow()
+--         local f = win:frame()
+--         local screen = win:screen()
+--         local max = screen:frame()
+--         f.x = max.x
+--         f.y = max.y
+--         f.w = max.w / 2
+--         f.h = max.h
+--         win:setFrame(f)
+--     end
+-- )
 
 -- Moves window/sets width to right half of screen
 hs.hotkey.bind(
