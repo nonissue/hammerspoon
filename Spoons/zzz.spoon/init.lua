@@ -236,7 +236,6 @@ function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
     self.sleepTimerMenu:setTitle("☾")
-    -- self.sleepTimerMenu:removeFromMenuBar()
     self.timerEvent = nil
     self.timerDisplay = nil
 end

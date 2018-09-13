@@ -53,7 +53,6 @@ for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end
 
-
 -- Load our spoons
 hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
@@ -65,16 +64,6 @@ hs.loadSpoon("Resolute")
 -- Init spins that require it
 spoon.Zzz:init()
 spoon.Resolute:init()
-
-
----------
--- Vars
-------------------------------------------------------------------------------
--- var for hyper key and mash
--- SWITCHING THESE ON SEPT 16 2015. Previously MASH was HYPER.
--- Doesn't make any sense though both in terms of naming and use.
-
-
 
 local safariHotkeys = {
     tabToNewWin = {mash, "T"},
