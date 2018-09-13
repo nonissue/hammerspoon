@@ -16,8 +16,26 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- init logger
 obj.logger = hs.logger.new('Fenestra')
 
--- figure out how to show hotkeys to user
-obj.hotkeyShow = nil
+-- init grid
+hs.grid.MARGINX = 0
+hs.grid.MARGINY = 0
+hs.grid.GRIDWIDTH = 8
+hs.grid.GRIDHEIGHT = 4
+hs.grid.ui.textSize = 25
+hs.grid.ui.cellStrokeColor = {0,0,0}
+hs.grid.ui.highlightColor = {0,1,0,0.3}
+hs.grid.ui.highlightStrokeColor = {0,1,0,1}
+hs.grid.ui.cellStrokeColor = {1,1,1,0.3}
+
+-- custom hints because i dont want to have to use function keys
+-- also have to dupe first line otherwise the order gets fucked?
+hs.grid.HINTS={
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }, 
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
+    { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" }, 
+    { "A", "S", "D", "F", "G", "H", "J", "K", "L", ";" }, 
+    { "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/" },
+}
 
 -- init obj history for undo
 obj.history = {}
@@ -71,6 +89,7 @@ function obj:maxWin()
     hs.grid.maximizeWindow()
 end
 
+-- how do i easily replicate this shit with grid?
 function obj:leftHalf()
     local win = hs.window.focusedWindow()
     local f = win:frame()

@@ -23,17 +23,17 @@
     "Constructor" : [
 
     ],
-    "Field" : [
-
-    ],
-    "Method" : [
+    "doc" : "Window Manipulaiton",
+    "items" : [
 
     ],
     "Command" : [
 
     ],
-    "doc" : "Window Manipulaiton",
-    "items" : [
+    "Method" : [
+
+    ],
+    "Field" : [
 
     ],
     "name" : "Fenestra"
