@@ -25,6 +25,7 @@ obj.history = {}
 -- these are the basics i want for now
 -- but im going to reevaliate them in future
 obj.defaultHotkeys = {
+    showGrid =              { {"ctrl"},                     "Space"},
     maxWin =                { {"alt"},                      "Space"},
     leftHalf =              { {"cmd", "alt"},               "left"},
     rightHalf =             { {"cmd", "alt"},               "right"},
@@ -36,9 +37,16 @@ obj.defaultHotkeys = {
 
 -- hotkey binding not working
 function obj:bindHotkeys(keys)
+    assert(keys['showGrid'], "Hotkey variable is 'showGrid'")
     assert(keys['maxWin'], "Hotkey variable is 'maxWin'")
     assert(keys['leftHalf'], "Hotkey variable is 'leftHalf'")
 
+    hs.hotkey.bindSpec(
+        keys["showGrid"],
+        function()
+            hs.grid.show()
+        end
+    )
     hs.hotkey.bindSpec(
         keys["maxWin"],
         function()
@@ -54,10 +62,7 @@ function obj:bindHotkeys(keys)
 end
 
 -- init grid
-hs.grid.MARGINX = 0
-hs.grid.MARGINY = 0
-hs.grid.GRIDWIDTH = 10
-hs.grid.GRIDHEIGHT = 10
+
 
 -- disable animation
 hs.window.animationDuration = 0
