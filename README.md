@@ -7,5 +7,3 @@ A very much in progress hammerspoon config.
 * please email me at hammerspoon [ a t ] nonissue.org if you have questions/thoughts/ideas
 
 * Most of the docs are out of date, they can be found in the HISTORY.md file.
-
-

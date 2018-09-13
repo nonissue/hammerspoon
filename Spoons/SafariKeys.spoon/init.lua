@@ -12,13 +12,6 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
--- local function script_path()
---   local str = debug.getinfo(2, "S").source:sub(2)
---   return str:match("(.*/)")
--- end
-
--- obj.spoonPath = script_path()
-
 function obj:bindHotkeys(mapping)
   local def = {
     tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
@@ -30,7 +23,6 @@ function obj:bindHotkeys(mapping)
 
    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
-
 
 --- SafariKeys:start()
 --- Method

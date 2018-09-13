@@ -152,11 +152,12 @@ end
 
 function obj:moveDockLeft() 
     hs.applescript.applescript(
-      [[
-        tell application "System Events" to set the autohide of the dock preferences to true
-        tell application "System Events" to set the screen edge of the dock preferences to left
-      ]])
-  end
+        [[
+            tell application "System Events" to set the autohide of the dock preferences to true
+            tell application "System Events" to set the screen edge of the dock preferences to left
+        ]]
+    )
+end
   
   function obj:moveDockDown() 
     hs.applescript.applescript(
@@ -164,7 +165,7 @@ function obj:moveDockLeft()
         tell application "System Events" to set the autohide of the dock preferences to false
         tell application "System Events" to set the screen edge of the dock preferences to bottom
       ]])
-  end
+end
 ----------------------------------------------------------
 -- screenWatcher
 ----------------------------------------------------------
