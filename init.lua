@@ -13,20 +13,31 @@
 -- [ ] Overwrite default alert styles
 
 -- Plugins (not finished):
--- SleepTimer
 -- BurnRate
 
 -- Plugins (to pluginify):
 -- [x] DisplayRes
--- WarmKeys
 -- [ ] Window Management
 -- [x] OnLocation
 -- [x] SafariKeys
--- [ ] UsefulUtilites
 
 -- lib stuff
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
+
+hs.shutdownCallback = function() hs.settings.set('history', hs.console.getHistory()) end
+hs.console.setHistory(hs.settings.get('history'))
+
+-- a MUST / disables window movement jank
+hs.window.animationDuration = 0
+
+-- aliases
+i = hs.inspect
+fw = hs.window.focusedWindow
+bind = hs.hotkey.bind
+clear = hs.console.clearConsole
+reload = hs.reload
+pbcopy = hs.pasteboard.setContents
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
@@ -55,24 +66,8 @@ end
 
 -- Load our spoons
 hs.loadSpoon("SystemContexts")
+
 hs.loadSpoon("SafariKeys")
-hs.loadSpoon("SysInfo")
-hs.loadSpoon("PaywallBuster")
-hs.loadSpoon("Zzz")
-hs.loadSpoon("Resolute")
-
-FenestraKeys = {
-    maxWin = {{"alt"}, "space"},
-    leftHalf = {hyper, "left"},
-}
-
-hs.loadSpoon("Fenestra")
-spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
-
--- Init spins that require it
-spoon.Zzz:init()
-spoon.Resolute:init()
-
 local safariHotkeys = {
     tabToNewWin = {mash, "T"},
     mailToSelf = {mash, "U"},
@@ -80,65 +75,57 @@ local safariHotkeys = {
     pinOrUnpinTab = {hyper, "P"},
     cycleUserAgent = {mash, "7"}
 }
-
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
-hs.hotkey.bind(
-    mash,
-    "J",
-    function()
-        spoon.Resolute:show()
-    end
-)
+hs.loadSpoon("SysInfo")
 
-hs.hotkey.bind(
-    mash,
-    "B",
-    function()
-        spoon.PaywallBuster:show()
-    end
-)
+hs.loadSpoon("PaywallBuster")
+hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
-hs.hotkey.bind(
-    mash,
-    "S",
-    function()
-        spoon.Zzz:show()
-    end
-)
+hs.loadSpoon("Zzz")
+spoon.Zzz:init()
+hs.hotkey.bind(mash, "S", function() spoon.Zzz:show() end)
 
-hs.hotkey.bind(
-    {"cmd", "alt", "ctrl"},
-    "y",
-    function()
-        hs.toggleConsole()
-    end
-)
+hs.loadSpoon("Resolute")
+spoon.Resolute:init()
+hs.hotkey.bind(mash, "J", function() spoon.Resolute:show() end)
 
---
+hs.loadSpoon("Fenestra")
+spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
+
+
+-- end of spoon load
+
+-- random
+function kirby()
+    hs.alert(" ¯\\_(ツ)_/¯ ", styles.alert_tomfoolery, 5)
+    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
+end
+
+hs.hotkey.bind(mash, "K", kirby)
+hs.hotkey.showHotkeys(mash, "space")
+hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
 
 -- init grid
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
-hs.grid.GRIDWIDTH = 10
-hs.grid.GRIDHEIGHT = 10
+hs.grid.GRIDWIDTH = 8
+hs.grid.GRIDHEIGHT = 4
+hs.grid.ui.textSize = 25
+hs.grid.ui.cellStrokeColor = {0,0,0}
+hs.grid.ui.highlightColor = {0,1,0,0.3}
+hs.grid.ui.highlightStrokeColor = {0,1,0,1}
+hs.grid.ui.cellStrokeColor = {1,1,1,0.3}
 
--- disable animation
-hs.window.animationDuration = 0
-
-----------------------------------------------------------
--- /end of WHY IS THIS HERE?
-----------------------------------------------------------
-
--- hs.hotkey.bind(alt, "space", hs.grid.maximizeWindow)
-
-hs.hotkey.bind(
-    hyper,
-    "H",
-    function()
-        hs.hints.windowHints()
-    end
-)
+-- custom hints because i dont want to have to use function keys
+-- also have to dupe first line otherwise the order gets fucked?
+hs.grid.HINTS={
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" }, 
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
+    { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" }, 
+    { "A", "S", "D", "F", "G", "H", "J", "K", "L", ";" }, 
+    { "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/" },
+}
 
 ------------------------------------------------------------------------------
 -- Layout stuff
@@ -215,21 +202,6 @@ hs.hotkey.bind(
     end
 )
 
-hs.hotkey.bind(
-    mash,
-    "N",
-    function()
-        hs.grid.maximizeWindow()
-        hs.grid.pushWindowNextScreen()
-    end
-)
-
 hs.hotkey.bind(mash, "N", hs.grid.pushWindowNextScreen)
 hs.hotkey.bind(mash, "P", hs.grid.pushWindowPrevScreen)
 
-function kirby()
-    hs.alert(" ¯\\_(ツ)_/¯ ", styles.alert_lrg, 1.5)
-    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-end
-
-hs.hotkey.bind(mash, "K", kirby)
