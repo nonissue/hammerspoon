@@ -1,6 +1,13 @@
 --- === Fenestra ===
 ---
 --- Window Manipulaiton
+--- Borrowed undo implementation from:
+--- github.com/heptal // https://goo.gl/HcebTk
+
+--- other interesting ideas:
+--- layouts (http://lowne.github.io/hammerspoon-extensions/)
+--- snapping (ibid)
+hs.window.animationDuration = 0
 
 local obj = {}
 obj.__index = obj
@@ -15,7 +22,6 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 -- init logger
 obj.logger = hs.logger.new('Fenestra')
-obj.history = {}
 
 -- grid size
 hs.grid.MARGINX = 0
@@ -47,8 +53,8 @@ obj.defaultHotkeys = {
     maxWin =                { {"alt"},                      "Space"},
     leftHalf =              { {"cmd", "alt"},               "left"},
     rightHalf =             { {"cmd", "alt"},               "right"},
-    left75 =                { {"cmd", "alt", "ctrl"},       "left"},
-    right25 =               { {"cmd", "alt", "ctrl"},       "right"},
+    leftMaj =               { {"cmd", "alt", "ctrl"},       "left"},
+    rightMin =              { {"cmd", "alt", "ctrl"},       "right"},
     pushWin =               { {"cmd", "alt", "ctrl"},       "N"},
     pullWin =               { {"cmd", "alt", "ctrl"},       "P"},
     undo =                  { {"cmd", "alt", "ctrl"},       "Z"},
@@ -79,6 +85,24 @@ function obj:bindHotkeys(keys)
         end
     )
     hs.hotkey.bindSpec(
+        keys["rightHalf"],
+        function()
+            self:rightHalf()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["leftMaj"],
+        function()
+            self:leftMaj()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["rightMin"],
+        function()
+            self:rightMin()
+        end
+    )
+    hs.hotkey.bindSpec(
         keys["undo"],
         "Undoing last layout change",
         function()
@@ -93,26 +117,59 @@ function obj:maxWin()
 end
 
 function obj:pushWin()
+    undo:push()
     hs.grid.pushWindowNextScreen()
 end
 
 function obj:pullWin()
+    undo:push()
     hs.grid.pushWindowPrevScreen()
 end
 
--- how do i easily replicate this shit with grid?
-function obj:leftHalf()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local max = screen:frame()
-    f.x = max.x
-    f.y = max.y
-    f.w = max.w / 2
-    f.h = max.h
-    win:setFrame(f)
+function obj:placeWindow(x, y, w, h)
+    function fn(cell)
+        cell.x = x
+        cell.y = y
+        cell.w = w
+        cell.h = h
+        return hs.grid
+    end
+    hs.grid.adjustWindow(fn)
 end
 
+function obj:leftHalf()
+    undo:push()
+    obj:placeWindow(0, 0, 4, 4)
+end
+
+function obj:rightHalf()
+    undo:push()
+    obj:placeWindow(4, 0, 4, 4)
+end
+
+function obj:leftMaj()
+    undo:push()
+    obj:placeWindow(0, 0, 6, 4)
+end
+
+function obj:rightMin()
+    undo:push()
+    obj:placeWindow(6, 0, 2, 4)
+end
+
+
+-- how do i easily replicate this shit with grid?
+-- function obj:leftHalf()
+--     local win = hs.window.focusedWindow()
+--     local f = win:frame()
+--     local screen = win:screen()
+--     local max = screen:frame()
+--     f.x = max.x
+--     f.y = max.y
+--     f.w = max.w / 2
+--     f.h = max.h
+--     win:setFrame(f)
+-- end
 
 -- undo for window operations
 local function rect(rect)

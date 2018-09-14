@@ -15,15 +15,15 @@
     "stripped_doc" : [
 
     ],
+    "desc" : "Window Manipulaiton",
+    "type" : "Module",
     "Deprecated" : [
 
     ],
-    "type" : "Module",
-    "desc" : "Window Manipulaiton",
     "Constructor" : [
 
     ],
-    "doc" : "Window Manipulaiton",
+    "doc" : "Window Manipulaiton\nBorrowed undo implementation from:\ngithub.com\/heptal \/\/ https:\/\/goo.gl\/HcebTk",
     "Method" : [
 
     ],
