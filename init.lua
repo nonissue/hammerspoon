@@ -76,7 +76,7 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz:show() end)
 
 hs.loadSpoon("Resolute")
 spoon.Resolute:init()
-hs.hotkey.bind(mash, "J", function() spoon.Resolute:show() end)
+hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
