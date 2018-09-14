@@ -38,8 +38,6 @@ package.path = package.path .. ";lib/?.lua"
 styles = require("styles")
 utils = require("utilities")
 
--- hs.alert(icons.ampOn, 3)
-
 -- i feel like these two should be spoons
 -- because they rely on watchers
 hs_reload = require("hammerspoon_config_reload")
@@ -82,11 +80,9 @@ hs.hotkey.bind(mash, "J", function() spoon.Resolute:show() end)
 
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
+--- end of spoons loading
 
-
--- end of spoon load
-
--- random
+-- random stuff
 function kirby()
     hs.alert(" ¯\\_(ツ)_/¯ ", styles.alert_tomfoolery, 5)
     hs.pasteboard.setContents("¯\\_(ツ)_/¯")
@@ -95,63 +91,3 @@ end
 hs.hotkey.bind(mash, "K", kirby)
 hs.hotkey.showHotkeys(mash, "space")
 hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
-
-------------------------------------------------------------------------------
--- Layout stuff
--- http://larryhynes.net/2015/02/switching-from-slate-to-hammerspoon.html
-------------------------------------------------------------------------------
--- Not very DRY but simple to understand and one of the first things I
--- wrote for hammerspoon
-------------------------------------------------------------------------------
-
--- Moves window/sets width to right half of screen
--- hs.hotkey.bind(
---     hyper,
---     "right",
---     function()
---         local win = hs.window.focusedWindow()
---         local f = win:frame()
---         local screen = win:screen()
---         local max = screen:frame()
---         f.x = max.x + (max.w / 2)
---         f.y = max.y
---         f.w = max.w / 2
---         f.h = max.h
---         win:setFrame(f)
---     end
--- )
-
--- Moves window to right, sets to 1/4 width
--- hs.hotkey.bind(
---     mash,
---     "right",
---     function()
---         local win = hs.window.focusedWindow()
---         local f = win:frame()
---         local screen = win:screen()
---         local max = screen:frame()
---         f.x = max.x + (max.w * 0.75)
---         f.y = max.y
---         f.w = max.w * 0.25
---         f.h = max.h
---         win:setFrame(f)
---     end
--- )
-
---Moves window to left, sets to 3/4 width
--- hs.hotkey.bind(
---     mash,
---     "left",
---     function()
---         local win = hs.window.focusedWindow()
---         local f = win:frame()
---         local screen = win:screen()
---         local max = screen:frame()
---         f.x = max.x
---         f.w = max.w * 0.75
---         f.h = max.h
---         f.y = max.y
---         win:setFrame(f)
---     end
--- )
-

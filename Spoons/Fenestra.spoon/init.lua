@@ -30,11 +30,15 @@ hs.grid.GRIDWIDTH = 8
 hs.grid.GRIDHEIGHT = 4
 
 -- grid ui
-hs.grid.ui.textSize = 25
-hs.grid.ui.cellStrokeColor = {0,0,0}
+hs.grid.ui.textSize = 40
+-- hs.grid.ui.cellStrokeColor = {0,0,0}
 hs.grid.ui.highlightColor = {0,1,0,0.3}
-hs.grid.ui.highlightStrokeColor = {0,1,0,1}
-hs.grid.ui.cellStrokeColor = {1,1,1,0.3}
+hs.grid.ui.highlightStrokeColor = {0,1,0,0.4}
+hs.grid.ui.cellStrokeColor = {1,1,1,1}
+hs.grid.ui.cellStrokeWidth = 2
+hs.grid.ui.highlightStrokeWidth = 20
+hs.grid.ui.fontName = 'Apercu Mono'
+hs.grid.ui.showExtraKeys = false
 
 -- custom grid hints
 -- because i dont want to use fn keys
@@ -69,6 +73,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["showGrid"],
         function()
+            undo:push()
             hs.grid.show()
         end
     )
@@ -157,21 +162,9 @@ function obj:rightMin()
     obj:placeWindow(6, 0, 2, 4)
 end
 
-
--- how do i easily replicate this shit with grid?
--- function obj:leftHalf()
---     local win = hs.window.focusedWindow()
---     local f = win:frame()
---     local screen = win:screen()
---     local max = screen:frame()
---     f.x = max.x
---     f.y = max.y
---     f.w = max.w / 2
---     f.h = max.h
---     win:setFrame(f)
--- end
-
 -- undo for window operations
+--- Borrowed undo implementation from:
+--- github.com/heptal // https://goo.gl/HcebTk
 local function rect(rect)
     return function()
       undo:push()
