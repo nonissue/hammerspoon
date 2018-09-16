@@ -1,3 +1,15 @@
+--[[
+Module to eject EGPU and drives on sleep so computer is ready to be unplugged at any time
+Requires modifying sudoers file
+
+Run:
+sudo visudo -f /etc/sudoers.d/toggle_tb
+
+Paste the following, with your username (you can use whoami to verify your username):
+<YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
+<YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
+]]
+
 local log = hs.logger.new("toggleEGPU", "debug")
 log.i('Initializing toggleEGPU...')
 
