@@ -8,6 +8,25 @@
 -- email me at the above address
 ------------------------------------------------------------------------------
 
+-- load basic modules / utils first
+-- that don't need to be spoons
+package.path = package.path .. ";lib/?.lua"
+styles = require("styles")
+utils = require("utilities")
+
+-- bind our alert style to default alert style
+for k, v in pairs(styles.alert_default) do
+    hs.alert.defaultStyle[k] = v
+end
+
+hs.logger.defaultLogLevel = "error"
+hs.console.darkMode(true)
+if hs.console.darkMode() then
+    hs.console.outputBackgroundColor{ white = 0.1 }
+    hs.console.consoleCommandColor{ white = 1 }
+    hs.console.alpha(.9)
+end
+
 -- yada yada
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
@@ -27,16 +46,18 @@ clear = hs.console.clearConsole
 reload = hs.reload
 pbcopy = hs.pasteboard.setContents
 
+
+
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
--- load basic modules 
--- that don't need to be spoons
-package.path = package.path .. ";lib/?.lua"
-styles = require("styles")
-utils = require("utilities")
+
+
+-- load scratch stuff
+package.path = package.path .. ";scratch/?.lua"
+egpu = require("egpu")
 
 -- i feel like these two should be spoons
 -- because they rely on watchers
@@ -47,10 +68,7 @@ burnrate = require("burnrate")
 burnrate.init()
 hs_reload.init()
 
--- bind our alert style to default alert style
-for k, v in pairs(styles.alert_default) do
-    hs.alert.defaultStyle[k] = v
-end
+
 
 -- Load our spoons
 hs.loadSpoon("SystemContexts")

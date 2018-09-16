@@ -111,8 +111,10 @@ end
 
 function obj.homeArrived()
   -- Should really have device specific settings (desktop vs laptop)
-  -- requires modified sudoers file
-  -- <YOUR USERNAME> ALL=(root) NOPASSWD: pmset -b displaysleep *
+  -- requires modified sudoers file. 
+  -- For Example!
+  -- IN /etc/sudoers.d/power_mgmt (sudo visudo -f /etc/sudoers.d/power_mgmt)
+  -- andrewwilliams ALL=(root) NOPASSWD: /usr/bin/pmset *
     os.execute("sudo pmset -b displaysleep 5 sleep 10")
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)

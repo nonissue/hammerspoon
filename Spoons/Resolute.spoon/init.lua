@@ -35,7 +35,6 @@ local mbpr15raw = {
   {w = 1440, h = 900, s = 2},
   {w = 1680, h = 1050, s = 2},
   {w = 1920, h = 1200, s = 2},
-  
 }
 
 local mbpr15 = {
@@ -133,7 +132,7 @@ function obj:init()
       self.resChooser:choices(mbpr15)
     else
       local choices = {
-        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution that almost certainly won't work"},
+        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution (BROKEN)"},
       }
       self.resChooser:choices(choices)
     end

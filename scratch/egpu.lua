@@ -1,0 +1,47 @@
+local log = hs.logger.new("toggleEGPU", "debug")
+log.i('Initializing toggleEGPU...')
+
+local function kextLoaded()
+    if os.execute("kextstat |grep AppleThunderboltPCIUpAdapter") then
+        return true
+    else
+        return false
+    end
+end
+
+local sleepScript = [[
+    tell application "Finder"
+	    eject (every disk whose ejectable is true)
+    end tell
+
+    do shell script "/usr/bin/SafeEjectGPU Eject"
+]]
+
+if not kextLoaded() then
+    log.e("TB Kext should be loaded but isnt!")
+    hs.alert("TB Kext should be loaded but isnt!", 5)
+    -- hs.alert("TB Kext should be loaded but isnt!", styles.alert_warning_lrg, 5)
+end
+
+
+function sleepWatch(eventType)
+    if (eventType == hs.caffeinate.watcher.systemWillSleep) then
+        log.d("Sleeping...")
+        result = hs.osascript._osascript(sleepScript, "AppleScript")
+        log.d("sleepScript result: " .. result)
+    elseif (eventType == hs.caffeinate.watcher.screensDidWake) then
+        log.d("Waking...")
+        os.execute("/sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+        if not kextLoaded() then
+            log.d("kext unloaded successfully?!")
+        else
+            log.e("Issue toggling thunderbolt kext!")
+            hs.alert("Issue toggling thunderbolt after sleep")
+        end
+        os.execute("/sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+        log.d("Display should be connecting...")
+    end
+end
+    
+local sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
+sleepWatcher:start()
