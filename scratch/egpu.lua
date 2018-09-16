@@ -10,7 +10,7 @@ Paste the following, with your username (you can use whoami to verify your usern
 <YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
 ]]
 
-local log = hs.logger.new("toggleEGPU", "debug")
+local log = hs.logger.new("toggleEGPU", "verbose")
 log.i('Initializing toggleEGPU...')
 
 local function kextLoaded()
@@ -38,19 +38,23 @@ end
 
 function sleepWatch(eventType)
     if (eventType == hs.caffeinate.watcher.systemWillSleep) then
-        log.d("Sleeping...")
-        result = hs.osascript._osascript(sleepScript, "AppleScript")
-        log.d("sleepScript result: " .. result)
+        log.i("Sleeping...")
+        -- local res = 
+        if hs.osascript._osascript(sleepScript, "AppleScript") then
+            log.i("sleepScript successful!")
+        else
+            log.e("sleepScript error:" .. result)
+        end
     elseif (eventType == hs.caffeinate.watcher.screensDidWake) then
         log.d("Waking...")
-        os.execute("/sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+        os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
         if not kextLoaded() then
-            log.d("kext unloaded successfully?!")
+            log.i("kext unloaded successfully?!")
         else
             log.e("Issue toggling thunderbolt kext!")
             hs.alert("Issue toggling thunderbolt after sleep")
         end
-        os.execute("/sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+        os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
         log.d("Display should be connecting...")
     end
 end
