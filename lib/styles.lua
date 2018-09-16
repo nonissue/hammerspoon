@@ -50,7 +50,7 @@ function obj.createSizes(size_base, size_count)
     return sizes
 end
 
-obj.alert.sizes = obj.createSizes(10, 7)
+obj.alert.sizes = obj.createSizes(11, 7)
 
 obj.alert.colors = {
     default = {
@@ -62,6 +62,25 @@ obj.alert.colors = {
         fillColor = {red = 1, alpha = 1},
         strokeColor = {white = 1, alpha = 0.25},
         textColor = {red = 1, alpha = 1},
+        textStyle = {
+            color = {white = 1, alpha = 1},
+            -- font = {name = "PragmataPro Bold", size = 40},
+        }
+    },
+    loader = {
+        fillColor = {red = 0.5, alpha = 0.6},
+        strokeColor = {white = 0, alpha = 0},
+        textColor = {red = 1, alpha = 1},
+        textStyle = {
+            color = {white = 1, alpha = 1},
+            font = {name = "GT Haptik Bold", size = 30},
+            shadow = {offset = {w = 2, h = -2}, blurRadius = 5, color = {black = 0.6, alpha= 0.3}}
+        }
+    },
+    success = {
+        fillColor = {green = 1, alpha = 1},
+        strokeColor = {white = 1, alpha = 0.25},
+        textColor = {green = 1, alpha = 1},
         textStyle = {
             color = {white = 1, alpha = 1},
         }
@@ -98,7 +117,9 @@ obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.
 
 -- should only update fields i want to change rather than regenerating default style every time
 obj.alert_lrg = obj.createStyle(obj.alert.sizes[5])
-obj.alert_warning = obj.createStyle(obj.alert.sizes[3], obj.alert.colors.warning)
+obj.alert_warning = obj.createStyle(obj.alert.sizes[2], obj.alert.colors.warning)
+obj.alert_loader = obj.createStyle(obj.alert.sizes[2], obj.alert.colors.loader)
+obj.alert_success = obj.createStyle(obj.alert.sizes[3], obj.alert.colors.success)
 obj.alert_warning_lrg = obj.createStyle(obj.alert.sizes[5], obj.alert.colors.warning, obj.alert.slow)
 obj.alert_tomfoolery = obj.createStyle(obj.alert.sizes[7], obj.alert.colors.tomfoolery, obj.alert.slow)
 

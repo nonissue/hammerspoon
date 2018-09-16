@@ -119,7 +119,8 @@ function obj.homeArrived()
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
   -- new arrive home alert
-    hs.alert(" ☛ ⌂ ", 3)
+    hs.notify.show("@home", "", "")
+    -- hs.alert(" ☛ ⌂ ", 3)
 end
 
 -- sets displaysleep to lowervalue
@@ -128,6 +129,7 @@ function obj.homeDeparted()
     -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
     -- new leave home alert
+    
     hs.alert("~(☛ ⌂)", 3)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 end
@@ -233,7 +235,8 @@ function obj.screenWatcher()
         obj:moveDockLeft()
         obj.checkAndEject("ExternalSSD")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
-        hs.alert("@mobile", 3)
+        hs.notify.show("@mobile", "", "")
+        -- hs.alert("@mobile", 3)
         obj.currentScreens = "@mobile"
         obj:moveDockLeft()
     else
