@@ -32,7 +32,7 @@ local sleepScript = [[
 if not kextLoaded() then
     log.w("TB Kext should be loaded but isnt!")
     hs.alert.closeAll(0.1)
-    local warning = hs.alert.show("CRITICAL: KEXT ERROR", styles.alert_warning, 5)
+    local warning = hs.alert.show("CRITICAL: KEXT ERROR", styles.alert_warning, 4)
       -- attempt to load kext
     log.d("Attempting to reload kext...!")
       -- hs.alert.closeAll(10)
@@ -53,14 +53,14 @@ if not kextLoaded() then
         function()
             -- hs.alert("Attempting Recovery...", styles.alert_warning, 1)
             -- hs.alert.closeSpecific(warning, 0.1)
-            hs.alert.closeAll(1.5)
+            -- hs.alert.closeAll(1.5)
             hs.timer.doUntil(function() return loader == 0 end,
                 function()
                     loader = loader - 1
-                    hs.alert.closeAll(0.2)
+                    hs.alert.closeAll(2)
                     hs.alert("Attempting Recovery...", styles.alert_loader, 1.75)
                 end,
-            0.5)
+            2)
         end
     )
   
@@ -69,7 +69,7 @@ if not kextLoaded() then
         log.e("Still can't load kext, something is broke")
         hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", styles.alert_warning_lrg, 10)
     else
-        hs.timer.doAfter(6, 
+        hs.timer.doAfter(10, 
             function()
                 loader = 0
                 hs.alert.closeAll(0.5)

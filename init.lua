@@ -20,11 +20,15 @@ for k, v in pairs(styles.alert_default) do
 end
 
 hs.logger.defaultLogLevel = "error"
-hs.console.darkMode(true)
+hs.console.darkMode(false)
 if hs.console.darkMode() then
-    hs.console.outputBackgroundColor{ white = 0.1 }
+    hs.console.outputBackgroundColor{ white = 0.1, alpha = 0.9}
     hs.console.consoleCommandColor{ white = 1 }
-    hs.console.alpha(.9)
+    hs.console.alpha(1)
+else
+    hs.console.outputBackgroundColor{ white = 1, alpha = 0.9}
+    hs.console.consoleCommandColor{ white = 0.1 }
+    hs.console.alpha(1)
 end
 
 -- yada yada
