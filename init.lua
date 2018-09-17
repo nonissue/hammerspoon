@@ -50,14 +50,10 @@ clear = hs.console.clearConsole
 reload = hs.reload
 pbcopy = hs.pasteboard.setContents
 
-
-
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
-
-
 
 -- load scratch stuff
 package.path = package.path .. ";scratch/?.lua"
@@ -104,10 +100,17 @@ hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 --- end of spoons loading
 
+
+
 -- random stuff
-function kirby()
-    hs.alert(" ¯\\_(ツ)_/¯ ", styles.alert_tomfoolery, 5)
-    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
+-- move these to chooser?
+local yay = "ᕙ(⇀‸↼‶)ᕗ"
+local boo = "ლ(ಠ益ಠლ)"
+local kirby = "¯\\_(ツ)_/¯"
+
+local function kirby()
+    hs.alert(boo, styles.alert_loader, 5)
+    hs.pasteboard.setContents(kirby)
 end
 
 hs.hotkey.bind(mash, "K", kirby)
