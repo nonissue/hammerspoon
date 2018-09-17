@@ -105,7 +105,7 @@ obj.alert.colors = {
 
 obj.alert.defaults = {
     textFont = ".AppleSystemUIFont",
-    atScreenEdge = 3,
+    atScreenEdge = 0,
     fadeInDuration = 0.5,
     fadeOutDuration = 0.75,
 }

@@ -9,7 +9,36 @@ Paste the following, with your username (you can use whoami to verify your usern
 <YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
 <YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
 ]]
-os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+
+-- syles for alerts
+-- way over the top but i had some fun with it
+local warningStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#FF3D00", alpha = 0.9}, radius = 1, textColor = {hex = "#FFCCBC", alpha = 1}, fillColor = {hex = "#DD2C00", alpha = 0.95}}
+local successStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#1B5E20", alpha = 0.9}, radius = 1, textColor = {hex = "#fff", alpha = 1}, fillColor = {hex = "#2E7D32", alpha = 0.9}}
+local loadingStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#263238", alpha = 0.9}, radius = 1, textColor = {hex = "#B0BEC5", alpha = 1}, fillColor = {hex = "#37474F", alpha = 0.9}}
+
+local chipIcon = [[ASCII:
+....................
+....................
+....................
+.....G..E..C..A.....
+....................
+....................
+...1.G..E..C..A.1...
+...7............5...
+....................
+....................
+....................
+....................
+...7............5...
+...3.g..e..c..a.3...
+....................
+....................
+.....g..e..c..a.....
+....................
+....................
+....................
+]]
+
 local log = hs.logger.new("toggleEGPU", "verbose")
 log.i('Initializing toggleEGPU...')
 
@@ -29,87 +58,118 @@ local sleepScript = [[
     do shell script "/usr/bin/SafeEjectGPU Eject"
 ]]
 
+local ejectAllVolumes = [[
+tell application "Finder"
+    eject (every disk whose ejectable is true)
+end tell
+]]
+
 if not kextLoaded() then
     log.w("TB Kext should be loaded but isnt!")
     hs.alert.closeAll(0.1)
-    local warning = hs.alert.show("CRITICAL: KEXT ERROR", styles.alert_warning, 4)
+    local warning = hs.alert.show("CRITICAL: KEXT ERROR", warningStyle, 3)
       -- attempt to load kext
     log.d("Attempting to reload kext...!")
-      -- hs.alert.closeAll(10)
     os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
-    -- hs.timer.doAfter(4, 
-    --     function()
-    --         hs.alert.closeAll(1)
-    --         -- hs.alert.closeSpecific(warning, 4)
-    --         hs.alert("Attempting Recovery...", styles.alert_warning, 6)
-    --     end
-    -- )
 
+    -- this is so hacky, the issue is either resolved immediatley or not
+    -- but i wanted to play with a user inteface a bit
+    -- problem is that most of this is synchronous and i want to avoid blocking
+    -- the thread
+    -- there are probably a million better ways to do this
     local loader = 20
-    -- hs.alert.closeAll(0.4)
-    -- hs.timer.usleep(3000000)
-
     hs.timer.doAfter(2,
         function()
-            -- hs.alert("Attempting Recovery...", styles.alert_warning, 1)
-            -- hs.alert.closeSpecific(warning, 0.1)
-            -- hs.alert.closeAll(1.5)
             hs.timer.doUntil(function() return loader == 0 end,
                 function()
                     loader = loader - 1
-                    hs.alert.closeAll(2)
-                    hs.alert("Attempting Recovery...", styles.alert_loader, 1.75)
+                    hs.alert.closeAll(0.75)
+                    hs.alert("RECOVERING...", loadingStyle, 1.5)
                 end,
             2)
         end
     )
   
-
     if not kextLoaded() then
         log.e("Still can't load kext, something is broke")
-        hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", styles.alert_warning_lrg, 10)
+        hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", 10)
     else
-        hs.timer.doAfter(10, 
+        -- another fake delay for ui reasons
+        hs.timer.doAfter(8, 
             function()
                 loader = 0
                 hs.alert.closeAll(0.5)
                 log.i("Issue resolved")
-                hs.alert("Issue resolved!", styles.alert_success, 3)
+                hs.alert("SUCCESS!", successStyle, 3)
             end
         )
     end
-    -- hs.alert("TB Kext should be loaded but isnt!", styles.alert_warning_lrg, 5)
 end
 
+local function toggleTB()
+    os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+    if not kextLoaded() then
+        log.i("kext unloaded successfully?!")
+    else
+        log.e("Could not unload kext")
+        hs.alert("COULDNT UNLOAD KEXT!", warningStyle, 3)
+    end
+    os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
+    if not kextLoaded() then
+        log.e("Issue loading thunderbolt kext!")
+        hs.alert("TB KEXT FAILURE!", warningStyle, 10)
+        error("EGPU TB TOGGLE FAILED, investigate.")
+    end
+    log.d("Display should be connecting...")
+    hs.alert("TB TOGGLED!", loadingStyle, 3)
+    return true
+end
 
 function sleepWatch(eventType)
     if (eventType == hs.caffeinate.watcher.systemWillSleep) then
         log.i("Sleeping...")
-        -- local res = 
         if hs.osascript._osascript(sleepScript, "AppleScript") then
             log.i("sleepScript successful!")
         else
             log.e("sleepScript error:" .. result)
         end
     elseif (eventType == hs.caffeinate.watcher.screensDidWake) then
-        log.d("Waking...")
-        os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
-        if not kextLoaded() then
-            log.i("kext unloaded successfully?!")
-        else
-            log.e("Could not unload kext")
-            hs.alert("COULDNT UNLOAD KEXT!", styles.alert_warning_lrg, 3)
-        end
-        os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
-        if not kextLoaded() then
-            log.e("Issue loading thunderbolt kext!")
-            log.e("INVESTIGATE!")
-            hs.alert("TB KEXT SHOULD BE LOADED BUT ISNT!", styles.alert_warning_lrg, 10)
-        end
-        log.d("Display should be connecting...")
-        hs.alert("TB Toggle Success!", styles.alert_success, 3)
+        log.i("Waking...")
+        toggleTB()
     end
 end
-    
+
+local egpuMenuOptions = {
+    { title = "⏏  eGPU & Vols", fn = function() os.execute("/usr/bin/SafeEjectGPU Eject") hs.osascript._osascript(ejectAllVolumes, "AppleScript") end },
+    { title = "⏏  eGPU", fn = os.execute("/usr/bin/SafeEjectGPU Eject")}, 
+    { title = "⏏  Vols", fn = hs.osascript._osascript(ejectAllVolumes, "AppleScript")},
+    { title = "-"},
+    { title = "Toggle TB", fn = toggleTB()},
+}
+
 local sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
+
+local egpuMenuMaker = function()
+    if egpuMenuLoaded then
+        table.remove(egpuMenuOptions)
+    end
+
+    egpuMenuLoaded = true
+
+    if kextLoaded() then
+        table.insert(egpuMenuOptions, {title = "TB ✔︎", disabled = false})
+        return egpuMenuOptions
+    else
+        table.insert(egpuMenuOptions, {title = "TB ✗", disabled = true})
+        return egpuMenuOptions
+    end
+end
+
+local egpuMenuLoaded = false
+egpuMenu = hs.menubar.new():setIcon(chipIcon):setMenu(egpuMenuMaker)
+
+function updateStatus()
+    hs.alert(tbStatusTitle())
+end
+
 sleepWatcher:start()
