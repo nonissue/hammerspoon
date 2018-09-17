@@ -107,22 +107,11 @@ if not kextLoaded() then
 end
 
 local function toggleTB()
-    os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
-    if not kextLoaded() then
-        log.i("kext unloaded successfully?!")
+    if kextLoaded() then
+        os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
     else
-        log.e("Could not unload kext")
-        hs.alert("COULDNT UNLOAD KEXT!", warningStyle, 3)
+        os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
     end
-    os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
-    if not kextLoaded() then
-        log.e("Issue loading thunderbolt kext!")
-        hs.alert("TB KEXT FAILURE!", warningStyle, 10)
-        error("EGPU TB TOGGLE FAILED, investigate.")
-    end
-    log.d("Display should be connecting...")
-    hs.alert("TB TOGGLED!", loadingStyle, 3)
-    return true
 end
 
 function sleepWatch(eventType)
@@ -141,14 +130,13 @@ end
 
 local egpuMenuOptions = {
     { title = "⏏  eGPU & Vols", fn = function() os.execute("/usr/bin/SafeEjectGPU Eject") hs.osascript._osascript(ejectAllVolumes, "AppleScript") end },
-    { title = "⏏  eGPU", fn = os.execute("/usr/bin/SafeEjectGPU Eject")}, 
-    { title = "⏏  Vols", fn = hs.osascript._osascript(ejectAllVolumes, "AppleScript")},
+    { title = "⏏  eGPU", fn = function() os.execute("/usr/bin/SafeEjectGPU Eject") end}, 
+    { title = "⏏  Vols", fn = function() hs.osascript._osascript(ejectAllVolumes, "AppleScript") end},
     { title = "-"},
-    { title = "Toggle TB", fn = toggleTB()},
+    { title = "Toggle TB", fn = function() toggleTB() end},
 }
 
-local sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
-
+local egpuMenuLoaded = false
 local egpuMenuMaker = function()
     if egpuMenuLoaded then
         table.remove(egpuMenuOptions)
@@ -165,11 +153,7 @@ local egpuMenuMaker = function()
     end
 end
 
-local egpuMenuLoaded = false
-egpuMenu = hs.menubar.new():setIcon(chipIcon):setMenu(egpuMenuMaker)
+local egpuMenu = hs.menubar.new():setIcon(chipIcon):setMenu(egpuMenuMaker)
 
-function updateStatus()
-    hs.alert(tbStatusTitle())
-end
-
+local sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
 sleepWatcher:start()
