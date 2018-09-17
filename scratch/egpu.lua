@@ -104,7 +104,7 @@ local function resetTB()
     unloadTB()
     return loadTB()
 end
-
+ 
 local function toggleTB()
     if kextLoaded() then
         unloadTB()

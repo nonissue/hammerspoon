@@ -15,29 +15,22 @@
     "stripped_doc" : [
 
     ],
+    "type" : "Module",
     "desc" : "UNKNOWN DESC",
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "Constructor" : [
-
-    ],
-    "doc" : "",
-    "Field" : [
-
-    ],
-    "Command" : [
 
     ],
     "items" : [
       {
         "doc" : "Starts PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object",
-        "def" : "PaywallBuster:start()",
         "stripped_doc" : [
           "Starts PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:start()",
         "parameters" : [
           " * None",
           ""
@@ -50,16 +43,16 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
-        "desc" : "Starts PaywallBuster"
+        "desc" : "Starts PaywallBuster",
+        "name" : "start"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * Some PaywallBuster plugins will continue performing background work even after this call (e.g. Spotlight searches)",
-        "def" : "PaywallBuster:stop()",
         "stripped_doc" : [
           "Stops PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:stop()",
         "parameters" : [
           " * None",
           ""
@@ -73,18 +66,25 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
-        "desc" : "Stops PaywallBuster"
+        "desc" : "Stops PaywallBuster",
+        "name" : "stop"
       }
+    ],
+    "doc" : "",
+    "Command" : [
+
+    ],
+    "Field" : [
+
     ],
     "Method" : [
       {
         "doc" : "Starts PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object",
-        "def" : "PaywallBuster:start()",
         "stripped_doc" : [
           "Starts PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:start()",
         "parameters" : [
           " * None",
           ""
@@ -97,16 +97,16 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
-        "desc" : "Starts PaywallBuster"
+        "desc" : "Starts PaywallBuster",
+        "name" : "start"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * Some PaywallBuster plugins will continue performing background work even after this call (e.g. Spotlight searches)",
-        "def" : "PaywallBuster:stop()",
         "stripped_doc" : [
           "Stops PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:stop()",
         "parameters" : [
           " * None",
           ""
@@ -120,8 +120,8 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
-        "desc" : "Stops PaywallBuster"
+        "desc" : "Stops PaywallBuster",
+        "name" : "stop"
       }
     ],
     "name" : "PaywallBuster"
