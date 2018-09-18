@@ -55,7 +55,12 @@ obj.chipIcon = [[ASCII:
 ]]
 
 function obj.kextLoaded()
-    return os.execute("kextstat |grep AppleThunderboltPCIUpAdapter")
+    -- stupidly verbose but to guard against nil
+    if os.execute("kextstat |grep AppleThunderboltPCIUpAdapter") then 
+        return true 
+    else 
+        return false
+    end
 end
 
 function obj.ejectEGPU()
@@ -101,42 +106,50 @@ function obj.resetTB()
     return obj.loadTB()
 end
 
-if not obj.kextLoaded() then
-    obj.logger.w("TB Kext should be loaded but isnt!")
-    hs.alert.closeAll(0.1)
-    local warning = hs.alert.show("CRITICAL: KEXT ERROR", warningStyle, 3)
-      -- attempt to load kext
-    obj.logger.d("Attempting to reload kext...!")
-    obj.logger.d(obj.resetTB())
+function obj.loadCheck()
+    hs.alert(obj.kextLoaded(), loadingStyle, 5)
+end
 
-    -- this is so hacky, the issue is either resolved immediatley or not
-    -- but i wanted to play with a user inteface a bit
-    -- problem is that most of this is synchronous and i want to avoid blocking
-    -- the thread
-    -- there are probably a million better ways to do this
-    local loader = 10
-    hs.timer.doAfter(2,
-        function()
-            hs.timer.doUntil(function() return loader == 0 end,
-                function()
-                    loader = loader - 1
-                    hs.alert("RECOVERING...", loadingStyle, 0.5)
-                end,
-            1)
-    end)
-    if not obj.kextLoaded() then
-        obj.logger.e("Still can't load kext, something is broke")
-        hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", warningStyle, 10)
-    else
-        -- another fake delay for ui reasons
-        hs.timer.doAfter(8, 
+function obj.spoonLoaded()
+    local kextStatus = obj.kextLoaded()
+    if not kextStatus then
+        obj.logger.e("kextStatus: " .. tostring(kextStatus))
+        obj.logger.w("TB Kext should be loaded but isnt!")
+        hs.alert.closeAll(0.1)
+        local warning = hs.alert.show("CRITICAL: KEXT ERROR", warningStyle, 3)
+        -- attempt to load kext
+        obj.logger.d("Attempting to reload kext...!")
+        obj.logger.d(obj.resetTB())
+
+        -- this is so hacky, the issue is either resolved immediatley or not
+        -- but i wanted to play with a user inteface a bit
+        -- problem is that most of this is synchronous and i want to avoid blocking
+        -- the thread
+        -- there are probably a million better ways to do this
+        local loader = 10
+        hs.timer.doAfter(2,
             function()
-                loader = 0 -- immediately kills fake recovery flasher
-                hs.alert.closeAll(0.5)
-                obj.logger.i("Issue resolved")
-                hs.alert("SUCCESS!", successStyle, 3)
-            end
-        )
+                hs.timer.doUntil(function() return loader == 0 end,
+                    function()
+                        loader = loader - 1
+                        hs.alert("RECOVERING...", loadingStyle, 0.5)
+                    end,
+                1)
+        end)
+        if not obj.kextLoaded() then
+            obj.logger.e("Still can't load kext, something is broke")
+            hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", warningStyle, 10)
+        else
+            -- another fake delay for ui reasons
+            hs.timer.doAfter(8, 
+                function()
+                    loader = 0 -- immediately kills fake recovery flasher
+                    hs.alert.closeAll(0.5)
+                    obj.logger.i("Issue resolved")
+                    hs.alert("SUCCESS!", successStyle, 3)
+                end
+            )
+        end
     end
 end
 
@@ -171,6 +184,7 @@ function obj:disableMenu()
 end
 
 function obj:init()
+    obj.spoonLoaded()
     obj.sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
 end
 

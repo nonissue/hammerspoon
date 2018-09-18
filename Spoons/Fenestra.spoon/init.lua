@@ -1,12 +1,14 @@
 --- === Fenestra ===
----
---- Window Manipulaiton
---- Borrowed undo implementation from:
---- github.com/heptal // https://goo.gl/HcebTk
+--- Method
+--- * Window Manipulaiton
+--- * Borrowed undo implementation from:
+--- * github.com/heptal // https://goo.gl/HcebTk
 
---- other interesting ideas:
---- layouts (http://lowne.github.io/hammerspoon-extensions/)
---- snapping (ibid)
+
+-- other interesting ideas:
+-- layouts (http://lowne.github.io/hammerspoon-extensions/)
+-- snapping (ibid)
+
 hs.window.animationDuration = 0
 
 local obj = {}
@@ -163,8 +165,8 @@ function obj:rightMin()
 end
 
 -- undo for window operations
---- Borrowed undo implementation from:
---- github.com/heptal // https://goo.gl/HcebTk
+-- Borrowed undo implementation from:
+-- github.com/heptal // https://goo.gl/HcebTk
 local function rect(rect)
     return function()
       undo:push()

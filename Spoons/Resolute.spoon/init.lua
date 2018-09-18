@@ -40,10 +40,10 @@ local mbpr15raw = {
 local mbpr15 = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
-  {["id"] = 1, ["text"] = "1280x800", ["res"] = {w = 1280, h = 800, s = 2}},
-  {["id"] = 2, ["text"] = "1440x900", ["res"] = {w = 1440, h = 900, s = 2}},
-  {["id"] = 3, ["text"] = "1680x1050", ["res"] = {w = 1680, h = 1050, s = 2}},
-  {["id"] = 4, ["text"] = "1920x1200", ["res"] = {w = 1920, h = 1200, s = 2}},
+  {["id"] = 1, ["subText"] = "1280x800",  ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
+  {["id"] = 2, ["subText"] = "1440x900",  ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
+  {["id"] = 3, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
+  {["id"] = 4, ["subText"] = "1920x1200", ["text"] = "More Space", ["res"] = {w = 1920, h = 1200, s = 2}},
 }
 
 local acer4kresRaw = {
@@ -138,8 +138,10 @@ function obj:init()
     end
   end)
 
-  self.resChooser:width(20)
-  self.resChooser:bgDark(false)
+  self.resChooser:width(30)
+  self.resChooser:bgDark(true)
+  self.resChooser:fgColor({hex = "#ccc"})
+  self.resChooser:subTextColor({hex = "#888"})
 
   return self
 end

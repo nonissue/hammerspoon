@@ -62,10 +62,10 @@ package.path = package.path .. ";scratch/?.lua"
 -- i feel like these two should be spoons
 -- because they rely on watchers
 hs_reload = require("hammerspoon_config_reload")
-burnrate = require("burnrate")
+-- burnrate = require("burnrate")
 
 -- and they have to be inited
-burnrate.init()
+-- burnrate.init()
 hs_reload.init()
 
 
@@ -83,7 +83,7 @@ local safariHotkeys = {
 }
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
-hs.loadSpoon("SysInfo")
+-- hs.loadSpoon("SysInfo")
 
 hs.loadSpoon("PaywallBuster")
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
@@ -99,8 +99,8 @@ hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
-hs.loadSpoon("eGPU")
-spoon.eGPU:start()
+-- hs.loadSpoon("eGPU")
+-- spoon.eGPU:start()
 --- end of spoons loading
 
 

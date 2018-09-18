@@ -15,25 +15,25 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "Window Manipulaiton",
-    "type" : "Module",
+    "desc" : "* Window Manipulaiton",
     "Deprecated" : [
 
     ],
+    "type" : "Module",
     "Constructor" : [
 
     ],
-    "doc" : "Window Manipulaiton\nBorrowed undo implementation from:\ngithub.com\/heptal \/\/ https:\/\/goo.gl\/HcebTk",
-    "Method" : [
+    "doc" : "Method\n* Window Manipulaiton\n* Borrowed undo implementation from:\n* github.com\/heptal \/\/ https:\/\/goo.gl\/HcebTk",
+    "Field" : [
 
     ],
     "Command" : [
 
     ],
-    "Field" : [
+    "items" : [
 
     ],
-    "items" : [
+    "Method" : [
 
     ],
     "name" : "Fenestra"
