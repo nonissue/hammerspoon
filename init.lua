@@ -83,7 +83,6 @@ local safariHotkeys = {
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
 -- hs.loadSpoon("SysInfo")
-
 hs.loadSpoon("PaywallBuster")
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
