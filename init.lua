@@ -20,6 +20,7 @@ for k, v in pairs(styles.alert_default) do
 end
 
 hs.logger.defaultLogLevel = "error"
+
 hs.console.darkMode(false)
 if hs.console.darkMode() then
     hs.console.outputBackgroundColor{ white = 0.1, alpha = 0.9}
@@ -63,12 +64,10 @@ package.path = package.path .. ";scratch/?.lua"
 -- because they rely on watchers
 hs_reload = require("hammerspoon_config_reload")
 -- burnrate = require("burnrate")
+-- burnrate.init()
 
 -- and they have to be inited
--- burnrate.init()
 hs_reload.init()
-
-
 
 -- Load our spoons
 hs.loadSpoon("SystemContexts")
@@ -102,8 +101,6 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- hs.loadSpoon("eGPU")
 -- spoon.eGPU:start()
 --- end of spoons loading
-
-
 
 -- random stuff
 -- move these to chooser?
