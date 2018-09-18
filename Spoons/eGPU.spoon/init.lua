@@ -10,13 +10,28 @@ Paste the following, with your username (you can use whoami to verify your usern
 <YOURUSERNAME> ALL=(root) NOPASSWD: /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/
 ]]
 
+local obj = {}
+obj.__index = obj
+
+-- Metadata
+obj.name = "eGPU"
+obj.version = "0.1"
+obj.author = "andy williams <andy@nonissue.org>"
+obj.homepage = "https://github.com/nonissue"
+obj.license = "MIT - https://opensource.org/licenses/MIT"
+-- end Metadata
+
+-- init logger
+obj.logger = hs.logger.new('eGPU', 'verbose')
+obj.logger.i('Initializing toggleEGPU...')
+
 -- syles for alerts
 -- way over the top but i had some fun with it
 local warningStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#FF3D00", alpha = 0.9}, radius = 1, textColor = {hex = "#FFCCBC", alpha = 1}, fillColor = {hex = "#DD2C00", alpha = 0.95}}
 local successStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#1B5E20", alpha = 0.9}, radius = 1, textColor = {hex = "#fff", alpha = 1}, fillColor = {hex = "#2E7D32", alpha = 0.9}}
 local loadingStyle = {textFont = "Helvetica Neue Condensed Bold", strokeWidth = 10, strokeColor = {hex = "#263238", alpha = 0.9}, radius = 1, textColor = {hex = "#B0BEC5", alpha = 1}, fillColor = {hex = "#37474F", alpha = 0.9}}
 
-local chipIcon = [[ASCII:
+obj.chipIcon = [[ASCII:
 ....................
 ....................
 ....................
@@ -39,22 +54,13 @@ local chipIcon = [[ASCII:
 ....................
 ]]
 
-local log = hs.logger.new("toggleEGPU", "verbose")
-log.i('Initializing toggleEGPU...')
-
-local function kextLoaded1()
-    if os.execute("kextstat |grep AppleThunderboltPCIUpAdapter") then
-        return true
-    else
-        return false
-    end
-end
-
-local function kextLoaded()
+function obj.kextLoaded()
     return os.execute("kextstat |grep AppleThunderboltPCIUpAdapter")
 end
 
-local function ejectEGPU()
+function obj.ejectEGPU()
+    -- returns true + result on success
+    -- otherwise returns false and the error
     return hs.osascript._osascript(
     [[
         do shell script "/usr/bin/SafeEjectGPU Eject"
@@ -63,8 +69,9 @@ local function ejectEGPU()
     )
 end
 
-local function ejectAllVolumes()
-    -- returns true if script runs
+function obj.ejectAllVolumes()
+    -- returns true + result on success
+    -- otherwise returns false and the error
     return hs.osascript._osascript([[
         tell application "Finder"
 	        eject (every disk whose ejectable is true)
@@ -74,52 +81,33 @@ local function ejectAllVolumes()
     )
 end
 
-local function asTest()
-    -- returns true if script runs
-    -- returns true
-    return hs.osascript._osascript([[
-        tell application "Safari"
-            set result to URL of document 1
-        end tell
-        return result
-        ]],
-        "AppleScript"
-    )
+function obj.undock()
+    -- returns true if both scripts are executed
+    -- but this doesn't necessarily reflect their affects
+    return obj.ejectEGPU() and obj.ejectAllVolumes()
 end
 
-local function undock()
-    return ejectEGPU(), ejectAllVolumes()
-end
-
-local function unloadTB()
+function obj.unloadTB()
     return os.execute("sudo /sbin/kextunload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
 end
 
-local function loadTB()
+function obj.loadTB()
     return os.execute("sudo /sbin/kextload /System/Library/Extensions/AppleThunderboltPCIAdapters.kext/Contents/PlugIns/AppleThunderboltPCIUpAdapter.kext/")
 end
 
-local function resetTB()
+function obj.resetTB()
     -- returns the result of loadTB() which is all we really care about
-    unloadTB()
-    return loadTB()
-end
- 
-local function toggleTB()
-    if kextLoaded() then
-        unloadTB()
-    else
-        loadTB()
-    end
+    obj.unloadTB()
+    return obj.loadTB()
 end
 
-if not kextLoaded() then
-    log.w("TB Kext should be loaded but isnt!")
+if not obj.kextLoaded() then
+    obj.logger.w("TB Kext should be loaded but isnt!")
     hs.alert.closeAll(0.1)
     local warning = hs.alert.show("CRITICAL: KEXT ERROR", warningStyle, 3)
       -- attempt to load kext
-    log.d("Attempting to reload kext...!")
-    log.d(resetTB())
+    obj.logger.d("Attempting to reload kext...!")
+    obj.logger.d(obj.resetTB())
 
     -- this is so hacky, the issue is either resolved immediatley or not
     -- but i wanted to play with a user inteface a bit
@@ -136,8 +124,8 @@ if not kextLoaded() then
                 end,
             1)
     end)
-    if not kextLoaded() then
-        log.e("Still can't load kext, something is broke")
+    if not obj.kextLoaded() then
+        obj.logger.e("Still can't load kext, something is broke")
         hs.alert("TB KEXT NOT LOADED, CANNOT RECOVER!", warningStyle, 10)
     else
         -- another fake delay for ui reasons
@@ -145,49 +133,57 @@ if not kextLoaded() then
             function()
                 loader = 0 -- immediately kills fake recovery flasher
                 hs.alert.closeAll(0.5)
-                log.i("Issue resolved")
+                obj.logger.i("Issue resolved")
                 hs.alert("SUCCESS!", successStyle, 3)
             end
         )
     end
 end
 
-local egpuMenuOptions = { 
-    { title = "⏏  eGPU & Vols", fn = function() log.d(undock()) end},
-    { title = "⏏  eGPU", fn = function() log.d(ejectEGPU()) end}, 
-    { title = "⏏  Vols", fn = function() log.d(ejectAllVolumes()) end},
-    { title = "♻︎  Reset TB", fn = function() local res = resetTB() hs.alert(res and "TB: Reset" or "TB: Error", res and successStyle or warningStyle, 3) log.d(res) end},
+obj.egpuMenuOptions = { 
+    { title = "⏏  eGPU & Vols", fn = function() obj.logger.d(obj.undock()) end},
+    { title = "⏏  eGPU", fn = function() obj.logger.d(obj.ejectEGPU()) end}, 
+    { title = "⏏  Vols", fn = function() obj.logger.d(obj.ejectAllVolumes()) end},
+    { title = "♻︎  Reset TB", fn = function() local res = obj.resetTB() hs.alert(res and "TB: Reset" or "TB: Error", res and successStyle or warningStyle, 3) obj.logger.d(res) end},
 }
 
--- local egpuMenuMaker = function()
---     if egpuMenuLoaded then
---         table.remove(egpuMenuOptions)
---     end
-
---     if kextLoaded() then
---         return egpuMenuOptions
---     else   
---         return egpuMenuOptions
---     end
--- end
-
-local egpuMenu = hs.menubar.new():setIcon(chipIcon):setMenu(egpuMenuOptions)
-
-function sleepWatch(eventType)
+local function sleepWatch(eventType)
     if (eventType == hs.caffeinate.watcher.systemWillSleep) then
-        log.i("Sleeping...")
-        if hs.osascript._osascript(sleepScript, "AppleScript") then
-            log.i("sleepScript successful!")
+        obj.logger.i("Sleeping...")
+        if obj.undock() then
+            obj.logger.i("sleepScript success!")
         else
-            log.e("sleepScript error:" .. result)
+            obj.logger.e("sleepScript error")
         end
     elseif (eventType == hs.caffeinate.watcher.screensDidWake) then
-        log.i("Waking...")
-        log.d(resetTB())
+        obj.logger.i("Waking...")
+        obj.logger.d(obj.resetTB())
     end
 end
 
-local sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
-sleepWatcher:start()
+function obj:enableMenu()
+    obj.egpuMenu = hs.menubar.new()
+    obj.egpuMenu:setIcon(obj.chipIcon):setMenu(obj.egpuMenuOptions)
+end
 
+function obj:disableMenu()
+    obj.egpuMenu:delete()
+end
 
+function obj:init()
+    obj.sleepWatcher = hs.caffeinate.watcher.new(sleepWatch)
+end
+
+function obj:start()
+    obj.sleepWatcher:start()
+    obj:enableMenu()
+    return obj
+end
+
+function obj:stop()
+    obj.sleepWatcher:stop()
+    obj.egpuMenu:disableMenu()
+    return obj
+end
+
+return obj

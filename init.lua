@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 -- init.lua
 ------------------------------------------------------------------------------
--- By: Andy Williams / hammerspoon [ at ] nonissue dot org
+-- By: Andy Williams / ham   merspoon [ at ] nonissue dot org
 ------------------------------------------------------------------------------
 -- A messy hammerspoon config
 -- If you have concerns (about my sanity or anything else) feel free to
@@ -57,7 +57,7 @@ local alt = {"alt"}
 
 -- load scratch stuff
 package.path = package.path .. ";scratch/?.lua"
-egpu = require("egpu")
+-- egpu = require("egpu")
 
 -- i feel like these two should be spoons
 -- because they rely on watchers
@@ -98,6 +98,9 @@ hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
+
+hs.loadSpoon("eGPU")
+spoon.eGPU:start()
 --- end of spoons loading
 
 
