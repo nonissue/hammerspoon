@@ -79,6 +79,7 @@ function obj:bindHotkeys(keys)
             hs.grid.show()
         end
     )
+    
     hs.hotkey.bindSpec(
         keys["maxWin"],
         function()
