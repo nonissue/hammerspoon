@@ -135,7 +135,8 @@ function obj:formatSeconds(seconds)
         hours = string.format("%02.f", math.floor(seconds / 3600));
         mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
         secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
-        return "☾ " .. mins..":"..secs
+        -- return "☾ " .. mins..":"..secs
+        return "[☾ " .. mins .. "]"
     end
 end
 
@@ -175,7 +176,8 @@ function obj:newTimer(timerInMins)
                 if interval == 11 then
                     hs.alert("Sleeping in 10 seconds...")
                 end
-                self.sleepTimerMenu:setTitle(obj:formatSeconds(interval))
+                
+                self.sleepTimerMenu:setTitle(hs.styledtext.new(obj:formatSeconds(interval), {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}))
             end
         )
     end
