@@ -15,15 +15,15 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "* Window Manipulaiton",
+    "type" : "Module",
     "Deprecated" : [
 
     ],
-    "type" : "Module",
+    "desc" : "* Window Manipulaiton",
     "Constructor" : [
 
     ],
-    "items" : [
+    "Field" : [
 
     ],
     "Method" : [
@@ -32,7 +32,7 @@
     "Command" : [
 
     ],
-    "Field" : [
+    "items" : [
 
     ],
     "doc" : "Method\n* Window Manipulaiton\n* Borrowed undo implementation from:\n* github.com\/heptal \/\/ https:\/\/goo.gl\/HcebTk",

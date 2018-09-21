@@ -39,7 +39,7 @@ hs.grid.ui.highlightStrokeColor = {0,1,0,0.4}
 hs.grid.ui.cellStrokeColor = {1,1,1,1}
 hs.grid.ui.cellStrokeWidth = 2
 hs.grid.ui.highlightStrokeWidth = 20
-hs.grid.ui.fontName = 'Apercu Mono'
+hs.grid.ui.fontName = 'Apercu Mono' -- should guard against this as it's not default
 hs.grid.ui.showExtraKeys = false
 
 -- custom grid hints
