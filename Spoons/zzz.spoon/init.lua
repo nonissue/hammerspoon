@@ -119,6 +119,14 @@ function obj:bindHotkeys(mapping)
     hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
+function obj:setTitleStyled(text)
+    self.sleepTimerMenu:setTitle(
+        hs.styledtext.new(
+            text, 
+            {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}
+        )
+    )
+end
 -- why not just deal with minutes?
 function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
@@ -135,8 +143,8 @@ function obj:formatSeconds(seconds)
         hours = string.format("%02.f", math.floor(seconds / 3600));
         mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
         secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
-        -- return "☾ " .. mins..":"..secs
-        return "[☾ " .. mins .. "]"
+        return "☾ " .. mins..":"..secs
+        -- return "[☾ " .. mins .. "]"
     end
 end
 
@@ -177,7 +185,7 @@ function obj:newTimer(timerInMins)
                     hs.alert("Sleeping in 10 seconds...")
                 end
                 
-                self.sleepTimerMenu:setTitle(hs.styledtext.new(obj:formatSeconds(interval), {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}))
+                self:setTitleStyled(obj:formatSeconds(interval))
             end
         )
     end
@@ -237,7 +245,7 @@ end
 function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
-    self.sleepTimerMenu:setTitle("[☾]")
+    self:setTitleStyled("☾")
     self.timerEvent = nil
     self.timerDisplay = nil
 end
@@ -301,7 +309,7 @@ function obj:init()
         self.sleepTimerMenu:delete()
     end
     self.sleepTimerMenu = hs.menubar.new()
-    self.sleepTimerMenu:setTitle("[☾]")
+    self:setTitleStyled("☾")
     
     -- the menubar isnt set by default by the menubar.new call
     -- with the parameter "false", but because we set the title 
@@ -352,7 +360,7 @@ function obj:init()
     )
     
     self.chooser:width(20)
-    self.chooser:bgDark(false)
+    self.chooser:bgDark(true)
 
     -- adds a menubar click callback to invoke show/hide chooser
     -- so sleep timer can be set with mouse only
