@@ -127,7 +127,7 @@ function obj:formatSeconds(seconds)
     if seconds <= minSecs then
         self:deleteTimer()
         -- it fiish
-        return "☾ "
+        return "[☾]"
     elseif seconds > maxSecs then -- not really the place to check this??
         hs.alert("Timer must be lower than two hours?")
         return "error"
@@ -237,7 +237,7 @@ end
 function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
-    self.sleepTimerMenu:setTitle("☾")
+    self.sleepTimerMenu:setTitle("[☾]")
     self.timerEvent = nil
     self.timerDisplay = nil
 end
@@ -301,7 +301,7 @@ function obj:init()
         self.sleepTimerMenu:delete()
     end
     self.sleepTimerMenu = hs.menubar.new()
-    self.sleepTimerMenu:setTitle("☾")
+    self.sleepTimerMenu:setTitle("[☾]")
     
     -- the menubar isnt set by default by the menubar.new call
     -- with the parameter "false", but because we set the title 
