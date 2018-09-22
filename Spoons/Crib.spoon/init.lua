@@ -8,7 +8,7 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "eGPU"
+obj.name = "Crib"
 obj.version = "0.1"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepzage = "https://github.com/nonissue"
@@ -98,6 +98,7 @@ function obj:init()
             end
         end
     )
+
     self.chooser:width(20)
     self.chooser:bgDark(true)
 
