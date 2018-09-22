@@ -97,6 +97,9 @@ hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
+hs.loadSpoon("Crib")
+spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
+
 -- hs.loadSpoon("eGPU")
 -- spoon.eGPU:start()
 --- end of spoons loading
