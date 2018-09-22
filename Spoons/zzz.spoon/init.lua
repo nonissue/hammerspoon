@@ -74,6 +74,7 @@ local presetCount = 3
 ]]--
 
 obj.createTimerChoices = {}
+obj.startMenuChoices = {}
 obj.modifyTimerChoices = {}
 
 -- generate presets dynamically based on sleepInterval/presentCount
@@ -84,7 +85,17 @@ for i = 1, presetCount do
         ["m"] = i * sleepInterval,
         ["text"] = i * sleepInterval .. " minutes",
     })
+    table.insert(obj.startMenuChoices, {
+        title = i * sleepInterval .. " minutes",
+        fn = function() obj:timerChooserCallback(obj.createTimerChoices[i]) end,
+        ["id"] = i,
+        ["action"] = "create",
+        ["m"] = i * sleepInterval,
+        ["text"] = i * sleepInterval .. " minutes",
+    })
 end
+
+print(i(obj.startMenuChoices))
 
 -- static chooser entries
 -- increase timer by X minutes decrease timer by Y minutes / stop timer
@@ -107,6 +118,33 @@ obj.modifyTimerChoices = {
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5 minutes"
+    },
+}
+
+obj.modifyMenuChoices = {
+    {
+        ["id"] = 1,
+        ["action"] = "stop",
+        ["m"] = 0,
+        ["text"] = "Stop Timer",
+        title = "Stop Timer",
+        fn = function() obj:timerChooserCallback(obj.createTimerChoices[1]) end,
+    },
+    {
+        ["id"] = 2,
+        ["action"] = "adjust",
+        ["m"] = 5,
+        ["text"] = "+5m",
+        title = "+5m",
+        fn = function() obj:timerChooserCallback(obj.createTimerChoices[2]) end,
+    },
+    {
+        ["id"] = 3,
+        ["action"] = "adjust",
+        ["m"] = -5,
+        ["text"] = "-5m",
+        title = "-5m",
+        fn = function() obj:timerChooserCallback(obj.createTimerChoices[3]) end,
     },
 }
 
@@ -216,6 +254,7 @@ function obj:timerChooserCallback(choice)
     else
         local mins = tonumber(choice['m'])
         if choice['id'] > 0 and choice['id'] <= #obj.createTimerChoices then
+            self.sleepTimerMenu:setMenu(self:getMenuChoices())
             self:newTimer(mins)
         else
             hs.alert("Invalid option, error", 3)
@@ -285,6 +324,14 @@ function obj:getCurrentChoices()
     end
 end
 
+function obj:getMenuChoices()
+    if self.timerEvent then
+        return self.modifyMenuChoices
+    else
+        return self.startMenuChoices
+    end
+end
+
 function obj:chooserToggle()
     self.chooser:choices(self:getCurrentChoices())
     self.chooser:rows(#self:getCurrentChoices())
@@ -300,6 +347,16 @@ function obj:chooserToggle()
     end
 end
 
+local testMenu = {
+    { title = "my menu item", fn = function() print("you clicked my menu item!") end },
+    { title = "-" },
+    { title = "other item", fn = some_function },
+    { title = "disabled item", disabled = true },
+    { title = "checked item", checked = true },
+}
+
+print(i(testMenu))
+
 function obj:init()
 
     -- if statement to prevent dupes especially during dev
@@ -308,7 +365,7 @@ function obj:init()
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end
-    self.sleepTimerMenu = hs.menubar.new()
+    self.sleepTimerMenu = hs.menubar.new():setMenu(obj:getMenuChoices())
     self:setTitleStyled("☾")
     
     -- the menubar isnt set by default by the menubar.new call
@@ -364,7 +421,7 @@ function obj:init()
 
     -- adds a menubar click callback to invoke show/hide chooser
     -- so sleep timer can be set with mouse only
-    self.sleepTimerMenu:setClickCallback(function() self:chooserToggle() end)
+    -- self.sleepTimerMenu:setClickCallback(function() self:chooserToggle() end)
 
     return self
 end
