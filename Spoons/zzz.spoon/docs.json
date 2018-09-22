@@ -18,22 +18,22 @@
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "desc" : "UNKNOWN DESC",
+    "type" : "Module",
     "Constructor" : [
 
     ],
+    "items" : [
+
+    ],
     "doc" : "",
-    "Method" : [
+    "Command" : [
 
     ],
     "Field" : [
 
     ],
-    "Command" : [
-
-    ],
-    "items" : [
+    "Method" : [
 
     ],
     "name" : "Zzz"
