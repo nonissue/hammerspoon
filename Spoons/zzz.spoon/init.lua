@@ -4,6 +4,8 @@
 
 --[[
     TODO:
+    * [ ] Basically needs a complete refactor
+        * overly complicated
     * [ ] remove unused/functions vars
     * [ ] proper spoon docs
     * [ ] proper spoon-style key binding
@@ -39,13 +41,6 @@ local minSecs = minMins / 60
 local maxMins = 300
 local maxSecs = maxMins * 60
 
-local function script_path()
-    local str = debug.getinfo(2, "S").source:sub(2)
-    return str:match("(.*/)")
-end
-  
-obj.spoonPath = script_path()
-
 -- moving this into init causes duplicates in menubar
 -- during dev when we are constantly reloading
 
@@ -73,9 +68,17 @@ local presetCount = 3
 
 ]]--
 
+function obj:styleText(text)
+    return hs.styledtext.new(
+        text, 
+        {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}
+    )
+end
+
 obj.createTimerChoices = {}
 obj.startMenuChoices = {}
 obj.modifyTimerChoices = {}
+obj.modifyMenuChoices = {}
 
 -- generate presets dynamically based on sleepInterval/presentCount
 for i = 1, presetCount do
@@ -86,12 +89,12 @@ for i = 1, presetCount do
         ["text"] = i * sleepInterval .. " minutes",
     })
     table.insert(obj.startMenuChoices, {
-        title = i * sleepInterval .. " minutes",
+        title = obj:styleText(tostring(i * sleepInterval .. "m")),
         fn = function() obj:timerChooserCallback(obj.createTimerChoices[i]) end,
         ["id"] = i,
         ["action"] = "create",
         ["m"] = i * sleepInterval,
-        ["text"] = i * sleepInterval .. " minutes",
+        ["text"] = i * sleepInterval .. "m",
     })
 end
 
@@ -128,7 +131,7 @@ obj.modifyMenuChoices = {
         ["m"] = 0,
         ["text"] = "Stop Timer",
         title = "Stop Timer",
-        fn = function() obj:timerChooserCallback(obj.createTimerChoices[1]) end,
+        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[1]) end,
     },
     {
         ["id"] = 2,
@@ -136,7 +139,7 @@ obj.modifyMenuChoices = {
         ["m"] = 5,
         ["text"] = "+5m",
         title = "+5m",
-        fn = function() obj:timerChooserCallback(obj.createTimerChoices[2]) end,
+        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[2]) end,
     },
     {
         ["id"] = 3,
@@ -144,7 +147,7 @@ obj.modifyMenuChoices = {
         ["m"] = -5,
         ["text"] = "-5m",
         title = "-5m",
-        fn = function() obj:timerChooserCallback(obj.createTimerChoices[3]) end,
+        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[3]) end,
     },
 }
 
@@ -165,6 +168,7 @@ function obj:setTitleStyled(text)
         )
     )
 end
+
 -- why not just deal with minutes?
 function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
@@ -173,7 +177,7 @@ function obj:formatSeconds(seconds)
     if seconds <= minSecs then
         self:deleteTimer()
         -- it fiish
-        return "[☾]"
+        return "☾"
     elseif seconds > maxSecs then -- not really the place to check this??
         hs.alert("Timer must be lower than two hours?")
         return "error"
@@ -206,6 +210,7 @@ function obj:newTimer(timerInMins)
     if self.timerEvent then
         hs.alert("Timer already started")
     else
+        self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
         -- i don't like having two functions for this
         -- and setting two variables
         interval = tonumber(timerInMins) * 60
@@ -285,6 +290,7 @@ function obj:deleteTimer()
     self.timerDisplay:stop()
     self.timerEvent:stop()
     self:setTitleStyled("☾")
+    self.sleepTimerMenu:setMenu(self.startMenuChoices)
     self.timerEvent = nil
     self.timerDisplay = nil
 end
