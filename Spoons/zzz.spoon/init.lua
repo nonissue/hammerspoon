@@ -178,19 +178,13 @@ end
 function obj:formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(seconds)
-
-    if seconds <= minSecs then
-        self:deleteTimer()
-        -- it fiish
-        return "☾"
-    elseif seconds > maxSecs then -- not really the place to check this??
-        hs.alert("Timer must be lower than two hours?")
-        return "error"
-    else
+    if seconds then
         hours = string.format("%02.f", math.floor(seconds / 3600));
         mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
         secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
         return "☾ " .. mins..":"..secs
+    else 
+        return false
         -- return "[☾ " .. mins .. "]"
     end
 end
