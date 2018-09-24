@@ -189,20 +189,6 @@ function obj:formatSeconds(seconds)
     end
 end
 
--- simple method to get time remaining 
--- in easily readable form
--- this is really dumb
-function obj:timeRemaining()
-    if self.timerEvent == nil then
-        return "Error: No timer event found to print"
-    else 
-        local minsRemaining = self.timerEvent:nextTrigger() / 60.0
-        mins = string.format("%02.1f", self.timerEvent:nextTrigger() / 60);
-
-        return mins
-    end
-end
-
 -- hs.timer interval is in seconds
 function obj:newTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
