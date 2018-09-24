@@ -88,7 +88,7 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
 hs.loadSpoon("Zzz")
 spoon.Zzz:init()
-hs.hotkey.bind(mash, "S", function() spoon.Zzz:show() end)
+hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 
 hs.loadSpoon("Resolute")
 spoon.Resolute:init()

@@ -68,11 +68,19 @@ local presetCount = 3
     }
 
 ]]--
+obj.menuColor = {hex = "#eee"}
 
-obj.menuFont = {
+local defaultFont = {
+    font = {name = "Input Mono", size = 14},
+    color = {hex = "#EEEEEE"}
+}
+
+local almostDone = {
     font = {name = "Input Mono", size = 14},
     color = {hex = "#FF6F00"}
 }
+
+obj.menuFont = defaultFont
 
 function obj:styleText(text)
     return hs.styledtext.new(
@@ -83,6 +91,7 @@ end
 
 obj.createTimerChoices = {}
 obj.startMenuChoices = {}
+obj.startMenuCustomChoices = {}
 obj.modifyTimerChoices = {}
 obj.modifyMenuChoices = {}
 
@@ -103,6 +112,13 @@ for i = 1, presetCount do
         ["text"] = i * sleepInterval .. "m",
     })
 end
+
+table.insert(obj.startMenuChoices, 
+    {
+        title = obj:styleText("Custom"), 
+        fn = function() obj.chooser:show() end
+    }
+)
 
 -- print(i(obj.startMenuChoices))
 
@@ -186,7 +202,6 @@ function obj:formatSeconds(seconds)
         return "☾ " .. mins..":"..secs
     else 
         return false
-        -- return "[☾ " .. mins .. "]"
     end
 end
 
@@ -219,6 +234,7 @@ function obj:timerChooserCallback(choice)
     elseif choice['m'] == nil then
         -- handle custom timer
         self:newTimer(tonumber(self.chooser:query()))
+        self.chooser:query(nil)
     else
         -- handle normal choice
         self:newTimer(tonumber(choice['m']))
@@ -231,8 +247,9 @@ function obj:updateMenu()
             return self.timerEvent
         end,
         function()
-            if math.floor(self.timerEvent:nextTrigger()) == 11 then
-                hs.alert("Sleeping in 10 seconds...") 
+            if math.floor(self.timerEvent:nextTrigger()) == 10 then
+                -- hs.alert("Sleeping in 10 seconds...")
+                obj.menuFont = almostDone
             end
             
             self:setTitleStyled(obj:formatSeconds(self.timerEvent:nextTrigger()))
@@ -240,7 +257,6 @@ function obj:updateMenu()
         1
     )
 end
-
 
 function obj:adjustTimer(minutes)
     if minutes < 0 then
@@ -261,18 +277,9 @@ end
 function obj:deleteTimer()
     self.timerEvent:stop()
     self.timerEvent = nil
+    self.menuFont = defaultFont 
     self:setTitleStyled("☾")
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
-end
-
-function obj:show()
-    self.chooser:show()
-    return self
-end
-
-function obj:hide()
-    self.chooser:hide()
-    return self
 end
 
 function obj:start()
@@ -373,7 +380,6 @@ function obj:init()
 
     -- adds a menubar click callback to invoke show/hide chooser
     -- so sleep timer can be set with mouse only
-    -- self.sleepTimerMenu:setClickCallback(function() self:chooserToggle() end)
 
     return self
 end
