@@ -30,7 +30,6 @@ obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.chooser = nil
-obj.timerDisplay = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
 
@@ -46,9 +45,11 @@ local maxSecs = maxMins * 60
 
 -- Interval between sleep times
 local sleepInterval = 15
+local updateInterval = 5
+local presetCount = 3
 
 -- Number of sleep times displayed in chooser
-local presetCount = 3
+
 
 --[[ 
     init our empty chooser choice tables
@@ -135,7 +136,7 @@ obj.modifyMenuChoices = {
         ["action"] = "stop",
         ["m"] = 0,
         ["text"] = "Stop Timer",
-        title = "Stop Timer",
+        title = obj:styleText("Stop"),
         fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[1]) end,
     },
     {
@@ -143,7 +144,7 @@ obj.modifyMenuChoices = {
         ["action"] = "adjust",
         ["m"] = 5,
         ["text"] = "+5m",
-        title = "+5m",
+        title = obj:styleText("+5m"),
         fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[2]) end,
     },
     {
@@ -151,7 +152,7 @@ obj.modifyMenuChoices = {
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5m",
-        title = "-5m",
+        title = obj:styleText("-5m"),
         fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[3]) end,
     },
 }
@@ -195,25 +196,13 @@ function obj:newTimer(timerInMins)
     if self.timerEvent then
         hs.alert("Timer already started")
     else
+        self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
-        -- i don't like having two functions for this
-        -- and setting two variables
-        interval = tonumber(timerInMins) * 60
         self.timerEvent = hs.timer.doAfter(
-            interval, 
-            function() 
-                hs.caffeinate.systemSleep() 
-            end
-        )
-        self.timerDisplay = hs.timer.doEvery(
-            1, 
+            tonumber(timerInMins) * 60,
             function()
-                interval = interval - 1
-                if interval == 11 then
-                    hs.alert("Sleeping in 10 seconds...")
-                end
-                
-                self:setTitleStyled(obj:formatSeconds(interval))
+                self:deleteTimer()
+                hs.caffeinate.systemSleep()
             end
         )
     end
@@ -221,36 +210,37 @@ end
 
 function obj:timerChooserCallback(choice)
     -- switch on action
-    if choice['action'] == 'stop' then
-        if self.timerEvent then
-            self:deleteTimer()
-        else
-            hs.alert("Error: No timer to stop")
-            return
-        end
+    if choice['action'] == 'stop' and self.timerEvent then
+        -- handle stop timer
+        self:deleteTimer()
     elseif choice['action'] == 'adjust' and self.timerEvent then
+        -- handle inc/dec timer
         self:adjustTimer(choice['m'])
     elseif choice['m'] == nil then
-        -- should do a check to see if customCountdown is a number
-        local customCountdown = tonumber(self.chooser:query())
-        -- Make sure the specified minutes are a reasonable amount
-        if customCountdown < maxMins and customCountdown > minMins then
-            self:newTimer(customCountdown)
-        else 
-            hs.alert("Specified value is too big or too small or nonsensical, try again")
-            self.chooser:cancel()
-            self.chooser:show()
-        end
+        -- handle custom timer
+        self:newTimer(tonumber(self.chooser:query()))
     else
-        local mins = tonumber(choice['m'])
-        if choice['id'] > 0 and choice['id'] <= #obj.createTimerChoices then
-            self.sleepTimerMenu:setMenu(self:getMenuChoices())
-            self:newTimer(mins)
-        else
-            hs.alert("Invalid option, error", 3)
-        end
+        -- handle normal choice
+        self:newTimer(tonumber(choice['m']))
     end
+end 
+
+function obj:updateMenu()
+    hs.timer.doWhile(
+        function()
+            return self.timerEvent
+        end,
+        function()
+            if math.floor(self.timerEvent:nextTrigger()) == 11 then
+                hs.alert("Sleeping in 10 seconds...") 
+            end
+            
+            self:setTitleStyled(obj:formatSeconds(self.timerEvent:nextTrigger()))
+        end,
+        1
+    )
 end
+
 
 function obj:adjustTimer(minutes)
     if minutes < 0 then
@@ -259,25 +249,20 @@ function obj:adjustTimer(minutes)
             hs.alert("nah that doesn't make sense")
             return
         else
-            local newTimerTime = self.timerEvent:nextTrigger() / 60 + minutes
+            local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
             self.timerEvent:setNextTrigger(newTimerTime)
-            self:deleteTimer()
-            self:newTimer(newTimerTime)
         end
     elseif minutes > 0 then
-        local newTimerTime = self.timerEvent:nextTrigger() / 60 + minutes
-        self:deleteTimer()
-        self:newTimer(newTimerTime)
+        local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
+        self.timerEvent:setNextTrigger(newTimerTime)
     end
 end
 
 function obj:deleteTimer()
-    self.timerDisplay:stop()
     self.timerEvent:stop()
+    self.timerEvent = nil
     self:setTitleStyled("☾")
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
-    self.timerEvent = nil
-    self.timerDisplay = nil
 end
 
 function obj:show()
@@ -323,21 +308,6 @@ function obj:getMenuChoices()
     end
 end
 
-function obj:chooserToggle()
-    self.chooser:choices(self:getCurrentChoices())
-    self.chooser:rows(#self:getCurrentChoices())
-    
-    if self.chooser:isVisible() then
-        -- cancel rather than hide
-        -- hide persists entered text in the search field
-        -- which i dont want
-        self.chooser:cancel()
-    else 
-
-        self.chooser:show()
-    end
-end
-
 function obj:init()
 
     -- if statement to prevent dupes especially during dev
@@ -346,6 +316,7 @@ function obj:init()
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end
+
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj:getMenuChoices())
     self:setTitleStyled("☾")
     
