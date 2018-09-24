@@ -68,10 +68,15 @@ local presetCount = 3
 
 ]]--
 
+obj.menuFont = {
+    font = {name = "Input Mono", size = 14},
+    color = {hex = "#FF6F00"}
+}
+
 function obj:styleText(text)
     return hs.styledtext.new(
         text, 
-        {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}
+        self.menuFont
     )
 end
 
@@ -98,7 +103,7 @@ for i = 1, presetCount do
     })
 end
 
-print(i(obj.startMenuChoices))
+-- print(i(obj.startMenuChoices))
 
 -- static chooser entries
 -- increase timer by X minutes decrease timer by Y minutes / stop timer
@@ -164,7 +169,7 @@ function obj:setTitleStyled(text)
     self.sleepTimerMenu:setTitle(
         hs.styledtext.new(
             text, 
-            {font = {name = "Input Mono", size = 12}, color = {hex = "#FF6F00"}}
+            self.menuFont
         )
     )
 end
@@ -240,8 +245,8 @@ function obj:timerChooserCallback(choice)
         if self.timerEvent then
             self:deleteTimer()
         else
-            print(choice['action'])
-            hs.alert("No timer to stop")
+            hs.alert("Error: No timer to stop")
+            return
         end
     elseif choice['action'] == 'adjust' and self.timerEvent then
         self:adjustTimer(choice['m'])
@@ -352,16 +357,6 @@ function obj:chooserToggle()
         self.chooser:show()
     end
 end
-
-local testMenu = {
-    { title = "my menu item", fn = function() print("you clicked my menu item!") end },
-    { title = "-" },
-    { title = "other item", fn = some_function },
-    { title = "disabled item", disabled = true },
-    { title = "checked item", checked = true },
-}
-
-print(i(testMenu))
 
 function obj:init()
 
