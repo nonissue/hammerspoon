@@ -18,6 +18,7 @@ Updated: 18-09-20
         * [ ] vim
         * [ ] myhammerspoon
 * [ ] resolve capslock issue with [this](https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e)
+* [ ] genericize timer spoon, let it be used for multiple things (alerts, screen wake)
 
 ## Future
 

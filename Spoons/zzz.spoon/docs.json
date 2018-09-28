@@ -16,17 +16,18 @@
 
     ],
     "desc" : "UNKNOWN DESC",
-    "type" : "Module",
     "Deprecated" : [
 
     ],
+    "type" : "Module",
     "Constructor" : [
 
     ],
-    "Field" : [
+    "doc" : "",
+    "Method" : [
 
     ],
-    "Method" : [
+    "Field" : [
 
     ],
     "Command" : [
@@ -35,7 +36,6 @@
     "items" : [
 
     ],
-    "doc" : "",
     "name" : "Zzz"
   }
 ]

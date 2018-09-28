@@ -4,20 +4,19 @@
 
 --[[
     TODO:
-    * [ ] Basically needs a complete refactor
-        * overly complicated
-    * [ ] remove unused/functions vars
+    * [x] remove unused/functions vars
     * [ ] proper spoon docs
     * [ ] proper spoon-style key binding
-    * [ ] fix lag with timer inc/dec actions
+    * [x] fix lag with timer inc/dec actions
         * timer has to be deleted then recreated which looks bad
-    * [ ] refactor so only one timer object needed
+    * [x] refactor so only one timer object needed
         * currently using two: 
             doAt for sysleep
             doEvery for menubar display
-    * [ ] verify choice['m'] is only being set as num
-        * so I can remove tonumber() casts which shouldn't be reqd
     * [ ] simplify timerChooserCallback() logic
+    * [ ] remove chooser choices, only use chooser for custom timers
+    * [ ] bind menubaritem to hotkey to invoke
+    * [ ] clean up / optimize table creation
 ]]--
 
 local obj = {}
@@ -40,16 +39,10 @@ local minSecs = minMins / 60
 local maxMins = 300
 local maxSecs = maxMins * 60
 
--- moving this into init causes duplicates in menubar
--- during dev when we are constantly reloading
-
 -- Interval between sleep times
 local sleepInterval = 15
 local updateInterval = 5
 local presetCount = 3
-
--- Number of sleep times displayed in chooser
-
 
 --[[ 
     init our empty chooser choice tables
@@ -115,12 +108,10 @@ end
 
 table.insert(obj.startMenuChoices, 
     {
-        title = obj:styleText("Custom"), 
+        title = obj:styleText("??m"), 
         fn = function() obj.chooser:show() end
     }
 )
-
--- print(i(obj.startMenuChoices))
 
 -- static chooser entries
 -- increase timer by X minutes decrease timer by Y minutes / stop timer
@@ -185,7 +176,7 @@ end
 function obj:setTitleStyled(text)
     self.sleepTimerMenu:setTitle(
         hs.styledtext.new(
-            text, 
+            text,
             self.menuFont
         )
     )
@@ -248,7 +239,7 @@ function obj:updateMenu()
         end,
         function()
             if math.floor(self.timerEvent:nextTrigger()) == 10 then
-                -- hs.alert("Sleeping in 10 seconds...")
+                hs.alert("Sleeping in 10 seconds...")
                 obj.menuFont = almostDone
             end
             
@@ -259,16 +250,11 @@ function obj:updateMenu()
 end
 
 function obj:adjustTimer(minutes)
-    if minutes < 0 then
-        local currentDuration = self.timerEvent:nextTrigger() / 60
-        if currentDuration - minutes < 3 then
-            hs.alert("nah that doesn't make sense")
-            return
-        else
-            local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
-            self.timerEvent:setNextTrigger(newTimerTime)
-        end
-    elseif minutes > 0 then
+    local currentDuration = self.timerEvent:nextTrigger() / 60
+    if currentDuration + minutes < 0 then
+        hs.alert("nah that doesn't make sense")
+        return
+    else
         local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
         self.timerEvent:setNextTrigger(newTimerTime)
     end
@@ -307,14 +293,6 @@ function obj:getCurrentChoices()
     end
 end
 
-function obj:getMenuChoices()
-    if self.timerEvent then
-        return self.modifyMenuChoices
-    else
-        return self.startMenuChoices
-    end
-end
-
 function obj:init()
 
     -- if statement to prevent dupes especially during dev
@@ -324,7 +302,7 @@ function obj:init()
         self.sleepTimerMenu:delete()
     end
 
-    self.sleepTimerMenu = hs.menubar.new():setMenu(obj:getMenuChoices())
+    self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
     self:setTitleStyled("☾")
     
     -- the menubar isnt set by default by the menubar.new call
@@ -349,7 +327,9 @@ function obj:init()
 
     -- Initialize chooser choices from sleepTable & rows
     self.chooser:choices(self:getCurrentChoices())
+    -- self.chooser:choices({})
     self.chooser:rows(#self:getCurrentChoices())
+    -- self.chooser:rows(0)
 
     -- QueryChangedCallback
     -- User hasn't entered any input, we show default options
