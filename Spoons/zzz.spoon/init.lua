@@ -61,7 +61,6 @@ local presetCount = 3
     }
 
 ]]--
-obj.menuColor = {hex = "#eee"}
 
 local defaultFont = {
     font = {name = "Input Mono", size = 14},
@@ -260,31 +259,6 @@ function obj:adjustTimer(minutes)
     end
 end
 
-function obj:deleteTimer()
-    self.timerEvent:stop()
-    self.timerEvent = nil
-    self.menuFont = defaultFont 
-    self:setTitleStyled("☾")
-    self.sleepTimerMenu:setMenu(self.startMenuChoices)
-end
-
-function obj:start()
-    print("-- Starting Zzz")
-    return self
-end
-
-function obj:stop()
-    hs.alert("-- Stopping Zzz.spoon")
-    self.chooser:cancel()
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
-    end
-
-    obj:deleteTimer()
-    self.sleepTimerMenu:delete()
-    return self
-end
-
 function obj:getCurrentChoices()
     if self.timerEvent then
         return self.modifyTimerChoices
@@ -293,18 +267,16 @@ function obj:getCurrentChoices()
     end
 end
 
-function obj:init()
-
-    -- if statement to prevent dupes especially during dev
-    -- We check to see if our menu already exists, and if so
-    -- we delete it. Then we create a new one from scratch
-    if self.sleepTimerMenu then
-        self.sleepTimerMenu:delete()
-    end
-
-    self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
+function obj:deleteTimer()
+    self.timerEvent:stop()
+    self.timerEvent = nil
+    self.menuFont = defaultFont 
     self:setTitleStyled("☾")
-    
+    self.sleepTimerMenu:setMenu(self.startMenuChoices)
+end
+
+function obj:initChooser()
+      
     -- the menubar isnt set by default by the menubar.new call
     -- with the parameter "false", but because we set the title 
     -- right after, it ends up being shown
@@ -358,6 +330,49 @@ function obj:init()
     self.chooser:width(20)
     self.chooser:bgDark(true)
 
+    return self
+end
+
+function obj:start()
+    print("-- Starting Zzz")
+    self:init()
+
+    return self
+end
+
+function obj:stop()
+    hs.alert("-- Stopping Zzz.spoon")
+    
+    if self.chooser then
+        self.chooser:cancel()
+        self.chooser = nil
+    end
+    
+    if self.hotkeyShow then
+        self.hotkeyShow:disable()
+    end
+
+    if self.timerEvent then
+        self:deleteTimer()
+    end
+
+    self.sleepTimerMenu:delete()
+    return self
+end
+
+function obj:init()
+
+    -- if statement to prevent dupes especially during dev
+    -- We check to see if our menu already exists, and if so
+    -- we delete it. Then we create a new one from scratch
+    if self.sleepTimerMenu then
+        self.sleepTimerMenu:delete()
+    end
+
+    self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
+    self:setTitleStyled("☾")
+
+    self:initChooser()
     -- adds a menubar click callback to invoke show/hide chooser
     -- so sleep timer can be set with mouse only
 
