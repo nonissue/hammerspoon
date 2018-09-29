@@ -203,6 +203,7 @@ function obj:newTimer(timerInMins)
     else
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
+        hs.brightness.set(20) -- this doesnt persist for different apps?
         self.timerEvent = hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()

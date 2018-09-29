@@ -63,8 +63,8 @@ package.path = package.path .. ";scratch/?.lua"
 -- i feel like these two should be spoons
 -- because they rely on watchers
 hs_reload = require("hammerspoon_config_reload")
--- burnrate = require("burnrate")
--- burnrate.init()
+burnrate = require("burnrate")
+burnrate.init()
 
 -- and they have to be inited
 hs_reload.init()
