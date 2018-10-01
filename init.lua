@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------------
 -- init.lua
 ------------------------------------------------------------------------------
--- By: Andy Williams / ham   merspoon [ at ] nonissue dot org
+-- By: Andy Williams / hammerspoon [ at ] nonissue dot org
 ------------------------------------------------------------------------------
--- A messy hammerspoon config
+-- A hammerspoon config
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
@@ -62,12 +62,11 @@ package.path = package.path .. ";scratch/?.lua"
 
 -- i feel like these two should be spoons
 -- because they rely on watchers
+-- TODO: Move the below to spoons
 hs_reload = require("hammerspoon_config_reload")
+hs_reload.init()
 burnrate = require("burnrate")
 burnrate.init()
-
--- and they have to be inited
-hs_reload.init()
 
 -- Load our spoons
 hs.loadSpoon("SystemContexts")
@@ -80,18 +79,21 @@ local safariHotkeys = {
     pinOrUnpinTab = {hyper, "P"},
     cycleUserAgent = {mash, "7"}
 }
+-- TODO: use default hotkeys
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
--- hs.loadSpoon("SysInfo")
 hs.loadSpoon("PaywallBuster")
+-- TODO: use default hotkeys
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
 hs.loadSpoon("Zzz")
 spoon.Zzz:init()
+-- TODO: use default hotkeys
 hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 
 hs.loadSpoon("Resolute")
 spoon.Resolute:init()
+-- TODO: use default hotkeys
 hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 
 hs.loadSpoon("Fenestra")
@@ -105,7 +107,7 @@ spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
 --- end of spoons loading
 
 -- random stuff
--- move these to chooser?
+-- TODO: move these to chooser?
 local yay = "ᕙ(⇀‸↼‶)ᕗ"
 local boo = "ლ(ಠ益ಠლ)"
 local kirby = "¯\\_(ツ)_/¯"

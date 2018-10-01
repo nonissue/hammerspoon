@@ -14,13 +14,6 @@ obj.hotkeyShow = nil
 obj.menubar = nil
 obj.resMenu = {}
 
--- local function script_path()
---   local str = debug.getinfo(2, "S").source:sub(2)
---   return str:match("(.*/)")
--- end
-
--- obj.spoonPath = script_path()
-
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
   local def = {
@@ -74,10 +67,8 @@ function obj.changeRes(choice)
   w = choice['w']
   h = choice['h']
   s = choice['s']
-  -- print_r(choice["res"])
-  hs.screen.find("Color LCD"):setMode(w, h, s)
 
-  -- hs.screen.primaryScreen():setMode(w, h, s)
+  hs.screen.find("Color LCD"):setMode(w, h, s)
 end
 
 function obj:menubarItems(res)
@@ -143,7 +134,7 @@ function obj:init()
   self.resChooser = hs.chooser.new(
     function(choice)
       if not (choice) then
-        self.resChooser:cancel()
+        self.resChooser:hide()
       else
         self:chooserCallback(choice)
       end
@@ -152,7 +143,7 @@ function obj:init()
   self.resChooser:choices(targetDisplay)
   self.resChooser:rows(#targetDisplay)
 
-  self.resChooser:width(30)
+  self.resChooser:width(20)
   self.resChooser:bgDark(true)
   self.resChooser:fgColor({hex = "#ccc"})
   self.resChooser:subTextColor({hex = "#888"})
