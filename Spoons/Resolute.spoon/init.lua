@@ -11,13 +11,15 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.resChooser = nil
 obj.hotkeyShow = nil
+obj.menubar = nil
+obj.resMenu = {}
 
-local function script_path()
-  local str = debug.getinfo(2, "S").source:sub(2)
-  return str:match("(.*/)")
-end
+-- local function script_path()
+--   local str = debug.getinfo(2, "S").source:sub(2)
+--   return str:match("(.*/)")
+-- end
 
-obj.spoonPath = script_path()
+-- obj.spoonPath = script_path()
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
@@ -64,33 +66,42 @@ local acer4kres = {
   {["id"] = 4, ["text"] = "2560x1440", ["res"] = {w = 2560, h = 1440, s = 2}},
 }
 
-function obj:resCallback(choice)
-  -- if choice['id'] == 1 then
-    -- hs.alert("too easy")
-    self.changeRes(choice)
-    -- print_r(choice["res"])
-  -- elseif choice['id'] == 2 then
-  --   obj:bust(choice['baseURL'])
-  -- elseif choice['id'] == 3 then
-  --   obj:bust(choice['baseURL'])
-  -- elseif choice['id'] == 4 then
-  --   obj:bust(choice['baseURL'])
-  -- elseif choice['id'] == 5 then
-  --   obj:bust(choice['baseURL'])
-  -- else
-  --   local URL = self.chooser:query()
-  --   obj:createCustom(URL)
-  -- end
+function obj:chooserCallback(choice)
+    self.changeRes(choice['res'])
 end
 
 function obj.changeRes(choice)
-  w = choice['res']['w']
-  h = choice['res']['h']
-  s = choice['res']['s']
+  w = choice['w']
+  h = choice['h']
+  s = choice['s']
   -- print_r(choice["res"])
   hs.screen.find("Color LCD"):setMode(w, h, s)
 
   -- hs.screen.primaryScreen():setMode(w, h, s)
+end
+
+function obj:createMenu(res)
+  local resMenu = {}
+  for i = 1, #res do
+    table.insert(
+      resMenu, 
+      {
+        title = res[i]['res'].w,
+        fn = function() self.changeRes(res[i]['res']) end,
+      }
+    )
+  end
+
+  return resMenu
+end
+
+function obj:createMenubar(display)
+  self.menubar = hs.menubar.new():setTitle("⚯")
+  
+
+  self.menubar:setMenu(
+    self:createMenu(display)
+  )
 end
 
 function obj:show()
@@ -109,10 +120,22 @@ function obj:stop()
   if self.hotkeyShow then
       self.hotkeyShow:disable()
   end
+
   return self
 end
 
 function obj:init()
+  local targetDisplay = mbpr15 
+
+  if self.menubar then
+    self.menubar:delete()
+  end
+
+  if self.resMenu then 
+    self.resMenu = {}
+  end
+
+  self:createMenubar(targetDisplay)
 
   self.resChooser = hs.chooser.new(
     function(choice)
@@ -120,16 +143,16 @@ function obj:init()
         print(self.resChooser:query())
         self.resChooser:hide()
       else
-        self:resCallback(choice)
+        self:chooserCallback(choice)
       end
   end)
 
-  self.resChooser:choices(mbpr15)
-  self.resChooser:rows(#mbpr15)
+  self.resChooser:choices(targetDisplay)
+  self.resChooser:rows(#targetDisplay)
 
   self.resChooser:queryChangedCallback(function(query)
     if query == '' then
-      self.resChooser:choices(mbpr15)
+      self.resChooser:choices(targetDisplay)
     else
       local choices = {
         {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution (BROKEN)"},
