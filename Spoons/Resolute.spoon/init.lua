@@ -80,7 +80,7 @@ function obj.changeRes(choice)
   -- hs.screen.primaryScreen():setMode(w, h, s)
 end
 
-function obj:createMenu(res)
+function obj:menubarItems(res)
   local resMenu = {}
   for i = 1, #res do
     table.insert(
@@ -96,21 +96,21 @@ function obj:createMenu(res)
 end
 
 function obj:createMenubar(display)
-  self.menubar = hs.menubar.new():setTitle("⚯")
-  
-
-  self.menubar:setMenu(
-    self:createMenu(display)
+  self.menubar = hs.menubar.new():setTitle("⚯"):setMenu(
+    self:menubarItems(display)
   )
 end
 
 function obj:show()
   self.resChooser:show()
+
   return self
 end
 
 function obj:start()
   print("-- Starting resChooser")
+  self:init()
+
   return self
 end
   
@@ -121,10 +121,13 @@ function obj:stop()
       self.hotkeyShow:disable()
   end
 
+  self.menubar:delete()
+
   return self
 end
 
 function obj:init()
+  -- TODO: add logic to detect current display
   local targetDisplay = mbpr15 
 
   if self.menubar then
@@ -140,8 +143,7 @@ function obj:init()
   self.resChooser = hs.chooser.new(
     function(choice)
       if not (choice) then
-        print(self.resChooser:query())
-        self.resChooser:hide()
+        self.resChooser:cancel()
       else
         self:chooserCallback(choice)
       end
@@ -149,17 +151,6 @@ function obj:init()
 
   self.resChooser:choices(targetDisplay)
   self.resChooser:rows(#targetDisplay)
-
-  self.resChooser:queryChangedCallback(function(query)
-    if query == '' then
-      self.resChooser:choices(targetDisplay)
-    else
-      local choices = {
-        {["id"] = 0, ["text"] = "Custom", subText="Enter a custom resolution (BROKEN)"},
-      }
-      self.resChooser:choices(choices)
-    end
-  end)
 
   self.resChooser:width(30)
   self.resChooser:bgDark(true)

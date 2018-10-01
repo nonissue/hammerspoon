@@ -31,7 +31,7 @@ Updated: 18-09-20
 * [ ] Use menubar hotkey options for simple ideas?
 * [ ] Spoon: App context switcher (using chooser)?
     * eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
-    * eg. 'scratchjs' -> opens javascript sandbox?   
+    * eg. 'scratchjs' -> opens javascript sandbox?
 * [ ] make all menubarlets enable/disableable through the same interface (chooser?)
 
 ### Finished
