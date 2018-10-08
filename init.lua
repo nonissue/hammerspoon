@@ -60,6 +60,7 @@ local alt = {"alt"}
 package.path = package.path .. ";scratch/?.lua"
 -- egpu = require("egpu")
 
+-- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
 -- because they rely on watchers
 -- TODO: Move the below to spoons
