@@ -69,42 +69,9 @@ hs_reload.init()
 -- burnrate.init()
 
 -- Load our spoons
-hs.loadSpoon("SystemContexts")
-
-hs.loadSpoon("SafariKeys")
-local safariHotkeys = {
-    tabToNewWin = {mash, "T"},
-    mailToSelf = {mash, "U"},
-    mergeAllWindows = {mash, "M"},
-    pinOrUnpinTab = {hyper, "P"},
-    cycleUserAgent = {mash, "7"}
-}
--- TODO: use default hotkeys
-spoon.SafariKeys:bindHotkeys(safariHotkeys)
-
 hs.loadSpoon("PaywallBuster")
 -- TODO: use default hotkeys
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
-
-hs.loadSpoon("Zzz")
-spoon.Zzz:init()
--- TODO: use default hotkeys
-hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
-
-hs.loadSpoon("Resolute")
-spoon.Resolute:init()
--- TODO: use default hotkeys
-hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
-
-hs.loadSpoon("Fenestra")
-spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
-
-hs.loadSpoon("Crib")
-spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
-
--- hs.loadSpoon("eGPU")
--- spoon.eGPU:start()
---- end of spoons loading
 
 -- random stuff
 -- TODO: move these to chooser?
