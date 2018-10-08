@@ -65,8 +65,8 @@ package.path = package.path .. ";scratch/?.lua"
 -- TODO: Move the below to spoons
 hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
-burnrate = require("burnrate")
-burnrate.init()
+-- burnrate = require("burnrate")
+-- burnrate.init()
 
 -- Load our spoons
 hs.loadSpoon("SystemContexts")

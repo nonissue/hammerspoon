@@ -57,10 +57,12 @@ mod.config = {
   allScreens = false,
 }
 
-local green = {color = {green = 1, alpha = 1}}
+local green = {color = {hex = "#1F9D55"}}
 local yellow = {color = {red = 1, green = 1, alpha = 1}}
 local orange = {color = {red = 1, green = 0.64, blue = 0, alpha = 1}}
-local red = {color = {red = 1, alpha = 1}}
+-- local orange = {color = {red = 1, green = 1, blue = 1, alpha = 1}}
+-- local red = {color = {red = 1, alpha = 1}}
+local red = {color = {hex = "#CC1F1A"}}
 
 
 --------------------------------------------------
@@ -85,8 +87,6 @@ function check_burnrate()
     setBurnrateText("⚡︎", green)
   elseif designCap / cur_amh > 30 then
     setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)
-  -- elseif designCap / cur_amh > 15 then
-  --   setBurnrateText("⚡︎: " .. burnrateRounded .. " ERR", red)
   elseif designCap / cur_amh > 10 then
     setBurnrateText("⚡︎: " .. burnrateRounded, green)
   elseif designCap / cur_amh > 6 then

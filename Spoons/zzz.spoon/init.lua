@@ -63,12 +63,12 @@ local presetCount = 3
 ]]--
 
 local defaultFont = {
-    font = {name = "Input Mono", size = 14},
-    color = {hex = "#EEEEEE"}
+    font = {name = "Input Mono", size = 12},
+    -- color = {hex = "#EEEEEE"}
 }
 
 local almostDone = {
-    font = {name = "Input Mono", size = 14},
+    font = {name = "Input Mono", size = 12},
     color = {hex = "#FF6F00"}
 }
 
