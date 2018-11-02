@@ -224,7 +224,8 @@ function obj.screenWatcher()
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
         -- handle unnecessary/redundant screenWatcher callbacks
         hs.alert("screenwatcher: fired, state: " .. obj.currentScreens, 3)
-    elseif hs.screen.find(69489838) then
+    elseif hs.screen.find("Cinema HD") then -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
+        -- Changed above line to use "Cinema HD" as display ID was not reliable?
         -- if we have a different amount of displays and one of them is 
         -- our cinema display, we are @desk
         hs.alert("@desk")
