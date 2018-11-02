@@ -111,6 +111,18 @@ function obj:bindHotkeys(keys)
         end
     )
     hs.hotkey.bindSpec(
+        keys["pushWin"],
+        function()
+            self:pushWin()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["pullWin"],
+        function()
+            self:pullWin()
+        end
+    )
+    hs.hotkey.bindSpec(
         keys["undo"],
         "Undoing last layout change",
         function()
@@ -131,7 +143,7 @@ end
 
 function obj:pullWin()
     undo:push()
-    hs.grid.pushWindowPrevScreen()
+    hs.grid.pullWindowNextScreen()
 end
 
 function obj:placeWindow(x, y, w, h)
