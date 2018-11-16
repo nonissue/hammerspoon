@@ -25,7 +25,7 @@ obj.__index = obj
 obj.name = "Zzz"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
-obj.homepage = "https://github.com/nonissue"
+obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.chooser = nil
@@ -59,16 +59,15 @@ local presetCount = 3
         ['text'] = <string>,
             text to appear in chooser
     }
-
 ]]--
 
 local defaultFont = {
-    font = {name = "Input Mono", size = 12},
+    font = {name = "Input Mono", size = 14},
     -- color = {hex = "#EEEEEE"}
 }
 
 local almostDone = {
-    font = {name = "Input Mono", size = 12},
+    font = {name = "Input Mono", size = 14},
     color = {hex = "#FF6F00"}
 }
 

@@ -40,9 +40,9 @@ function obj.createSizes(size_base, size_count)
     for x = 1, size_count do
         table.insert(sizes,
         {
-                textSize = size_base * 2,
-                radius = size_base / 2,
-                strokeWidth = size_base * 0.375,  
+            textSize = size_base * 2,
+            radius = size_base / 2,
+            strokeWidth = size_base * 0.375,  
         })
         size_base = size_base * 1.3
     end

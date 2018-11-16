@@ -6,7 +6,7 @@
 -- utils = require('utilies')
 
 local mod={}
-local configFileWatcher = nil
+local configFileWatcher
 
 mod.config = {
    auto_reload = true,

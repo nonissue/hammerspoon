@@ -71,6 +71,7 @@ function obj:bindHotkeys(keys)
     assert(keys['showGrid'], "Hotkey variable is 'showGrid'")
     assert(keys['maxWin'], "Hotkey variable is 'maxWin'")
     assert(keys['leftHalf'], "Hotkey variable is 'leftHalf'")
+    -- should finish asserts?
 
     hs.hotkey.bindSpec(
         keys["showGrid"],
@@ -79,7 +80,6 @@ function obj:bindHotkeys(keys)
             hs.grid.show()
         end
     )
-    
     hs.hotkey.bindSpec(
         keys["maxWin"],
         function()

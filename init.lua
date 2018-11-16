@@ -14,6 +14,7 @@ package.path = package.path .. ";lib/?.lua"
 styles = require("styles")
 utils = require("utilities")
 
+
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
@@ -32,7 +33,6 @@ else
     hs.console.alpha(1)
 end
 
--- yada yada
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 

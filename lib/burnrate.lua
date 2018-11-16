@@ -68,7 +68,7 @@ local red = {color = {hex = "#CC1F1A"}}
 --------------------------------------------------
 -- Handler directly called by the "low-level" watcher API.
 --------------------------------------------------
-local cur_amh = nil
+local cur_amh
 function check_burnrate()
   -- BurnRate = Rate of Battery drain = BR
   cur_amh = math.abs(hs.battery.amperage())
