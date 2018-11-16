@@ -16,7 +16,9 @@
     * [ ] simplify timerChooserCallback() logic
     * [ ] remove chooser choices, only use chooser for custom timers
     * [ ] bind menubaritem to hotkey to invoke
+        * Dunno if this is possible?
     * [ ] clean up / optimize table creation
+    * [ ] Reduce volume and brightness by XX% over sleep time period?
 ]]--
 
 local obj = {}
@@ -202,7 +204,8 @@ function obj:newTimer(timerInMins)
     else
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
-        hs.brightness.set(20) -- this doesnt persist for different apps?
+        -- self:updateBrightnessAndVol(timerInMins)
+        hs.brightness.set(50) -- only works if automatically adjust brightness is off
         self.timerEvent = hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()
@@ -211,6 +214,26 @@ function obj:newTimer(timerInMins)
             end
         )
     end
+end
+
+function obj:updateBrightnessAndVol(timerInMins)
+    local startBrightness = hs.brightness.get()
+    local brightness = startBrightness
+    local startVol = hs.audiodevice.defaultOutputDevice():outputVolume()
+    local interval = math.floor((timerInMins * 60) / 20)
+    local step = math.floor(startBrightness / 21)
+    hs.timer.doWhile(
+        function()
+            return self.timerEvent
+        end,
+        function()
+            brightness = brightness - step
+            hs.alert(brightness)
+            hs.alert(step )
+            hs.brightness.set(brightness)
+        end,
+        interval
+    )
 end
 
 function obj:timerChooserCallback(choice)
@@ -237,12 +260,13 @@ function obj:updateMenu()
             return self.timerEvent
         end,
         function()
-            if math.floor(self.timerEvent:nextTrigger()) == 10 then
+            local timeLeft = self.timerEvent:nextTrigger()
+            if math.floor(timeLeft) == 10 then
                 hs.alert("Sleeping in 10 seconds...")
                 obj.menuFont = almostDone
             end
             
-            self:setTitleStyled(obj:formatSeconds(self.timerEvent:nextTrigger()))
+            self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
         1
     )
@@ -299,9 +323,7 @@ function obj:initChooser()
 
     -- Initialize chooser choices from sleepTable & rows
     self.chooser:choices(self:getCurrentChoices())
-    -- self.chooser:choices({})
     self.chooser:rows(#self:getCurrentChoices())
-    -- self.chooser:rows(0)
 
     -- QueryChangedCallback
     -- User hasn't entered any input, we show default options
