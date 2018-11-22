@@ -24,11 +24,9 @@ Updated: 18-09-20
 
 ### Misc
 
-* [ ] chooser to start/stop spoons, with persistence?
+* [ ] chooser to start/stop spoons, with persistence? (++)
 * [ ] marquee/animated ticker with updates in menubar
 * [ ] current weather?
-* [ ] update Zzz so it can do the opposte (keep computer awale for a certain amount of time)
-* [ ] Use menubar hotkey options for simple ideas?
 * [ ] Spoon: App context switcher (using chooser)?
     * eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
     * eg. 'scratchjs' -> opens javascript sandbox?
@@ -45,3 +43,6 @@ Updated: 18-09-20
 * [x] SPEED UP RELOAD
 
 ### Discontinued
+
+* [A] update Zzz so it can do the opposte (keep computer awale for a certain amount of time)
+* [A] Use menubar hotkey options for simple ideas? (not possible?)

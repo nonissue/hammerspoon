@@ -18,7 +18,7 @@ obj.__index = obj
 obj.name = "Fenestra"
 obj.version = "0.1"
 obj.author = "andy williams <andy@nonissue.org>"
-obj.homepage = "https://github.com/nonissue"
+obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- end Metadata
 

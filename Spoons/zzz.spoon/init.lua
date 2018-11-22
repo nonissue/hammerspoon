@@ -205,7 +205,7 @@ function obj:newTimer(timerInMins)
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
         -- self:updateBrightnessAndVol(timerInMins)
-        hs.brightness.set(50) -- only works if automatically adjust brightness is off
+        -- hs.brightness.set(50) -- only works if automatically adjust brightness is off
         self.timerEvent = hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()
@@ -217,6 +217,7 @@ function obj:newTimer(timerInMins)
 end
 
 function obj:updateBrightnessAndVol(timerInMins)
+    -- not currently used
     local startBrightness = hs.brightness.get()
     local brightness = startBrightness
     local startVol = hs.audiodevice.defaultOutputDevice():outputVolume()

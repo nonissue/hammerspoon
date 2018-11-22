@@ -60,12 +60,12 @@ local schoolSSID = "MacEwanSecure"
 local hostName = hs.host.localizedName() -- maybe not needed?
 
 -- not needed but included
-local function script_path()
-    local str = debug.getinfo(2, "S").source:sub(2)
-    return str:match("(.*/)")
-end
+-- local function script_path()
+--     local str = debug.getinfo(2, "S").source:sub(2)
+--     return str:match("(.*/)")
+-- end
 
-obj.spoonPath = script_path()
+-- obj.spoonPath = script_path()
 
 --
 -- settings to apply based on context:

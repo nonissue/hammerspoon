@@ -7,7 +7,6 @@
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
-
 -- load basic modules / utils first
 -- that don't need to be spoons
 package.path = package.path .. ";lib/?.lua"
@@ -22,7 +21,7 @@ end
 
 hs.logger.defaultLogLevel = "error"
 
-hs.console.darkMode(false)
+hs.console.darkMode(true)
 if hs.console.darkMode() then
     hs.console.outputBackgroundColor{ white = 0.1, alpha = 0.9}
     hs.console.consoleCommandColor{ white = 1 }
@@ -69,6 +68,10 @@ hs_reload.init()
 -- burnrate = require("burnrate")
 -- burnrate.init()
 
+-- Load Spoon from https://github.com/jasonrudolph/ControlEscape.spoon
+-- Doesn't do what I wanted (fix issues capslock issues with AEKII)
+hs.loadSpoon('ControlEscape'):start()
+
 hs.loadSpoon("SystemContexts")
 
 hs.loadSpoon("SafariKeys")
@@ -79,6 +82,7 @@ local safariHotkeys = {
     pinOrUnpinTab = {hyper, "P"},
     cycleUserAgent = {mash, "7"}
 }
+
 -- TODO: use default hotkeys
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
@@ -98,7 +102,6 @@ hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
-
 
 hs.loadSpoon("Crib")
 spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)

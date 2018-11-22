@@ -15,27 +15,27 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "UNKNOWN DESC",
     "Deprecated" : [
 
     ],
+    "desc" : "UNKNOWN DESC",
     "type" : "Module",
     "Constructor" : [
 
     ],
-    "Field" : [
-
-    ],
+    "doc" : "",
     "Method" : [
-
-    ],
-    "Command" : [
 
     ],
     "items" : [
 
     ],
-    "doc" : "",
+    "Command" : [
+
+    ],
+    "Field" : [
+
+    ],
     "name" : "Zzz"
   }
 ]

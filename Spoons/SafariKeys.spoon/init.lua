@@ -20,7 +20,7 @@ function obj:bindHotkeys(mapping)
     pinOrUnpinTab = hs.fnutils.partial(self.pinOrUnpinTab, self),
     cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self),
    }
-
+   
    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
@@ -38,6 +38,7 @@ function obj:start()
   if self.hotkeyShow then
       self.hotkeyShow:enable()
   end
+
   return self
 end
 
@@ -61,7 +62,6 @@ function obj:stop()
   end
   return self
 end
-
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -135,9 +135,6 @@ function obj:mailToSelf()
   end
 end
 
--- mails current url to myself using mailtoself function
-
-  
 ------------------------------------------------------------------------------
 -- siteSpecificSearch
 ------------------------------------------------------------------------------
