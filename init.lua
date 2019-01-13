@@ -65,7 +65,7 @@ hs_reload.init()
 -- AEKII m3501, but I don't think it does
 -- It does replace Karabiner Elements for me though, which is nice!
 ------------------------------------------------------------------------------
-hs.loadSpoon('ControlEscape'):start()
+hs.loadSpoon('ControlEscape')
 
 ------------------------------------------------------------------------------
 -- SystemContexts.spoon / by me
