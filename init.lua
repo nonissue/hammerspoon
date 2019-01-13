@@ -111,7 +111,6 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) -- TODO: us
 -- There is also a modal to let users enter custom times
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
-spoon.Zzz:init()
 hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) -- TODO: use default hotkeys
 
 ------------------------------------------------------------------------------
@@ -122,7 +121,6 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) -- TODO: use 
 -- May change that in future
 ------------------------------------------------------------------------------
 hs.loadSpoon("Resolute")
-spoon.Resolute:init()
 hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end) -- TODO: use default hotkeys
 
 ------------------------------------------------------------------------------
