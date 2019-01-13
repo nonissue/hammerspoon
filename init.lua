@@ -52,6 +52,9 @@ local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 local alt = {"alt"}
 
+-- console window hotkey
+hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
+
 -- load scratch stuff
 package.path = package.path .. ";scratch/?.lua"
 
@@ -145,8 +148,11 @@ spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
 ------------------------------------------------------------------------------
 
 
+------------------------------------------------------------------------------
+--                                NONSENSE                                  --
+------------------------------------------------------------------------------
+
 -- random stuff
--- TODO: move these to chooser?
 local yay = "ᕙ(⇀‸↼‶)ᕗ"
 local boo = "ლ(ಠ益ಠლ)"
 local kirby = "¯\\_(ツ)_/¯"
@@ -158,4 +164,3 @@ end
 
 hs.hotkey.bind(mash, "K", showKirby)
 hs.hotkey.showHotkeys(mash, "space")
-hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
