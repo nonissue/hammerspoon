@@ -4,11 +4,19 @@ Updated: 18-09-20
 
 ## Next
 
+* BEFORE ANYTHING ELSE:
+  * Write docs for spoons
+  * Make them proper git submodules
+  * Clean them up if necessary
+  * SUBMIT THEM
+
+
 ### Changes/Fixes
 
 * [ ] move hotkey binding from spoons to main init!
 * [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)
 * [ ] TESTING
+* [ ] 
 
 ### Features
 
