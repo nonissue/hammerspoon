@@ -67,6 +67,10 @@ function obj:init()
       return false
     end
   )
+
+  -- IMO spoon should start when loaded
+  -- Rather than requiring spoon:start()
+  self:start()
 end
 
 --- ControlEscape:start()
