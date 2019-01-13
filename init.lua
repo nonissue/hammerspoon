@@ -64,8 +64,11 @@ hs_reload.init()
 -- I wanted this to resolve my issues with my locking capslock key on my
 -- AEKII m3501, but I don't think it does
 -- It does replace Karabiner Elements for me though, which is nice!
+-- EDIT: maybe check this 
+-- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
-hs.loadSpoon('ControlEscape')
+-- hs.loadSpoon('ControlEscape')
+hs.loadSpoon('CTRL-ESC')
 
 ------------------------------------------------------------------------------
 -- SystemContexts.spoon / by me

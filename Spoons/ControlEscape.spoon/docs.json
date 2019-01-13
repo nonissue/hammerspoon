@@ -15,22 +15,24 @@
     "stripped_doc" : [
 
     ],
-    "type" : "Module",
     "Deprecated" : [
 
     ],
+    "type" : "Module",
     "desc" : "Make the `control` key more useful: If the `control` key is tapped, treat it",
     "Constructor" : [
 
     ],
-    "doc" : "Make the `control` key more useful: If the `control` key is tapped, treat it\nas the `escape` key. If the `control` key is held down and used in\ncombination with another key, then provide the normal `control` key\nbehavior.",
+    "Field" : [
+
+    ],
     "Method" : [
       {
-        "doc" : "Start sending `escape` when `control` is pressed and released in isolation",
+        "def" : "ControlEscape:start()",
         "stripped_doc" : [
           "Start sending `escape` when `control` is pressed and released in isolation"
         ],
-        "def" : "ControlEscape:start()",
+        "doc" : "Start sending `escape` when `control` is pressed and released in isolation",
         "desc" : "Start sending `escape` when `control` is pressed and released in isolation",
         "notes" : [
 
@@ -46,11 +48,11 @@
         ]
       },
       {
-        "doc" : "Stop sending `escape` when `control` is pressed and released in isolation",
+        "def" : "ControlEscape:stop()",
         "stripped_doc" : [
           "Stop sending `escape` when `control` is pressed and released in isolation"
         ],
-        "def" : "ControlEscape:stop()",
+        "doc" : "Stop sending `escape` when `control` is pressed and released in isolation",
         "desc" : "Stop sending `escape` when `control` is pressed and released in isolation",
         "notes" : [
 
@@ -69,16 +71,13 @@
     "Command" : [
 
     ],
-    "Field" : [
-
-    ],
     "items" : [
       {
-        "doc" : "Start sending `escape` when `control` is pressed and released in isolation",
+        "def" : "ControlEscape:start()",
         "stripped_doc" : [
           "Start sending `escape` when `control` is pressed and released in isolation"
         ],
-        "def" : "ControlEscape:start()",
+        "doc" : "Start sending `escape` when `control` is pressed and released in isolation",
         "desc" : "Start sending `escape` when `control` is pressed and released in isolation",
         "notes" : [
 
@@ -94,11 +93,11 @@
         ]
       },
       {
-        "doc" : "Stop sending `escape` when `control` is pressed and released in isolation",
+        "def" : "ControlEscape:stop()",
         "stripped_doc" : [
           "Stop sending `escape` when `control` is pressed and released in isolation"
         ],
-        "def" : "ControlEscape:stop()",
+        "doc" : "Stop sending `escape` when `control` is pressed and released in isolation",
         "desc" : "Stop sending `escape` when `control` is pressed and released in isolation",
         "notes" : [
 
@@ -114,6 +113,7 @@
         ]
       }
     ],
+    "doc" : "Make the `control` key more useful: If the `control` key is tapped, treat it\nas the `escape` key. If the `control` key is held down and used in\ncombination with another key, then provide the normal `control` key\nbehavior.",
     "name" : "ControlEscape"
   }
 ]

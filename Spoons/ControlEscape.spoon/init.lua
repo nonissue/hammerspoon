@@ -27,6 +27,10 @@ function obj:init()
 
   -- Create an eventtap to run each time the modifier keys change (i.e., each
   -- time a key like control, shift, option, or command is pressed or released)
+  
+  -- @nonissue: maybe rewrite this using:
+  -- https://gist.github.com/arbelt/b91e1f38a0880afb316dd5b5732759f1#gistcomment-1980777
+  -- makes it faster?
   self.controlTap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged},
     function(event)
       local newModifiers = event:getFlags()
