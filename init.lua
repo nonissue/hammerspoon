@@ -35,6 +35,8 @@ bind = hs.hotkey.bind
 clear = hs.console.clearConsole
 reload = hs.reload
 pbcopy = hs.pasteboard.setContents
+print_t = utils.print_r
+print_r = utils.print_r
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
