@@ -52,7 +52,7 @@ package.path = package.path .. ";scratch/?.lua"
 -- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
 -- because they rely on watchers
--- TODO: Move the below to spoons
+-- TODO: Move the below to spoons 
 hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
