@@ -10,7 +10,6 @@ Updated: 18-09-20
   * Clean them up if necessary
   * SUBMIT THEM
 
-
 ### Changes/Fixes
 
 * [ ] move hotkey binding from spoons to main init!
