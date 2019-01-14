@@ -8,6 +8,7 @@ Updated: 18-09-20
   * Write docs for spoons
   * Make them proper git submodules
   * Clean them up if necessary
+  * REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
   * SUBMIT THEM
 
 
