@@ -35,71 +35,68 @@ local function len(t)
     return length
 end
 
--- simplify branch logic
--- though it seems to be working
+-- i tried to simplify this, but ended up making it more complicated
+-- but i think it works better though ?
 function obj:mod_handler_new(event)
     local cur_mods = event:getFlags()
+    print("\n\nkey event")
+    print("cur_mods" .. i(cur_mods))
+    print("prev_mods" .. i(self.prev_mods))
 
     if self.event_tainted and len(cur_mods) == 0 then
-        -- if more than one modifier has been pressed,
-        -- we know we don't want to send escape
+        -- len(cur_mods) means this will only be called on
+        -- the LAST modifier flag keyup event
+        -- if the event was tainted when the last key goes up,
+        -- we can clear the event_tainted flag 
         self.event_started = false
         self.event_tainted = false
         self.prev_mods = cur_mods
+
         return false
     end
 
     if not (cur_mods["ctrl"] or self.prev_mods["ctrl"]) then
         -- set event_started to false as ctrl isn't being pressed 
         -- and wasn't pressed previously
-        obj.logger.v("\n\nFirst!")
-        obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
         self.event_started = false
-
         self.prev_mods = cur_mods
+
         return false
     end
 
     if len(cur_mods) > 1 then
+        -- if we have more than one key modifier pressed,
+        -- we don't want to send esc
+        -- This handles the following case: 
+        -- if the user presses cmd, then ctrl
+        -- then releases cmd, then releases ctrl, 
+        -- we don't want to send esc even though
+        -- prev_mods will be { ctrl = true } and len(cur_mods) == 0
         self.event_started = false
         self.event_tainted = true
 
         self.prev_mods = cur_mods
         return false
-        -- return false
     elseif cur_mods["ctrl"] then
-        obj.logger.v("\nSecond!")
-        obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
-
+        -- not sure if this branch is needed tbh
         self.event_started = true
     elseif len(cur_mods) == 0 and self.event_started == true and not self.event_tainted then
-        obj.logger.v("\nSend Esc!")
-        obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
-
         -- we know that prev_mods had to contain ctrl
-        -- if we got here (first if statement) 
         -- so if cur_mods is empty, prev_mods had to have ctrl it
         -- and so it means ctrl was our only modifier and it is now
         -- key up, so send escape
+
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
         hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
         self.event_tainted = false
         self.event_started = false
     else 
-        -- ctrl is not in event flags,
-        -- do nothing!
         self.prev_mods = cur_mods
-        print("event tainted?" .. tostring(self.event_tainted))
-        obj.logger.v("\n\n\nERROR!")
-        obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
+
         return false
     end
 
     self.prev_mods = cur_mods
-    -- self.event_tainted = false
-
-    obj.logger.v("\nFell!!")
-    obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
 
     return false
 end
@@ -108,18 +105,16 @@ end
 
 function obj:mod_handler(event)
     local cur_mods = event:getFlags()
-
-    -- obj.logger.v("\ncur_mods:\t" .. i(cur_mods) .. "\nprev_mods:\t" .. i(self.prev_mods))
-    -- obj.logger.v("\nsend_esc:" .. tostring(self.send_esc) .. "\n")
+    print("\n\nkey event")
+    print("cur_mods" .. i(cur_mods))
+    print("prev_mods" .. i(self.prev_mods))
 
     if len(cur_mods) == 0 and len(self.prev_mods) > 0 and not self.prev_mods['ctrl'] then
         -- just end this I think?
         self.send_esc = false
     elseif self.prev_mods["ctrl"] == cur_mods["ctrl"] then
-        -- if ctrl was already pressed, and is still pressed, 
-        -- event still going, so wait for next key event
-        -- obj.logger.i("not handling event as ctrl hasn't changed")
         self.send_esc = false
+        self.prev_mods = cur_mods
         return false
     end
 
@@ -128,7 +123,7 @@ function obj:mod_handler(event)
         self.send_esc = true
     elseif self.prev_mods["ctrl"] and len(cur_mods) == 0 and self.send_esc then
         -- ctrl pressed solo / event over since len(cur_mods) == 0
-        -- obj.logger.v("Sending ESC / Event over")
+        obj.logger.v("Sending ESC / Event over")
 
        -- sending escape
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
@@ -139,6 +134,7 @@ function obj:mod_handler(event)
         -- this is to handle the case where we have some modifiers
         -- left over, but they haven't been cleared and so 
         -- can contaminate the next time control is pressed
+        hs.alert("do we hit this?")
         self.send_esc = false
 
         -- returning true deletes the event
@@ -149,19 +145,21 @@ function obj:mod_handler(event)
         self.send_esc = true
     end
 
+    print("gotem x2")
+
     self.prev_mods = cur_mods
 
     return false
 end
 
 function obj:init() 
-    obj.logger.i("CTRL-ESC.spoon initialized")
+    obj.logger.i("CTRLESC.spoon initialized")
     obj.send_esc = false
     self.event_started = false
     self.event_tainted = false
 
     -- self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_handler(event) end)
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_handler_new(event) end)
+    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_handler(event) end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
         function(event)
             -- if any non-modifier key is pressed
