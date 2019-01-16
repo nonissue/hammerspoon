@@ -69,6 +69,7 @@ hs_reload.init()
 ------------------------------------------------------------------------------
 -- hs.loadSpoon('ControlEscape')
 hs.loadSpoon('CTRLESC')
+hs.loadSpoon('CTRLESC'):start()
 
 ------------------------------------------------------------------------------
 -- SystemContexts.spoon / by me

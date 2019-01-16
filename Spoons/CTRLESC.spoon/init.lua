@@ -26,6 +26,7 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.prev_mods = {}
 obj.msg = "MODS: "
 
+
 -- get length of table so we can check how many keys
 local function len(t)
     local length = 0
@@ -34,6 +35,62 @@ local function len(t)
     end
     return length
 end
+
+function obj:slaps_roof(event)
+    local cur_mods = event:getFlags()
+    print("wtf")
+    print("send sec: " .. tostring(self.send_esc))
+    -- print("ignore mods: " .. tostring(self.ignore_mods))
+    
+    -- if len(cur_mods) > 1 then
+    --     print("ignore_mods!")
+    --     self.ignore_mods = true
+
+    --     return true
+    -- end
+
+    -- if self.prev_mods['ctrl'] and len(cur_mods) == 0 and not self.ignore_mods then
+    if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
+        self.send_esc = true
+    elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
+        -- hs.eventtap.keyStroke({}, "ESCAPE")
+        hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
+        hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
+
+        self.send_esc = false
+    else
+        self.send_esc = false
+    end
+
+    --[[
+
+    if self.prev_mods['ctrl'] and len(cur_mods) == 0 and not self.send_esc then
+        -- self.send_esc = false
+        self.ignore_mods = false
+        print("escape pressed?")
+        hs.eventtap.keyStroke({}, "ESCAPE")
+    else
+        self.send_sec = false
+        -- self.ignore_mods = false
+    end
+    ]]
+        -- hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
+        -- hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
+
+    
+
+    -- self.is_solo = true    
+    -- end
+
+    -- if len(cur_mods) == 0 then
+    --     self.send_sec = false
+    --     -- self.ignore_mods = false
+    -- end
+
+    self.prev_mods = cur_mods
+    return false
+end
+    
 
 -- i tried to simplify this, but ended up making it more complicated
 -- but i think it works better though ?
@@ -88,6 +145,8 @@ function obj:mod_handler_new(event)
 
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
         hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
+
+        
         self.event_tainted = false
         self.event_started = false
     else 
@@ -154,21 +213,14 @@ end
 
 function obj:init() 
     obj.logger.i("CTRLESC.spoon initialized")
-    obj.send_esc = false
-    self.event_started = false
-    self.event_tainted = false
+    -- self.is_solo = true
+    -- self.ignore_mods = false
+    self.send_esc = false
 
-    -- self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_handler(event) end)
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_handler(event) end)
+    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:slaps_roof(event) end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
-        function(event)
-            -- if any non-modifier key is pressed
-            -- we disable our send_esc flag as
-            -- escape is only sent when only control is 
-            -- pressed
-            -- hs.alert("non_ctrl_tap")
+        function(event) 
             self.send_esc = false
-            self.event_started = false
 	        return false
         end
     )
@@ -181,21 +233,23 @@ function obj:init()
     -- SOOO im wrong about this, hammerspon docs make it clear
     -- this shouldnt be here
     
-    self:start()
 end
 
 function obj:start()
-    obj.logger.i("CTRL-ESC.spoon started")
+    obj.logger.i("CTRLESC.spoon started")
 
     obj.ctrl_tap:start()
     obj.non_ctrl_tap:start()
+
 end
 
 function obj:stop()
-    obj.logger.i("CTRL-ESC.spoon stopped")
+    obj.logger.i("CTRLESC.spoon stopped")
 
     self.ctrl_tap:stop()
     self.non_ctrl_tap:stop()
+
+    
 
     self.send_esc = false
     self.prev_mods = {}
