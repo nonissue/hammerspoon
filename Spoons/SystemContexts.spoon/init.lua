@@ -97,7 +97,6 @@ local hostName = hs.host.localizedName() -- maybe not needed?
 -- Move to env variable / .env?
 
 function obj.ssidChangedCallback()
-    print("\nWifi CB fired\n")
     local newSSID = hs.wifi.currentNetwork()
 
     if (newSSID == homeSSID or newSSID == yycSSID) and (obj.currentSSID ~= homeSSID) then

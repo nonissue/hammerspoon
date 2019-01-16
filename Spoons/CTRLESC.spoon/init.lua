@@ -2,9 +2,9 @@
 -- Almost none of this is original work, just combined some existing solutions
 -- See Readme for more info
 --
+--
 
 -- TODO
--- [EDIT: I probably wont, sending ESCAPE on keyup is better imo] add delay timer?
 -- Tests
 -- Docs
 -- Remove any utilities/functions speciifc to my config
@@ -15,7 +15,7 @@ local obj = {}
 obj.__index = obj
 
 obj.logger = hs.logger.new('CTRL-ESC', 'verbose')
-obj.logger.i('Initializing CTRL-ESC.spoon logger...')
+-- obj.logger.i('Initializing CTRL-ESC.spoon logger...')
 
 obj.name = "CTRLESC"
 obj.version = "1.0"
@@ -25,8 +25,9 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.prev_mods = {}
 
-
 -- get length of table so we can check how many keys
+-- method borrowed from 
+-- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 local function len(t)
     local length = 0
     for k, v in pairs(t) do
@@ -35,6 +36,8 @@ local function len(t)
     return length
 end
 
+-- logic largely copied from
+-- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 function obj:mod_event_handler(event)
     local cur_mods = event:getFlags()
 
@@ -49,7 +52,7 @@ function obj:mod_event_handler(event)
     elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
         -- so, if our conditions are met, we send the esc keyevent
         -- note: newKeyEvent seems much much faster than keyStroke 
-        --for somereason
+        -- for somereason
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
         hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
 
@@ -65,7 +68,6 @@ function obj:mod_event_handler(event)
 end
     
 function obj:init() 
-    obj.logger.i("CTRLESC.spoon initialized")
     self.send_esc = false
 
     self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_event_handler(event) end)
@@ -75,7 +77,6 @@ function obj:init()
 	        return false
         end
     )
-    
 end
 
 function obj:start()
