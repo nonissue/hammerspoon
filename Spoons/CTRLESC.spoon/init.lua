@@ -24,7 +24,6 @@ obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.prev_mods = {}
-obj.msg = "MODS: "
 
 
 -- get length of table so we can check how many keys
@@ -36,211 +35,54 @@ local function len(t)
     return length
 end
 
-function obj:slaps_roof(event)
+function obj:mod_event_handler(event)
     local cur_mods = event:getFlags()
-    print("wtf")
-    print("send sec: " .. tostring(self.send_esc))
-    -- print("ignore mods: " .. tostring(self.ignore_mods))
-    
-    -- if len(cur_mods) > 1 then
-    --     print("ignore_mods!")
-    --     self.ignore_mods = true
 
-    --     return true
-    -- end
-
-    -- if self.prev_mods['ctrl'] and len(cur_mods) == 0 and not self.ignore_mods then
     if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
+        -- we want to go from NO modifiers pressed to only one pressed 
+        -- in order to consider sending escape. 
+        -- for example, in the case that user holds down:
+        -- [ CMD ] -> [ CMD, CTRL ] -> [ CTRL ] -> [ ]
+        -- We DO NOT want to send esc with this pattern
+        
         self.send_esc = true
     elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
-        -- hs.eventtap.keyStroke({}, "ESCAPE")
+        -- so, if our conditions are met, we send the esc keyevent
+        -- note: newKeyEvent seems much much faster than keyStroke 
+        --for somereason
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
         hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
 
+        -- then we set our flag back to false
         self.send_esc = false
     else
+        -- in any other case, we don't want to send esc
         self.send_esc = false
     end
-
-    --[[
-
-    if self.prev_mods['ctrl'] and len(cur_mods) == 0 and not self.send_esc then
-        -- self.send_esc = false
-        self.ignore_mods = false
-        print("escape pressed?")
-        hs.eventtap.keyStroke({}, "ESCAPE")
-    else
-        self.send_sec = false
-        -- self.ignore_mods = false
-    end
-    ]]
-        -- hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
-        -- hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
-
-    
-
-    -- self.is_solo = true    
-    -- end
-
-    -- if len(cur_mods) == 0 then
-    --     self.send_sec = false
-    --     -- self.ignore_mods = false
-    -- end
 
     self.prev_mods = cur_mods
     return false
 end
     
-
--- i tried to simplify this, but ended up making it more complicated
--- but i think it works better though ?
-function obj:mod_handler_new(event)
-    local cur_mods = event:getFlags()
-    print("\n\nkey event")
-    print("cur_mods" .. i(cur_mods))
-    print("prev_mods" .. i(self.prev_mods))
-
-    if self.event_tainted and len(cur_mods) == 0 then
-        -- len(cur_mods) means this will only be called on
-        -- the LAST modifier flag keyup event
-        -- if the event was tainted when the last key goes up,
-        -- we can clear the event_tainted flag 
-        self.event_started = false
-        self.event_tainted = false
-        self.prev_mods = cur_mods
-
-        return false
-    end
-
-    if not (cur_mods["ctrl"] or self.prev_mods["ctrl"]) then
-        -- set event_started to false as ctrl isn't being pressed 
-        -- and wasn't pressed previously
-        self.event_started = false
-        self.prev_mods = cur_mods
-
-        return false
-    end
-
-    if len(cur_mods) > 1 then
-        -- if we have more than one key modifier pressed,
-        -- we don't want to send esc
-        -- This handles the following case: 
-        -- if the user presses cmd, then ctrl
-        -- then releases cmd, then releases ctrl, 
-        -- we don't want to send esc even though
-        -- prev_mods will be { ctrl = true } and len(cur_mods) == 0
-        self.event_started = false
-        self.event_tainted = true
-
-        self.prev_mods = cur_mods
-        return false
-    elseif cur_mods["ctrl"] then
-        -- not sure if this branch is needed tbh
-        self.event_started = true
-    elseif len(cur_mods) == 0 and self.event_started == true and not self.event_tainted then
-        -- we know that prev_mods had to contain ctrl
-        -- so if cur_mods is empty, prev_mods had to have ctrl it
-        -- and so it means ctrl was our only modifier and it is now
-        -- key up, so send escape
-
-        hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
-        hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
-
-        
-        self.event_tainted = false
-        self.event_started = false
-    else 
-        self.prev_mods = cur_mods
-
-        return false
-    end
-
-    self.prev_mods = cur_mods
-
-    return false
-end
-
-
-
-function obj:mod_handler(event)
-    local cur_mods = event:getFlags()
-    print("\n\nkey event")
-    print("cur_mods" .. i(cur_mods))
-    print("prev_mods" .. i(self.prev_mods))
-
-    if len(cur_mods) == 0 and len(self.prev_mods) > 0 and not self.prev_mods['ctrl'] then
-        -- just end this I think?
-        self.send_esc = false
-    elseif self.prev_mods["ctrl"] == cur_mods["ctrl"] then
-        self.send_esc = false
-        self.prev_mods = cur_mods
-        return false
-    end
-
-    if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
-        -- only ctrl so far, so preparing to send escape on keyup
-        self.send_esc = true
-    elseif self.prev_mods["ctrl"] and len(cur_mods) == 0 and self.send_esc then
-        -- ctrl pressed solo / event over since len(cur_mods) == 0
-        obj.logger.v("Sending ESC / Event over")
-
-       -- sending escape
-        hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
-        hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
-
-        self.send_esc = false
-    elseif len(cur_mods) > 0 and len(cur_mods) < len(self.prev_mods) then
-        -- this is to handle the case where we have some modifiers
-        -- left over, but they haven't been cleared and so 
-        -- can contaminate the next time control is pressed
-        hs.alert("do we hit this?")
-        self.send_esc = false
-
-        -- returning true deletes the event
-        return true
-    elseif len(cur_mods) == 0 and len(self.prev_mods) > 0 and not self.prev_mods['ctrl'] then
-        self.send_esc = false
-    else
-        self.send_esc = true
-    end
-
-    print("gotem x2")
-
-    self.prev_mods = cur_mods
-
-    return false
-end
-
 function obj:init() 
     obj.logger.i("CTRLESC.spoon initialized")
-    -- self.is_solo = true
-    -- self.ignore_mods = false
     self.send_esc = false
 
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:slaps_roof(event) end)
+    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_event_handler(event) end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
         function(event) 
             self.send_esc = false
 	        return false
         end
     )
-
-    -- im wrong about this
-    -- FIXME
-    -- (Based on spoon docs)
-    -- user shouldn't have to invoke :start() imo
-    -- FIXME --
-    -- SOOO im wrong about this, hammerspon docs make it clear
-    -- this shouldnt be here
     
 end
 
 function obj:start()
-    obj.logger.i("CTRLESC.spoon started")
+    self.logger.i("CTRLESC.spoon started")
 
-    obj.ctrl_tap:start()
-    obj.non_ctrl_tap:start()
-
+    self.ctrl_tap:start()
+    self.non_ctrl_tap:start()
 end
 
 function obj:stop()
@@ -248,8 +90,6 @@ function obj:stop()
 
     self.ctrl_tap:stop()
     self.non_ctrl_tap:stop()
-
-    
 
     self.send_esc = false
     self.prev_mods = {}
