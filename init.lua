@@ -68,7 +68,7 @@ hs_reload.init()
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
 -- hs.loadSpoon('ControlEscape')
-hs.loadSpoon('CTRL-ESC')
+hs.loadSpoon('CTRLESC')
 
 ------------------------------------------------------------------------------
 -- SystemContexts.spoon / by me
