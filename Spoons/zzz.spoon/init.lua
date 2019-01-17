@@ -34,6 +34,8 @@ obj.chooser = nil
 obj.timerEvent = nil
 obj.hotkeyShow = nil
 
+obj.timers = {}
+
 -- I should probably just normalize everything to seconds?
 local minMins = 0
 local minSecs = minMins / 60
@@ -45,6 +47,7 @@ local maxSecs = maxMins * 60
 local sleepInterval = 15
 local updateInterval = 5
 local presetCount = 3
+
 
 --[[ 
     init our empty chooser choice tables
@@ -77,8 +80,8 @@ obj.menuFont = defaultFont
 
 function obj:styleText(text)
     return hs.styledtext.new(
-        text, 
-        self.menuFont
+        text
+        -- self.menuFont
     )
 end
 
@@ -197,7 +200,7 @@ function obj:formatSeconds(seconds)
 end
 
 -- hs.timer interval is in seconds
-function obj:newTimer(timerInMins)
+function obj:startTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
         hs.alert("Timer already started")
@@ -247,11 +250,11 @@ function obj:timerChooserCallback(choice)
         self:adjustTimer(choice['m'])
     elseif choice['m'] == nil then
         -- handle custom timer
-        self:newTimer(tonumber(self.chooser:query()))
+        self:startTimer(tonumber(self.chooser:query()))
         self.chooser:query(nil)
     else
         -- handle normal choice
-        self:newTimer(tonumber(choice['m']))
+        self:startTimer(tonumber(choice['m']))
     end
 end 
 
@@ -400,6 +403,28 @@ function obj:init()
     -- so sleep timer can be set with mouse only
 
     return self
+end
+
+function obj:addTimer(name, title, type)
+    local timer = {}
+
+    local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setTitle(title)
+
+
+    table.insert(obj.timers, {
+        [name] = {
+            menu,
+
+        }
+    })
+
+    -- table.insert(obj.timers, {
+    --     ["name"] = name,
+    --     ["title"] = title,
+    --     ["type"] = type,
+    -- })
+
+    
 end
 
 
