@@ -114,7 +114,7 @@ hs.loadSpoon("Zzz")
 -- TODO: use default hotkeys
 hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) 
 
-hs.loadSpoon("Timers")
+-- hs.loadSpoon("Timers")
 
 
 ------------------------------------------------------------------------------
