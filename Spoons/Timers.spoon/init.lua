@@ -18,7 +18,7 @@ local minSecs = minMins / 60
 local maxMins = 300
 local maxSecs = maxMins * 60
 
-local sleepInterval = 15
+local sleepInterval = 0.2
 local updateInterval = 5
 local presetCount = 3
 
@@ -28,8 +28,8 @@ obj.startMenuCustomChoices = {}
 obj.modifyTimerChoices = {}
 obj.modifyMenuChoices = {}
 
-local timer = {}
-timer.__index = timer
+local Timer = {}
+Timer.__index = Timer
 
 local function formatSeconds(seconds)
     -- from https://gist.github.com/jesseadams/791673
@@ -44,23 +44,45 @@ local function formatSeconds(seconds)
     end
 end
 
-function timer:new(name, title, type)
+function Timer:new(name, title, type)
     -- o = o or {}
     -- setmetatable(o, self)
-    print("SELF!" .. i(self))
-    self.__index = self
+    local tmr = {}             -- our new object
+    setmetatable(tmr,Timer)
 
-    self.name = name
-    self.title = title
-    self.type = type
+    tmr.name = name
+    tmr.title = title
+    tmr.type = type
+    tmr.endEvent = tmr:processType(tmr.type)
 
-    print("title is: " .. self.title)
-    self.menu = hs.menubar.new():setMenu(self.createMenu):setTitle(self.title)
+    print("title is: " .. tmr.title)
+    tmr.menu = hs.menubar.new():setMenu(Timer:createMenu(tmr)):setTitle(tmr.title)
 
-    return self
+    return tmr
 end
 
-function timer:startTimer(mins)
+function Timer:processType()
+    if self.type == "sleep" then
+        return function() hs.caffeinate.systemSleep() end
+    elseif self.type == "alert" then
+        return function() hs.alert("Timer finished!") end
+    elseif self.type == "annoying" then
+        -- make a persistent alert that doesn't go away until dismissed
+        -- and repeats a sound every 10 seconds?
+        return function() 
+            hs.alert("Timer finished!") 
+            hs.alert("Timer finished!") 
+            hs.alert("Timer finished!") 
+            hs.alert("Timer finished!") 
+            hs.alert("Timer finished!") 
+            hs.alert("Timer finished!") 
+        end
+    else 
+        return hs.alert("no function provided")
+    end
+end
+
+function Timer:startTimer(mins)
     if self.timerEvent then
         hs.alert("Timer already started")
     else
@@ -71,14 +93,35 @@ function timer:startTimer(mins)
         self.timerEvent = hs.timer.doAfter(
             tonumber(mins) * 60,
             function()
-                -- self:deleteTimer()
-                hs.caffeinate.systemSleep()
+                self:deleteTimer()
+                self:endEvent()
+                -- hs.caffeinate.systemSleep()
             end
         )
     end
 end
 
-function timer:cleanup()
+function Timer:deleteTimer()
+    self.timerEvent:stop()
+    self.timerEvent = nil
+    -- self.menu:delete()
+    self.menu:setTitle(self.title)
+
+    -- print("self from delete" .. i(self))
+
+    -- for k,v in pairs(self) do
+    --     print("key: " .. k)
+    --     self.k = nil
+    -- end
+
+    -- self = nil
+
+    -- return self
+end
+
+
+
+function Timer:cleanup()
     self.timerEvent:stop()
     self.timerEvent = nil
     self.menu:delete()
@@ -95,7 +138,7 @@ function timer:cleanup()
     return self
 end
 
-function timer:updateMenu()
+function Timer:updateMenu()
     hs.timer.doWhile(
         function()
             return self.timerEvent
@@ -121,7 +164,7 @@ function obj:styleText(text)
     )
 end
 
-function timer:actionHandler(choice)
+function Timer:actionHandler(choice)
     if choice['action'] == 'stop' and self.timerEvent then
         -- handle stop timer
         self:deleteTimer()
@@ -141,8 +184,10 @@ function timer:actionHandler(choice)
     end
 end
 
-function timer:createMenu()
+function Timer:createMenu()
     self.timerMenu = {}
+    print("SELF FROM CREATE!")
+    print(i(self))
 
     for i = 1, presetCount do
         table.insert(self.timerMenu, {
@@ -151,7 +196,7 @@ function timer:createMenu()
             ["action"] = "create",
             ["m"] = i * sleepInterval,
             ["text"] = i * sleepInterval .. "m",
-            fn = function() timer:actionHandler(self.timerMenu[i]) end,
+            fn = function() Timer:actionHandler(self.timerMenu[i]) end,
         })
     end
 
@@ -161,7 +206,7 @@ function timer:createMenu()
 end
 
 function obj:addTimer(name, title, type)
-    local newTimer = timer:new(name, title, type)
+    local newTimer = Timer:new(name, title, type)
 
     -- local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setTitle(title)
     
@@ -181,7 +226,7 @@ function obj:addTimer(name, title, type)
     -- )
 end
 
-function timer:toggleTimer(name)
+function Timer:toggleTimer(name)
     for i = 1, #obj.timers do
         if obj.timers[i].name == name and obj.timers[i].timer then
             if obj.timers[i].timer:running() then
@@ -223,7 +268,11 @@ function obj:deleteTimer(name)
 end
 
 function obj:init()
-    self:addTimer("test", "test", "alert")
+    self:addTimer("sleep", "sleep", "sleep")
+
+    self:addTimer("alert", "alert", "alert")
+
+    self:addTimer("annoying", "annoy", "annoying")
 
 end
 
