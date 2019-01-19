@@ -10,6 +10,7 @@
 -- snapping (ibid)
 
 hs.window.animationDuration = 0
+local fw = hs.window.focusedWindow
 
 local obj = {}
 obj.__index = obj
@@ -25,10 +26,70 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- init logger
 obj.logger = hs.logger.new('Fenestra')
 
+-- undo logic from @songchenwen:
+-- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
+local undostack = {
+	stack = {},
+	stackMax = 100,
+	skip = false,
+}
+
+function undostack:addToStack(wins)
+	if self.skip then return end
+    if not wins then wins = { hs.window.focusedWindow() } end
+    local size = #self.stack
+    self.stack[size + 1] = self:getCurrentWindowsLayout(wins)
+    size = size + 100
+    if size > self.stackMax then
+        for x = 1, size - self.stackMax do
+            self.stack[1] = nil
+        end
+    end
+end
+
+function undostack:getCurrentWindowsLayout(wins)
+    if not wins then wins = { hs.window.focusedWindow() } end
+    local current = {}
+    for i = 1, #wins do
+        local w = wins[i]
+        local f = w:frame()
+        if w:isVisible() and w:isStandard() and w:id() and f then
+            current[w] = f
+        end
+    end
+
+    return current
+end
+
+function undostack:undo()
+	local size = #self.stack
+    if size > 0 then
+        local status = self.stack[size]
+        for w, f in pairs(status) do 
+            if w and f and w:isVisible() and w:isStandard() and w:id() then
+                if not compareFrame(f, w:frame()) then
+                    w:setFrame(f)
+                end
+            end
+        end
+        self.stack[size] = nil
+    else
+        hs.alert('Nothing to Undo', 0.5)
+    end
+end
+
+function compareFrame(t1, t2)
+    if t1 == t2 then return true end
+    if t1 and t2 then
+        return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
+    end
+    return false
+end
+
 -- grid size
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
-hs.grid.GRIDWIDTH = 8
+hs.grid.GRIDWIDTH = 10
 hs.grid.GRIDHEIGHT = 4
 
 -- grid ui
@@ -76,73 +137,77 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["showGrid"],
         function()
-            undo:push()
+            undostack:addToStack()
             hs.grid.show()
         end
     )
     hs.hotkey.bindSpec(
         keys["maxWin"],
         function()
+            undostack:addToStack()
             self:maxWin()
         end
     )
     hs.hotkey.bindSpec(
         keys["leftHalf"],
         function()
+            undostack:addToStack()
             self:leftHalf()
         end
     )
     hs.hotkey.bindSpec(
         keys["rightHalf"],
         function()
+            undostack:addToStack()
             self:rightHalf()
         end
     )
     hs.hotkey.bindSpec(
         keys["leftMaj"],
         function()
+            undostack:addToStack()
             self:leftMaj()
         end
     )
     hs.hotkey.bindSpec(
         keys["rightMin"],
         function()
+            undostack:addToStack()
             self:rightMin()
         end
     )
     hs.hotkey.bindSpec(
         keys["pushWin"],
         function()
+            undostack:addToStack()
             self:pushWin()
         end
     )
     hs.hotkey.bindSpec(
         keys["pullWin"],
         function()
+            undostack:addToStack()
             self:pullWin()
         end
     )
     hs.hotkey.bindSpec(
         keys["undo"],
-        "Undoing last layout change",
+        -- "Undoing last layout change",
         function()
-            undo:pop() 
+            undostack:undo()
         end
     )
 end
 
 function obj:maxWin()
-    undo:push()
     hs.grid.maximizeWindow()
 end
 
 function obj:pushWin()
-    undo:push()
     hs.grid.pushWindowNextScreen()
 end
 
 function obj:pullWin()
-    undo:push()
     hs.grid.pullWindowNextScreen()
 end
 
@@ -154,56 +219,64 @@ function obj:placeWindow(x, y, w, h)
         cell.h = h
         return hs.grid
     end
+
     hs.grid.adjustWindow(fn)
 end
 
 function obj:leftHalf()
-    undo:push()
-    obj:placeWindow(0, 0, 4, 4)
+    obj:placeWindow(0, 0, 5, 4)
 end
 
 function obj:rightHalf()
-    undo:push()
-    obj:placeWindow(4, 0, 4, 4)
+    obj:placeWindow(5, 0, 5, 4)
 end
 
 function obj:leftMaj()
-    undo:push()
-    obj:placeWindow(0, 0, 6, 4)
+    obj:placeWindow(0, 0, 7, 4)
 end
 
 function obj:rightMin()
-    undo:push()
-    obj:placeWindow(6, 0, 2, 4)
+    obj:placeWindow(7, 0, 3, 4)
 end
 
 -- undo for window operations
 -- Borrowed undo implementation from:
 -- github.com/heptal // https://goo.gl/HcebTk
-local function rect(rect)
-    return function()
-      undo:push()
-      local win = fw()
-      if win then win:move(rect) end
-    end
-end
+-- local function rect(rect)
+--     return function()
+--       undo:push()
+--       local win = fw()
+--       if win then win:move(rect) end
+--     end
+-- end
 
-undo = {}
+-- function obj:push()
+--   hs.alert(i(fw():frame()), 5)
+--   print(i(fw()))
+--   print(fw():id())
+--   local win = fw()
+--   if win and not self.undo[win:id()] then
+--     self.undo[win:id()] = win:frame()
+--   end
+-- end
 
-function undo:push()
-  local win = fw()
-  if win and not undo[win:id()] then
-    self[win:id()] = win:frame()
-  end
-end
+-- function obj:pop()
 
-function undo:pop()
-  local win = fw()
-  if win and self[win:id()] then
-    win:setFrame(self[win:id()])
-    self[win:id()] = nil
-  end
-end
+--   print("\n\nPOP")
+--   hs.alert(i(fw():frame()), 5)
+--   print(i(fw():frame()))
+--   print(fw():id())
+
+--   local win = fw()
+--   if win and self.undo[win:id()] then
+--     win:setFrame(self.undo[win:id()])
+--     self.undo[win:id()] = nil
+--     self.undo = {}
+--   else 
+--     hs.alert("error undoing last window change")
+--     self.undo = {}
+--   end
+-- end
 
 function obj:start()
   print("-- Starting fenestra")
