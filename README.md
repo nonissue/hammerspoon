@@ -1,9 +1,9 @@
-# Hammerspoon .dotfiles
+# a hammerspoon config
 
-A very much in progress hammerspoon config. 
+This is pretty unstable and changes frequently. 
 
-* Most recently I've been moving things to spoons. 
-* I've created a few Spoons of my own, but the docs are lacking and they are definitely not ready for widespread use.
+* Most things are in Spoons (I plan to add better documentation)
+* I haven't tested the spoons to see if they stand alone (they may use functions loaded elsewhere in my config)
 * please email me at hammerspoon [ a t ] nonissue.org if you have questions/thoughts/ideas
 
-* Most of the docs are out of date, they can be found in the HISTORY.md file.
+* Out of date docs/logs can be found in the HISTORY.md file.
