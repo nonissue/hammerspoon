@@ -5,10 +5,13 @@ Updated: 18-09-20
 ## Next
 
 * BEFORE ANYTHING ELSE:
-  * Write docs for spoons
-  * Make them proper git submodules
-  * Clean them up if necessary
-  * REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
+  * [ ] Write docs for spoons
+  * ~~[ ] Make them proper git submodules~~ EDIT: gitsubmodules suck
+  * [ ] Clean them up if necessary
+  * [ ] REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
+  * [ ] add spoon loader spoon and hammerspoon config k/v store
+  * [ ] test spoons on empty config
+  * [ ] remove any styledtext as it may cause mem leaks
   * SUBMIT THEM
 
 
