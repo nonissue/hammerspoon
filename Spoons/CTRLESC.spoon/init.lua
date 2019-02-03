@@ -40,6 +40,8 @@ end
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 function obj:mod_event_handler(event)
     local cur_mods = event:getFlags()
+    print("Mod handler called with flags:")
+    print(i(cur_mods))
 
     if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
         -- we want to go from NO modifiers pressed to only one pressed 
@@ -70,11 +72,27 @@ end
 function obj:init() 
     self.send_esc = false
 
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, function(event) obj:mod_event_handler(event) end)
+    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, 
+        function(event) 
+            obj:mod_event_handler(event)
+            -- event:setFlags({'ctrl'})
+            print("Modifier key: ")
+            print(i(event:systemKey()))
+            -- hs.eventtap.event.newKeyEvent({"ctrl"}, "", true):post()
+        end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
         function(event) 
             self.send_esc = false
+            print("System key: ")
+            print(i(event:getType()))
+            print(i(event:getKeyCode()))
 	        return false
+        end
+    )
+    self.keystroke = hs.eventtap.new({"all"},
+        function(event)
+            print("ALL!")
+            print(i(event.properties()))
         end
     )
 end
