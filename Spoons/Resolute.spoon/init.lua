@@ -14,15 +14,12 @@ obj.hotkeyShow = nil
 obj.menubar = nil
 obj.resMenu = {}
 
--- hotkey binding not working
-function obj:bindHotkeys(mapping)
-  local def = {
-    showPaywallBuster = hs.fnutils.partial(self:show(), self),
-   }
+obj.defaultHotkeys = {
+  showResoluteChooser =              { {"cmd", "alt", "ctrl"},                     "L"},
+}
 
-   hs.spoons.bindHotkeysToSpec(def, mapping)
-end
-
+-- TODO:
+-- this should be automated somehow?
 local mbpr15raw = {
   -- first 1920 is for retina resolution @ 30hz
   -- might not be neede as 2048 looks pretty good
@@ -58,6 +55,17 @@ local acer4kres = {
   {["id"] = 3, ["text"] = "2304x1296", ["res"] = {w = 2304, h = 1296, s = 2}},
   {["id"] = 4, ["text"] = "2560x1440", ["res"] = {w = 2560, h = 1440, s = 2}},
 }
+
+function obj:bindHotkeys(keys)
+  assert(keys['showResoluteChooser'], "Hotkey variable is 'showResoluteChooser'")
+
+  hs.hotkey.bindSpec(
+      keys["showResoluteChooser"],
+      function()
+        self.resChooser:show()
+      end
+  )
+end
 
 function obj:chooserCallback(choice)
     self.changeRes(choice['res'])

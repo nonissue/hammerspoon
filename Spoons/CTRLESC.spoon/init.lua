@@ -75,24 +75,12 @@ function obj:init()
     self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, 
         function(event) 
             obj:mod_event_handler(event)
-            -- event:setFlags({'ctrl'})
-            print("Modifier key: ")
-            print(i(event:systemKey()))
-            -- hs.eventtap.event.newKeyEvent({"ctrl"}, "", true):post()
         end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
         function(event) 
             self.send_esc = false
-            print("System key: ")
-            print(i(event:getType()))
-            print(i(event:getKeyCode()))
+      
 	        return false
-        end
-    )
-    self.keystroke = hs.eventtap.new({"all"},
-        function(event)
-            print("ALL!")
-            print(i(event.properties()))
         end
     )
 end
