@@ -120,7 +120,7 @@ function obj.homeArrived()
     hs.audiodevice.defaultOutputDevice():setMuted(false)
   -- new arrive home alert
     hs.notify.show("@home", "", "")
-    -- hs.alert(" ☛ ⌂ ", 3)
+    hs.alert(" ☛ ⌂ ", 3)
 end
 
 -- sets displaysleep to lowervalue

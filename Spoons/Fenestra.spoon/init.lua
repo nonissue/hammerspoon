@@ -34,58 +34,6 @@ local undostack = {
 	skip = false,
 }
 
-function undostack:addToStack(wins)
-	if self.skip then return end
-    if not wins then wins = { hs.window.focusedWindow() } end
-    local size = #self.stack
-    self.stack[size + 1] = self:getCurrentWindowsLayout(wins)
-    size = size + 100
-    if size > self.stackMax then
-        for x = 1, size - self.stackMax do
-            self.stack[1] = nil
-        end
-    end
-end
-
-function undostack:getCurrentWindowsLayout(wins)
-    if not wins then wins = { hs.window.focusedWindow() } end
-    local current = {}
-    for i = 1, #wins do
-        local w = wins[i]
-        local f = w:frame()
-        if w:isVisible() and w:isStandard() and w:id() and f then
-            current[w] = f
-        end
-    end
-
-    return current
-end
-
-function undostack:undo()
-	local size = #self.stack
-    if size > 0 then
-        local status = self.stack[size]
-        for w, f in pairs(status) do 
-            if w and f and w:isVisible() and w:isStandard() and w:id() then
-                if not compareFrame(f, w:frame()) then
-                    w:setFrame(f)
-                end
-            end
-        end
-        self.stack[size] = nil
-    else
-        hs.alert('Nothing to Undo', 0.5)
-    end
-end
-
-function compareFrame(t1, t2)
-    if t1 == t2 then return true end
-    if t1 and t2 then
-        return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
-    end
-    return false
-end
-
 -- grid size
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
@@ -100,7 +48,6 @@ hs.grid.ui.highlightStrokeColor = {0,1,0,0.4}
 hs.grid.ui.cellStrokeColor = {1,1,1,1}
 hs.grid.ui.cellStrokeWidth = 2
 hs.grid.ui.highlightStrokeWidth = 20
-hs.grid.ui.fontName = 'Apercu Mono' -- should guard against this as it's not default
 hs.grid.ui.showExtraKeys = false
 
 -- custom grid hints
@@ -239,44 +186,63 @@ function obj:rightMin()
     obj:placeWindow(7, 0, 3, 4)
 end
 
--- undo for window operations
--- Borrowed undo implementation from:
--- github.com/heptal // https://goo.gl/HcebTk
--- local function rect(rect)
---     return function()
---       undo:push()
---       local win = fw()
---       if win then win:move(rect) end
---     end
--- end
+-- undo functions from
+-- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
+-- allows us to undo the window arrangement changes
+-- keeps history
 
--- function obj:push()
---   hs.alert(i(fw():frame()), 5)
---   print(i(fw()))
---   print(fw():id())
---   local win = fw()
---   if win and not self.undo[win:id()] then
---     self.undo[win:id()] = win:frame()
---   end
--- end
+function undostack:addToStack(wins)
+	if self.skip then return end
+    if not wins then wins = { hs.window.focusedWindow() } end
+    local size = #self.stack
+    self.stack[size + 1] = self:getCurrentWindowsLayout(wins)
+    size = size + 100
+    if size > self.stackMax then
+        for x = 1, size - self.stackMax do
+            self.stack[1] = nil
+        end
+    end
+end
 
--- function obj:pop()
+function undostack:getCurrentWindowsLayout(wins)
+    if not wins then wins = { hs.window.focusedWindow() } end
+    local current = {}
+    for i = 1, #wins do
+        local w = wins[i]
+        local f = w:frame()
+        if w:isVisible() and w:isStandard() and w:id() and f then
+            current[w] = f
+        end
+    end
 
---   print("\n\nPOP")
---   hs.alert(i(fw():frame()), 5)
---   print(i(fw():frame()))
---   print(fw():id())
+    return current
+end
 
---   local win = fw()
---   if win and self.undo[win:id()] then
---     win:setFrame(self.undo[win:id()])
---     self.undo[win:id()] = nil
---     self.undo = {}
---   else 
---     hs.alert("error undoing last window change")
---     self.undo = {}
---   end
--- end
+function undostack:undo()
+	local size = #self.stack
+    if size > 0 then
+        local status = self.stack[size]
+        for w, f in pairs(status) do 
+            if w and f and w:isVisible() and w:isStandard() and w:id() then
+                if not compareFrame(f, w:frame()) then
+                    w:setFrame(f)
+                end
+            end
+        end
+        self.stack[size] = nil
+    else
+        hs.alert('Nothing to Undo', 0.5)
+    end
+end
+
+function compareFrame(t1, t2)
+    if t1 == t2 then return true end
+    if t1 and t2 then
+        return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
+    end
+    return false
+end
+-- end of undo functionality
 
 function obj:start()
   print("-- Starting fenestra")

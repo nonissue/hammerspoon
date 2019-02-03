@@ -126,7 +126,8 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 ------------------------------------------------------------------------------
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
-hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end) 
+-- hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
+spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys) 
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
