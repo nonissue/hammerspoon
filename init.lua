@@ -143,8 +143,8 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 -- WIP, not finished at all
 ------------------------------------------------------------------------------
-hs.loadSpoon("Crib")
-spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
+-- hs.loadSpoon("Crib")
+-- spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
