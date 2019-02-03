@@ -89,7 +89,8 @@ local safariHotkeys = {
     cycleUserAgent = {mash, "7"}
 }
 
-spoon.SafariKeys:bindHotkeys(safariHotkeys) -- TODO: use default hotkeys
+ -- TODO: use default hotkeys
+spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
 ------------------------------------------------------------------------------
 -- PaywallBuster.spoon / by me
@@ -97,7 +98,8 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys) -- TODO: use default hotkeys
 -- Ultimately this probably isn't necessary, but I do occasionally use it
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
-hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) -- TODO: use default hotkeys
+-- TODO: use default hotkeys
+hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) 
 
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
@@ -109,7 +111,11 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) -- TODO: us
 -- There is also a modal to let users enter custom times
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
-hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) -- TODO: use default hotkeys
+-- TODO: use default hotkeys
+hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) 
+
+-- hs.loadSpoon("Timers")
+
 
 ------------------------------------------------------------------------------
 -- Resolute.spoon / by me
@@ -118,8 +124,9 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) -- TODO: use 
 -- Currently, you have to specify the choices manually
 -- May change that in future
 ------------------------------------------------------------------------------
+-- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
-hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end) -- TODO: use default hotkeys
+hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end) 
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
