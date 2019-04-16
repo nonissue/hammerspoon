@@ -235,6 +235,7 @@ function obj.screenWatcher()
         obj.currentScreens = "@mobile"
         obj:moveDockLeft()
         obj.checkAndEject("ExternalSSD")
+        obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
         hs.notify.show("@mobile", "", "")
         -- hs.alert("@mobile", 3)

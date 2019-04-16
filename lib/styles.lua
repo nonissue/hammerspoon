@@ -41,7 +41,8 @@ function obj.createSizes(size_base, size_count)
         table.insert(sizes,
         {
             textSize = size_base * 2,
-            radius = size_base / 2,
+            -- radius = size_base / 2,
+            radius = 0,
             strokeWidth = size_base * 0.375,  
         })
         size_base = size_base * 1.3
@@ -54,7 +55,7 @@ obj.alert.sizes = obj.createSizes(11, 7)
 
 obj.alert.colors = {
     default = {
-        fillColor = {white = 1, alpha = 1},
+        fillColor = {white = 1, alpha = 0.95},
         strokeColor = {blue = 1, alpha = 0.05},
         textColor = {blue = 1, alpha = 1},
     },
@@ -64,7 +65,6 @@ obj.alert.colors = {
         textColor = {red = 1, alpha = 1},
         textStyle = {
             color = {white = 1, alpha = 1},
-            -- font = {name = "PragmataPro Bold", size = 40},
         }
     },
     loader = {
@@ -75,7 +75,6 @@ obj.alert.colors = {
         radius = 30,
         textStyle = {
             color = {white = 0.7, alpha = 1},
-            -- font = {name = "Metric", size = 30},
             -- shadow = {offset = {w = 2, h = -2}, blurRadius = 5, color = {black = 0.6, alpha= 0.3}}
         }
     },
@@ -136,9 +135,9 @@ local loadingStyle = {textFont = "Helvetica Neue Condensed Bold", fadeInDuration
 local function newStuffDemo()
     local warning = hs.alert.show("CRITICAL: KEXT ERROR", warningStyle, 3)
     
-    hs.timer.doAfter(2,
+    hs.timer.doAfter(3,
         function()
-            local loader = 10
+            local loader = 3
             hs.timer.doUntil(function() return loader == 0 end,
                 function()
                     loader = loader - 1
@@ -147,11 +146,11 @@ local function newStuffDemo()
             1)
         end
     )
-    hs.timer.doAfter(10, 
+    hs.timer.doAfter(7, 
         function()
             loader = 0
             hs.alert.closeAll(0.5)
-            log.i("Issue resolved")
+            -- log.i("Issue resolved")
             hs.alert("SUCCESS!", successStyle, 3)
         end
     ) 

@@ -40,8 +40,6 @@ end
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 function obj:mod_event_handler(event)
     local cur_mods = event:getFlags()
-    print("Mod handler called with flags:")
-    print(i(cur_mods))
 
     if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
         -- we want to go from NO modifiers pressed to only one pressed 

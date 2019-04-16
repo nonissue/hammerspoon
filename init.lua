@@ -67,7 +67,6 @@ hs_reload.init()
 -- EDIT: maybe check this 
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
--- hs.loadSpoon('ControlEscape')
 hs.loadSpoon('CTRLESC')
 hs.loadSpoon('CTRLESC'):start()
 
