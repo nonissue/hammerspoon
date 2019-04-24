@@ -5,7 +5,6 @@
 SCRATCH.lua
 .vs
 totest
-.vscode
 media/
 .idea
 docs.json

@@ -1,0 +1,7 @@
+{
+    "lua.targetVersion": "5.3",
+    "lua.format.indentCount": 4,
+    "lua.format.singleQuote": false,
+    "lua.preferLuaCheckErrors": true,
+    "lua.luacheckPath": "/usr/local/bin/luacheck"
+}
