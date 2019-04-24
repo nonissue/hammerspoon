@@ -10,3 +10,5 @@ media/
 .idea
 docs.json
 scratch/
+/lua
+/lua_modules

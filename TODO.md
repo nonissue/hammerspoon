@@ -1,6 +1,6 @@
 # TODO
 
-Updated: 18-09-20
+Updated: 19-04-24
 
 ## Next
 
@@ -20,7 +20,6 @@ Updated: 18-09-20
 * [ ] move hotkey binding from spoons to main init!
 * [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)
 * [ ] TESTING
-* [ ] 
 
 ### Features
 
@@ -31,6 +30,7 @@ Updated: 18-09-20
         * [ ] myhammerspoon
 * [ ] resolve capslock issue with [this](https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e)
 * [ ] genericize timer spoon, let it be used for multiple things (alerts, screen wake)
+  * Inspiration: https://github.com/scottcs/dot_hammerspoon/blob/master/.hammerspoon/modules/timer.lua
 
 ## Future
 

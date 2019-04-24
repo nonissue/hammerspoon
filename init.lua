@@ -11,8 +11,8 @@
 -- load basic modules / utils first
 -- that don't need to be spoons
 package.path = package.path .. ";lib/?.lua"
-styles = require("styles")
-utils = require("utilities")
+local styles = require("styles")
+local utils = require("utilities")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -39,12 +39,14 @@ print_t = utils.print_r
 print_r = utils.print_r
 
 -- hotkey groups
-local mash = {"cmd", "alt", "ctrl"}
-local hyper = {"cmd", "alt"}
-local alt = {"alt"}
+local mash = { "cmd", "alt", "ctrl" }
+local hyper = { "cmd", "alt" }
+--local alt = {"alt"}
 
 -- console window hotkey
-hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
+hs.hotkey.bind(mash, "y", function()
+    hs.toggleConsole()
+end)
 
 -- load scratch stuff
 package.path = package.path .. ";scratch/?.lua"
@@ -52,8 +54,8 @@ package.path = package.path .. ";scratch/?.lua"
 -- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
 -- because they rely on watchers
--- TODO: Move the below to spoons 
-hs_reload = require("hammerspoon_config_reload")
+-- TODO: Move the below to spoons
+local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
 ------------------------------------------------------------------------------
@@ -64,7 +66,7 @@ hs_reload.init()
 -- I wanted this to resolve my issues with my locking capslock key on my
 -- AEKII m3501, but I don't think it does
 -- It does replace Karabiner Elements for me though, which is nice!
--- EDIT: maybe check this 
+-- EDIT: maybe check this
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
 hs.loadSpoon('CTRLESC')
@@ -81,14 +83,14 @@ hs.loadSpoon("SystemContexts")
 hs.loadSpoon("SafariKeys")
 
 local safariHotkeys = {
-    tabToNewWin = {mash, "T"},
-    mailToSelf = {mash, "U"},
-    mergeAllWindows = {mash, "M"},
-    pinOrUnpinTab = {hyper, "P"},
-    cycleUserAgent = {mash, "7"}
+    tabToNewWin = { mash, "T" },
+    mailToSelf = { mash, "U" },
+    mergeAllWindows = { mash, "M" },
+    pinOrUnpinTab = { hyper, "P" },
+    cycleUserAgent = { mash, "7" }
 }
 
- -- TODO: use default hotkeys
+-- TODO: use default hotkeys
 spoon.SafariKeys:bindHotkeys(safariHotkeys)
 
 ------------------------------------------------------------------------------
@@ -98,7 +100,9 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys)
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
 -- TODO: use default hotkeys
-hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) 
+hs.hotkey.bind(mash, "B", function()
+    spoon.PaywallBuster:show()
+end)
 
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
@@ -111,7 +115,9 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
 -- TODO: use default hotkeys
-hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) 
+hs.hotkey.bind(mash, "S", function()
+    spoon.Zzz.chooser:show()
+end)
 
 -- hs.loadSpoon("Timers")
 
@@ -126,7 +132,7 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
 -- hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys) 
+spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
@@ -135,7 +141,7 @@ spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 -- Resize active windows, move stuff between monitors, etc
 ------------------------------------------------------------------------------
 hs.loadSpoon("Fenestra")
-spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys) 
+spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Crib.spoon / by me
@@ -155,8 +161,8 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 
 -- random stuff
-local yay = "ᕙ(⇀‸↼‶)ᕗ"
-local boo = "ლ(ಠ益ಠლ)"
+--local yay = "ᕙ(⇀‸↼‶)ᕗ"
+--local boo = "ლ(ಠ益ಠლ)"
 local kirby = "¯\\_(ツ)_/¯"
 
 local function showKirby()
@@ -166,3 +172,13 @@ end
 
 hs.hotkey.bind(mash, "K", showKirby)
 hs.hotkey.showHotkeys(mash, "space")
+
+
+-- hs.textDroppedToDockIconCallback()
+-- hs.dockIconClickCallback()
+hs.dockIcon(true)
+
+-- initial testing with using the 'send to' contextual menu functionality
+hs.textDroppedToDockIconCallback = function(value)
+    hs.alert(string.format("Text dropped to dock icon: %s", value))
+end
