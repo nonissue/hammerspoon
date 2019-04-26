@@ -1,3 +1,11 @@
+------------------------------------------------------------------------------
+-- styles.lua
+------------------------------------------------------------------------------
+-- Playground to mess around with different visual alert styles
+-- It is an absolute mess, I apologize in advance for anyone
+-- Who has to read this
+------------------------------------------------------------------------------
+
 local obj = {}
 obj.__index = obj
 
@@ -9,20 +17,20 @@ obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 -- Move this to utilites!
-function table.merge(tablelist)
+local function mergeTables(tablelist)
     local newTable = {}
 
     for t = 1, #tablelist do
         for k, v in pairs(tablelist[t]) do
             newTable[k] = v
-        end 
+        end
     end
 
     return newTable
 end
 
 function obj.createStyle(layout, font, color)
-    local newStyle = table.merge({layout, font, color})
+    local newStyle = mergeTables({layout, font, color})
     return newStyle
 end
 
@@ -31,7 +39,19 @@ obj.alert = {}
 
 -- calculate size_base based on resolution?
 
--- dynamically generate sizes
+--- styles.createSizes(size_base, size_count)
+--- Method
+--- Creates a scale of different sizes for alerts
+---
+--- Parameters:
+---  * size_base = the size we start from (in pts)
+---  * size_count = the number of steps in our scale
+---
+--- Returns:
+---  * A table with a scale of sizes to apply to:
+---     * textSize
+---     * radius (alert corner radius)
+---     * strokeWidth
 function obj.createSizes(size_base, size_count)
     local sizes = {}
     size_count = size_count or 3
@@ -54,7 +74,6 @@ obj.alert.colors = {
     default = {
         fillColor = {white = 1, alpha = 0.95},
         strokeColor = {hex = "#084887", alpha = 0.3},
-        -- strokeColor = {hex = "#F58A07", alpha = 0.1},
         textColor = {hex = "#084887"},
         textStyle = {shadow = {offset = {w = 1, h = -1}, blurRadius = 5, color = {black = 0.5, alpha= 0.15}}, kerning = -1}
     },
@@ -106,6 +125,11 @@ obj.alert.colors = {
     }
 }
 
+-- Default alert settings for
+-- * Font family
+-- * kerning
+-- * location (screenEdge)
+-- * fadeIn/fadeOut
 obj.alert.defaults = {
     textFont = ".AppleSystemUIFont",
     kerning = -5,
@@ -119,7 +143,12 @@ obj.alert.slow = {
     fadeOutDuration = 2,
 }
 
--- CREATE DEFAULT STYLE WITH ALL FIELDS
+-- CREATE DEFAULT STYLE WITH ALL FIELDS with our:
+-- * obj.alert.defaults (textFont, kerning, fadeIn/fadeOut, etc)
+-- * obj.alert.sizes (textSize, radius, stroke)
+--   * Note: sizes array goes from small to large
+--   * So inc array index to increase sizes in proportion
+-- * obj.alert.colors.default (default colors)
 obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.alert.colors.darkmode)
 
 -- should only update fields i want to change rather than regenerating default style every time
