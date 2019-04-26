@@ -47,7 +47,6 @@ function obj:mod_event_handler(event)
         -- for example, in the case that user holds down:
         -- [ CMD ] -> [ CMD, CTRL ] -> [ CTRL ] -> [ ]
         -- We DO NOT want to send esc with this pattern
-        
         self.send_esc = true
     elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
         -- so, if our conditions are met, we send the esc keyevent
@@ -66,8 +65,8 @@ function obj:mod_event_handler(event)
     self.prev_mods = cur_mods
     return false
 end
-    
-function obj:init() 
+
+function obj:init()
     self.send_esc = false
 
     self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, 
@@ -75,9 +74,8 @@ function obj:init()
             obj:mod_event_handler(event)
         end)
     self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
-        function(event) 
+        function(event)
             self.send_esc = false
-      
 	        return false
         end
     )

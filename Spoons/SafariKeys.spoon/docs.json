@@ -24,15 +24,18 @@
 
     ],
     "doc" : "",
-    "items" : [
+    "Method" : [
       {
         "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
+        "desc" : "Starts SafariKeys",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "stripped_doc" : [
           "Starts SafariKeys",
           ""
         ],
-        "desc" : "Starts SafariKeys",
-        "def" : "SafariKeys:start()",
         "notes" : [
 
         ],
@@ -41,20 +44,20 @@
         "returns" : [
           " * The SafariKeys object"
         ],
-        "name" : "start",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "def" : "SafariKeys:start()",
+        "name" : "start"
       },
       {
         "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
+        "desc" : "Stops SafariKeys",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "stripped_doc" : [
           "Stops SafariKeys",
           ""
         ],
-        "desc" : "Stops SafariKeys",
-        "def" : "SafariKeys:stop()",
         "notes" : [
           " * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -64,25 +67,25 @@
           " * The SafariKeys object",
           ""
         ],
-        "name" : "stop",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "def" : "SafariKeys:stop()",
+        "name" : "stop"
       }
     ],
     "Command" : [
 
     ],
-    "Method" : [
+    "items" : [
       {
         "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
+        "desc" : "Starts SafariKeys",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "stripped_doc" : [
           "Starts SafariKeys",
           ""
         ],
-        "desc" : "Starts SafariKeys",
-        "def" : "SafariKeys:start()",
         "notes" : [
 
         ],
@@ -91,20 +94,20 @@
         "returns" : [
           " * The SafariKeys object"
         ],
-        "name" : "start",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "def" : "SafariKeys:start()",
+        "name" : "start"
       },
       {
         "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
+        "desc" : "Stops SafariKeys",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "stripped_doc" : [
           "Stops SafariKeys",
           ""
         ],
-        "desc" : "Stops SafariKeys",
-        "def" : "SafariKeys:stop()",
         "notes" : [
           " * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -114,11 +117,8 @@
           " * The SafariKeys object",
           ""
         ],
-        "name" : "stop",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "def" : "SafariKeys:stop()",
+        "name" : "stop"
       }
     ],
     "Field" : [

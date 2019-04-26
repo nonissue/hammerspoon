@@ -92,7 +92,6 @@ function obj:cycleUserAgent()
 
   if (default and default["ticked"]) then
     safari:selectMenuItem(str_iPad)
-    
     hs.alert.show("UA: iPad", 1.5)
   end
   if (iPad and iPad["ticked"]) then

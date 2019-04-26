@@ -41,7 +41,7 @@ print_r = utils.print_r
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
-local alt = {"alt"}
+-- local alt = {"alt"}
 
 -- console window hotkey
 hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
@@ -52,7 +52,7 @@ package.path = package.path .. ";scratch/?.lua"
 -- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
 -- because they rely on watchers
--- TODO: Move the below to spoons 
+-- TODO: Move the below to spoons
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
@@ -98,7 +98,7 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys)
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
 -- TODO: use default hotkeysi
-hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end) 
+hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
@@ -111,7 +111,7 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
 -- TODO: use default hotkeys
-hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end) 
+hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 
 -- hs.loadSpoon("Timers")
 
@@ -126,7 +126,7 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
 -- hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys) 
+spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
@@ -135,7 +135,7 @@ spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 -- Resize active windows, move stuff between monitors, etc
 ------------------------------------------------------------------------------
 hs.loadSpoon("Fenestra")
-spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys) 
+spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Crib.spoon / by me
@@ -155,8 +155,8 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 
 -- random stuff
-local yay = "ᕙ(⇀‸↼‶)ᕗ"
-local boo = "ლ(ಠ益ಠლ)"
+-- local yay = "ᕙ(⇀‸↼‶)ᕗ"
+-- local boo = "ლ(ಠ益ಠლ)"
 local kirby = "¯\\_(ツ)_/¯"
 
 local function showKirby()

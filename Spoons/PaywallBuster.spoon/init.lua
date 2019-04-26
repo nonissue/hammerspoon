@@ -59,11 +59,17 @@ local chooserTable = {
         ["text"] = "Outline.com",
         subText = "sends current url to outline.com",
         ["baseURL"] = "https://outline.com/"
+    },
+    {
+        ["id"] = 6,
+        ["text"] = "iOS User Agent",
+        subText = "Changes Safari UA string to 'Safari iOS'.",
+        ["baseURL"] = ""
     }
 }
 
 -- create new private browsing window
-privateBrowsing =
+local privateBrowsing =
     [[
     tell application "Safari"
     activate
@@ -74,7 +80,7 @@ privateBrowsing =
     end tell
 ]]
 
-getURL = [[
+local getURL = [[
     tell application "Safari"
     set currentURL to URL of front document
     end tell
@@ -102,7 +108,7 @@ end
 -- User can pass in custom URL rather than safari attempting to process the frontmost tab
 -- once user pastes URL in chooser modal, they only have one option, which will call
 -- this method :D
-function obj:createCustom(URL)
+function obj.createCustom(URL)
     -- print_r(URL)
     local newURL = "https://outline.com/" .. hs.http.encodeForQuery(URL)
     hs.osascript.applescript(
@@ -111,24 +117,23 @@ function obj:createCustom(URL)
     )
 end
 
-function obj:setURL(newURL)
+function obj.setURL(newURL)
     hs.osascript.applescript('tell application "Safari" to set the URL of the front document to "' .. newURL .. '"')
 end
 
-function obj:getURL()
+function obj.getURL()
     local ok, currentURL, err = hs.osascript._osascript(getURL, "AppleScript")
     if (ok) then
         return currentURL
-     --hs.http.encodeForQuery(currentURL)
     else
-        hs.alert("Error Busting Paywall!")
+        hs.alert("Error Busting Paywall: " .. err)
         return nil
     end
 end
 
 function obj:bust(baseURL)
     local currentURL = obj:getURL()
-    if (currentURL) then
+    if (currentURL and baseURL) then
         local newURL = baseURL .. hs.http.encodeForQuery(currentURL)
         hs.application.launchOrFocus("Safari")
         self.createWindow(currentURL, newURL)
@@ -138,6 +143,8 @@ function obj:bust(baseURL)
 end
 
 function obj:busterChooserCallback(choice)
+    -- change this to a lookup table or something
+    -- simpler
     -- if not choicez then focusLastFocused(); return end
     if choice["id"] == 1 then
         -- seems to have fixed the binding problem [FIXED?]
@@ -152,6 +159,11 @@ function obj:busterChooserCallback(choice)
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 5 then
         obj:bust(choice["baseURL"])
+    elseif choice["id"] == 6 then
+        local frontmostURL = obj:getURL()
+        local UAString = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPhone"}
+        hs.appfinder.appFromName("Safari"):selectMenuItem(UAString)
+        obj:setURL(frontmostURL)
     else
         local URL = self.chooser:query()
         obj:createCustom(URL)
@@ -225,7 +237,7 @@ end
 ---  * The PaywallBuster object
 ---
 --- Notes:
----  * Some PaywallBuster plugins will continue performing background work even after this call (e.g. Spotlight searches)
+---  * N/A
 function obj:stop()
     print("-- Stopping PaywallBuster")
     self.chooser:hide()
