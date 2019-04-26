@@ -13,10 +13,15 @@ obj.resChooser = nil
 obj.hotkeyShow = nil
 obj.menubar = nil
 obj.resMenu = {}
+obj.current = nil
 
-obj.defaultHotkeys = {
-    showResoluteChooser = {{"cmd", "alt", "ctrl"}, "L"}
-}
+function obj:bindHotkeys(mapping)
+    local def = {
+        showResoluteChooser = hs.fnutils.partial(self:show(), self)
+    }
+
+    hs.spoons.bindHotkeysToSpec(def, mapping)
+end
 
 -- TODO:
 -- this should be automated somehow?
@@ -55,12 +60,13 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["showResoluteChooser"],
         function()
-            self.resChooser:show()
+            self:show()
         end
     )
 end
 
 function obj:chooserCallback(choice)
+    print("Chooser callback called...")
     self.changeRes(choice["res"])
 end
 
@@ -78,11 +84,8 @@ function obj.changeRes(choice)
     -- Not efficient, but there doesn't seem to be a delay and
     -- I can't think of a better way to do this
 
-    -- clear current resmenu
     obj.resMenu = {}
-    -- recreate current resmenu
     obj:menubarItems(mbpr15)
-    -- set current resmenu
     obj.menubar:setMenu(obj.resMenu)
 end
 
@@ -114,21 +117,19 @@ function obj:createMenubar(display)
 end
 
 function obj:show()
+    -- self.current = hs.window.frontmostWindow()
     self.resChooser:show()
-
     return self
 end
 
 function obj:start()
     print("-- Starting resChooser")
     self:init()
-
-    return self
 end
 
 function obj:stop()
     print("-- Stopping resChooser?")
-    self.resChooser:hide()
+    self.resChooser:delete()
     if self.hotkeyShow then
         self.hotkeyShow:disable()
     end
@@ -138,8 +139,19 @@ function obj:stop()
     return self
 end
 
+-- trying to fix chooser toggling console?
+-- I think it's a bug
+local function focusLastFocused()
+    local wf = hs.window.filter
+    local lastFocused = hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast)
+    print_r(lastFocused[1])
+    if #lastFocused > 0 then
+        print("setting last focused!")
+        hs.window.orderedWindows()[1]:focus()
+    end
+end
+
 function obj:init()
-    -- TODO: add logic to detect current display
     local targetDisplay = mbpr15
 
     if self.menubar then
@@ -150,6 +162,10 @@ function obj:init()
         self.resMenu = {}
     end
 
+    if self.resChooser then
+        self.resChooser:delete()
+    end
+
     self:createMenubar(targetDisplay)
 
     self.resChooser =
@@ -157,9 +173,9 @@ function obj:init()
         function(choice)
             if not (choice) then
                 self.resChooser:hide()
-            else
-                self:chooserCallback(choice)
+                return
             end
+            self:chooserCallback(choice)
         end
     )
 

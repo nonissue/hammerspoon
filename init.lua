@@ -44,7 +44,7 @@ local hyper = {"cmd", "alt"}
 -- local alt = {"alt"}
 
 -- console window hotkey
-hs.hotkey.bind(mash, "y", function() hs.toggleConsole() end)
+hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)
 
 -- load scratch stuff
 package.path = package.path .. ";scratch/?.lua"
@@ -126,7 +126,8 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
 -- hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
+-- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
+hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me

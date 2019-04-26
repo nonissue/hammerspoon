@@ -185,8 +185,9 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
-                print(self.chooser:query())
                 self.chooser:hide()
+                return
+                -- print(self.chooser:query())
             else
                 --   hs.alert("No choice made?")
                 --   return
@@ -210,6 +211,7 @@ function obj:init()
             end
         end
     )
+
     self.chooser:width(20)
     self.chooser:bgDark(false)
 
