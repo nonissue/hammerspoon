@@ -60,12 +60,12 @@ local chooserTable = {
         subText = "sends current url to outline.com",
         ["baseURL"] = "https://outline.com/"
     },
-    {
-        ["id"] = 6,
-        ["text"] = "iOS User Agent",
-        subText = "Changes Safari UA string to 'Safari iOS'.",
-        ["baseURL"] = ""
-    }
+    -- {
+    --     ["id"] = 6,
+    --     ["text"] = "iOS User Agent",
+    --     subText = "Changes Safari UA string to 'Safari iOS'.",
+    --     ["baseURL"] = ""
+    -- }
 }
 
 -- create new private browsing window
@@ -117,11 +117,11 @@ function obj.createCustom(URL)
     )
 end
 
-function obj.setURL(newURL)
+function obj:setURL(newURL)
     hs.osascript.applescript('tell application "Safari" to set the URL of the front document to "' .. newURL .. '"')
 end
 
-function obj.getURL()
+function obj:getURL()
     local ok, currentURL, err = hs.osascript._osascript(getURL, "AppleScript")
     if (ok) then
         return currentURL
@@ -133,7 +133,7 @@ end
 
 function obj:bust(baseURL)
     local currentURL = obj:getURL()
-    if (currentURL and baseURL) then
+    if (currentURL) then
         local newURL = baseURL .. hs.http.encodeForQuery(currentURL)
         hs.application.launchOrFocus("Safari")
         self.createWindow(currentURL, newURL)
