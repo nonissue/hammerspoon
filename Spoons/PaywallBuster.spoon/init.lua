@@ -87,13 +87,13 @@ local getURL = [[
     return currentURL
 ]]
 
-local function focusLastFocused()
-    local wf = hs.window.filter
-    local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
-    if #lastFocused > 0 then
-        lastFocused[1]:focus()
-    end
-end
+-- local function focusLastFocused()
+--     local wf = hs.window.filter
+--     local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+--     if #lastFocused > 0 then
+--         lastFocused[1]:focus()
+--     end
+-- end
 
 function obj.createWindow(originalURL, newURL)
     hs.osascript.applescript(
