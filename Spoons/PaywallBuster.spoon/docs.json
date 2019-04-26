@@ -18,8 +18,8 @@
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "desc" : "UNKNOWN DESC",
+    "type" : "Module",
     "Constructor" : [
 
     ],
@@ -31,8 +31,11 @@
           "Starts PaywallBuster",
           ""
         ],
-        "def" : "PaywallBuster:start()",
-        "desc" : "Starts PaywallBuster",
+        "name" : "start",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -41,11 +44,8 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "desc" : "Starts PaywallBuster",
+        "def" : "PaywallBuster:start()"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * N\/A",
@@ -53,8 +53,11 @@
           "Stops PaywallBuster",
           ""
         ],
-        "def" : "PaywallBuster:stop()",
-        "desc" : "Stops PaywallBuster",
+        "name" : "stop",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
           " * N\/A"
         ],
@@ -64,17 +67,11 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "desc" : "Stops PaywallBuster",
+        "def" : "PaywallBuster:stop()"
       }
     ],
     "Command" : [
-
-    ],
-    "Field" : [
 
     ],
     "items" : [
@@ -84,8 +81,11 @@
           "Starts PaywallBuster",
           ""
         ],
-        "def" : "PaywallBuster:start()",
-        "desc" : "Starts PaywallBuster",
+        "name" : "start",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
 
         ],
@@ -94,11 +94,8 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "desc" : "Starts PaywallBuster",
+        "def" : "PaywallBuster:start()"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * N\/A",
@@ -106,8 +103,11 @@
           "Stops PaywallBuster",
           ""
         ],
-        "def" : "PaywallBuster:stop()",
-        "desc" : "Stops PaywallBuster",
+        "name" : "stop",
+        "parameters" : [
+          " * None",
+          ""
+        ],
         "notes" : [
           " * N\/A"
         ],
@@ -117,12 +117,12 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
-        "parameters" : [
-          " * None",
-          ""
-        ]
+        "desc" : "Stops PaywallBuster",
+        "def" : "PaywallBuster:stop()"
       }
+    ],
+    "Field" : [
+
     ],
     "name" : "PaywallBuster"
   }
