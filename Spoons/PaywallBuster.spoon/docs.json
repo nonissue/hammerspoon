@@ -15,10 +15,10 @@
     "stripped_doc" : [
 
     ],
-    "desc" : "UNKNOWN DESC",
     "Deprecated" : [
 
     ],
+    "desc" : "UNKNOWN DESC",
     "type" : "Module",
     "Constructor" : [
 
@@ -27,11 +27,11 @@
     "Method" : [
       {
         "doc" : "Starts PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object",
-        "desc" : "Starts PaywallBuster",
         "stripped_doc" : [
           "Starts PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:start()",
         "parameters" : [
           " * None",
           ""
@@ -44,16 +44,16 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "def" : "PaywallBuster:start()",
-        "name" : "start"
+        "name" : "start",
+        "desc" : "Starts PaywallBuster"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * N\/A",
-        "desc" : "Stops PaywallBuster",
         "stripped_doc" : [
           "Stops PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:stop()",
         "parameters" : [
           " * None",
           ""
@@ -67,24 +67,21 @@
           " * The PaywallBuster object",
           ""
         ],
-        "def" : "PaywallBuster:stop()",
-        "name" : "stop"
+        "name" : "stop",
+        "desc" : "Stops PaywallBuster"
       }
     ],
     "Command" : [
 
     ],
-    "Field" : [
-
-    ],
     "items" : [
       {
         "doc" : "Starts PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object",
-        "desc" : "Starts PaywallBuster",
         "stripped_doc" : [
           "Starts PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:start()",
         "parameters" : [
           " * None",
           ""
@@ -97,16 +94,16 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "def" : "PaywallBuster:start()",
-        "name" : "start"
+        "name" : "start",
+        "desc" : "Starts PaywallBuster"
       },
       {
         "doc" : "Stops PaywallBuster\n\nParameters:\n * None\n\nReturns:\n * The PaywallBuster object\n\nNotes:\n * N\/A",
-        "desc" : "Stops PaywallBuster",
         "stripped_doc" : [
           "Stops PaywallBuster",
           ""
         ],
+        "def" : "PaywallBuster:stop()",
         "parameters" : [
           " * None",
           ""
@@ -120,9 +117,12 @@
           " * The PaywallBuster object",
           ""
         ],
-        "def" : "PaywallBuster:stop()",
-        "name" : "stop"
+        "name" : "stop",
+        "desc" : "Stops PaywallBuster"
       }
+    ],
+    "Field" : [
+
     ],
     "name" : "PaywallBuster"
   }

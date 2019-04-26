@@ -60,12 +60,12 @@ local chooserTable = {
         subText = "sends current url to outline.com",
         ["baseURL"] = "https://outline.com/"
     },
-    -- {
-    --     ["id"] = 6,
-    --     ["text"] = "iOS User Agent",
-    --     subText = "Changes Safari UA string to 'Safari iOS'.",
-    --     ["baseURL"] = ""
-    -- }
+    {
+        ["id"] = 6,
+        ["text"] = "iOS User Agent",
+        subText = "Changes Safari UA string to 'Safari iOS'.",
+        ["baseURL"] = ""
+    }
 }
 
 -- create new private browsing window
@@ -117,11 +117,11 @@ function obj.createCustom(URL)
     )
 end
 
-function obj:setURL(newURL)
+function obj.setURL(newURL)
     hs.osascript.applescript('tell application "Safari" to set the URL of the front document to "' .. newURL .. '"')
 end
 
-function obj:getURL()
+function obj.getURL()
     local ok, currentURL, err = hs.osascript._osascript(getURL, "AppleScript")
     if (ok) then
         return currentURL
@@ -132,7 +132,7 @@ function obj:getURL()
 end
 
 function obj:bust(baseURL)
-    local currentURL = obj:getURL()
+    local currentURL = obj.getURL()
     if (currentURL) then
         local newURL = baseURL .. hs.http.encodeForQuery(currentURL)
         hs.application.launchOrFocus("Safari")
@@ -148,9 +148,9 @@ function obj:busterChooserCallback(choice)
     -- if not choicez then focusLastFocused(); return end
     if choice["id"] == 1 then
         -- seems to have fixed the binding problem [FIXED?]
-        local frontmostURL = obj:getURL()
+        local frontmostURL = obj.getURL()
         hs.osascript.applescript(privateBrowsing)
-        obj:setURL(frontmostURL)
+        obj.setURL(frontmostURL)
     elseif choice["id"] == 2 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 3 then
@@ -160,10 +160,10 @@ function obj:busterChooserCallback(choice)
     elseif choice["id"] == 5 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 6 then
-        local frontmostURL = obj:getURL()
+        local frontmostURL = obj.getURL()
         local UAString = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPhone"}
         hs.appfinder.appFromName("Safari"):selectMenuItem(UAString)
-        obj:setURL(frontmostURL)
+        obj.setURL(frontmostURL)
     else
         local URL = self.chooser:query()
         obj:createCustom(URL)
