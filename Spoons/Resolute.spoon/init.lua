@@ -84,8 +84,11 @@ function obj.changeRes(choice)
     -- Not efficient, but there doesn't seem to be a delay and
     -- I can't think of a better way to do this
 
+    -- clear current resmenu
     obj.resMenu = {}
+    -- recreate current resmenu
     obj:menubarItems(mbpr15)
+    -- set current resmenu
     obj.menubar:setMenu(obj.resMenu)
 end
 
@@ -129,7 +132,7 @@ end
 
 function obj:stop()
     print("-- Stopping resChooser?")
-    self.resChooser:delete()
+    self.resChooser:hide()
     if self.hotkeyShow then
         self.hotkeyShow:disable()
     end
@@ -139,19 +142,18 @@ function obj:stop()
     return self
 end
 
--- trying to fix chooser toggling console?
--- I think it's a bug
 local function focusLastFocused()
     local wf = hs.window.filter
     local lastFocused = hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast)
     print_r(lastFocused[1])
     if #lastFocused > 0 then
         print("setting last focused!")
-        hs.window.orderedWindows()[1]:focus()
+        lastFocused[1]:raise():focus()
     end
 end
 
 function obj:init()
+    -- TODO: add logic to detect current display
     local targetDisplay = mbpr15
 
     if self.menubar then
@@ -172,10 +174,22 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
+                -- print_r(hs.window.orderedWindows())
                 self.resChooser:hide()
+                -- focusLastFocused()
+                -- local current = hs.application.frontmostApplication()
+                -- self.current:becomeMain()
+                -- print(hs.inspect(self.current))
+                -- focusLastFocused()
+                -- print(hs.inspect(hs.window.frontmostWindow()))
+                -- currentWin:focus():raise()
                 return
+                -- self.resChooser:cancel()
+                -- print_r(hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast))
+            else
+                self:chooserCallback(choice)
+                -- focusLastFocused()
             end
-            self:chooserCallback(choice)
         end
     )
 
