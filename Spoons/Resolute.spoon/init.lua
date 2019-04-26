@@ -29,23 +29,16 @@ local mbpr15raw = {
     {w = 1920, h = 1200, s = 2}
 }
 
+-- We can get available modes with hs.screen:availableModes()
+-- But the list is too long, and we only care about a few options
+-- Might be nice to automatically choose some based on screen,
+-- but it's tough to know what will look good
 local mbpr15 = {
-    -- first 1920 is for retina resolution @ 30hz
-    -- might not be neede as 2048 looks pretty good
     {["id"] = 1, ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
     {["id"] = 2, ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
     {["id"] = 3, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
     {["id"] = 4, ["subText"] = "1920x1200", ["text"] = "More Space", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
-
--- local acer4kresRaw = {
---     -- first 1920 is for retina resolution @ 30hz
---     -- might not be neede as 2048 looks pretty good
---     { w = 1920, h = 1080, s = 2 },
---     { w = 2048, h = 1152, s = 2 },
---     { w = 2304, h = 1296, s = 2 },
---     { w = 2560, h = 1440, s = 2 }
--- }
 
 local acer4kres = {
     -- first 1920 is for retina resolution @ 30hz
@@ -76,10 +69,20 @@ function obj.changeRes(choice)
     local h = choice["h"]
     local s = choice["s"]
 
-    -- hs.screen.find("Color LCD"):setMode(w, h, s)
+    -- change res
     hs.screen.mainScreen():setMode(w, h, s)
+
+    -- The code below updates the menubar menu to indicate new resolution
+    -- The menubar menu doesn't refresh automatically, so we generate
+    -- a new table of options, and then replace the existing one
+    -- Not efficient, but there doesn't seem to be a delay and
+    -- I can't think of a better way to do this
+
+    -- clear current resmenu
     obj.resMenu = {}
+    -- recreate current resmenu
     obj:menubarItems(mbpr15)
+    -- set current resmenu
     obj.menubar:setMenu(obj.resMenu)
 end
 
@@ -95,36 +98,18 @@ function obj:menubarItems(res)
                 checked = false,
             }
         )
+        -- make menubar item menu indicate current res
         if hs.screen.mainScreen():currentMode().w == res[i]["res"].w then
             obj.resMenu[i]["checked"] = true
         end
     end
-
-    --local widthTest = {
-    --    { title = "other item", fn = function() print('test') end },
-    --    { title = "disabled item", disabled = true },
-    --    { title = "checked item", checked = true },
-    --}
-    -- table.insert(resMenu, { title = "-" })
-    -- table.insert(resMenu, { title = "disabled item", disabled = true  })
-
-    -- return resMenu
 end
 
--- local widthTest =  {
---     { title = "my menu item", fn = function() print("you clicked my menu item!") en  },
---     { title = "-" },
---     { title = "other item", fn = some_function },
---     { title = "disabled item", disabled = true  },
---     { title = "checked item", checked = true },
--- }
-
--- for i = 1, #widthTest do
---     table.insert(widthTest, {["res"] = {w = 1920, h = 1080, s = 2}})
--- end
-
 function obj:createMenubar(display)
+    -- create menubar menu for current display
     self:menubarItems(display)
+
+    -- create menubar, set title, set submenu we just created
     self.menubar = hs.menubar.new():setTitle("⚯"):setMenu(self.resMenu)
 end
 
