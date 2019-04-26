@@ -52,11 +52,17 @@ obj.alert.sizes = obj.createSizes(11, 7)
 
 obj.alert.colors = {
     default = {
-        fillColor = {white = 1, alpha = 0.93},
+        fillColor = {white = 1, alpha = 0.95},
         strokeColor = {hex = "#084887", alpha = 0.3},
         -- strokeColor = {hex = "#F58A07", alpha = 0.1},
         textColor = {hex = "#084887"},
         textStyle = {shadow = {offset = {w = 1, h = -1}, blurRadius = 5, color = {black = 0.5, alpha= 0.15}}, kerning = -1}
+    },
+    darkmode = {
+        fillColor = {hex = "#0B0B11", alpha = 0.9},
+        strokeColor = {hex = "#084887", alpha = 0.3},
+        textColor = {hex = "#F8FBE6"},
+        textStyle = {shadow = {offset = {w = 2, h = -2}, blurRadius = 10, color = {hex = "#F8FBE6", alpha= 0.3}}, kerning = -1}
     },
     warning = {
         fillColor = {red = 1, alpha = 1},
@@ -114,7 +120,7 @@ obj.alert.slow = {
 }
 
 -- CREATE DEFAULT STYLE WITH ALL FIELDS
-obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[3], obj.alert.colors.default)
+obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.alert.colors.darkmode)
 
 -- should only update fields i want to change rather than regenerating default style every time
 obj.alert_lrg = obj.createStyle(obj.alert.sizes[5])
