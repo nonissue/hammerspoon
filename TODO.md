@@ -13,6 +13,10 @@ Updated: 19-04-24
   * [ ] test spoons on empty config
   * [ ] remove any styledtext as it may cause mem leaks
   * SUBMIT THEM
+  * [ ] use key/value store for configurable variables/defaults
+  	* [ ] screen resolutions
+	* [ ] wifi ssid
+	* [ ] ...
 
 
 ### Changes/Fixes
