@@ -20,7 +20,7 @@ for k, v in pairs(styles.alert_default) do
 end
 
 -- set logger level
-hs.logger.defaultLogLevel = "error"
+hs.logger.defaultLogLevel = "debug"
 
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"

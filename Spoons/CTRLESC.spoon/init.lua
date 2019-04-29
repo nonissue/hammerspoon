@@ -14,7 +14,7 @@
 local obj = {}
 obj.__index = obj
 
-obj.logger = hs.logger.new('CTRL-ESC', 'verbose')
+
 -- obj.logger.i('Initializing CTRL-ESC.spoon logger...')
 
 obj.name = "CTRLESC"
@@ -22,6 +22,7 @@ obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
+obj.logger = hs.logger.new("CTRL-ESC")
 
 obj.prev_mods = {}
 
@@ -69,11 +70,11 @@ end
 function obj:init()
     self.send_esc = false
 
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged}, 
-        function(event) 
+    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged},
+        function(event)
             obj:mod_event_handler(event)
         end)
-    self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, 
+    self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown},
         function(event)
             self.send_esc = false
 	        return false
@@ -82,14 +83,14 @@ function obj:init()
 end
 
 function obj:start()
-    self.logger.i("CTRLESC.spoon started")
+    self.logger.df("CTRLESC.spoon started")
 
     self.ctrl_tap:start()
     self.non_ctrl_tap:start()
 end
 
 function obj:stop()
-    obj.logger.i("CTRLESC.spoon stopped")
+    obj.logger.df("CTRLESC.spoon stopped")
 
     self.ctrl_tap:stop()
     self.non_ctrl_tap:stop()

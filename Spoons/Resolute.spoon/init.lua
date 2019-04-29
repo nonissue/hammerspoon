@@ -8,7 +8,7 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
-obj.logger = hs.logger.new('Resolute')
+obj.logger = hs.logger.new("Resolute")
 obj.resChooser = nil
 obj.hotkeyShow = nil
 obj.menubar = nil
@@ -66,7 +66,6 @@ function obj:bindHotkeys(keys)
 end
 
 function obj:chooserCallback(choice)
-    print("Chooser callback called...")
     self.changeRes(choice["res"])
 end
 
@@ -114,9 +113,11 @@ end
 function obj:createMenubar(display)
     -- create menubar menu for current display
     self:menubarItems(display)
-
+    local test = "1⃣2⃣3⃣ 4 ⃝: 44⃞ 4⃝ 4⃫ 44⃤  4⃩ ❏❒❑"
+    local title = "❑"
+    local styled = hs.styledtext.new(title, {font = {name = "Helvetica"}})
     -- create menubar, set title, set submenu we just created
-    self.menubar = hs.menubar.new():setTitle("⚯"):setMenu(self.resMenu)
+    self.menubar = hs.menubar.new():setTitle(styled):setMenu(self.resMenu)
 end
 
 function obj:show()
@@ -125,29 +126,12 @@ function obj:show()
     return self
 end
 
-function obj:start()
-    print("-- Starting resChooser")
-    self:init()
-end
 
-function obj:stop()
-    print("-- Stopping resChooser?")
-    self.resChooser:hide()
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
-    end
-
-    self.menubar:delete()
-
-    return self
-end
 
 local function focusLastFocused()
     local wf = hs.window.filter
     local lastFocused = hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast)
-    print_r(lastFocused[1])
     if #lastFocused > 0 then
-        print("setting last focused!")
         lastFocused[1]:raise():focus()
     end
 end
@@ -174,12 +158,10 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
-                -- print_r(hs.window.orderedWindows())
                 self.resChooser:hide()
                 -- focusLastFocused()
                 -- local current = hs.application.frontmostApplication()
                 -- self.current:becomeMain()
-                -- print(hs.inspect(self.current))
                 -- focusLastFocused()
                 -- print(hs.inspect(hs.window.frontmostWindow()))
                 -- currentWin:focus():raise()
@@ -200,6 +182,24 @@ function obj:init()
     self.resChooser:bgDark(true)
     self.resChooser:fgColor({hex = "#ccc"})
     self.resChooser:subTextColor({hex = "#888"})
+
+    return self
+end
+
+function obj:start()
+    obj.logger.df("-- Starting resChooser")
+    self:init()
+    return self
+end
+
+function obj:stop()
+    obj.logger.df("-- Stopping resChooser?")
+    self.resChooser:hide()
+    if self.hotkeyShow then
+        self.hotkeyShow:disable()
+    end
+
+    self.menubar:delete()
 
     return self
 end

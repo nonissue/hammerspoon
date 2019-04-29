@@ -11,17 +11,18 @@ obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
+obj.logger = hs.logger.new("SafariKeys")
 
 function obj:bindHotkeys(mapping)
-  local def = {
-    tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
-    mailToSelf = hs.fnutils.partial(self.mailToSelf, self),
-    mergeAllWindows = hs.fnutils.partial(self.mergeAllWindows, self),
-    pinOrUnpinTab = hs.fnutils.partial(self.pinOrUnpinTab, self),
-    cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self),
-   }
-   
-   hs.spoons.bindHotkeysToSpec(def, mapping)
+    local def = {
+        tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
+        mailToSelf = hs.fnutils.partial(self.mailToSelf, self),
+        mergeAllWindows = hs.fnutils.partial(self.mergeAllWindows, self),
+        pinOrUnpinTab = hs.fnutils.partial(self.pinOrUnpinTab, self),
+        cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self)
+    }
+
+    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
 --- SafariKeys:start()
@@ -34,12 +35,12 @@ end
 --- Returns:
 ---  * The SafariKeys object
 function obj:start()
-  print("-- Starting SafariKeys")
-  if self.hotkeyShow then
-      self.hotkeyShow:enable()
-  end
+    obj.logger.df("-- Starting SafariKeys")
+    if self.hotkeyShow then
+        self.hotkeyShow:enable()
+    end
 
-  return self
+    return self
 end
 
 --- SafariKeys:stop()
@@ -55,12 +56,12 @@ end
 --- Notes:
 ---  * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)
 function obj:stop()
-  print("-- Stopping SafariKeys")
-  self.chooser:hide()
-  if self.hotkeyShow then
-      self.hotkeyShow:disable()
-  end
-  return self
+    obj.logger.df("-- Stopping SafariKeys")
+    self.chooser:hide()
+    if self.hotkeyShow then
+        self.hotkeyShow:disable()
+    end
+    return self
 end
 
 ------------------------------------------------------------------------------
@@ -81,43 +82,45 @@ end
 -- Probably a better way tn o do it.
 ------------------------------------------------------------------------------
 function obj:cycleUserAgent()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
+    hs.application.launchOrFocus("Safari")
+    local safari = hs.appfinder.appFromName("Safari")
 
-  local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
-  local str_iPad = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPad"}
+    local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
+    local str_iPad = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPad"}
 
-  local default = safari:findMenuItem(str_default)
-  local iPad = safari:findMenuItem(str_iPad)
+    local default = safari:findMenuItem(str_default)
+    local iPad = safari:findMenuItem(str_iPad)
 
-  if (default and default["ticked"]) then
-    safari:selectMenuItem(str_iPad)
-    hs.alert.show("UA: iPad", 1.5)
-  end
-  if (iPad and iPad["ticked"]) then
-    safari:selectMenuItem(str_default)
-    hs.alert.show("UA: Default", 2)
-  end
+    if (default and default["ticked"]) then
+        safari:selectMenuItem(str_iPad)
+        hs.alert.show("UA: iPad", 1.5)
+    end
+    if (iPad and iPad["ticked"]) then
+        safari:selectMenuItem(str_default)
+        hs.alert.show("UA: Default", 2)
+    end
 end
 
-  ------------------------------------------------------------------------------
-  -- mailToSelf
-  ------------------------------------------------------------------------------
-  -- Gets current url from active safari tab and mails it to specified address
-  -- problem is, no alert when DND is on. hmmm.
-  ------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- mailToSelf
+------------------------------------------------------------------------------
+-- Gets current url from active safari tab and mails it to specified address
+-- problem is, no alert when DND is on. hmmm.
+------------------------------------------------------------------------------
 function obj:mailToSelf()
-  script = [[
+    local script =
+        [[
     tell application "Safari"
       set currentURL to URL of document 1
     end tell
     return currentURL
   ]]
 
-  -- hs.alert("current url is" .. hs.applescript(script))
-  ok, result = hs.applescript(script)
-  if (ok) then
-    hs.applescript.applescript([[
+    -- hs.alert("current url is" .. hs.applescript(script))
+    local ok, result = hs.applescript(script)
+    if (ok) then
+        hs.applescript.applescript(
+            [[
       tell application "Safari"
       set result to URL of document 1
       end tell
@@ -128,10 +131,11 @@ function obj:mailToSelf()
       send
       end tell
       end tell
-    ]])
-    
-    hs.alert.show(" ↧ ", 2)
-  end
+    ]]
+        )
+
+        hs.alert.show(" ↧ ", 2)
+    end
 end
 
 ------------------------------------------------------------------------------
@@ -150,27 +154,27 @@ end
 -- could maybe send it to next monitor immediately if there is one?
 ------------------------------------------------------------------------------
 function obj:tabToNewWindow()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
+    hs.application.launchOrFocus("Safari")
+    local safari = hs.appfinder.appFromName("Safari")
 
-  local target_item_in_menu = {"Window", "Move Tab to New Window"}
-  safari:selectMenuItem(target_item_in_menu)
+    local target_item_in_menu = {"Window", "Move Tab to New Window"}
+    safari:selectMenuItem(target_item_in_menu)
 
-  hs.alert.show(" ⎘ ", 1.5)
+    hs.alert.show(" ⎘ ", 1.5)
 end
-  
+
 ------------------------------------------------------------------------------
 -- mergeAllWindows
 ------------------------------------------------------------------------------
 -- Merges all separate windows into one window
 ------------------------------------------------------------------------------
 function obj:mergeAllWindows()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
+    hs.application.launchOrFocus("Safari")
+    local safari = hs.appfinder.appFromName("Safari")
 
-  local target_item_in_menu = {"Window", "Merge All Windows"}
-  safari:selectMenuItem(target_item_in_menu)
-  hs.alert.show(" ⎗ ", 1.5)
+    local target_item_in_menu = {"Window", "Merge All Windows"}
+    safari:selectMenuItem(target_item_in_menu)
+    hs.alert.show(" ⎗ ", 1.5)
 end
 
 ------------------------------------------------------------------------------
@@ -179,22 +183,22 @@ end
 -- Pins or unpins current tab
 ------------------------------------------------------------------------------
 function obj:pinOrUnpinTab()
-  hs.application.launchOrFocus("Safari")
-  local safari = hs.appfinder.appFromName("Safari")
+    hs.application.launchOrFocus("Safari")
+    local safari = hs.appfinder.appFromName("Safari")
 
-  local pin_tab = {"Window", "Pin Tab"}
-  local unpin_tab = {"Window", "Unpin Tab"}
+    local pin_tab = {"Window", "Pin Tab"}
+    local unpin_tab = {"Window", "Unpin Tab"}
 
-  if (safari:findMenuItem(pin_tab)) then
-    -- new pin tab
-    hs.alert.show(" ⍇ ", 1.5)
-    safari:selectMenuItem(pin_tab)
-  else
-    hs.alert.show(" ⍈ ", 1.5)
-    safari:selectMenuItem(unpin_tab)
-  end
+    if (safari:findMenuItem(pin_tab)) then
+        -- new pin tab
+        hs.alert.show(" ⍇ ", 1.5)
+        safari:selectMenuItem(pin_tab)
+    else
+        hs.alert.show(" ⍈ ", 1.5)
+        safari:selectMenuItem(unpin_tab)
+    end
 end
-  
+
 return obj
 ------------------------------------------------------------------------------
 -- End of safari stuff

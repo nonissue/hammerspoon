@@ -15,6 +15,8 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.chooser = nil
 obj.hotkeyShow = nil
 
+obj.logger = hs.logger.new("PaywallBuster")
+
 -- local function script_path()
 --   local str = debug.getinfo(2, "S").source:sub(2)
 --   return str:match("(.*/)")
@@ -180,7 +182,7 @@ end
 --- Returns:
 ---  * The PaywallBuster object
 function obj:init()
-    print("-- Starting PaywallBuster")
+    obj.logger.df("-- Initializing PaywallBuster")
     self.chooser =
         hs.chooser.new(
         function(choice)
@@ -215,7 +217,7 @@ function obj:init()
     self.chooser:width(20)
     self.chooser:bgDark(false)
 
-    return self
+    return self.chooser
 end
 
 function obj:show()
@@ -223,10 +225,11 @@ function obj:show()
     return self
 end
 
-function obj:start()
-    print("-- Starting PaywallBuster")
-    return self
-end
+-- function obj:start()
+--     obj.logger.df("-- Starting PaywallBuster")
+--     self:init()
+--     return self
+-- end
 
 --- PaywallBuster:stop()
 --- Method
@@ -240,13 +243,13 @@ end
 ---
 --- Notes:
 ---  * N/A
-function obj:stop()
-    print("-- Stopping PaywallBuster")
-    self.chooser:hide()
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
-    end
-    return self
-end
+-- function obj:stop()
+--     obj.logger.df("-- Stopping PaywallBuster")
+--     self.chooser:hide()
+--     if self.hotkeyShow then
+--         self.hotkeyShow:disable()
+--     end
+--     return self
+-- end
 
 return obj

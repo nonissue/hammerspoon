@@ -368,12 +368,12 @@ end
 
 function obj:stop()
     hs.alert("-- Stopping Zzz.spoon")
-    
+
     if self.chooser then
         self.chooser:cancel()
         self.chooser = nil
     end
-    
+
     if self.hotkeyShow then
         self.hotkeyShow:disable()
     end
@@ -424,7 +424,6 @@ function obj:addTimer(name, title, type)
     --     ["type"] = type,
     -- })
 
-    
 end
 
 

@@ -75,7 +75,7 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
-                print(self.chooser:query())
+                -- print(self.chooser:query())
                 self.chooser:hide()
             else
                 self:chooserCallback(choice)

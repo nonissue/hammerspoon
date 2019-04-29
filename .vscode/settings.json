@@ -3,5 +3,6 @@
     "lua.format.indentCount": 4,
     "lua.format.singleQuote": false,
     "lua.preferLuaCheckErrors": true,
-    "lua.luacheckPath": "/usr/local/bin/luacheck"
+    "lua.luacheckPath": "/usr/local/bin/luacheck",
+    "lua.linting.enabled": true,
 }
