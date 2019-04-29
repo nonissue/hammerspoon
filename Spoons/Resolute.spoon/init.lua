@@ -114,7 +114,7 @@ function obj:createMenubar(display)
     -- create menubar menu for current display
     self:menubarItems(display)
     local test = "1⃣2⃣3⃣ 4 ⃝: 44⃞ 4⃝ 4⃫ 44⃤  4⃩ ❏❒❑"
-    local title = "❑"
+    local title =  "Ⳮ"-- ☲⧉∆ↁⳭ" -- "⃣" -- ☲ = def, ☱ = one larger, ☴ = one smaller, ☶ = two smaller?
     local styled = hs.styledtext.new(title, {font = {name = "Helvetica"}})
     -- create menubar, set title, set submenu we just created
     self.menubar = hs.menubar.new():setTitle(styled):setMenu(self.resMenu)
