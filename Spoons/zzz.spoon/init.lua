@@ -67,12 +67,12 @@ local presetCount = 3
 ]]--
 
 local defaultFont = {
-    font = {name = "Input Mono", size = 14},
+    font = {name = "SF Mono"},
     -- color = {hex = "#EEEEEE"}
 }
 
 local almostDone = {
-    font = {name = "Input Mono", size = 14},
+    font = {name = "SF Mono"},
     color = {hex = "#FF6F00"}
 }
 
@@ -203,7 +203,7 @@ end
 function obj:startTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
-        hs.alert("Timer already started")
+        hs.alert("Timer alreadfy started")
     else
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
