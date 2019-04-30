@@ -3,8 +3,8 @@
 ===========================================================
 SystemContexts Spoon
 -----------------------------------------------------------
-Set and manage system defaults. Handle and manage config 
-options as user env changes. 
+Set and manage system defaults. Handle and manage config
+options as user env changes.
   e.g.  * Sleep settings at school vs home
         * When using multiple monitors, diff res choices
         * Autoconfig layout for mobile vs at desk. Things
@@ -17,7 +17,7 @@ todo:
 
 * invoke do not disturb on when not at home
 * store state in an object?
-    * eg: 
+    * eg:
         * state.location
             * vals: home, school, other
         * state.docked
@@ -48,16 +48,17 @@ obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
-
+obj.logger = hs.logger.new("SystemContexts")
 obj.hotkeyShow = nil
 
 obj.wifiWatcher = nil
 obj.cafWatcher = nil
 obj.currentSSID = nil
+local homeSSIDs = {"BROMEGA", "ComfortInn Plus", "1614 Apple II"}
 local homeSSID = "BROMEGA"
 local altHomeSSID = "ComfortInn Plus"
-local yycSSID = "1614 Apple II"
-local schoolSSID = "MacEwanSecure"
+-- local yycSSID = "1614 Apple II"
+-- local schoolSSID = "MacEwanSecure"
 local hostName = hs.host.localizedName() -- maybe not needed?
 
 -- not needed but included
@@ -97,15 +98,31 @@ local hostName = hs.host.localizedName() -- maybe not needed?
 -- Maybe implement a default setting that is applied when computer is 'in limbo'
 -- Move to env variable / .env?
 
+
+local function has_value (tab, val)
+    for index, value in ipairs(tab) do
+        if value == val then
+            return true
+        end
+    end
+
+    return false
+end
+
 function obj.ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
-    if (newSSID == homeSSID or newSSID == altHomeSSID or newSSID == yycSSID) and
+    if (has_value(homeSSIDs, newSSID)) and
         (obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
         -- we are at home!
+        obj.logger.i("@home")
         obj.homeArrived()
-    elseif newSSID ~= homeSSID or newSSID ~= altHomeSSID then
+    elseif has_value(homeSSIDs, newSSID) then
+        obj.logger.i("@away")
         obj.homeDeparted()
+    else
+        obj.logger.e("SC: Unhandled SSID!")
+        hs.alert("SystemContexts Error")
     end
 
     obj.currentSSID = newSSID
@@ -113,7 +130,7 @@ end
 
 function obj.homeArrived()
   -- Should really have device specific settings (desktop vs laptop)
-  -- requires modified sudoers file. 
+  -- requires modified sudoers file.
   -- For Example!
   -- IN /etc/sudoers.d/power_mgmt (sudo visudo -f /etc/sudoers.d/power_mgmt)
   -- andrewwilliams ALL=(root) NOPASSWD: /usr/bin/pmset *
@@ -131,7 +148,6 @@ function obj.homeDeparted()
     -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
     -- new leave home alert
-    
     hs.alert("~(☛ ⌂)", 3)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 end
@@ -141,22 +157,23 @@ function obj.initWifiWatcher()
         obj.ssidChangedCallback()
     end
 
-    obj.wifiWatcher = hs.wifi.watcher.new(obj.ssidChangedCallback)  
+    obj.wifiWatcher = hs.wifi.watcher.new(obj.ssidChangedCallback)
 end
 
--- this catches situations where we get somewhere, computer wakes from sleep, 
+-- this catches situations where we get somewhere, computer wakes from sleep,
 -- but doesn't connect to a network automatically. I still want things set
 function obj.muteOnWake(eventType)
-    if (eventType == hs.caffeinate.watcher.systemDidWake and (hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
-        obj.homeDeparted()
+    if (eventType == hs.caffeinate.watcher.systemDidWake and
+        (hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
+            obj.homeDeparted()
     end
 end
 
-function obj:initCafWatcher()
+function obj.initCafWatcher()
     obj.cafWatcher = hs.caffeinate.watcher.new(obj.muteOnWake)
 end
 
-function obj:moveDockLeft() 
+function obj.moveDockLeft()
     hs.applescript.applescript(
         [[
             tell application "System Events" to set the autohide of the dock preferences to true
@@ -164,8 +181,8 @@ function obj:moveDockLeft()
         ]]
     )
 end
-  
-  function obj:moveDockDown() 
+
+  function obj.moveDockDown()
     hs.applescript.applescript(
       [[
         tell application "System Events" to set the autohide of the dock preferences to false
@@ -178,7 +195,7 @@ end
 -- Cinema Display Name: "Cinema HD"
 -- Cinema Display ID: 69489838
 
--- Issues: 
+-- Issues:
 -- affinity designer triggers screen change?
 -- gets called multiple times as sometimes add multiple displays
   -- if called multiple times, our conditional logic is broken?
@@ -190,11 +207,11 @@ end
         * wifi: home
         * display count: 1-3
         * actions:
-            * entry: 
+            * entry:
                 moveDockDown()
                 audioOn()
                 applyLayouts?
-            * exit: 
+            * exit:
 
     @duet:
         * display count: 2
@@ -221,21 +238,21 @@ end
 
 function obj.screenWatcher()
     local newNumberOfScreens = #hs.screen.allScreens()
-  
+
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
         -- handle unnecessary/redundant screenWatcher callbacks
-        hs.alert("screenwatcher: fired, state: " .. obj.currentScreens, 3)
+        hs.alert("SW:" .. obj.currentScreens, 3)
     elseif hs.screen.find("Cinema HD") then -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
         -- Changed above line to use "Cinema HD" as display ID was not reliable?
-        -- if we have a different amount of displays and one of them is 
+        -- if we have a different amount of displays and one of them is
         -- our cinema display, we are @desk
         hs.alert("@desk")
         obj.currentScreens = "@desk"
-        obj:moveDockDown()
+        obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.currentScreens == "@desk" then
         hs.alert("@undocking", 3)
         obj.currentScreens = "@mobile"
-        obj:moveDockLeft()
+        obj.moveDockLeft()
         obj.checkAndEject("ExternalSSD")
         obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
@@ -265,7 +282,7 @@ end
 
 -- start watchers
 function obj:start()
-  print("-- Starting SystemContexts")
+--   print("-- Starting SystemContexts")
   if self.hotkeyShow then
       self.hotkeyShow:enable()
   end
@@ -278,7 +295,7 @@ end
 
 -- stop watchers
 function obj:stop()
-  print("-- Stopping SystemContexts")
+--   print("-- Stopping SystemContexts")
   if self.hotkeyShow then
       self.hotkeyShow:disable()
   end
