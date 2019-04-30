@@ -256,7 +256,7 @@ function obj:timerChooserCallback(choice)
         -- handle normal choice
         self:startTimer(tonumber(choice['m']))
     end
-end 
+end
 
 function obj:updateMenu()
     hs.timer.doWhile(
@@ -269,7 +269,7 @@ function obj:updateMenu()
                 hs.alert("Sleeping in 10 seconds...")
                 obj.menuFont = almostDone
             end
-            
+
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
         1
@@ -304,7 +304,6 @@ function obj:deleteTimer()
 end
 
 function obj:initChooser()
-      
     -- the menubar isnt set by default by the menubar.new call
     -- with the parameter "false", but because we set the title 
     -- right after, it ends up being shown
@@ -352,7 +351,7 @@ function obj:initChooser()
             end
         end
     )
-    
+
     self.chooser:width(20)
     self.chooser:bgDark(true)
 
@@ -360,14 +359,14 @@ function obj:initChooser()
 end
 
 function obj:start()
-    print("-- Starting Zzz")
+    -- print("-- Starting Zzz")
     self:init()
 
     return self
 end
 
 function obj:stop()
-    hs.alert("-- Stopping Zzz.spoon")
+    -- hs.alert("-- Stopping Zzz.spoon")
 
     if self.chooser then
         self.chooser:cancel()
@@ -409,8 +408,6 @@ function obj:addTimer(name, title, type)
     local timer = {}
 
     local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setTitle(title)
-
-
     table.insert(obj.timers, {
         [name] = {
             menu,

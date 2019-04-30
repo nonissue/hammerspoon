@@ -55,7 +55,7 @@ obj.wifiWatcher = nil
 obj.cafWatcher = nil
 obj.currentSSID = nil
 local homeSSID = "BROMEGA"
-local altHomeSSID = "ComportInn Plus"
+local altHomeSSID = "ComfortInn Plus"
 local yycSSID = "1614 Apple II"
 local schoolSSID = "MacEwanSecure"
 local hostName = hs.host.localizedName() -- maybe not needed?
@@ -100,7 +100,8 @@ local hostName = hs.host.localizedName() -- maybe not needed?
 function obj.ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
-    if (newSSID == homeSSID or newSSID == altHomeSSID or newSSID == yycSSID) and (obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
+    if (newSSID == homeSSID or newSSID == altHomeSSID or newSSID == yycSSID) and
+        (obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
         -- we are at home!
         obj.homeArrived()
     elseif newSSID ~= homeSSID or newSSID ~= altHomeSSID then
