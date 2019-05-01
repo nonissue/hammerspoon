@@ -44,4 +44,12 @@ function round(num, numDecimalPlaces)
     else return math.ceil(num * mult - 0.5) / mult end
 end
 
+local function focusLastFocused()
+    local wf = hs.window.filter
+    local lastFocused = hs.window.filter.defaultCurrentSpace:getWindows(hs.window.filter.sortByFocusedLast)
+    if #lastFocused > 0 then
+        lastFocused[1]:raise():focus()
+    end
+end
+
 return mod
