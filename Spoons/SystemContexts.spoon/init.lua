@@ -59,7 +59,7 @@ local homeSSID = "BROMEGA"
 local altHomeSSID = "ComfortInn Plus"
 -- local yycSSID = "1614 Apple II"
 -- local schoolSSID = "MacEwanSecure"
-local hostName = hs.host.localizedName() -- maybe not needed?
+--local hostName = hs.host.localizedName() -- maybe not needed?
 
 -- not needed but included
 -- local function script_path()
@@ -113,7 +113,7 @@ function obj.ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
     if (has_value(homeSSIDs, newSSID)) and
-        (obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
+        (not has_value(homeSSIDs, obj.currentSSID)) then --/obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
         -- we are at home!
         obj.logger.i("@home")
         obj.homeArrived()
@@ -163,8 +163,8 @@ end
 -- this catches situations where we get somewhere, computer wakes from sleep,
 -- but doesn't connect to a network automatically. I still want things set
 function obj.muteOnWake(eventType)
-    if (eventType == hs.caffeinate.watcher.systemDidWake and
-        (hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
+    if (eventType == hs.caffeinate.watcher.systemDidWake and (not has_value(homeSSIDs, hs.wifi.currentNetwork()))) then
+        --(hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
             obj.homeDeparted()
     end
 end
