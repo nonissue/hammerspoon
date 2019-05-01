@@ -35,7 +35,7 @@ local mbpr15 = {
     {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
     {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
     {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
-    {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "More Space", ["res"] = {w = 1920, h = 1200, s = 2}}
+    {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
 
 function obj:bindHotkeys(keys)
@@ -131,7 +131,7 @@ function obj:init()
         self.resChooser:delete()
     end
 
-    self:createMenubar(targetDisplay)
+    self.createMenubar(targetDisplay)
 
     self.resChooser =
         hs.chooser.new(
