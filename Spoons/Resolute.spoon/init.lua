@@ -12,6 +12,7 @@ obj.logger = hs.logger.new("Resolute")
 obj.resChooser = nil
 obj.hotkeyShow = nil
 obj.menubar = nil
+obj.menuIcon = "☲"
 obj.resMenu = {}
 obj.current = nil
 
@@ -39,10 +40,10 @@ local mbpr15raw = {
 -- Might be nice to automatically choose some based on screen,
 -- but it's tough to know what will look good
 local mbpr15 = {
-    {["id"] = 1, ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
-    {["id"] = 2, ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
-    {["id"] = 3, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
-    {["id"] = 4, ["subText"] = "1920x1200", ["text"] = "More Space", ["res"] = {w = 1920, h = 1200, s = 2}}
+    {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
+    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
+    {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
+    {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "More Space", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
 
 local acer4kres = {
@@ -88,6 +89,7 @@ function obj.changeRes(choice)
     -- recreate current resmenu
     obj:menubarItems(mbpr15)
     -- set current resmenu
+    obj.menubar:setTitle(obj.menuIcon)
     obj.menubar:setMenu(obj.resMenu)
 end
 
@@ -96,7 +98,7 @@ function obj:menubarItems(res)
         table.insert(
             self.resMenu,
             {
-                title = hs.styledtext.new(" " .. res[i]["text"], {font = hs.styledtext.defaultFonts.userFixedPitch}),
+                title = hs.styledtext.new(" " .. res[i]["text"], {font = hs.styledtext.defaultFonts.menu}),
                 fn = function()
                     self.changeRes(res[i]["res"])
                 end,
@@ -105,6 +107,7 @@ function obj:menubarItems(res)
         )
         -- make menubar item menu indicate current res
         if hs.screen.mainScreen():currentMode().w == res[i]["res"].w then
+            obj.menuIcon = res[i]["icon"]
             obj.resMenu[i]["checked"] = true
         end
     end
@@ -113,11 +116,11 @@ end
 function obj:createMenubar(display)
     -- create menubar menu for current display
     self:menubarItems(display)
-    local test = "1⃣2⃣3⃣ 4 ⃝: 44⃞ 4⃝ 4⃫ 44⃤  4⃩ ❏❒❑"
-    local title =  "☲"-- ☲⧉∆ↁⳭ" -- "⃣" -- ☲ = def, ☱ = one larger, ☴ = one smaller, ☶ = two smaller?
-    local styled = hs.styledtext.new(title, {font = {name = "Helvetica"}})
+    -- local test = "1⃣2⃣3⃣ 4 ⃝: 44⃞ 4⃝ 4⃫ 44⃤  4⃩ ❏❒❑"
+    local title =  "☲"-- ☲⧉∆ↁⳭ" -- "⃣" -- ☲ = def, ☱ = one larger, ☴ = one smaller, ☶ ☳ = two smaller?
+    -- local styled = hs.styledtext.new(title, {font = {name = "Helvetica"}})
     -- create menubar, set title, set submenu we just created
-    self.menubar = hs.menubar.new():setTitle(styled):setMenu(self.resMenu)
+    self.menubar = hs.menubar.new():setTitle(obj.menuIcon):setMenu(self.resMenu)
 end
 
 function obj:show()
