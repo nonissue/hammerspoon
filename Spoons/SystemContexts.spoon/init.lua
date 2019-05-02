@@ -13,6 +13,7 @@ obj.hotkeyShow = nil
 obj.wifiWatcher = nil
 obj.cafWatcher = nil
 obj.currentSSID = nil
+-- move to key value store
 local homeSSIDs = {"BROMEGA", "ComfortInn Plus", "1614 Apple II"}
 -- local schoolSSID = "MacEwanSecure"
 
@@ -62,9 +63,7 @@ end
 -- sets displaysleep to lowervalue
 -- eventually should unmount disks and perform other functions?
 function obj.homeDeparted()
-    -- set volume to 0
     hs.audiodevice.defaultOutputDevice():setMuted(true)
-    -- new leave home alert
     hs.alert("~(☛ ⌂)", 3)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 end
@@ -81,7 +80,6 @@ end
 -- but doesn't connect to a network automatically. I still want things set
 function obj.muteOnWake(eventType)
     if (eventType == hs.caffeinate.watcher.systemDidWake and (not has_value(homeSSIDs, hs.wifi.currentNetwork()))) then
-        --(hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
         obj.homeDeparted()
     end
 end
