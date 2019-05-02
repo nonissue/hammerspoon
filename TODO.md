@@ -14,9 +14,10 @@ Updated: 19-04-24
   * [ ] remove any styledtext as it may cause mem leaks
   * SUBMIT THEM
   * [ ] use key/value store for configurable variables/defaults
-  	* [ ] screen resolutions
-	* [ ] wifi ssid
-	* [ ] ...
+    * [ ] screen resolutions
+    * [ ] wifi ssid
+    * [ ] ...
+* [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods
 
 
 ### Changes/Fixes

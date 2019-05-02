@@ -1,15 +1,14 @@
 local obj = {}
 obj.__index = obj
 
--- Metadata
 obj.name = "SystemContexts"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
+
 obj.logger = hs.logger.new("SystemContexts")
 obj.hotkeyShow = nil
-
 obj.wifiWatcher = nil
 obj.cafWatcher = nil
 obj.currentSSID = nil
@@ -55,7 +54,6 @@ function obj.homeArrived()
     os.execute("sudo pmset -b displaysleep 5 sleep 10")
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
-  -- new arrive home alert
     hs.notify.show("@home", "", "")
     hs.alert(" ☛ ⌂ ", 3)
 end
@@ -138,7 +136,7 @@ function obj.screenWatcher()
         obj.checkAndEject("ExternalSSD")
         obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
-        hs.notify.show("@mobile", "", "")
+        -- hs.notify.show("@mobile", "", "")
         obj.currentScreens = "@mobile"
         obj:moveDockLeft()
     else
