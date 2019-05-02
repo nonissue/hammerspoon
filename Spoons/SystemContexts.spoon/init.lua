@@ -1,44 +1,3 @@
---[[
-
-===========================================================
-SystemContexts Spoon
------------------------------------------------------------
-Set and manage system defaults. Handle and manage config
-options as user env changes.
-  e.g.  * Sleep settings at school vs home
-        * When using multiple monitors, diff res choices
-        * Autoconfig layout for mobile vs at desk. Things
-          like dock position, display arrangement, etc.
-
------------------------------------------------------------
-
-todo:
-* make this whole thing a proper state machine!
-
-* invoke do not disturb on when not at home
-* store state in an object?
-    * eg:
-        * state.location
-            * vals: home, school, other
-        * state.docked
-
-    Outline of:
-    - Properties to init
-    - How it's computed
-    - Effect of properties
-
-    - Docked: Bool
-        - Computed from:
-            - number of screens
-            - names of displays
-            - name of SSID
-        - Effect:
-            - dock position
-            - provide correct 'changeres' options
-            - set window layout?
-    * Location
-
-]]
 local obj = {}
 obj.__index = obj
 
@@ -55,49 +14,7 @@ obj.wifiWatcher = nil
 obj.cafWatcher = nil
 obj.currentSSID = nil
 local homeSSIDs = {"BROMEGA", "ComfortInn Plus", "1614 Apple II"}
-local homeSSID = "BROMEGA"
-local altHomeSSID = "ComfortInn Plus"
--- local yycSSID = "1614 Apple II"
 -- local schoolSSID = "MacEwanSecure"
---local hostName = hs.host.localizedName() -- maybe not needed?
-
--- not needed but included
--- local function script_path()
---     local str = debug.getinfo(2, "S").source:sub(2)
---     return str:match("(.*/)")
--- end
-
--- obj.spoonPath = script_path()
-
---
--- settings to apply based on context:
---    screen lock time
---    volume
---    dock position
---    default app layouts
-
-
-
-------------------------------------------------------------------------------
--- Location based functions to change system settings
-------------------------------------------------------------------------------
--- functions for different locations
--- configure things like drive mounts, display sleep (for security), etc.
--- sets displaysleep to 90 minutes if at home
--- should be called based on ssid
--- not the most secure since someone could fake ssid I guess
--- might want some other level of verification-- makes new window from current tab in safari
--- could maybe send it to next monitor immediately if there is one?
--- differentiate between settings for laptop vs desktop
--- Mostly lifted from:
--- https://github.com/cmsj/hammerspoon-config/blob/master/init.lua
-------------------------------------------------------------------------------
--- Don't love the logic of how this is implemented
--- If computer is in between networks (say, woken from sleep in new location)
--- Then desired settings like volume mute are not applied until after a delay
--- Maybe implement a default setting that is applied when computer is 'in limbo'
--- Move to env variable / .env?
-
 
 local function has_value (tab, val)
     for index, value in ipairs(tab) do
@@ -113,7 +30,7 @@ function obj.ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
     if (has_value(homeSSIDs, newSSID)) and
-        (not has_value(homeSSIDs, obj.currentSSID)) then --/obj.currentSSID ~= homeSSID or obj.currentSSID ~= altHomeSSID) then
+        (not has_value(homeSSIDs, obj.currentSSID)) then
         -- we are at home!
         obj.logger.i("@home")
         obj.homeArrived()
@@ -121,7 +38,7 @@ function obj.ssidChangedCallback()
         obj.logger.i("@away")
         obj.homeDeparted()
     else
-        obj.logger.e("SC: Unhandled SSID!")
+        obj.logger.e("SC: Unhandled SSID!" .. newSSID)
         hs.alert("SystemContexts Error")
     end
 
@@ -165,7 +82,7 @@ end
 function obj.muteOnWake(eventType)
     if (eventType == hs.caffeinate.watcher.systemDidWake and (not has_value(homeSSIDs, hs.wifi.currentNetwork()))) then
         --(hs.wifi.currentNetwork() ~= homeSSID and hs.wifi.currentNetwork() ~= altHomeSSID)) then
-            obj.homeDeparted()
+        obj.homeDeparted()
     end
 end
 
@@ -189,39 +106,6 @@ end
         tell application "System Events" to set the screen edge of the dock preferences to bottom
       ]])
 end
-----------------------------------------------------------
--- screenWatcher
-----------------------------------------------------------
--- Cinema Display Name: "Cinema HD"
--- Cinema Display ID: 69489838
-
--- Issues:
--- affinity designer triggers screen change?
--- gets called multiple times as sometimes add multiple displays
-  -- if called multiple times, our conditional logic is broken?
--- figure out how to batch the updates?
-
---[[ display contexts:
-    @desk:
-        * cinema display detected
-        * wifi: home
-        * display count: 1-3
-        * actions:
-            * entry:
-                moveDockDown()
-                audioOn()
-                applyLayouts?
-            * exit:
-
-    @duet:
-        * display count: 2
-        * wifi: any
-        * ipad display detected?
-        * actions:spo
-    @else:
-        * display count: 1
-        * wifi: any
-]]
 
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 obj.currentScreens = hs.screen.allScreens()
@@ -257,7 +141,6 @@ function obj.screenWatcher()
         obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
         hs.notify.show("@mobile", "", "")
-        -- hs.alert("@mobile", 3)
         obj.currentScreens = "@mobile"
         obj:moveDockLeft()
     else
@@ -282,7 +165,7 @@ end
 
 -- start watchers
 function obj:start()
---   print("-- Starting SystemContexts")
+    obj.logger.i("-- Starting Contexts")
   if self.hotkeyShow then
       self.hotkeyShow:enable()
   end
@@ -295,7 +178,7 @@ end
 
 -- stop watchers
 function obj:stop()
---   print("-- Stopping SystemContexts")
+    obj.logger.df("-- Stopping Contexts")
   if self.hotkeyShow then
       self.hotkeyShow:disable()
   end
@@ -306,6 +189,4 @@ function obj:stop()
   return self
 end
 
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
 return obj
