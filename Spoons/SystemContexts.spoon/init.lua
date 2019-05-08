@@ -14,7 +14,6 @@ obj.cafWatcher = nil
 obj.currentSSID = nil
 -- move to key value store
 local homeSSIDs = {"BROMEGA", "ComfortInn Plus", "1614 Apple II"}
--- local schoolSSID = "MacEwanSecure"
 
 local function has_value (tab, val)
     for index, value in ipairs(tab) do
@@ -34,11 +33,14 @@ function obj.ssidChangedCallback()
         -- we are at home!
         obj.logger.i("@home")
         obj.homeArrived()
-    elseif has_value(homeSSIDs, newSSID) then
+    elseif not has_value(homeSSIDs, newSSID) then
         obj.logger.i("@away")
         obj.homeDeparted()
     else
-        obj.logger.e("SC: Unhandled SSID!" .. newSSID)
+        if newSSID ~= nil then
+            obj.logger.e("SC: Unhandled SSID!" .. newSSID)
+        end
+        obj.logger.e("SC: Unhandled SSID case!")
         hs.alert("SystemContexts Error")
     end
 

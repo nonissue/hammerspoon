@@ -9,7 +9,6 @@
 ------------------------------------------------------------------------------
 
 -- load basic modules / utils first
--- that don't need to be spoons
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
@@ -41,13 +40,12 @@ print_r = utils.print_r
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
--- local alt = {"alt"}
 
 -- console window hotkey
 hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)
 
 -- load scratch stuff
-package.path = package.path .. ";scratch/?.lua"
+-- package.path = package.path .. ";scratch/?.lua"
 
 -- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
@@ -97,7 +95,7 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys)
 -- Ultimately this probably isn't necessary, but I do occasionally use it
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
--- TODO: use default hotkeysi
+-- TODO: use default hotkeys
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
 ------------------------------------------------------------------------------
@@ -150,11 +148,9 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
 
-
 ------------------------------------------------------------------------------
 --                                NONSENSE                                  --
 ------------------------------------------------------------------------------
-
 -- random stuff
 -- local yay = "ᕙ(⇀‸↼‶)ᕗ"
 -- local boo = "ლ(ಠ益ಠლ)"
@@ -168,11 +164,9 @@ end
 hs.hotkey.bind(mash, "K", showKirby)
 hs.hotkey.showHotkeys(mash, "space")
 
-
 -- hs.textDroppedToDockIconCallback()
 -- hs.dockIconClickCallback()
 -- hs.dockIcon(true)
-
 -- initial testing with using the 'send to' contextual menu functionality
 hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
