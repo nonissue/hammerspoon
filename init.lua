@@ -83,7 +83,8 @@ local safariHotkeys = {
     mailToSelf = {mash, "U"},
     mergeAllWindows = {mash, "M"},
     pinOrUnpinTab = {hyper, "P"},
-    cycleUserAgent = {mash, "7"}
+    cycleUserAgent = {mash, "7"},
+    addToReadingList = {mash, "R"}
 }
 
  -- TODO: use default hotkeys

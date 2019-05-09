@@ -19,7 +19,8 @@ function obj:bindHotkeys(mapping)
         mailToSelf = hs.fnutils.partial(self.mailToSelf, self),
         mergeAllWindows = hs.fnutils.partial(self.mergeAllWindows, self),
         pinOrUnpinTab = hs.fnutils.partial(self.pinOrUnpinTab, self),
-        cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self)
+        cycleUserAgent = hs.fnutils.partial(self.cycleUserAgent, self),
+        addToReadingList = hs.fnutils.partial(self.addToReadingList, self)
     }
 
     hs.spoons.bindHotkeysToSpec(def, mapping)
@@ -107,32 +108,52 @@ end
 -- Gets current url from active safari tab and mails it to specified address
 -- problem is, no alert when DND is on. hmmm.
 ------------------------------------------------------------------------------
-function obj:mailToSelf()
+function obj.addToReadingList()
+    local ok, result = hs.osascript.applescript(
+    [[
+        tell application "Safari"
+	        set result to URL of document 1
+        end tell
+
+        tell application "Safari" to add reading list item result
+    ]])
+
+    ok = false
+
+    if (ok) then
+        hs.alert.show(" ⚯⁺")
+        obj.logger.i("Added item to reading list")
+    else
+        obj.logger.e("Error adding item to reading list")
+    end
+end
+
+
+function obj.mailToSelf()
     local script =
-        [[
-    tell application "Safari"
-      set currentURL to URL of document 1
-    end tell
-    return currentURL
-  ]]
+    [[
+        tell application "Safari"
+            set currentURL to URL of document 1
+        end tell
+        return currentURL
+    ]]
 
     -- hs.alert("current url is" .. hs.applescript(script))
     local ok, result = hs.applescript(script)
     if (ok) then
-        hs.applescript.applescript(
-            [[
-      tell application "Safari"
-      set result to URL of document 1
-      end tell
-      tell application "Mail"
-      set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
-      tell theMessage
-      make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-      send
-      end tell
-      end tell
-    ]]
-        )
+        hs.applescript.applescript([[
+            tell application "Safari"
+                set result to URL of document 1
+            end tell
+
+            tell application "Mail"
+                set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
+                tell theMessage
+                    make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+                    send
+                end tell
+            end tell
+        ]])
 
         hs.alert.show(" ↧ ", 2)
     end
