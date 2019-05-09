@@ -26,45 +26,6 @@ function obj:bindHotkeys(mapping)
     hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
---- SafariKeys:start()
---- Method
---- Starts SafariKeys
----
---- Parameters:
----  * None
----
---- Returns:
----  * The SafariKeys object
-function obj:start()
-    obj.logger.df("-- Starting SafariKeys")
-    if self.hotkeyShow then
-        self.hotkeyShow:enable()
-    end
-
-    return self
-end
-
---- SafariKeys:stop()
---- Method
---- Stops SafariKeys
----
---- Parameters:
----  * None
----
---- Returns:
----  * The SafariKeys object
----
---- Notes:
----  * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)
-function obj:stop()
-    obj.logger.df("-- Stopping SafariKeys")
-    self.chooser:hide()
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
-    end
-    return self
-end
-
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 -- SAFARI STUFF STARTS
@@ -218,6 +179,45 @@ function obj:pinOrUnpinTab()
         hs.alert.show(" ⍈ ", 1.5)
         safari:selectMenuItem(unpin_tab)
     end
+end
+
+--- SafariKeys:start()
+--- Method
+--- Starts SafariKeys
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The SafariKeys object
+function obj:start()
+    obj.logger.df("-- Starting SafariKeys")
+    if self.hotkeyShow then
+        self.hotkeyShow:enable()
+    end
+
+    return self
+end
+
+--- SafariKeys:stop()
+--- Method
+--- Stops SafariKeys
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The SafariKeys object
+---
+--- Notes:
+---  * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)
+function obj:stop()
+    obj.logger.df("-- Stopping SafariKeys")
+    self.chooser:hide()
+    if self.hotkeyShow then
+        self.hotkeyShow:disable()
+    end
+    return self
 end
 
 return obj
