@@ -68,18 +68,51 @@ end
 ------------------------------------------------------------------------------
 -- Gets current url from active safari tab and mails it to specified address
 -- problem is, no alert when DND is on. hmmm.
-------------------------------------------------------------------------------
 function obj.addToReadingList()
     local ok, result = hs.osascript.applescript(
     [[
         tell application "Safari"
 	        set result to URL of document 1
         end tell
-
         tell application "Safari" to add reading list item result
     ]])
 
-    ok = false
+    if (ok) then
+        hs.alert.show(" ⚯⁺")
+        obj.logger.i("Added item to reading list")
+    else
+        obj.logger.e("Error adding item to reading list")
+        obj.logger.e(result)
+    end
+end
+
+-- Attempt to accept URl if passed, and if no URL is passed
+-- Grabs the URL of the frontmost safari tab
+-- Not working as I can't get string interpolation working with
+-- hs.osascript
+function obj:addToReadingListTest(url)
+    local ok, result
+
+    if (not url) then
+        ok, result = hs.osascript.applescript(
+            [[
+                tell application "Safari"
+                    set result to URL of document 1
+                end tell
+                tell application "Safari" to add reading list item result
+            ]])
+    else
+        obj.logger.e("URL: " .. url)
+        local script = string.format([[tell application "Safari" to add reading list item %s]], url)
+        obj.logger.e(script)
+
+        ok, result = hs.osascript.applescript(script)
+        
+        if (not ok) then
+            obj.logger.e("error saving passed url")
+            obj.logger.e(result)
+        end
+    end
 
     if (ok) then
         hs.alert.show(" ⚯⁺")

@@ -23,16 +23,15 @@
     "Constructor" : [
 
     ],
-    "doc" : "",
-    "Method" : [
+    "items" : [
       {
-        "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
+        "name" : "start",
         "stripped_doc" : [
           "Starts SafariKeys",
           ""
         ],
-        "name" : "start",
         "desc" : "Starts SafariKeys",
+        "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
         "notes" : [
 
         ],
@@ -48,13 +47,13 @@
         ]
       },
       {
-        "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
+        "name" : "stop",
         "stripped_doc" : [
           "Stops SafariKeys",
           ""
         ],
-        "name" : "stop",
         "desc" : "Stops SafariKeys",
+        "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
         "notes" : [
           " * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -71,18 +70,15 @@
         ]
       }
     ],
-    "Field" : [
-
-    ],
-    "items" : [
+    "Method" : [
       {
-        "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
+        "name" : "start",
         "stripped_doc" : [
           "Starts SafariKeys",
           ""
         ],
-        "name" : "start",
         "desc" : "Starts SafariKeys",
+        "doc" : "Starts SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object",
         "notes" : [
 
         ],
@@ -98,13 +94,13 @@
         ]
       },
       {
-        "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
+        "name" : "stop",
         "stripped_doc" : [
           "Stops SafariKeys",
           ""
         ],
-        "name" : "stop",
         "desc" : "Stops SafariKeys",
+        "doc" : "Stops SafariKeys\n\nParameters:\n * None\n\nReturns:\n * The SafariKeys object\n\nNotes:\n * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)",
         "notes" : [
           " * Some SafariKeys plugins will continue performing background work even after this call (e.g. Spotlight searches)"
         ],
@@ -124,6 +120,10 @@
     "Command" : [
 
     ],
+    "Field" : [
+
+    ],
+    "doc" : "",
     "name" : "SafariKeys"
   }
 ]
