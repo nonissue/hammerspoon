@@ -7,8 +7,10 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
-obj.logger = hs.logger.new("SystemContexts")
+obj.logger = hs.logger.new("Context")
 obj.hotkeyShow = nil
+
+obj.pendingAlert = false
 
 obj.wifiWatcher = nil
 obj.screenWatcher = nil
@@ -37,14 +39,20 @@ local function has_value(tab, val)
     return false
 end
 
+local function atHome(SSID)
+    return has_value(homeSSIDs, SSID)
+end
+
 function obj.ssidChangedCallback()
     local newSSID = hs.wifi.currentNetwork()
 
-    if (has_value(homeSSIDs, newSSID)) and (not has_value(homeSSIDs, obj.currentSSID)) then
+    if (obj.currentSSID == newSSID) then
+        obj.logger.i("no change")
+    elseif (atHome(newSSID)) and (not has_value(homeSSIDs, obj.currentSSID)) then
         -- we are at home!
         obj.logger.i("@home")
         obj.homeArrived()
-    elseif not has_value(homeSSIDs, newSSID) then
+    elseif not atHome(newSSID) then
         obj.logger.i("@away")
         obj.homeDeparted()
     else
@@ -85,8 +93,21 @@ end
 -- this catches situations where we get somewhere, computer wakes from sleep,
 -- but doesn't connect to a network automatically. I still want things set
 function obj.muteOnWake(eventType)
-    if (eventType == hs.caffeinate.watcher.systemDidWake and (not has_value(homeSSIDs, hs.wifi.currentNetwork()))) then
+
+    -- handle hs.caffeinate.watcher.screensDidWake
+    -- as well?
+    local didWake = hs.caffeinate.watcher.screensDidWake
+    obj.logger.i(eventType)
+
+    if (eventType == didWake and (not atHome(obj.currentSSID))) then
+        obj.logger.i("CW: Woke from sleep, not @home")
         obj.homeDeparted()
+    elseif (eventType == didWake) and (obj.currentSSID == "@home") then
+        obj.homeArrived()
+        obj.logger.i("CW: Woke from sleep, @home")
+    elseif (eventType ~= didWake) then
+        obj.logger.i("CW: EventType " .. eventType)
+        obj.logger.i("CW: SSID" .. obj.currentSSID)
     end
 end
 
@@ -187,7 +208,6 @@ function obj:init()
     obj.initWifiWatcher()
     obj.initCafWatcher()
     obj.initScreenWatcher()
-
 
     obj.menu = {
         {
