@@ -49,7 +49,6 @@ function obj.ssidChangedCallback()
     if (obj.currentSSID == newSSID) then
         obj.logger.i("no change")
     elseif (atHome(newSSID)) and (not has_value(homeSSIDs, obj.currentSSID)) then
-        -- we are at home!
         obj.logger.i("@home")
         obj.homeArrived()
     elseif not atHome(newSSID) then
@@ -57,10 +56,10 @@ function obj.ssidChangedCallback()
         obj.homeDeparted()
     else
         if newSSID ~= nil then
-            obj.logger.e("SC: Unhandled SSID!" .. newSSID)
+            obj.logger.e("[SC] Unhandled SSID: " .. newSSID)
         end
-        obj.logger.e("SC: Unhandled SSID case!")
-        hs.alert("SystemContexts Error")
+
+        obj.logger.e("[SC] No SSID found!")
     end
 
     obj.currentSSID = newSSID
@@ -75,8 +74,8 @@ function obj.homeArrived()
     os.execute("sudo pmset -b displaysleep 5 sleep 10")
     os.execute("sudo pmset -c displaysleep 5 sleep 10")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
-    -- hs.notify.show("@home", "", "")
-    hs.alert(" ☛ ⌂ ", 1)
+
+    hs.alert(" ☛ ⌂ ", 3)
     obj.location = "@home"
 end
 
@@ -92,22 +91,20 @@ end
 
 -- this catches situations where we get somewhere, computer wakes from sleep,
 -- but doesn't connect to a network automatically. I still want things set
-function obj.muteOnWake(eventType)
-
-    -- handle hs.caffeinate.watcher.screensDidWake
-    -- as well?
-    local didWake = hs.caffeinate.watcher.screensDidWake
-    obj.logger.i(eventType)
+function obj.cafChangedCallback(eventType)
+    -- handle both?:
+        -- hs.caffeinate.watcher.screensDidWake
+        -- hs.caffeinate.watcher.systemDidWake
+    local didWake = hs.caffeinate.watcher.systemDidWake
 
     if (eventType == didWake and (not atHome(obj.currentSSID))) then
-        obj.logger.i("CW: Woke from sleep, not @home")
+        obj.logger.i("[CW] Woke from sleep, not @home")
         obj.homeDeparted()
-    elseif (eventType == didWake) and (obj.currentSSID == "@home") then
+    elseif (eventType == didWake) and (atHome(obj.currentSSID)) then
+        obj.logger.i("[CW] Woke from sleep, @home")
         obj.homeArrived()
-        obj.logger.i("CW: Woke from sleep, @home")
     elseif (eventType ~= didWake) then
-        obj.logger.i("CW: EventType " .. eventType)
-        obj.logger.i("CW: SSID" .. obj.currentSSID)
+        obj.logger.i("[CW] nonWakeEvent: " .. eventType)
     end
 end
 
@@ -123,8 +120,8 @@ end
 function obj.moveDockDown()
     hs.applescript.applescript(
         [[
-        tell application "System Events" to set the autohide of the dock preferences to false
-        tell application "System Events" to set the screen edge of the dock preferences to bottom
+            tell application "System Events" to set the autohide of the dock preferences to false
+            tell application "System Events" to set the screen edge of the dock preferences to bottom
       ]]
     )
 end
@@ -143,40 +140,49 @@ function obj.screenWatcherCallback()
 
     -- if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
+        obj.logger.i("[SW] no change")
         -- handle unnecessary/redundant screenWatcher callbacks
-        hs.alert("SW: no change", 1)
-    elseif hs.screen.find("Cinema HD") then -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
+    elseif hs.screen.find("Cinema HD") then
+        -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
         -- Changed above line to use "Cinema HD" as display ID was not reliable?
         -- if we have a different amount of displays and one of them is
         -- our cinema display, we are @desk
-        hs.alert("SW: desk", 1)
+        obj.logger.i("[SW] no change")
+
+        hs.alert("[SW] desk", 1)
         obj.docked = "docked"
         obj.moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.currentScreens == "@desk" then
-        hs.alert("SW: undocking", 1)
-        obj.docked = "mobile"
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.docked == "@desk" then
+        obj.logger.i("[SW] undocking")
+        hs.alert("[SW] undocking", 3)
 
+        obj.docked = "mobile"
         obj.moveDockLeft()
+
+        -- Move these to a hs key value store?
         obj.checkAndEject("ExternalSSD")
         obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
-        hs.alert("SW: mobile", 1)
+        obj.logger.i("[SW] mobile")
+        hs.alert("[SW] mobile", 3)
+
         obj.docked = "mobile"
 
         obj:moveDockLeft()
     else
-        hs.alert("ERROR: Unhandled screenWatcher case", 5)
-        obj.docked = "error"
-        obj.location = "error"
+        obj.logger.e("[SW] Error!")
+        hs.alert("ERROR: Unhandled screenWatcher case", 1)
 
-        obj.logger.e("SW Error!")
+        obj.docked = "error"
     end
 
     obj.lastNumberOfScreens = newNumberOfScreens
 end
 
 function obj.initWifiWatcher()
-    if not obj.currentNetwork then
+    -- if location hasn't been set,
+    -- run the callback once to populate it
+    if not obj.location then
         obj.ssidChangedCallback()
     end
 
@@ -184,11 +190,16 @@ function obj.initWifiWatcher()
 end
 
 function obj.initCafWatcher()
-    obj.cafWatcher = hs.caffeinate.watcher.new(obj.muteOnWake)
+    obj.cafWatcher = hs.caffeinate.watcher.new(obj.cafChangedCallback)
 end
 
 function obj.initScreenWatcher()
-    obj.screenWatcherCallback()
+    -- if docked hasn't been set,
+    -- run the callback once to populate it
+    if not obj.docked then
+        obj.screenWatcherCallback()
+    end
+
     obj.screenWatcher = hs.screen.watcher.new(obj.screenWatcherCallback)
 end
 
@@ -223,9 +234,6 @@ function obj:init()
             end
         }
     }
-    -- table.insert(
-    --     obj.menu,
-    -- )
 
     obj.menubar:setMenu(obj.menu)
 
@@ -240,7 +248,6 @@ function obj:start()
     end
 
     obj:init()
-    --   obj.initWifiWatcher()
 
     obj.wifiWatcher:start()
     obj.cafWatcher:start()

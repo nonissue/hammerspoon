@@ -65,14 +65,14 @@ hs_reload.init()
 -- EDIT: maybe check this
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
-hs.loadSpoon('CTRLESC')
+-- hs.loadSpoon('CTRLESC')
 hs.loadSpoon('CTRLESC'):start()
 
 ------------------------------------------------------------------------------
 -- SystemContexts.spoon / by me
 ------------------------------------------------------------------------------
-hs.loadSpoon("Context")
-spoon.Context:start()
+hs.loadSpoon("Context"):start()
+-- spoon.Context:start()
 
 
 ------------------------------------------------------------------------------
@@ -175,6 +175,8 @@ hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
 
+-- COPIED FROM: https://github.com/af/dotfiles/blob/63370411e709e006b26f07781376da1e6d7ae2c8/hammerspoon/utils.lua#L51
+-- Close all open notifications
 local function dismissAllNotifications()
     local success, result = hs.applescript([[
         tell application "System Events"
