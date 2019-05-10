@@ -1,3 +1,14 @@
+--[[
+    Todo:
+    - [ ] combine alerts when multiple callbacks are fired
+    - [ ] move SSIDs in hs key value store
+    - [ ] make sure all wake events are handle (screen, system)
+    - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
+    - [ ] move displays to hs key value store
+    - [ ] move list of drives to eject to hs key value store
+]]
+
+
 local obj = {}
 obj.__index = obj
 
@@ -71,8 +82,8 @@ function obj.homeArrived()
     -- For Example!
     -- IN /etc/sudoers.d/power_mgmt (sudo visudo -f /etc/sudoers.d/power_mgmt)
     -- andrewwilliams ALL=(root) NOPASSWD: /usr/bin/pmset *
-    os.execute("sudo pmset -b displaysleep 5 sleep 10")
-    os.execute("sudo pmset -c displaysleep 5 sleep 10")
+    os.execute("sudo pmset -b displaysleep 2 sleep 10")
+    os.execute("sudo pmset -c displaysleep 5 sleep 15")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
 
     hs.alert(" ☛ ⌂ ", 3)
