@@ -174,3 +174,21 @@ hs.hotkey.showHotkeys(mash, "space")
 hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
+
+local function dismissAllNotifications()
+    local success, result = hs.applescript([[
+        tell application "System Events"
+        tell process "Notification Center"
+            set theWindows to every window
+            repeat with i from 1 to number of items in theWindows
+                set this_item to item i of theWindows
+                try
+                    click button 1 of this_item
+                end try
+            end repeat
+        end tell
+    end tell
+    ]])
+end
+
+hs.hotkey.bind(mash, "N", dismissAllNotifications)
