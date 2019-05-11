@@ -1,0 +1,9 @@
+tell application "Safari"
+	set original_window to front window
+	set tab_index to index of current tab of original_window
+	set tab_limit to index of last tab of original_window
+	
+	make new document
+	move tabs tab_index thru -1 of original_window to front window
+	close first tab of front window
+end tell
