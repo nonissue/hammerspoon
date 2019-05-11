@@ -5,4 +5,7 @@
     "lua.preferLuaCheckErrors": true,
     "lua.luacheckPath": "/usr/local/bin/luacheck",
     "lua.linting.enabled": true,
+    "cSpell.words": [
+        "fnutils"
+    ],
 }
