@@ -137,9 +137,11 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
+                obj.logger.i("Hiding chooser")
                 self.resChooser:hide()
                 return
             else
+                obj.logger.i("Choice selected")
                 self:chooserCallback(choice)
             end
         end
@@ -148,7 +150,9 @@ function obj:init()
     self.resChooser:choices(targetDisplay)
     self.resChooser:rows(#targetDisplay)
 
-    self.resChooser:width(20)
+    self.resChooser:placeholderText("Select a resolution")
+    self.resChooser:searchSubText(true)
+    self.resChooser:width(30)
     self.resChooser:bgDark(true)
     self.resChooser:fgColor({hex = "#ccc"})
     self.resChooser:subTextColor({hex = "#888"})
