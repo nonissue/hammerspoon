@@ -24,6 +24,8 @@ hs.logger.defaultLogLevel = "debug"
 -- This is great, disables all the superfluous hotkey logging
 require("hs.hotkey").setLogLevel("warning")
 
+-- package.path = package.path .. ";WIP/"
+
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
