@@ -258,7 +258,7 @@ function obj:start()
         self.hotkeyShow:enable()
     end
 
-    obj:init()
+    -- obj:init()
 
     obj.wifiWatcher:start()
     obj.cafWatcher:start()
