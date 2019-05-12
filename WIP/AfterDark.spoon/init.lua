@@ -1,13 +1,14 @@
---[[
-    Todo:
-    - [ ] combine alerts when multiple callbacks are fired
-    - [ ] move SSIDs in hs key value store
-    - [ ] make sure all wake events are handle (screen, system)
-    - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
-    - [ ] move displays to hs key value store
-    - [ ] move list of drives to eject to hs key value store
-]]
+-- inspiration:
+-- https://github.com/Hammerspoon/Spoons/tree/master/Source/Shade.spoon
+-- https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
+-- https://github.com/HarshilShah/Nocturnal
 
+--[[
+Todo:
+
+- [ ] fix animation
+- [ ] handle new event while animating (cancel current?)
+]]
 
 local obj = {}
 obj.__index = obj
@@ -22,21 +23,19 @@ obj.logger = hs.logger.new("MenuTest")
 obj.hotkeyShow = nil
 
 obj.menubar = nil
-obj.menuIcon = "Test"
 obj.menu = {}
 
 --Find out screen size. Currently using only the primary screen
 obj.screenSize = hs.screen.primaryScreen()
 
 --Returns a hs.geometry rect describing screen's frame in absolute coordinates, including the dock and menu.
+-- might be better to do this with canvas?
 obj.shade = hs.drawing.rectangle(obj.screenSize:fullFrame())
 
---- Shade.shadeTransparency
+--- AfterDark.shadeTransparency
 --- Variable
---- Contains the alpha (transparency) of the overlay, from 0.0 (completely
---- transparent to 1.0 (completely opaque). Default is 0.5.
-obj.shadeTransparency = 1.5
-
+--- Set to greater than 1
+obj.shadeTransparency = 1.2
 
 --shade characteristics
 --white - the ratio of white to black from 0.0 (completely black) to 1.0 (completely white); default = 0.
@@ -45,9 +44,9 @@ obj.shade:setFillColor({["white"]=0, ["alpha"] = obj.shadeTransparency })
 obj.shade:setStroke(false):setFill(true)
 
 --set to cover the whole screen, all spaces and expose
-obj.shade:bringToFront(true):setBehavior(17)
+obj.shade:bringToFront(false):setBehavior(17)
 
---- Shade.darkModeIsOn
+--- AfterDark.darkModeIsOn
 --- Variable
 --- Flag for Shade status, 'false' means shade off, 'true' means on.
 obj.darkModeIsOn = nil
@@ -111,28 +110,32 @@ obj.darkModeScript = [[
 ]]
 
 function obj.toggleDarkMode()
+    hs.alert.closeAll()
+    hs.alert("ANIMATING!", 3)
     obj.start()
     hs.osascript.applescript(obj.darkModeScript)
-
     -- super ugly transition as change is kind of janky
+    -- idea lifted from: https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
     local timer
     local origOpacity = obj.shadeTransparency
+    -- local opacity = obj.shadeTransparency + 0.3
     timer = hs.timer.doEvery(
         0.05,
         function()
             if obj.shadeTransparency > 0.1 then
-            obj.shadeTransparency = obj.shadeTransparency - 0.05
-            obj.shade:setFillColor({["white"]=0, ["alpha"] = obj.shadeTransparency })
+                obj.shadeTransparency = obj.shadeTransparency - 0.02
+                obj.shade:setFillColor({["white"]=0, ["alpha"] = obj.shadeTransparency })
             else
-            timer:stop()
-            timer = nil
-            obj.shade:hide()
-            obj.shadeTransparency = origOpacity
+                timer:stop()
+                timer = nil
+                obj.shade:hide()
+                obj.shadeTransparency = origOpacity
             end
     end)
-	-- else
-    --     obj.logger.e("Error toggling Dark Mode")
-	-- end
+
+    -- can use the below function to eject during dev
+    -- so we dont get a rectangle stuck on the screen covering everything lol
+    -- hs.timer.doAfter(1.4, function() hs.alert("Ejecting...") timer:stop() obj:stop() end)
 end
 
 function obj:init()
@@ -144,7 +147,7 @@ function obj:init()
 
     --create icon on the menu bar and set flag to 'false'
     self.menubar = hs.menubar.new()
-    self.menubar:setIcon(obj.iconOff)
+    self.menubar:setIcon(obj.iconOn)
     self.menubar:setClickCallback(obj.toggleDarkMode)
     self.menubar:setTooltip('AfterDark')
 
@@ -169,13 +172,12 @@ function obj.start()
 
     --Find out screen size. Currently using only the primary screen
     obj.screenSize = hs.screen.primaryScreen()
-
+    
     --Returns a hs.geometry rect describing screen's frame in absolute coordinates, including the dock and menu.
     obj.shade = hs.drawing.rectangle(obj.screenSize:fullFrame())
 
     -- use something like the following to create a transitiion:
-    -- https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
-    obj.shade:setFillColor({["alpha"] = obj.shadeTransparency })
+    obj.shade:setFillColor({["alpha"] = obj.shadeTransparency})
     obj.shade:show()
     obj.darkModeIsOn = true
     obj.menubar:setIcon(obj.iconOn)
