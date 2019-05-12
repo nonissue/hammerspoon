@@ -88,7 +88,7 @@ function obj:menubarItems(res)
                 fn = function()
                     self.changeRes(res[i]["res"])
                 end,
-                checked = false,
+                checked = false
             }
         )
         -- make menubar item menu indicate current res

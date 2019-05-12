@@ -24,7 +24,10 @@ hs.logger.defaultLogLevel = "debug"
 -- This is great, disables all the superfluous hotkey logging
 require("hs.hotkey").setLogLevel("warning")
 
--- package.path = package.path .. ";WIP/"
+-- Load spoons from our WIP dir
+package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
+print(hs.configdir)
+
 
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
@@ -52,7 +55,7 @@ hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindo
 -- load scratch stuff
 -- package.path = package.path .. ";scratch/?.lua"
 
-package.path = package.path .. ";WIP/?.spoon"
+-- package.path = package.path .. ";WIP/?.spoon"
 -- hs.loadSpoon("MenuTest.spoon")
 
 -- TODO: Let user enable/display spoons as desired.
@@ -154,6 +157,8 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 -- hs.loadSpoon("Crib")
 -- spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
+
+hs.loadSpoon("AfterDark")
 
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
