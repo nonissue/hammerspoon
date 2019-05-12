@@ -36,11 +36,12 @@ obj.shade = hs.drawing.rectangle(obj.screenSize:fullFrame())
 --- Variable
 --- Set to greater than 1
 obj.shadeTransparency = 1.2
+obj.timer = nil
 
 --shade characteristics
 --white - the ratio of white to black from 0.0 (completely black) to 1.0 (completely white); default = 0.
 --alpha - the color transparency from 0.0 (completely transparent) to 1.0 (completely opaque)
-obj.shade:setFillColor({["white"]=0, ["alpha"] = obj.shadeTransparency })
+obj.shade:setFillColor({["blue"]=0.5, ["alpha"] = obj.shadeTransparency })
 obj.shade:setStroke(false):setFill(true)
 
 --set to cover the whole screen, all spaces and expose
@@ -50,6 +51,42 @@ obj.shade:bringToFront(false):setBehavior(17)
 --- Variable
 --- Flag for Shade status, 'false' means shade off, 'true' means on.
 obj.darkModeIsOn = nil
+
+local lightMode = hs.image.imageFromASCII("1.........2\n" ..
+"...........\n" ..
+"...........\n" ..
+".....b.....\n" ..
+"...........\n" ..
+"...........\n" ..
+"....e.f....\n" ..
+"...........\n" ..
+"...a...c...\n" ..
+"...........\n" ..
+"4.........3",
+{
+{ strokeColor = { red = 1 }, fillColor = { alpha = 0.0 } },
+{ strokeColor = { blue = 1 }, fillColor = { alpha = 0.0 }, shouldClose = false },
+{ strokeColor = { green = 1 } },
+{}
+})
+
+local darkMode = hs.image.imageFromASCII("1.........2\n" ..
+"...........\n" ..
+"...........\n" ..
+".....b.....\n" ..
+"...........\n" ..
+"...........\n" ..
+"....e.f....\n" ..
+"...........\n" ..
+"...a...c...\n" ..
+"...........\n" ..
+"4.........3",
+{
+{ strokeColor = { white = .75 }, fillColor = { alpha = 0.5 } },
+{ strokeColor = { white = .75 }, fillColor = { alpha = 0.0 }, shouldClose = false },
+{ strokeColor = { white = .75 } },
+{}
+})
 
 --String containing an ASCII diagram to be rendered as a menu bar icon for when Shade is OFF.
 obj.iconOff = "ASCII:" ..
@@ -110,29 +147,33 @@ obj.darkModeScript = [[
 ]]
 
 function obj.toggleDarkMode()
+    if obj.timer then
+        hs.alert("Already transitioning!")
+        return
+    end
     hs.alert.closeAll()
-    hs.alert("ANIMATING!", 3)
+    -- hs.alert("ANIMATING!", 0.5)
     obj.start()
     hs.osascript.applescript(obj.darkModeScript)
     -- super ugly transition as change is kind of janky
     -- idea lifted from: https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
-    local timer
+    -- local timer
     local origOpacity = obj.shadeTransparency
     -- local opacity = obj.shadeTransparency + 0.3
-    timer = hs.timer.doEvery(
-        0.05,
+    obj.timer = hs.timer.doEvery(
+        1,
         function()
             if obj.shadeTransparency > 0.1 then
-                obj.shadeTransparency = obj.shadeTransparency - 0.02
-                obj.shade:setFillColor({["white"]=0, ["alpha"] = obj.shadeTransparency })
+                obj.shadeTransparency = obj.shadeTransparency - 0.7
+                obj.shade:setFillColor({["white"]=0.5, ["alpha"] = obj.shadeTransparency })
             else
-                timer:stop()
-                timer = nil
+                obj.timer:stop()
+                obj.timer = nil
                 obj.shade:hide()
                 obj.shadeTransparency = origOpacity
             end
     end)
-
+    -- obj.timer = nil
     -- can use the below function to eject during dev
     -- so we dont get a rectangle stuck on the screen covering everything lol
     -- hs.timer.doAfter(1.4, function() hs.alert("Ejecting...") timer:stop() obj:stop() end)
@@ -147,7 +188,7 @@ function obj:init()
 
     --create icon on the menu bar and set flag to 'false'
     self.menubar = hs.menubar.new()
-    self.menubar:setIcon(obj.iconOn)
+    self.menubar:setTitle("☀︎")
     self.menubar:setClickCallback(obj.toggleDarkMode)
     self.menubar:setTooltip('AfterDark')
 
@@ -180,7 +221,7 @@ function obj.start()
     obj.shade:setFillColor({["alpha"] = obj.shadeTransparency})
     obj.shade:show()
     obj.darkModeIsOn = true
-    obj.menubar:setIcon(obj.iconOn)
+    obj.menubar:setTitle("☀︎")
 end
 
   --- Shade:stop()
@@ -197,7 +238,7 @@ function obj.stop()
 
     obj.shade:hide()
     obj.darkModeIsOn = false
-    obj.menubar:setIcon(obj.iconOff)
+    obj.menubar:setTitle("︎︎︎☀︎")
 end
 
 -- -- start watchers

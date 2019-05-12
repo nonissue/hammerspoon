@@ -160,12 +160,12 @@ function obj.screenWatcherCallback()
         -- our cinema display, we are @desk
         obj.logger.i("[SW] no change")
 
-        hs.alert("[SW] desk", 1)
+        -- hs.alert("[SW] desk", 1)
         obj.docked = "docked"
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.docked == "@desk" then
         obj.logger.i("[SW] undocking")
-        hs.alert("[SW] undocking", 3)
+        -- hs.alert("[SW] undocking", 3)
 
         obj.docked = "mobile"
         obj.moveDockLeft()
@@ -175,7 +175,7 @@ function obj.screenWatcherCallback()
         obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
         obj.logger.i("[SW] mobile")
-        hs.alert("[SW] mobile", 3)
+        -- hs.alert("[SW] mobile", 3)
 
         obj.docked = "mobile"
 

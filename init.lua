@@ -26,8 +26,9 @@ require("hs.hotkey").setLogLevel("warning")
 
 -- Load spoons from our WIP dir
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
-print(hs.configdir)
+package.path = package.path .. ";WIP/?.lua"
 
+-- chooserToolbar = require("chooserToolbar")
 
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
