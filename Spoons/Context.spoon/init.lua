@@ -1,11 +1,16 @@
 --[[
     Todo:
     - [ ] combine alerts when multiple callbacks are fired
-    - [ ] move SSIDs in hs key value store
+    - [x] move SSIDs in hs key value store
     - [ ] make sure all wake events are handle (screen, system)
     - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
     - [ ] move displays to hs key value store
     - [ ] move list of drives to eject to hs key value store
+]]
+
+--[[
+    Values stored in hs.settings:
+    -- homeSSIDs
 ]]
 
 
@@ -37,9 +42,10 @@ obj.currentSSID = nil
 obj.currentScreens = nil
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 
--- move to key value store
-local homeSSIDs = {"BROMEGA", "ComfortInn Plus", "1614 Apple II"}
+-- moved to key/val store
+local homeSSIDs = hs.settings.get("homeSSIDs")
 
+-- exists in utilies library, but not accessible from spoon
 local function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then

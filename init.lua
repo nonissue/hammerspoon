@@ -45,6 +45,7 @@ reload = hs.reload
 pbcopy = hs.pasteboard.setContents
 print_t = utils.print_r
 print_r = utils.print_r
+has_val = utils.has_value
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
