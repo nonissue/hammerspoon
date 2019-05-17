@@ -2,9 +2,9 @@
     Todo:
     - [ ] combine alerts when multiple callbacks are fired
     - [x] move SSIDs in hs key value store
-    - [ ] make sure all wake events are handle (screen, system)
+    - [x] make sure all wake events are handle (screen, system)
     - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
-    - [ ] move displays to hs key value store
+    - [x] move displays to hs key value store
     - [ ] move list of drives to eject to hs key value store
 ]]
 
@@ -44,10 +44,8 @@ obj.lastNumberOfScreens = #hs.screen.allScreens()
 -- spoon options
 obj.shownInMenu = false
 
--- Spoon config options
--- moved to key/val store
+-- fetched from hs key/value store
 local homeSSIDs = hs.settings.get("homeSSIDs")
-
 
 -- exists in utilies library, but not accessible from spoon
 local function has_value(tab, val)
@@ -63,6 +61,10 @@ end
 local function atHome(SSID)
     return has_value(homeSSIDs, SSID)
 end
+
+------------------------------------------------------------------------------
+--- Fucntions that describe system changes
+------------------------------------------------------------------------------
 
 --- Context.moveDockLeft()
 --- Method
@@ -184,6 +186,10 @@ function obj.ssidChangedCallback()
     obj.currentSSID = newSSID
 end
 
+------------------------------------------------------------------------------
+--- Callback functions (which are called based on certain changes)
+------------------------------------------------------------------------------
+
 --- Context.cafChangedCallback()
 --- Method
 ---
@@ -193,7 +199,7 @@ end
 --- Returns:
 ---  * None
 function obj.cafChangedCallback(eventType)
-    -- handle both?:
+    -- I think both are handled?
         -- hs.caffeinate.watcher.screensDidWake
         -- hs.caffeinate.watcher.systemDidWake
     local didWake = hs.caffeinate.watcher.systemDidWake
@@ -204,8 +210,6 @@ function obj.cafChangedCallback(eventType)
     elseif (eventType == didWake) and (atHome(obj.currentSSID)) then
         obj.logger.i("[CW] Woke from sleep, @home")
         obj.homeArrived()
-    -- elseif (eventType ~= didWake) then
-    --     obj.logger.i("[CW] nonWakeEvent: " .. eventType)
     end
 end
 
@@ -261,6 +265,10 @@ function obj.screenWatcherCallback()
     obj.lastNumberOfScreens = newNumberOfScreens
 end
 
+------------------------------------------------------------------------------
+--- Watchers
+------------------------------------------------------------------------------
+
 --- Context.initWifiWatcher()
 --- Method
 ---
@@ -295,9 +303,7 @@ end
 --- Method
 ---
 --- Parameters:
----  * options - An optional table containing spoon configuration options
----     showMenu - boolean which indicates whether menubar item is shown
----     animate - boolean which indicates whether ui mode toggle is animated
+---  * None
 ---
 --- Returns:
 ---  * None
@@ -311,14 +317,15 @@ function obj.initScreenWatcher()
     obj.screenWatcher = hs.screen.watcher.new(obj.screenWatcherCallback)
 end
 
+------------------------------------------------------------------------------
+--- Default spoon api methods
+------------------------------------------------------------------------------
 
 --- Context:init()
 --- Method
 ---
 --- Parameters:
----  * options - An optional table containing spoon configuration options
----     showMenu - boolean which indicates whether menubar item is shown
----     animate - boolean which indicates whether ui mode toggle is animated
+---  * None
 ---
 --- Returns:
 ---  * None
@@ -360,7 +367,8 @@ function obj:start(options)
         obj.shownInMenu = options.showMenu or obj.shownInMenu
     end
 
-    --create icon on the menu bar and set flag to 'false'
+    -- creates menubar item if desired
+    -- currently menu functions dont do anything
     if obj.shownInMenu then
         obj.menu = {
             {
