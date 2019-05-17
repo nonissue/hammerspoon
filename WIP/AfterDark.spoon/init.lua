@@ -5,9 +5,10 @@
 
 --[[
 Todo:
-
 - [ ] fix animation
-- [ ] handle new event while animating (cancel current?)
+- [x] handle new event while animating (cancel current?)
+- [x] handle screensize change after init
+- [ ] add option to disable animation (Menubar dropdown?)
 ]]
 
 local obj = {}
@@ -24,6 +25,10 @@ obj.hotkeyShow = nil
 
 obj.menubar = nil
 obj.menu = {}
+
+--- Spoon options
+obj.shownInMenu = false
+obj.animate = false
 
 --- AfterDark.darkModeIsOn
 --- Variable
@@ -91,28 +96,32 @@ function obj.toggleDarkMode()
     -- create our default overlay
     -- the createOverlay function also adjusts rect size
     -- if screen dimensions have changed
-    obj.createOverlay()
-    obj.overlay:show()
+    if obj.animate then
+        obj.createOverlay()
+        obj.overlay:show()
+    end
 
     hs.osascript.applescript(obj.darkModeScript)
 
     -- Kind of janky screen overlay / transition.
     -- Idea lifted and mispurposed from:
     -- https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
-    local origOpacity = obj.overlayTransparency
-    obj.timer = hs.timer.doEvery(
-        0.1,
-        function()
-            if obj.overlayTransparency > 0.1 then
-                obj.overlayTransparency = obj.overlayTransparency - 0.1
-                obj.overlay:setFillColor({["white"]=0.0, ["alpha"] = obj.overlayTransparency })
-            else
-                obj.timer:stop()
-                obj.timer = nil
-                obj.overlay:hide()
-                obj.overlayTransparency = origOpacity
-            end
-    end)
+    if obj.animate then
+        local origOpacity = obj.overlayTransparency
+        obj.timer = hs.timer.doEvery(
+            0.1,
+            function()
+                if obj.overlayTransparency > 0.1 then
+                    obj.overlayTransparency = obj.overlayTransparency - 0.1
+                    obj.overlay:setFillColor({["white"]=0.0, ["alpha"] = obj.overlayTransparency })
+                else
+                    obj.timer:stop()
+                    obj.timer = nil
+                    obj.overlay:hide()
+                    obj.overlayTransparency = origOpacity
+                end
+        end)
+    end
 
     -- In case we want an escape to make sure the rectangle overlay is truly gone
     -- hs.timer.doAfter(1.4, function() hs.alert("Ejecting...") timer:stop() obj:stop() end)
@@ -136,12 +145,12 @@ end
 function obj:init()
     obj.logger.i("-- AfterDark initialized")
 
-    if self.menubar then
-        self.menubar:delete()
+    if obj.menubar then
+        obj.menubar:delete()
     end
 
-    if self.overlay then
-        self.overlay:delete()
+    if obj.overlay then
+        obj.overlay:delete()
     end
 
     --Find out screen size. Currently using only the primary screen
@@ -166,13 +175,7 @@ function obj:init()
     --set to cover the whole screen, all spaces and expose
     obj.overlay:bringToFront(false):setBehavior(17)
 
-    --create icon on the menu bar and set flag to 'false'
-    self.menubar = hs.menubar.new()
-    self.menubar:setTitle("☀︎")
-    self.menubar:setClickCallback(obj.toggleDarkMode)
-    self.menubar:setTooltip('AfterDark')
-
-    self.darkModeIsOn = false
+    obj.darkModeIsOn = false
 
     return self
 end
@@ -181,11 +184,25 @@ end
 --- Method
 ---
 --- Parameters:
----  * None
+---  * options - An optional table containing spoon configuration options
 ---
 --- Returns:
 ---  * None
-function obj.start()
+function obj:start(options)
+    obj.init()
+
+    if options then
+        obj.shownInMenu = options.showMenu or obj.shownInMenu
+        obj.animate = options.animate or obj.animate
+    end
+
+    --create icon on the menu bar and set flag to 'false'
+    if obj.shownInMenu then
+        obj.menubar = hs.menubar.new()
+        obj.menubar:setTitle("☀︎")
+        obj.menubar:setClickCallback(obj.toggleDarkMode)
+        obj.menubar:setTooltip('AfterDark')
+    end
 
     return
 end
