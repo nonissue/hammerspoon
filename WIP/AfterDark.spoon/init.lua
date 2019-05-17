@@ -5,10 +5,10 @@
 
 --[[
 Todo:
-- [ ] fix animation
+- [x] fix animation
 - [x] handle new event while animating (cancel current?)
 - [x] handle screensize change after init
-- [ ] add option to disable animation (Menubar dropdown?)
+- [x] add option to disable animation (Menubar dropdown?)
 ]]
 
 local obj = {}
