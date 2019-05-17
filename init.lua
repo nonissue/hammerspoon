@@ -82,11 +82,20 @@ hs_reload.init()
 hs.loadSpoon('CTRLESC'):start()
 
 ------------------------------------------------------------------------------
--- SystemContexts.spoon / by me
+-- Context.spoon / by me
 ------------------------------------------------------------------------------
-hs.loadSpoon("Context"):start()
--- spoon.Context:start()
-
+-- Watches for wifi ssid changes + screen resolution changes
+-- If changes are detected and match a series of rules
+-- Systemwide settings are configured
+-- For example:
+--  * On wifi ssid change, if isn't one of our home networks
+--    system is muted and screenlock is set to a short time
+--
+-- PARAMS:
+-- [Optional] Accepts a boolean which dictates whether the menubar item is shown
+-- Defaults to false if nothing is passed
+------------------------------------------------------------------------------
+hs.loadSpoon("Context"):start(false)
 
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
@@ -111,7 +120,6 @@ spoon.SafariKeys:bindHotkeys(safariHotkeys)
 -- Ultimately this probably isn't necessary, but I do occasionally use it
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
--- TODO: use default hotkeys
 hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 
 ------------------------------------------------------------------------------
@@ -153,14 +161,25 @@ hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 ------------------------------------------------------------------------------
+-- [WIP] AfterDark.spoon / by me
+------------------------------------------------------------------------------
+-- Dark mode toggle in menubar
+-- PARAMS:
+-- [Optional] Accepts a boolean which dictates whether the menubar item is shown
+-- Defaults to false if nothing is passed
+------------------------------------------------------------------------------
+hs.loadSpoon("AfterDark"):start({showMenu = true})
+-- hs.loadSpoon("AfterDark"):start()
+
+
+------------------------------------------------------------------------------
 -- Crib.spoon / by me
 ------------------------------------------------------------------------------
 -- WIP, not finished at all
 ------------------------------------------------------------------------------
 -- hs.loadSpoon("Crib")
 -- spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
-
-hs.loadSpoon("AfterDark")
+------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
