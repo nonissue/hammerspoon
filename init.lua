@@ -169,7 +169,6 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 hs.loadSpoon("AfterDark"):start({showMenu = true})
--- hs.loadSpoon("AfterDark"):start()
 
 
 ------------------------------------------------------------------------------
