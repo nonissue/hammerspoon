@@ -24,8 +24,10 @@ hs.logger.defaultLogLevel = "debug"
 -- This is great, disables all the superfluous hotkey logging
 require("hs.hotkey").setLogLevel("warning")
 
--- Load spoons from our WIP dir
+-- Add WIP Spoons to path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
+
+-- Add WIP files to path
 package.path = package.path .. ";WIP/?.lua"
 
 -- chooserToolbar = require("chooserToolbar")
@@ -45,7 +47,6 @@ reload = hs.reload
 pbcopy = hs.pasteboard.setContents
 print_t = utils.print_r
 print_r = utils.print_r
-has_val = utils.has_value
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
@@ -168,7 +169,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
-hs.loadSpoon("AfterDark"):start({showMenu = true})
+hs.loadSpoon("AfterDark"):start({showMenu = false})
 
 
 ------------------------------------------------------------------------------
@@ -224,6 +225,10 @@ local function dismissAllNotifications()
         end tell
     end tell
     ]])
+    if not success then
+        hs.logger.e("Error dismissing notifcations")
+        hs.logger.e(result)
+    end
 end
 
 hs.hotkey.bind(mash, "N", dismissAllNotifications)
