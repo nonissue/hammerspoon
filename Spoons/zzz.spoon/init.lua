@@ -4,13 +4,14 @@
 
 --[[
     TODO:
+    * [ ] add spoon options (enable/disable chooser/menu)
     * [x] remove unused/functions vars
     * [ ] proper spoon docs
     * [ ] proper spoon-style key binding
     * [x] fix lag with timer inc/dec actions
         * timer has to be deleted then recreated which looks bad
     * [x] refactor so only one timer object needed
-        * currently using two: 
+        * currently using two:
             doAt for sysleep
             doEvery for menubar display
     * [ ] simplify timerChooserCallback() logic
@@ -29,6 +30,8 @@ obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
+
+obj.logger = hs.logger.new("Zzz")
 
 obj.chooser = nil
 obj.timerEvent = nil
@@ -203,8 +206,10 @@ end
 function obj:startTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
+        self.logger.e("Timer already running?")
         hs.alert("Timer alreadfy started")
     else
+        self.logger.df("Timer started!")
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
         -- self:updateBrightnessAndVol(timerInMins)
@@ -212,6 +217,7 @@ function obj:startTimer(timerInMins)
         self.timerEvent = hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()
+                self.logger.df("Timer finished, sleeping!")
                 self:deleteTimer()
                 hs.caffeinate.systemSleep()
             end
@@ -244,16 +250,19 @@ function obj:timerChooserCallback(choice)
     -- switch on action
     if choice['action'] == 'stop' and self.timerEvent then
         -- handle stop timer
+        self.logger.d("Timer stopped")
         self:deleteTimer()
     elseif choice['action'] == 'adjust' and self.timerEvent then
         -- handle inc/dec timer
         self:adjustTimer(choice['m'])
     elseif choice['m'] == nil then
         -- handle custom timer
+        self.logger.d("Custom timer started")
         self:startTimer(tonumber(self.chooser:query()))
         self.chooser:query(nil)
     else
         -- handle normal choice
+        self.logger.d("Default timer started")
         self:startTimer(tonumber(choice['m']))
     end
 end
@@ -266,6 +275,7 @@ function obj:updateMenu()
         function()
             local timeLeft = self.timerEvent:nextTrigger()
             if math.floor(timeLeft) == 10 then
+                self.logger.d("Sleeping in 10 seconds")
                 hs.alert("Sleeping in 10 seconds...")
                 obj.menuFont = almostDone
             end
@@ -279,11 +289,13 @@ end
 function obj:adjustTimer(minutes)
     local currentDuration = self.timerEvent:nextTrigger() / 60
     if currentDuration + minutes < 0 then
+        self.logger.e("Desired timer adjustment invalid")
         hs.alert("nah that doesn't make sense")
         return
     else
         local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
         self.timerEvent:setNextTrigger(newTimerTime)
+        self.logger.d("Timer adjusted successfully")
     end
 end
 
@@ -411,7 +423,6 @@ function obj:addTimer(name, title, type)
     table.insert(obj.timers, {
         [name] = {
             menu,
-
         }
     })
 

@@ -6,6 +6,16 @@ Updated: 19-04-24
 
 * BEFORE ANYTHING ELSE:
   * [ ] Write docs for spoons
+    * [ ] Fenestra
+    * [ ] AfterDark
+    * [~] Context
+    * [ ] PaywallBuster
+    * [ ] Zzz
+    * [ ] Resolute
+    * [ ] CTRLESC
+    * [ ] SafariKeys
+  * [ ] Set spoon hotkeys properly (like Fenestra does?)
+  * [ ] Create menubar spoon that controls config of other spoons
   * ~~[ ] Make them proper git submodules~~ EDIT: git submodules suck
   * [ ] Clean them up if necessary
   * [ ] REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
@@ -15,7 +25,8 @@ Updated: 19-04-24
   * SUBMIT THEM
   * [ ] use key/value store for configurable variables/defaults
     * [ ] screen resolutions
-    * [ ] wifi ssid
+    * [ ] Drives to eject
+    * [x] wifi ssid
     * [ ] ...
 * [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods
 
