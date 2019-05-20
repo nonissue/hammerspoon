@@ -14,6 +14,7 @@ Updated: 19-04-24
     * [ ] Resolute
     * [ ] CTRLESC
     * [ ] SafariKeys
+  * [ ] quickreference notes chooser (with things like server details, etc)
   * [ ] Set spoon hotkeys properly (like Fenestra does?)
   * [ ] Create menubar spoon that controls config of other spoons
   * ~~[ ] Make them proper git submodules~~ EDIT: git submodules suck
