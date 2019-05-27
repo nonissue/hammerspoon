@@ -5,6 +5,9 @@
 -- other ideas:
 -- database so i can track date added, date modified, type, etc.
 -- could even add reviews after consuming said media?
+-- https://www.sqlite.org/backup.html
+-- http://lua.sqlite.org/index.cgi/doc/tip/doc/lsqlite3.wiki#sqlite3_open
+-- http://lua.sqlite.org/index.cgi/artifact/8157f16fa6bd6d20
 local obj = {}
 obj.__index = obj
 
@@ -28,14 +31,11 @@ obj.db:exec[[
   );
 ]]
 
-
 function obj:insertStmt(data)
   local insert_stmt = assert( obj.db:prepare("INSERT INTO test VALUES (NULL, ?)") )
-  -- local function insert(data)
   insert_stmt:bind_values(data)
   insert_stmt:step()
   insert_stmt:reset()
-  -- end
 end
 
 function obj:select()
