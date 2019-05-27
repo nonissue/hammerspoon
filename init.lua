@@ -18,6 +18,17 @@ for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end
 
+if not hs.ipc.cliStatus() then
+    local cliInstallResult = hs.ipc.cliInstall()
+    if cliInstallResult then
+        require('hs.ipc')
+    else
+        hs.alert('hs.ipc error!')
+    end
+else
+    require('hs.ipc')
+end
+
 -- set logger level
 hs.logger.defaultLogLevel = "debug"
 
@@ -29,6 +40,8 @@ package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 
 -- Add WIP files to path
 package.path = package.path .. ";WIP/?.lua"
+-- require("sql3-test")
+hs.loadSpoon("QuickAdd")
 
 -- chooserToolbar = require("chooserToolbar")
 
@@ -169,7 +182,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
-hs.loadSpoon("AfterDark"):start({showMenu = false})
+hs.loadSpoon("AfterDark"):start({showMenu = true})
 
 
 ------------------------------------------------------------------------------
@@ -188,6 +201,59 @@ hs.loadSpoon("AfterDark"):start({showMenu = false})
 ------------------------------------------------------------------------------
 --                                NONSENSE                                  --
 ------------------------------------------------------------------------------
+
+
+-- God this was painful to get working
+-- and i should have just passed the code directly to hammerspoon using `hs -c`
+-- anyway, this sends an alert when simon notices a server down
+-- hs -m simon -c test
+function simonMsgHandler(_, msgID, msg)
+    if msgID == 900 then
+        -- the message sent will be a mathematical equation; the original ipc will evaluate it because it ignored
+        -- the msgid.  We send back a version string instead
+        return "version:2.0a"
+    end
+    -- print(msgID)
+    local instanceID, arguments = msg:match("^([%w-]+)\0(.*)$")
+
+    if msgID == 100 then
+        -- hs.alert('msg is 100?')
+        -- hs.alert('arguements are: ' .. arguments)
+    elseif arguments then
+        -- hs.alert(msg)
+        hs.alert(arguments)
+
+        -- hs.alert('arguments if something else' .. arguments)
+        -- hs.alert('msgID' .. msgID)
+        -- hs.alert(arguments)
+        -- print(msg)
+    end
+    if arguments then
+        print("arguments: " .. arguments)
+    else
+        print("messages: " .. msg)
+    end
+    -- hs.alert('local')
+    -- _:delete()
+    -- print(msg)
+    -- print(msgID)
+    -- print(i(arguments))
+    -- hs.alert(msg)
+    -- hs.alert(msgID)
+    -- hs.alert(arguments)
+    -- print(msgID)
+    -- return "msg: " .. msg
+    -- return false
+    return
+end
+
+simonLocal = hs.ipc.localPort('simon', simonMsgHandler)
+simonRemote = hs.ipc.remotePort('simon')
+
+
+
+
+
 -- random stuff
 -- local yay = "ᕙ(⇀‸↼‶)ᕗ"
 -- local boo = "ლ(ಠ益ಠლ)"
