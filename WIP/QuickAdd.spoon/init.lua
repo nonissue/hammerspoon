@@ -20,19 +20,23 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.logger = hs.logger.new("QuickAdd")
 obj.hotkeyShow = nil
 
+obj.db = nil
+
 local sqlite3 = hs.sqlite3
 
-obj.db = sqlite3.open_memory()
+-- obj.db:exec[[
+--   CREATE TABLE test (
+--     id        INTEGER PRIMARY KEY,
+--     content   VARCHAR,
+--     type      VARCHAR,
+--     url       VARCHAR,
+--     rating    NULL
+--   );
+-- ]]
 
-obj.db:exec[[
-  CREATE TABLE test (
-    id        INTEGER PRIMARY KEY,
-    content   VARCHAR
-  );
-]]
-
-function obj:insertStmt(data)
-  local insert_stmt = assert( obj.db:prepare("INSERT INTO test VALUES (NULL, ?)") )
+function obj:insertStmt(data, rating)
+  rating = rating or "NULL"
+  local insert_stmt = assert( obj.db:prepare("INSERT INTO test VALUES (NULL, strftime('%s','now'), ?, " .. rating .. ")") )
   insert_stmt:bind_values(data)
   insert_stmt:step()
   insert_stmt:reset()
@@ -42,28 +46,29 @@ function obj:select()
   local select_stmt = assert( obj.db:prepare("SELECT * FROM test") )
 
   for row in select_stmt:nrows() do
-      print(row.id, row.content)
-
+      print(row.id, row.created, row.content, row.rating)
     end
 end
 
 function obj:initDb()
-  if not obj.db:isopen() then 
+  if not obj.db then
     obj.db = sqlite3.open_memory()
-    obj.db:exec[[
-    CREATE TABLE test (
-        id        INTEGER PRIMARY KEY,
-        content   VARCHAR
-      );
-    ]]
-
-  else 
-    obj.logger.e("DB already open")
-  end
+      obj.db:exec[[
+        CREATE TABLE test (
+          id        INTEGER PRIMARY KEY,
+          created   VARCHAR,
+          content   VARCHAR,
+          rating    INTEGER
+        );
+      ]]
+    else
+      obj.logger.e("DB already open")
+    end
+  -- end
 end
 
 function obj:closeDb()
-  if obj.db:isopen() then 
+  if obj.db:isopen() then
     obj.db:close()
   else 
     obj.logger.e("No DB to close")
@@ -71,17 +76,28 @@ function obj:closeDb()
 end
 
 function obj:test()
-  obj:insertStmt("Hello World")
-  print("First:")
+  -- obj:insertStmt("Hello World", "book", "https://test.com")
+  obj:insertStmt("World", 5)
+  print("\nFirst:")
   obj:select()
 
-  obj:insertStmt("Hello Lua")
-  print("Second:")
+  -- obj:insertStmt("Lua", "web", "https://web.com")
+  obj:insertStmt("Lua")
+  print("\nSecond:")
   obj:select()
 
-  obj:insertStmt("Hello Sqlite3")
-  print("Third:")
+  print("\nThird:")
+  -- obj:insertStmt("Sqlite3", "movie", "https://imdb.com/")
+  obj:insertStmt("Tesssssssst")
   obj:select()
+end
+
+function obj:init()
+  obj:initDb()
+end
+
+function obj:stop()
+  obj:closeDb()
 end
 
 return obj
