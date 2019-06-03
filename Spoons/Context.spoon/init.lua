@@ -232,6 +232,16 @@ function obj.screenWatcherCallback()
     -- then we know that the displays are assigned to the Radeon and it is
     -- the current gpu in use. If there is no occurrence of Radeon between
     -- "Intel" and "Displays", it means we are using the integrated gpu
+
+    -- Warning: not sure if this would work with egpus, not sure if it matters
+    -- alternate sed:
+    -- system_profiler SPDisplaysDataType | sed -e '/Intel/,/Displays/!d' | grep Radeon
+    -- system_profiler SPDisplaysDataType | sed -e '/Intel/,/Radeon/!d' | grep Displays
+
+    -- this shoudl work for any discrete gpu?
+    -- if we find "Displays" after Chipset Mode: Intel but before a blank line
+    -- then we know displays are attached to integrated gpu
+    -- system_profiler SPDisplaysDataType | sed -e '/Chipset Model: Intel/,/^\\s*$/!d' | grep Displays
     local res, success, exit = hs.execute("system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | \
         grep Radeon | tr -d '[:space:]'")
