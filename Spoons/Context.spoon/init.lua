@@ -41,6 +41,8 @@ obj.currentSSID = nil
 obj.currentScreens = nil
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 
+obj.currentGPU = nil
+
 -- spoon options
 obj.shownInMenu = false
 
@@ -224,9 +226,33 @@ end
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
 
+    -- ugly as hell way to find out which display is in use
+    -- uses sed to cut all text between "Intel" and "Displays"
+    -- If Radeon (our discrete gpu) occurs between these strings,
+    -- then we know that the displays are assigned to the Radeon and it is
+    -- the current gpu in use. If there is no occurrence of Radeon between
+    -- "Intel" and "Displays", it means we are using the integrated gpu
+    local res, success, exit = hs.execute("system_profiler SPDisplaysDataType | \
+        sed -n '/Intel/,/Displays/p' | \
+        grep Radeon | tr -d '[:space:]'")
+    if res == "" then obj.currentGPU = "integrated" else obj.currentGPU = "discrete" end
+    -- hs.alert("[SW] gpu: " .. obj.currentGPU)
+    -- local test = hs.notify.new({title = "Test", subtitle = "Test Subtitle", alwaysPresent = true, autoWithdraw = false})
+
+    -- maybe check how long the dedicated gpu has been in use?
+    if obj.currentGPU == "discrete" then
+        hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use", alwaysPresent = true, autoWithdraw = false}):send()
+        -- hs.notify.show("GPU Status", "Warning", "Dedicated GPU in use")
+    end
+
     -- if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
+
+
+        -- 0 = integrated
+        -- 1 = discrete
+        -- 2 = auto switch
         -- handle unnecessary/redundant screenWatcher callbacks
     elseif hs.screen.find("Cinema HD") then
         -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
@@ -234,6 +260,29 @@ function obj.screenWatcherCallback()
         -- if we have a different amount of displays and one of them is
         -- our cinema display, we are @desk
         obj.logger.i("[SW] no change")
+
+
+        -- 0 = integrated
+        -- 1 = discrete
+        -- 2 = auto switch
+        -- if success and not res == obj.gpuSwitchStatus then
+        --     obj.gpuSwitchStatus = res
+        --     if res == 0 then
+        --         hs.alert("[SW} Automatic GPU Switch disabled (integrated only)")
+        --         -- obj.gpuSwitchStatus = 0
+        --     elseif res == 1 then
+        --         -- obj.gpuSwitchStatus = 1
+        --         hs.alert("[SW} Automatic GPU Switch disabled (discrete only)")
+        --     elseif res == 2 then
+        --         hs.alert("[SW] Automatic GPU Switch enabled")
+        --         -- obj.gpuSwitchStatus = 2
+        --     else
+        --         obj.logger.e("Couldn't get gpuSwitch status")
+        --     end
+        -- else
+        --     obj.logger.i("[SW] no gpuswitch change")
+        --     obj.logger.i("[SW] gpuswitch = " .. res)
+        -- end
 
         -- hs.alert("[SW] desk", 1)
         obj.docked = "docked"
