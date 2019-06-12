@@ -69,13 +69,15 @@ end
 -- Gets current url from active safari tab and mails it to specified address
 -- problem is, no alert when DND is on. hmmm.
 function obj.addToReadingList()
-    local ok, result = hs.osascript.applescript(
-    [[
+    local ok, result =
+        hs.osascript.applescript(
+        [[
         tell application "Safari"
 	        set result to URL of document 1
         end tell
         tell application "Safari" to add reading list item result
-    ]])
+    ]]
+    )
 
     if (ok) then
         hs.alert.show(" ⚯⁺")
@@ -94,20 +96,22 @@ function obj:addToReadingListTest(url)
     local ok, result
 
     if (not url) then
-        ok, result = hs.osascript.applescript(
+        ok, result =
+            hs.osascript.applescript(
             [[
                 tell application "Safari"
                     set result to URL of document 1
                 end tell
                 tell application "Safari" to add reading list item result
-            ]])
+            ]]
+        )
     else
         obj.logger.e("URL: " .. url)
         local script = string.format([[tell application "Safari" to add reading list item %s]], url)
         obj.logger.e(script)
 
         ok, result = hs.osascript.applescript(script)
-        
+
         if (not ok) then
             obj.logger.e("error saving passed url")
             obj.logger.e(result)
@@ -122,10 +126,52 @@ function obj:addToReadingListTest(url)
     end
 end
 
-
 function obj.mailToSelf()
+    local firefox = hs.application.get("Firefox")
+    local safari = hs.application.get("Safari")
+    local frontApp = hs.application.frontmostApplication()
+
+
+    if frontApp == firefox then
+        local ok, result = hs.osascript.applescript(
+            [[
+                use scripting additions
+                use framework "Foundation"
+                tell application "System Events" to tell process "firefox"
+                    set frontmost to true
+                    set the_title to name of windows's item 1
+                    set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
+                    set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
+                end tell
+                tell application "System Events"
+                    keystroke "l" using command down
+                    delay 0.5
+                    keystroke "c" using command down
+                end tell
+                set the_url to the clipboard
+                tell application "Mail"
+                    set theMessage to make new outgoing message with properties {subject:"MTS: " & the_title, content:the_url, visible:true}
+                    tell theMessage
+                        make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+                        send
+                    end tell
+                end tell
+                
+                -- return the_title & the the_url as text
+            ]]
+        )
+
+        if frontApp == firefox then
+            -- hs.alert("Frontmost app is firefox")
+            hs.alert("frontmost url = result: " .. result)
+            hs.alert("URL:" .. result)
+
+            return
+        end
+    end
+
     local script =
-    [[
+        [[
         tell application "Safari"
             set currentURL to URL of document 1
         end tell
@@ -135,7 +181,8 @@ function obj.mailToSelf()
     -- hs.alert("current url is" .. hs.applescript(script))
     local ok, result = hs.applescript(script)
     if (ok) then
-        hs.applescript.applescript([[
+        hs.applescript.applescript(
+            [[
             tell application "Safari"
                 set result to URL of document 1
             end tell
@@ -147,7 +194,8 @@ function obj.mailToSelf()
                     send
                 end tell
             end tell
-        ]])
+        ]]
+        )
 
         hs.alert.show(" ↧ ", 2)
     end
