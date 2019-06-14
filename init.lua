@@ -12,6 +12,7 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
+require("hs.image")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -298,3 +299,86 @@ local function dismissAllNotifications()
 end
 
 hs.hotkey.bind(mash, "N", dismissAllNotifications)
+
+-- currentScreenshotPath = nil
+local wasCreated = false
+-- watches for new screenshots in target location and copies them to clipboard
+function imageToClipboard(files, flagTables)
+    -- if the only change is a DS_Store file, ignore it
+    -- local files = {}
+
+    -- table.insert(files, filesRaw[1])
+    -- print(i(files))
+    -- local wasCreated = false
+
+    if files[1] == ".DS_Store" and #files == 1 then
+        return
+    end
+
+    -- print("\nFlagtables: " .. i(flagTables).. "\n")
+    -- print("\nFiles: " .. i(files) .. "\n")
+
+    for x = 1, #flagTables do
+        if flagTables[x]['itemCreated'] then
+            wasCreated = true
+        end
+    end
+
+    for y = 1, #files do
+        local file = files[y]
+        if string.sub(file, -4) == ".png" then
+            print("\nFlagtables: " .. i(flagTables).. "\n")
+            print("\nFiles: " .. i(files) .. "\n")
+
+            local fileName = file:match( "([^/]+)$" )
+            local filePath = hs.http.encodeForQuery("file://" .. file)
+            print("\nfilename: " .. fileName .. "\nfilePath: " .. filePath)
+
+            if string.sub(fileName, 1, 3) == "apw" and wasCreated then
+                if hs.pasteboard.readDataForUTI("public.file-url") == filePath then
+                    print("Already in clipboard")
+                else
+                    print("\n   ------------------------\n  Match! Copying to clipboard... \n   ------------------------\n")
+                    hs.pasteboard.writeDataForUTI(nil, "public.file-url", filePath)
+                    hs.alert("New Screenshot Copied to Clipboard", 0.75)
+                    wasCreated = false
+                    break
+                end
+            else
+                print("file watcher called, but file is either temporary, or has been removed")
+            end
+        else
+            print("DEBUG: Target not an image file..." .. file)
+        end
+    end
+
+--[[
+    for x = 1, #flagTables do
+        -- macos performs a few operations before the final png is written to disk (i think)
+        -- as our pathwatcher callback fires multiple times?
+        -- based on a quick examination of the contents of flagTables on each call
+        -- wrote this conditional which seems to match when all os events are finished
+        if flagTables[x]['itemRenamed'] == nil and flagTables[x]['itemIsFile'] and not flagTables[x]['itemCreated'] then
+            local target = files[#files]
+            if string.sub(target, -4) == ".png" then
+
+                local newScreenshot = hs.image.imageFromPath(target)
+                if newScreenshot then
+                    hs.pasteboard.writeObjects(newScreenshot)
+                    hs.alert("New Screenshot Copied to Clipboard", 0.75)
+                end
+            else
+                hs.alert("New file in screenshots folder isn't screenshot")
+                hs.alert(target)
+            end
+        end
+    end
+    ]]
+
+    wasCreated = false
+end
+
+
+local screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2016mbpr/"
+local screenshotWatcher = hs.pathwatcher.new(screenshotPath, imageToClipboard)
+screenshotWatcher:start()
