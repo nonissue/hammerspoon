@@ -38,6 +38,7 @@ obj.timerEvent = nil
 obj.hotkeyShow = nil
 
 obj.timers = {}
+obj.menuBarIcon = "𝐙"
 
 -- I should probably just normalize everything to seconds?
 local minMins = 0
@@ -69,13 +70,14 @@ local presetCount = 3
     }
 ]]--
 
+
 local defaultFont = {
-    font = {name = "SF Mono"},
+    font = "Menlo",
     -- color = {hex = "#EEEEEE"}
 }
 
 local almostDone = {
-    font = {name = "SF Mono"},
+    font = "Menlo",
     color = {hex = "#FF6F00"}
 }
 
@@ -311,7 +313,7 @@ function obj:deleteTimer()
     self.timerEvent:stop()
     self.timerEvent = nil
     self.menuFont = defaultFont 
-    self:setTitleStyled("☾")
+    self:setTitleStyled(self.menuBarIcon)
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
 end
 
@@ -407,7 +409,8 @@ function obj:init()
     end
 
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
-    self:setTitleStyled("☾")
+    -- self:setTitleStyled("𝐙")
+    self:setTitleStyled(self.menuBarIcon)
 
     self:initChooser()
     -- adds a menubar click callback to invoke show/hide chooser

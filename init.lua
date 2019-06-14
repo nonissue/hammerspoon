@@ -110,6 +110,7 @@ hs.loadSpoon('CTRLESC'):start()
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
+hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP"})
 hs.loadSpoon("Context"):start(false)
 
 ------------------------------------------------------------------------------
@@ -392,7 +393,6 @@ function imageToClipboard(files, flagTables)
 
     wasCreated = false
 end
-
 
 local screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2016mbpr/"
 local screenshotWatcher = hs.pathwatcher.new(screenshotPath, imageToClipboard)
