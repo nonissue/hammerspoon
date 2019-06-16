@@ -321,4 +321,6 @@ hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
 
+
+hs.loadSpoon("PlexOverlay")
 -- require("new_console")
