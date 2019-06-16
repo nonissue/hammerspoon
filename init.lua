@@ -82,6 +82,8 @@ hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindo
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
+
+
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
 ------------------------------------------------------------------------------
@@ -269,13 +271,6 @@ end
 hs.hotkey.bind(mash, "K", showKirby)
 hs.hotkey.showHotkeys(mash, "space")
 
--- hs.textDroppedToDockIconCallback()
--- hs.dockIconClickCallback()
--- hs.dockIcon(true)
--- initial testing with using the 'send to' contextual menu functionality
-hs.textDroppedToDockIconCallback = function(value)
-    hs.alert(string.format("Text dropped to dock icon: %s", value))
-end
 
 -- COPIED FROM: https://github.com/af/dotfiles/blob/63370411e709e006b26f07781376da1e6d7ae2c8/hammerspoon/utils.lua#L51
 -- Close all open notifications
@@ -301,12 +296,29 @@ end
 
 hs.hotkey.bind(mash, "N", dismissAllNotifications)
 
--- clipboard stuff
+-- clipboard stcuff
 
 -- https://github.com/CommandPost/CommandPost/blob/45f1cbfb6f97f7a47de9a5db05fd89c49a85ea6a/src/plugins/finalcutpro/text2speech/init.lua
 -- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
 -- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
 -- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
-
 hs.loadSpoon("Clippy")
 spoon.Clippy:start()
+
+
+hs.console.titleVisibility("hidden")
+hs.console.consolePrintColor({blue = 1})
+hs.console.consoleCommandColor({red = 1})
+hs.console.inputBackgroundColor({white = 1, alpha = 1})
+hs.console.windowBackgroundColor({white = 1})
+hs.console.toolbar(nil)
+
+-- hs.textDroppedToDockIconCallback()
+-- hs.dockIconClickCallback()
+-- hs.dockIcon(true)
+-- initial testing with using the 'send to' contextual menu functionality
+hs.textDroppedToDockIconCallback = function(value)
+    hs.alert(string.format("Text dropped to dock icon: %s", value))
+end
+
+-- require("new_console")
