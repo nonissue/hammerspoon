@@ -322,5 +322,5 @@ hs.textDroppedToDockIconCallback = function(value)
 end
 
 
--- hs.loadSpoon("PlexOverlay")
+-- hs.loadSpoon("PlexMini")
 -- require("new_console")

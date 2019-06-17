@@ -1,15 +1,22 @@
+
+
+--- PlexOverlay
+--- Provides menubar applet to create and control floating plex miniplayer
+--- NOT EVEN CLOSE TO STABLE, still in progress
+
+--- Heavily based on:
+--- === SDC Overcast ===
 -- https://github.com/rsefer/dotfiles/blob/df890b0f2cfc9c6595037150413e9ae92a35d1d8/hammerspoon.symlink/Spoons/SDCOvercast.spoon/init.lua
 
---- === SDC Overcast ===
 
---- Plex 
+--- PlexMini
 -- [ ] add play pause to menubar
 -- [ ] add info
 -- [ ] add hide/show kill
 
 local obj = {}
 obj.__index = obj
-obj.name = "Plex"
+obj.name = "PlexMini"
 
 function script_path()
   local str = debug.getinfo(2, 'S').source:sub(2)
@@ -116,12 +123,6 @@ function obj:init()
 
           obj.plexControlMenu:setIcon(iconPause)
           obj.plexMenu:setIcon(icon, false)
-
-          -- if obj.hideSpotify then
-          --   if hs.spotify.isPlaying() then
-          --     hs.spotify.pause()
-          --   end
-          -- end
 
         else
           obj.plexControlMenu:setIcon(iconPlay)

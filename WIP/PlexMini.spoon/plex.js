@@ -1,5 +1,3 @@
-console.log('JS injected!');
-
 function testInjectJS() {
   console.log('LOADED!');
 }
@@ -19,7 +17,6 @@ function sendProgress() {
     if ($('.show-video-player')) {
         playerDetected = true
     };
-
 
     webkit.messageHandlers.plexoverlay.postMessage({
         hasPlayer: playerDetected,
