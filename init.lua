@@ -251,12 +251,8 @@ local function simonMsgHandler(_, msgID, msg)
     return
 end
 
-simonLocal = hs.ipc.localPort('simon', simonMsgHandler)
-simonRemote = hs.ipc.remotePort('simon')
-
-
-
-
+-- simonLocal = hs.ipc.localPort('simon', simonMsgHandler)
+-- simonRemote = hs.ipc.remotePort('simon')
 
 -- random stuff
 -- local yay = "ᕙ(⇀‸↼‶)ᕗ"
@@ -320,7 +316,6 @@ hs.console.toolbar(nil)
 hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
-
 
 -- hs.loadSpoon("PlexMini")
 -- require("new_console")
