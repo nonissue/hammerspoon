@@ -16,9 +16,11 @@ function script_path()
   return str:match("(.*/)")
 end
 
-local plexWeb = 'https://plex.tv/web'
-local viewWidth = 480
-local viewHeight = 320
+obj.running = false
+
+local plexWeb = 'https://app.plex.tv/desktop'
+local viewWidth = 700
+local viewHeight = 400
 local iconSize = 14.0
 local iconFull = hs.image.imageFromPath(script_path() .. 'images/overcast_black.pdf')
 local icon = iconFull:setSize({ w = iconSize, h = iconSize })
@@ -31,16 +33,19 @@ function round(num, numDecimalPlaces)
 end
 
 function obj:togglePlayPause()
-  obj.overcastWebview:evaluateJavaScript('togglePlayPause();')
+  obj.plexWebview:evaluateJavaScript('togglePlayPause();')
 end
 
 function obj:toggleWebview()
-  if obj.isShown then
-    obj.Plex:hide()
+  if not obj.running then
+    obj:start()
+    obj.plexWebview:show():bringToFront(true)
+  elseif obj.isShown then
+    obj.plexWebview:hide()
     obj.isShown = false
   else
-    obj.Plex:show():bringToFront(true)
-		obj.Plex:hswindow():moveToScreen(hs.screen.primaryScreen()):focus()
+    obj.plexWebview.show():bringToFront(true)
+		obj.plexWebview:hswindow():moveToScreen(hs.screen.primaryScreen()):focus()
     obj.isShown = true
   end
 end
@@ -58,7 +63,7 @@ function obj:init()
   self.hideSpotify = true
   self.hideItunes = true
 
-  self.plexToolbar = hs.webview.toolbar.new('myConsole', { { id = 'resetBrowser', label = 'Home', fn = function(t, w, i) self.Plex:url(plexWeb) end } })
+  self.plexToolbar = hs.webview.toolbar.new('myConsole', { { id = 'resetBrowser', label = 'Home', fn = function(t, w, i) self.plexWebview:url(plexWeb) end }, { id  = 'stop', label = 'Stop', fn = function() self:stop() end} })
     :sizeMode('small')
     :displayMode('label')
 
@@ -67,23 +72,29 @@ function obj:init()
   self.plexControlMenu = hs.menubar.new()
     :setClickCallback(obj.togglePlayPause):setIcon(iconPause)
 
-  self.plexMenu = hs.menubar.new()
-    :setClickCallback(obj.toggleWebview)
-    :setIcon(icon, true)
+    if self.plexMenu == nil then 
+      self.plexMenu = hs.menubar.new()
+        :setClickCallback(obj.toggleWebview)
+        :setIcon(icon, true)
+    end
 
   self.plexMenuFrame = self.plexMenu:frame()
   self.screenWidth = hs.screen.primaryScreen():currentMode().w
 --   self.rect = hs.geometry.rect((self.plexMenuFrame.x + self.plexMenuFrame.w / 4) - (viewWidth / 2), self.plexMenuFrame.y, viewWidth, viewHeight)
-  self.rect = hs.geometry.rect((self.screenWidth - viewWidth), self.plexMenuFrame.y, viewWidth, viewHeight)
+  self.rect = hs.geometry.rect((self.screenWidth - viewWidth), self.plexMenuFrame.y, viewWidth, viewHeight + 50)
 
-  self.plexJS = hs.webview.usercontent.new('idhsovercastwebview')
+  self.plexJS = hs.webview.usercontent.new('plexoverlay')
  
-
   local injectFileResult = ''
-  for line in io.lines(script_path() .. "inject.js") do injectFileResult = injectFileResult .. line end
+  -- for line in io.lines(script_path() .. "inject.js") do injectFileResult = injectFileResult .. line end
 
-  localjsScript = "var thome = '" .. plexWeb .. "';" .. injectFileResult
-  self.plexJS:injectScript({ source = localjsScript, mainFrame = true, injectionTime = 'documentEnd' })
+  local injectJqueryResult = ''
+  for line in io.lines(script_path() .. "plex.js") do injectJqueryResult = injectJqueryResult .. line end
+  -- for line in io.lines(script_path() .. "jquery.min.js") do injectFileResult = injectFileResult .. line end
+
+  -- localjsScript = "var thome = '" .. plexWeb .. "';" .. injectFileResult .. injectJqueryResult
+  local localjsScript = "var thome = '" .. plexWeb .. "';" .. injectJqueryResult
+  self.plexJS:injectScript({ source = localjsScript, mainFrame = false, injectionTime = 'documentEnd' })
     :setCallback(function(message)
 
       if message.body.page == 'home' or message.body.progress >= 1 then
@@ -97,7 +108,7 @@ function obj:init()
         --   hs.timer.doAfter(2.5, function() notification:withdraw() end)
         -- end
         if message.body.isFinished or (message.body.progress ~=nil and message.body.progress >= 1) then
-          self.Plex:url(plexWeb)
+          self.plexWebview:url(plexWeb)
         end
       elseif message.body.hasPlayer and message.body.hasPlayer == true then
 
@@ -112,12 +123,6 @@ function obj:init()
           --   end
           -- end
 
-          if obj.hideItunes then
-            if hs.itunes.isPlaying() then
-              hs.itunes.pause()
-            end
-          end
-
         else
           obj.plexControlMenu:setIcon(iconPlay)
           obj.plexMenu:setIcon(icon, true)
@@ -127,7 +132,7 @@ function obj:init()
 
           local episodeString = message.body.podcast.name .. ' - ' .. message.body.podcast.episodeTitle
 
-          menubarHeight = 22
+          menubarHeight = 50
 
 					textColor = '000000'
 
@@ -166,29 +171,69 @@ function obj:init()
 
     end)
 
-  self.Plex = hs.webview.newBrowser(self.rect, { developerExtrasEnabled = true }, self.plexJS)
+  self.plexWebview= hs.webview.newBrowser(self.rect, { developerExtrasEnabled = true }, self.plexJS)
     :url(plexWeb)
     :allowTextEntry(true)
     :level(3)
     :shadow(true)
-    -- :attachedToolbar(self.plexToolbar)
-	:windowCallback(function(action, webview, state)
+    :attachedToolbar(self.plexToolbar)
+	  :windowCallback(function(action, webview, state)
 			if action == 'closing' and state ~= true then
-			    self.Plex:hide()
+			    self.plexWebview:hide()
 		        self.isShown = false
 			end
     end)
-    -- :magnification(2)
-    :windowStyle(
-        hs.webview.windowMasks['titled'] |
-        hs.webview.windowMasks['fullSizeContentView'] |
+    -- :windowStyle(
+        -- hs.webview.windowMasks['titled'] |
+        -- hs.webview.windowMasks['fullSizeContentView'] |
         -- hs.webview.windowMasks['resizable'] |
-        hs.webview.windowMasks['closable'] |
-        hs.webview.windowMasks['utility'] |
-        hs.webview.windowMasks['HUD']
-    )
-    
+        -- hs.webview.windowMasks['closable'] |
+        -- hs.webview.windowMasks['nonactivating']
+        -- hs.webview.windowMasks['utility'] |
+        -- hs.webview.windowMasks['HUD']
+    -- )
+end
 
+function obj:stop()
+  if self.plexWebview ~= nil then
+    self.plexWebview:delete()
+  end
+
+  self.plexJS = nil
+
+  -- if self.plexMenu then
+  --   self.plexMenu:delete()
+  -- end
+
+  if self.plexInfoMenu then
+    self.plexInfoMenu:delete()
+  end
+
+  if self.plexControlMenu then
+    self.plexControlMenu:delete()
+  end
+
+  if self.plexToolbar then
+    self.plexToolbar:delete()
+  end
+
+  self.plexToolbar = nil
+  self.plexMenuFrame = nil
+
+  self.running = false
+
+  -- make sure we cleaned up everything
+  -- edit: this is a bad idea
+  -- for key, value in pairs(spoon.PlexOverlay) do 
+  --   if key ~= "init" and value ~= "start" and value ~= "stop" and value ~= "running" then
+  --     spoon.PlexOverlay[key] = nil
+  --   end
+  -- end
+end
+
+function obj:start()
+  self:init()
+  self.running = true
 end
 
 return obj

@@ -1,0 +1,81 @@
+console.log('JS injected!');
+
+function testInjectJS() {
+  console.log('LOADED!');
+}
+
+// var injected = 'injected!';
+
+// var test = console.log('LOADED!');
+
+// function sendProgress() {
+//   console.log('\n\nSend Progress called!\n\n');
+//   var isVideoPlaying = false;
+//   var isFinished = false;
+//   if ($('.show-video-player').length > 0) {
+//     if ($("[aria-lable='Pause']")) {
+//       isVideoPlaying = true;
+//     }
+//     var videoPlayerProgress = document
+//       .getElementById("data-qa-id='mediaDuration']")
+//       .val();
+//     // progress = audioPlayer.currentTime / audioPlayer.duration;
+//     progress = parseInt(videoPlayerProgress);
+//     if (progress == 1) {
+//       isFinished = true;
+//     }
+//   }
+//   if (!progress) {
+//     progress = 0;
+//   }
+//   webkit.messageHandlers.plexoverlay.postMessage({
+//     hasPlayer: true,
+//     isPlaying: isVideoPlaying,
+//     isFinished: isFinished,
+//     progress: progress,
+//     // podcast: {
+//     //   name: $('h3 a').html(),
+//     //   episodeTitle: $('h2').html(),
+//     // },
+//   });
+// }
+
+function togglePlayPause() {
+  if ($('.show-video-player').length > 0) {
+    var videoPlayer = $('.show-video-player');
+    console.log("Toggle called!")
+  }
+}
+
+// if (window.location.href == thome) {
+//   webkit.messageHandlers.plexyoverlay.postMessage({
+//     page: 'home',
+//   });
+//   setTimeout(function() {
+//     location.reload();
+//   }, 60 * 1000);
+// } else if ($('.show-video.player').length > 0) {
+//   sendProgress();
+//   setTimeout(function() {
+//     sendProgress();
+//   }, 2 * 1000);
+//   setInterval(function() {
+//     sendProgress();
+//   }, 5 * 1000);
+// }
+// if (window.location.href == thome) {
+//   webkit.messageHandlers.plexoverlay.postMessage({
+//     page: 'home',
+//   });
+//   setTimeout(function() {
+//     location.reload();
+//   }, 60 * 1000);
+// } else if ($('.show-video.player').length > 0) {
+//   sendProgress();
+//   setTimeout(function() {
+//     sendProgress();
+//   }, 2 * 1000);
+//   setInterval(function() {
+//     sendProgress();
+//   }, 5 * 1000);
+// }
