@@ -68,8 +68,9 @@ obj.defaultHotkeys = {
     rightHalf = {{"cmd", "alt"}, "right"},
     leftMaj = {{"cmd", "alt", "ctrl"}, "left"},
     rightMin = {{"cmd", "alt", "ctrl"}, "right"},
-    pushWin = {{"cmd", "alt", "ctrl"}, "N"},
-    pullWin = {{"cmd", "alt", "ctrl"}, "P"},
+    pushWest = {{"cmd", "alt", "ctrl"}, "W"},
+    pushEast = {{"cmd", "alt", "ctrl"}, "E"},
+    pushNext = {{"cmd", "alt", "ctrl"}, "L"},
     undo = {{"cmd", "alt", "ctrl"}, "Z"}
 }
 
@@ -123,17 +124,27 @@ function obj:bindHotkeys(keys)
         end
     )
     hs.hotkey.bindSpec(
-        keys["pushWin"],
+        keys["pushWest"],
         function()
             undostack:addToStack()
-            self:pushWin()
+            obj.logger.d("Push Win Hotkey")
+            self:pushWest()
         end
     )
     hs.hotkey.bindSpec(
-        keys["pullWin"],
+        keys["pushEast"],
         function()
             undostack:addToStack()
-            self:pullWin()
+            obj.logger.d("Pull Win Hotkey")
+            self:pushEast()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["pushNext"],
+        function()
+            undostack:addToStack()
+            obj.logger.d("Push Next Hotkey")
+            self:pushNext()
         end
     )
     hs.hotkey.bindSpec(
@@ -146,16 +157,33 @@ function obj:bindHotkeys(keys)
 end
 
 function obj:maxWin()
+    hs.window.animationDuration = 0.1
+    hs.window.focusedWindow():centerOnScreen()
+    -- hs.window:focusedWindow():centerOnScreen()
     hs.grid.maximizeWindow()
 end
 
-function obj:pushWin()
-    hs.grid.pushWindowNextScreen()
+function obj:pushWest()
+    obj.logger.d("Push Win Function")
+    hs.window.focusedWindow():moveOneScreenWest()
+    -- hs.window:moveOneScreenWest()
+    -- hs.grid.pushWindowNextScreen()
 end
 
-function obj:pullWin()
-    hs.grid.pullWindowNextScreen()
+function obj:pushEast()
+    hs.window.focusedWindow():moveOneScreenEast()
+    -- hs.window:moveOneScreenEast()
+    -- hs.grid.pullWindowNextScreen()
 end
+
+
+function obj:pushNext()
+    -- hs.window.focusedWindow():moveToScreen(hs.window:focusedWindow():screen():next())
+    local currentWindow = hs.window.focusedWindow()
+    local nextScreen = currentWindow:screen():next()
+    currentWindow:moveToScreen(nextScreen)
+end
+
 
 function obj:placeWindow(x, y, w, h)
     function fn(cell)

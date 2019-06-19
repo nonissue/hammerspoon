@@ -82,8 +82,6 @@ hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindo
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
-
-
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
 ------------------------------------------------------------------------------
