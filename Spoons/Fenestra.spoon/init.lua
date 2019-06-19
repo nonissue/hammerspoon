@@ -70,7 +70,7 @@ obj.defaultHotkeys = {
     rightMin = {{"cmd", "alt", "ctrl"}, "right"},
     pushWest = {{"cmd", "alt", "ctrl"}, "W"},
     pushEast = {{"cmd", "alt", "ctrl"}, "E"},
-    pushNext = {{"cmd", "alt", "ctrl"}, "L"},
+    pushNext = {{"ctrl", "alt", "cmd"}, "P"},
     undo = {{"cmd", "alt", "ctrl"}, "Z"}
 }
 
@@ -157,7 +157,6 @@ function obj:bindHotkeys(keys)
 end
 
 function obj:maxWin()
-    hs.window.animationDuration = 0.1
     hs.window.focusedWindow():centerOnScreen()
     -- hs.window:focusedWindow():centerOnScreen()
     hs.grid.maximizeWindow()
