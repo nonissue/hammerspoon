@@ -151,9 +151,6 @@ hs.loadSpoon("Zzz")
 -- TODO: use default hotkeys
 hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 
--- hs.loadSpoon("Timers")
-
-
 ------------------------------------------------------------------------------
 -- Resolute.spoon / by me
 ------------------------------------------------------------------------------
@@ -217,7 +214,6 @@ end
 hs.hotkey.bind(mash, "K", showKirby)
 hs.hotkey.showHotkeys(mash, "space")
 
-
 -- COPIED FROM: https://github.com/af/dotfiles/blob/63370411e709e006b26f07781376da1e6d7ae2c8/hammerspoon/utils.lua#L51
 -- Close all open notifications
 local function dismissAllNotifications()
@@ -248,23 +244,8 @@ hs.hotkey.bind(mash, "N", dismissAllNotifications)
 -- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
 -- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
 -- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
-hs.loadSpoon("Clippy")
-spoon.Clippy:start()
-
-
--- hs.console.titleVisibility("hidden")
--- hs.console.consolePrintColor({black = 1})
--- hs.console.consoleCommandColor({black = 1})
--- hs.console.consoleResultColor({red = 1})
--- hs.console.inputBackgroundColor({white = 0.7, alpha = 0.7})
--- hs.console.windowBackgroundColor({white = 0.9, alpha = 0.7})
--- hs.console.alpha(1)
--- hs.console.outputBackgroundColor({white = 1, alpha = 1})
--- hs.console.darkMode(false)
--- hs.console.toolbar(hs.console.defaultToolbar)
--- hs.console.titleVisibility("visible")
--- local myConsoleTB = hs.console.defaultToolbar:copy()
--- hs.console.toolbar(myConsoleTB)
+-- hs.loadSpoon("Clippy")
+-- spoon.Clippy:start()
 
 local toolbar     = require"hs.webview.toolbar"
 local console     = require"hs.console"
@@ -275,14 +256,11 @@ local styledtext  = require"hs.styledtext"
 local doc         = require"hs.doc"
 local watchable   = require"hs.watchable"
 local canvas      = require"hs.canvas"
-
-
 -- local imageBasePath = hs.configdir .. "/_localAssets/images/"
 
 -- local autoHideImage = function()
 --     return imageBasePath .. (module.watchConsoleAutoClose:value() and "unpinned.png" or "pinned.png")
 -- end
-
 
 local consoleToolbar = {
     { id = "NSToolbarFlexibleSpaceItem" },
@@ -325,10 +303,9 @@ local makeModuleListForMenu = function()
     return searchList
 end
 
-
 table.insert(consoleToolbar, {
     id = "searchID",
-    -- label = "HS Doc Search",
+    label = "HS Doc Search",
     tooltip = "Search for a HS function or method",
     fn = function(t, w, i, text)
         if text ~= "" then require"hs.doc.hsdocs".help(text) end
@@ -337,7 +314,7 @@ table.insert(consoleToolbar, {
 
     searchfield               = true,
     searchPredefinedMenuTitle = false,
-    searchText                = "Search HS Docs",
+    -- searchText                = "Search HS Docs",
     searchPredefinedSearches  = makeModuleListForMenu(),
     searchWidth               = 250,
 })
@@ -372,7 +349,6 @@ fnutils.each({
         default = true,
     })
 end)
-
 
 local myConsoleToolbar = toolbar.new("_asmConsole_001")
       :addItems(consoleToolbar)
