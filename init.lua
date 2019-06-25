@@ -12,7 +12,7 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
-require("hs.image")
+local console = require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -41,10 +41,6 @@ package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 
 -- Add WIP files to path
 package.path = package.path .. ";WIP/?.lua"
--- require("sql3-test")
--- hs.loadSpoon("QuickAdd")
-
--- chooserToolbar = require("chooserToolbar")
 
 hostname = hs.host.localizedName()
 hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
@@ -68,12 +64,6 @@ local hyper = {"cmd", "alt"}
 
 -- console window hotkey
 hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)
-
--- load scratch stuff
--- package.path = package.path .. ";scratch/?.lua"
-
--- package.path = package.path .. ";WIP/?.spoon"
--- hs.loadSpoon("MenuTest.spoon")
 
 -- TODO: Let user enable/display spoons as desired.
 -- i feel like these two should be spoons
@@ -183,6 +173,13 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 hs.loadSpoon("AfterDark"):start({showMenu = true})
 
+------------------------------------------------------------------------------
+-- Clippy.spoon / by me
+------------------------------------------------------------------------------
+-- Copy screenshot to clipboard and save to disk
+------------------------------------------------------------------------------
+hs.loadSpoon("Clippy")
+spoon.Clippy:start()
 
 ------------------------------------------------------------------------------
 -- Crib.spoon / by me
@@ -193,6 +190,10 @@ hs.loadSpoon("AfterDark"):start({showMenu = true})
 -- spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
 ------------------------------------------------------------------------------
 
+-- WIP Stuff
+-- hs.loadSpoon("PlexMini")
+-- require("sql3-test")
+-- hs.loadSpoon("QuickAdd")
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
@@ -238,133 +239,6 @@ end
 
 hs.hotkey.bind(mash, "N", dismissAllNotifications)
 
--- clipboard stcuff
-
--- https://github.com/CommandPost/CommandPost/blob/45f1cbfb6f97f7a47de9a5db05fd89c49a85ea6a/src/plugins/finalcutpro/text2speech/init.lua
--- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
--- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
--- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
-hs.loadSpoon("Clippy")
-spoon.Clippy:start()
-
-local toolbar     = require"hs.webview.toolbar"
-local console     = require"hs.console"
-local image       = require"hs.image"
-local fnutils     = require"hs.fnutils"
-local application = require"hs.application"
-local styledtext  = require"hs.styledtext"
-local doc         = require"hs.doc"
-local watchable   = require"hs.watchable"
-local canvas      = require"hs.canvas"
--- local imageBasePath = hs.configdir .. "/_localAssets/images/"
-
--- local autoHideImage = function()
---     return imageBasePath .. (module.watchConsoleAutoClose:value() and "unpinned.png" or "pinned.png")
--- end
-
-local consoleToolbar = {
-    { id = "NSToolbarFlexibleSpaceItem" },
-    {
-        id = "cust",
-        label = "customize",
-        tooltip = "Modify Toolbar",
-        fn = function(t, w, i)
-            t:customizePanel()
-        end,
-        image = image.imageFromName("NSToolbarCustomizeToolbarItemImage")
-    }
-}
-
-table.insert(consoleToolbar, {
-    id = "hammerspoonDocumentation",
-    label = "HS Documentation",
-    tooltip = "Show HS Documentation Browser",
-    image = image.imageFromName("NXHelpIndex"),
-    fn = function(bar, attachedTo, item)
-        local base = require"hs.doc.hsdocs"
-        if not base._browser then
-            base.help()
-        else
-            base._browser:show()
-        end
-    end,
-    default = false,
-})
-
-local makeModuleListForMenu = function()
-    local searchList = {}
-    for i,v in ipairs(doc._jsonForModules) do
-        table.insert(searchList, v.name)
-    end
-    for i,v in ipairs(doc._jsonForSpoons) do
-        table.insert(searchList, "spoon." .. v.name)
-    end
-    table.sort(searchList, function(a, b) return a:lower() < b:lower() end)
-    return searchList
-end
-
-table.insert(consoleToolbar, {
-    id = "searchID",
-    label = "HS Doc Search",
-    tooltip = "Search for a HS function or method",
-    fn = function(t, w, i, text)
-        if text ~= "" then require"hs.doc.hsdocs".help(text) end
-    end,
-    default = false,
-
-    searchfield               = true,
-    searchPredefinedMenuTitle = false,
-    -- searchText                = "Search HS Docs",
-    searchPredefinedSearches  = makeModuleListForMenu(),
-    searchWidth               = 250,
-})
-
-local moduleListChanges = watchable.watch("hs.doc", "changeCount", function(w, p, k, o, n)
-    if module.toolbar then
-        module.toolbar:modifyItem{
-            id = "searchID",
-            searchPredefinedSearches = makeModuleListForMenu(),
-        }
-    end
-end)
-
-fnutils.each({
-    -- { "XCode",            "com.apple.dt.Xcode" },
-    { "Code",              "com.microsoft.VSCode", },
-    { "Console",          "com.apple.Console", },
-    { "Terminal",         "com.apple.Terminal" },
-    { "Safari",           "com.apple.Safari" },
-    { "Activity", "com.apple.ActivityMonitor"},
-    -- { "AXUI Inspector",   "com.apple.AccessibilityInspector"},
-}, function(entry)
-    local app, bundleID = table.unpack(entry)
-    table.insert(consoleToolbar, {
-        id = bundleID,
-        label = app,
-        tooltip = app,
-        image = image.imageFromAppBundle(bundleID),
-        fn = function(bar, attachedTo, item)
-            application.launchOrFocusByBundleID(bundleID)
-        end,
-        default = true,
-    })
-end)
-
-local myConsoleToolbar = toolbar.new("_asmConsole_001")
-      :addItems(consoleToolbar)
-      :canCustomize(true)
-      :autosaves(true)
-      :separator(true)
-      :setCallback(function(...)
-                        print("+++ Oops! You better assign me something to do!")
-                   end)
-
-
-hs.console.inputBackgroundColor({white = 0.9, alpha = 1})
-hs.console.consoleCommandColor({blue = 1, alpha = 1})
-hs.console.consolePrintColor({black = 1, alpha = 1})
-
-hs.console.toolbar(myConsoleToolbar)
 -- hs.textDroppedToDockIconCallback()
 -- hs.dockIconClickCallback()
 -- hs.dockIcon(true)
@@ -373,5 +247,3 @@ hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
 
--- hs.loadSpoon("PlexMini")
--- require("new_console")
