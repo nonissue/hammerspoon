@@ -66,7 +66,6 @@ table.insert(consoleToolbar, {
 
     searchfield               = true,
     searchPredefinedMenuTitle = false,
-    -- searchText                = "Search HS Docs",
     searchPredefinedSearches  = makeModuleListForMenu(),
     searchWidth               = 250,
 })
@@ -108,7 +107,6 @@ local myConsoleToolbar = toolbar.new("_asmConsole_001")
       :setCallback(function(...)
                         print("+++ Oops! You better assign me something to do!")
                    end)
-
 
 hs.console.inputBackgroundColor({white = 0.9, alpha = 1})
 hs.console.consoleCommandColor({blue = 1, alpha = 1})
