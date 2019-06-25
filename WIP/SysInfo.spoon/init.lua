@@ -76,9 +76,6 @@ end
 ---
 --- Parameters:
 ---  * minutes - How many minutes
-
-
-
 function obj:startFor(minutes)
     if obj.timer then
         canvasCleanup()
@@ -112,7 +109,6 @@ end
 --- Method
 --- Pause or resume the existing countdown.
 ---
-
 function obj:pauseOrResume()
     if obj.timer then
         if obj.timer:running() then
@@ -129,7 +125,6 @@ end
 ---
 --- Parameters:
 ---  * progress - an number specifying the value of progress (0.0 - 1.0)
-
 function obj:setProgress(progress, notifystr)
     if obj.canvas:frame().h == 0 then
         -- Make the canvas actully visible
