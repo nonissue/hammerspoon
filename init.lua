@@ -244,8 +244,8 @@ hs.hotkey.bind(mash, "N", dismissAllNotifications)
 -- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
 -- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
 -- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
--- hs.loadSpoon("Clippy")
--- spoon.Clippy:start()
+hs.loadSpoon("Clippy")
+spoon.Clippy:start()
 
 local toolbar     = require"hs.webview.toolbar"
 local console     = require"hs.console"
