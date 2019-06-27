@@ -101,24 +101,13 @@ hs.loadSpoon('CTRLESC'):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP"})
-hs.loadSpoon("Context"):start(false)
+hs.loadSpoon("Context"):start({ showMenu = false })
 
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
 ------------------------------------------------------------------------------
 hs.loadSpoon("SafariKeys")
-
-local safariHotkeys = {
-    tabToNewWin = {mash, "T"},
-    mailToSelf = {mash, "U"},
-    mergeAllWindows = {mash, "M"},
-    pinOrUnpinTab = {hyper, "P"},
-    cycleUserAgent = {mash, "7"},
-    addToReadingList = {mash, "R"}
-}
-
- -- TODO: use default hotkeys
-spoon.SafariKeys:bindHotkeys(safariHotkeys)
+spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- PaywallBuster.spoon / by me
@@ -178,8 +167,7 @@ hs.loadSpoon("AfterDark"):start({showMenu = true})
 ------------------------------------------------------------------------------
 -- Copy screenshot to clipboard and save to disk
 ------------------------------------------------------------------------------
-hs.loadSpoon("Clippy")
-spoon.Clippy:start()
+hs.loadSpoon("Clippy"):start()
 
 ------------------------------------------------------------------------------
 -- Crib.spoon / by me
@@ -194,6 +182,9 @@ spoon.Clippy:start()
 -- hs.loadSpoon("PlexMini")
 -- require("sql3-test")
 -- hs.loadSpoon("QuickAdd")
+-- require("callbacks")
+hs.loadSpoon("SysInfo")
+spoon.SysInfo:startFor(0.2)
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------

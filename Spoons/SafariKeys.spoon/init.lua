@@ -13,6 +13,18 @@ obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.logger = hs.logger.new("SafariKeys")
 
+local mash = {"cmd", "alt", "ctrl"}
+local hyper = {"cmd", "alt"}
+
+obj.defaultHotkeys = {
+    tabToNewWin = {mash, "T"},
+    mailToSelf = {mash, "U"},
+    mergeAllWindows = {mash, "M"},
+    pinOrUnpinTab = {hyper, "P"},
+    cycleUserAgent = {mash, "7"},
+    addToReadingList = {mash, "R"}
+}
+
 function obj:bindHotkeys(mapping)
     local def = {
         tabToNewWin = hs.fnutils.partial(self.tabToNewWindow, self),
