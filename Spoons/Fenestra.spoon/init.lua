@@ -92,7 +92,7 @@ function obj:bindHotkeys(keys)
         keys["maxWin"],
         function()
             undostack:addToStack()
-            self:maxWin()
+            self.maxWin()
         end
     )
     hs.hotkey.bindSpec(
@@ -156,9 +156,8 @@ function obj:bindHotkeys(keys)
     )
 end
 
-function obj:maxWin()
-    hs.window.focusedWindow():centerOnScreen()
-    -- hs.window:focusedWindow():centerOnScreen()
+function obj.maxWin()
+    hs.window.focusedWindow()
     hs.grid.maximizeWindow()
 end
 
@@ -185,7 +184,7 @@ end
 
 
 function obj:placeWindow(x, y, w, h)
-    function fn(cell)
+    local function fn(cell)
         cell.x = x
         cell.y = y
         cell.w = w
@@ -250,6 +249,16 @@ function undostack:getCurrentWindowsLayout(wins)
     return current
 end
 
+local function compareFrame(t1, t2)
+    if t1 == t2 then
+        return true
+    end
+    if t1 and t2 then
+        return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
+    end
+    return false
+end
+
 function undostack:undo()
     local size = #self.stack
     if size > 0 then
@@ -267,15 +276,6 @@ function undostack:undo()
     end
 end
 
-function compareFrame(t1, t2)
-    if t1 == t2 then
-        return true
-    end
-    if t1 and t2 then
-        return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
-    end
-    return false
-end
 -- end of undo functionality
 
 -- function obj:start()

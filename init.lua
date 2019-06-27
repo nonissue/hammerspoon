@@ -12,7 +12,7 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
-local console = require("console")
+require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do

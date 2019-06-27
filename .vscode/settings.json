@@ -4,9 +4,9 @@
     "lua.format.singleQuote": false,
     "lua.preferLuaCheckErrors": true,
     "lua.luacheckPath": "/usr/local/bin/luacheck",
-    "lua.linting.enabled": true,
-    "cspell.enabled": false,
-    "cSpell.words": [
-        "fnutils"
-    ],
+    // "lua.linting.enabled": true,
+    // "cspell.enabled": false,
+    // "cSpell.words": [
+    //     "fnutils"
+    // ],
 }

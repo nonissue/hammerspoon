@@ -55,7 +55,7 @@ function obj:init()
         -- fillColor = {white = 1, alpha = 1},
         -- padding = 5.0,
         withShadow = false,
-        shadow = { blurRadius = 5.0, color = { black = 1, alpha = 3/3 }, offset = { h = -1.0, w = 1 } },
+        shadow = {blurRadius = 5.0, color = {black = 1, alpha = 3 / 3}, offset = {h = -1.0, w = 1}},
         fillColor = hs.drawing.color.osx_yellow,
         frame = {x = "0%", y = "0%", w = "0%", h = "100%"}
     }
@@ -70,7 +70,7 @@ function obj:init()
     }
 end
 
-function obj:setup()
+function obj.setup()
     canvasCleanup()
     local mainScreen = hs.screen.mainScreen()
     local mainRes = mainScreen:fullFrame()
@@ -85,13 +85,15 @@ function obj:setup()
             h = circleH
         }
     )
-    -- obj.canvas:frame({x=mainRes.w - (circleW + bottomRightOffset), y=mainRes.h - (circleH + bottomRightOffset + 20), w=circleW, h=circleH})
+    -- obj.canvas:frame({x=mainRes.w - (circleW + bottomRightOffset),
+    -- y=mainRes.h - (circleH + bottomRightOffset + 20), w=circleW, h=circleH})
     -- obj.canvas[1].frame.w = tostring(10)
 end
 
 --- CountDown:startFor(minutes)
 --- Method
---- Start a countdown for `minutes` minutes immediately. Calling this method again will kill the existing countdown instance.
+--- Start a countdown for `minutes` minutes immediately.
+-- Calling this method again will kill the existing countdown instance.
 ---
 --- Parameters:
 ---  * minutes - How many minutes
@@ -136,7 +138,7 @@ end
 --- Method
 --- Pause or resume the existing countdown.
 ---
-function obj:pauseOrResume()
+function obj.pauseOrResume()
     if obj.timer then
         if obj.timer:running() then
             obj.timer:stop()
@@ -153,11 +155,11 @@ end
 --- Parameters:
 ---  * progress - an number specifying the value of progress (0.0 - 1.0)
 function obj:setProgress(progress, notifystr)
-    if obj.canvas:frame().w == 0 then
+    if self.canvas:frame().w == 0 then
         -- Make the canvas actully visible
         local mainScreen = hs.screen.mainScreen()
         local mainRes = mainScreen:fullFrame()
-        obj.canvas:frame({x = mainRes.x, y = mainRes.h - 5, w = mainRes.w, h = 5})
+        self.canvas:frame({x = mainRes.x, y = mainRes.h - 5, w = mainRes.w, h = 5})
     end
     if progress >= 1 then
         canvasCleanup()
@@ -170,9 +172,9 @@ function obj:setProgress(progress, notifystr)
             ):send()
         end
     else
-        obj.canvas[1].frame.w = tostring(progress)
-        obj.canvas[2].frame.x = tostring(progress)
-        obj.canvas[2].frame.w = tostring(1 - progress)
+        self.canvas[1].frame.w = tostring(progress)
+        self.canvas[2].frame.x = tostring(progress)
+        self.canvas[2].frame.w = tostring(1 - progress)
     end
 end
 
