@@ -420,8 +420,6 @@ function obj:start(options)
     obj.cafWatcher:start()
     obj.screenWatcher:start()
 
-
-
     if options then
         obj.shownInMenu = options.showMenu or obj.shownInMenu
     end
