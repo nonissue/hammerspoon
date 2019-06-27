@@ -8,7 +8,7 @@
 -- layouts (http://lowne.github.io/hammerspoon-extensions/)
 -- snapping (ibid)
 
-hs.window.animationDuration = 0
+-- hs.window.animationDuration = 0
 local fw = hs.window.focusedWindow
 
 local obj = {}

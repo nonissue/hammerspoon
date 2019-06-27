@@ -37,7 +37,7 @@ function obj:init()
     self.canvas = hs.canvas.new({x = 0, y = 0, w = 0, h = 0}):show()
     self.canvas:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces)
     self.canvas:level(hs.canvas.windowLevels.status)
-    self.canvas:alpha(0.5)
+    self.canvas:alpha(0.9)
     -- Time elapsed
     -- self.canvas[1] = {
     --     type = "circle",
@@ -101,8 +101,6 @@ function obj:startFor(minutes)
     else
         local mainScreen = hs.screen.mainScreen()
         local mainRes = mainScreen:fullFrame()
-        -- obj.canvas:frame({x=mainRes.x, y=mainRes.h-1, w=mainRes.w, h=10})
-        -- obj.canvas:frame({x=mainRes.x, y=mainRes.h-1, w=mainRes.w, h=10})
         obj.canvas:frame({x = mainRes.x, y = mainRes.h - 8, w = mainRes.w, h = 8})
         -- Set minimum visual step to 2px (i.e. Make sure every trigger updates 2px on screen at least.)
         local minimumStep = 2
@@ -173,7 +171,6 @@ function obj:setProgress(progress, notifystr)
         end
     else
         obj.canvas[1].frame.w = tostring(progress)
-        -- obj.canvas[1].frame.x = tostring(progress)
         obj.canvas[2].frame.x = tostring(progress)
         obj.canvas[2].frame.w = tostring(1 - progress)
     end

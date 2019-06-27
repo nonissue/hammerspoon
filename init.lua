@@ -184,7 +184,7 @@ hs.loadSpoon("Clippy"):start()
 -- hs.loadSpoon("QuickAdd")
 -- require("callbacks")
 hs.loadSpoon("SysInfo")
-spoon.SysInfo:startFor(0.2)
+-- spoon.SysInfo:startFor(0.2)
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
