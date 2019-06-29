@@ -108,7 +108,7 @@ function obj:addToReadingListTest(url)
     local ok, result
 
     if (not url) then
-        ok, result =
+        local _, _ =
             hs.osascript.applescript(
             [[
                 tell application "Safari"
@@ -140,47 +140,53 @@ end
 
 function obj.mailToSelf()
     local firefox = hs.application.get("Firefox")
-    local safari = hs.application.get("Safari")
+    -- local safari = hs.application.get("Safari")
     local frontApp = hs.application.frontmostApplication()
 
+    -- this shit is too unreliable
+    if frontApp == firefox then hs.alert("Can't currently save url from firefox") return end
 
-    if frontApp == firefox then
-        local ok, result = hs.osascript.applescript(
-            [[
-                use scripting additions
-                use framework "Foundation"
-                tell application "System Events" to tell process "firefox"
-                    set frontmost to true
-                    set the_title to name of windows's item 1
-                    set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
-                    set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
-                end tell
-                tell application "System Events"
-                    keystroke "l" using command down
-                    delay 0.5
-                    keystroke "c" using command down
-                end tell
-                set the_url to the clipboard
-                tell application "Mail"
-                    set theMessage to make new outgoing message with properties {subject:"MTS: " & the_title, content:the_url, visible:true}
-                    tell theMessage
-                        make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-                        send
-                    end tell
-                end tell
-                
-                -- return the_title & the the_url as text
-            ]]
-        )
+        -- local ok, firefoxsaveres = hs.osascript.applescript(
+        --     [[
+        --         use scripting additions
+        --         use framework "Foundation"
+        --         tell application "System Events" to tell process "firefox"
+        --             set frontmost to true
+        --             set the_title to name of windows's item 1
+        --             set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
+        --             set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
+        --         end tell
+        --         tell application "System Events"
+        --             keystroke "l" using command down
+        --             delay 1
+        --             keystroke "c" using command down
+        --         end tell
+        --         set the_url to the clipboard
+        --         tell application "Mail"
+        --             set theMessage to make new outgoing message with properties ¬
+        --                 {subject:"MTS: " & the_title, content:the_url, visible:true}
+        --             tell theMessage
+        --                 make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+        --                 send
+        --             end tell
+        --         end tell
+        --     ]]
+        -- )
+        -- return the_title & ": " & the the_url as text
 
-        if frontApp == firefox then
-            -- hs.alert("Frontmost app is firefox")
-            hs.alert("frontmost url = result: " .. result)
-            hs.alert("URL:" .. result)
+        -- if not ok then
+        --     hs.logger.e("error saving url from firefox")
+        --     return
+        -- end
 
-            return
-        end
-    end
+        -- if frontApp == firefox then
+        --     -- hs.alert("Frontmost app is firefox")
+        --     if result and ok then
+        --         hs.alert("frontmost url = result: " .. result)
+        --         hs.alert("URL:" .. result)
+        --     end
+        --     return
+        -- end
 
     local script =
         [[
@@ -191,16 +197,22 @@ function obj.mailToSelf()
     ]]
 
     -- hs.alert("current url is" .. hs.applescript(script))
-    local ok, result = hs.applescript(script)
+    local ok, _ = hs.applescript(script)
     if (ok) then
         hs.applescript.applescript(
             [[
             tell application "Safari"
-                set result to URL of document 1
+                set theURL to URL of document 1
+                set theSource to source of front document
+                set AppleScript's text item delimiters to "title>"
+                set theSource to second text item of theSource
+                set AppleScript's text item delimiters to "</"
+                set theTitle to first text item of theSource
             end tell
 
             tell application "Mail"
-                set theMessage to make new outgoing message with properties {subject: "MTS: " & result, content:result, visible:true}
+                set theMessage to make new outgoing message with properties ¬
+                    {subject: "MTS: " & theTitle, content: theURL, visible:true}
                 tell theMessage
                     make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
                     send
