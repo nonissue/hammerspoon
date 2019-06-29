@@ -35,7 +35,9 @@ obj.prev_mods = {}
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 local function len(t)
     local length = 0
-    for k, v in pairs(t) do -- luacheck: ignore
+    -- changed this to stateless iterators
+    -- and i think it's working?
+    for _, _ in pairs(t) do
         length = length + 1
     end
     return length
