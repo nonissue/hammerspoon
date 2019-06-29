@@ -55,7 +55,7 @@ local homeSSIDs = hs.settings.get("homeSSIDs")
 
 -- exists in utilies library, but not accessible from spoon
 local function has_value(tab, val)
-    for index, value in ipairs(tab) do
+    for index, value in ipairs(tab) do -- luacheck: ignore
         if value == val then
             return true
         end
@@ -251,9 +251,9 @@ function obj.screenWatcherCallback()
     -- if we find "Displays" after Chipset Mode: Intel but before a blank line
     -- then we know displays are attached to integrated gpu
     -- system_profiler SPDisplaysDataType | sed -e '/Chipset Model: Intel/,/^\\s*$/!d' | grep Displays
-    local res, success, exit = hs.execute("system_profiler SPDisplaysDataType | \
-        sed -n '/Intel/,/Displays/p' | \
-        grep Radeon | tr -d '[:space:]'")
+    local res, success, exit = --luacheck: ignore
+        hs.execute("system_profiler SPDisplaysDataType | \
+        sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'")
 
     if res == "" then
         obj.currentGPU = "integrated"
@@ -262,7 +262,8 @@ function obj.screenWatcherCallback()
     end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
-        hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use", alwaysPresent = true, autoWithdraw = false}):send()
+        hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use",
+        alwaysPresent = true, autoWithdraw = false}):send()
     end
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
