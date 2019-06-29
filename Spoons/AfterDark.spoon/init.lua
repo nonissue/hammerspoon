@@ -1,15 +1,17 @@
+--- === AfterDark ===
+---
+--- Darkmode menubar toggle
+---
+
 -- inspiration:
 -- https://github.com/Hammerspoon/Spoons/tree/master/Source/Shade.spoon
 -- https://github.com/Hammerspoon/Spoons/blob/master/Source/FadeLogo.spoon/init.lua
 -- https://github.com/HarshilShah/Nocturnal
-
---[[
-Todo:
-- [x] fix animation
-- [x] handle new event while animating (cancel current?)
-- [x] handle screensize change after init
-- [x] add option to disable animation (Menubar dropdown?)
-]]
+-- Todo:
+-- - [x] fix animation
+-- - [x] handle new event while animating (cancel current?)
+-- - [x] handle screensize change after init
+-- - [x] add option to disable animation (Menubar dropdown?)
 
 local obj = {}
 obj.__index = obj
@@ -26,13 +28,12 @@ obj.hotkeyShow = nil
 obj.menubar = nil
 obj.menu = {}
 
---- Spoon options
 obj.shownInMenu = false
 obj.animate = false
 
 --- AfterDark.darkModeIsOn
 --- Variable
---- Flag for Shade status, 'false' means shade off, 'true' means on.
+--- Flag for darkmode status, 'false' means darkmode off, 'true' means on.
 obj.darkModeIsOn = nil
 
 obj.darkModeScript = [[
@@ -131,11 +132,11 @@ end
 --- AfterDark:init()
 --- Method
 --- Initialize our AfterDark spoon
---- * Deletes any existing menubars
---- * Deletes any leftover overlays
---- * Creates a new rect with current screenSize
---- * Sets rect properties
---- * Creates menubar item, adds it to menubar
+--- - Deletes any existing menubars
+--- - Deletes any leftover overlays
+--- - Creates a new rect with current screenSize
+--- - Sets rect properties
+--- - Creates menubar item, adds it to menubar
 ---
 --- Parameters:
 ---  * None
@@ -156,11 +157,12 @@ function obj:init()
     --Find out screen size. Currently using only the primary screen
     obj.screenSize = hs.screen.primaryScreen():fullFrame()
 
-    --Returns a hs.geometry rect describing screen's frame in absolute coordinates, including the dock and menu.
+    -- Returns a hs.geometry rect describing screen's frame in absolute coordinates, including the dock and menu.
     -- might be better to do this with canvas?
     obj.overlay = hs.drawing.rectangle(obj.screenSize)
 
-    --- AfterDark.rectTransparency
+    --- AfterDark.overlayTransparency
+    --- Variable
     --- Set to greater than 1 so there is a slight delay before overlay starts fading out
     --- Probably not the best way to do this though
     obj.overlayTransparency = 1.2
@@ -182,6 +184,7 @@ end
 
 --- AfterDark:start()
 --- Method
+--- Start
 ---
 --- Parameters:
 ---  * options - An optional table containing spoon configuration options
@@ -216,7 +219,7 @@ end
   ---
   --- Returns:
   ---  * None
-function obj.stop()
+function obj:stop()
     obj.logger.df("-- Stopping AfterDark")
 
     if obj.overlay then
@@ -240,7 +243,7 @@ end
 ---
 --- Returns:
 ---  * None
-function obj.disable()
+function obj:disable()
     if obj.menubar then
         obj.menubar:delete()
     end
