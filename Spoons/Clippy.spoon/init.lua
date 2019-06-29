@@ -69,7 +69,8 @@ function obj.imageToClipboard(files, flagTables)
                 if hs.pasteboard.readDataForUTI("public.file-url") == filePath then
                     print("Already in clipboard")
                 else
-                    print("\n   ------------------------\n  Match! Copying to clipboard... \n   ------------------------\n")
+                    print("\n   ------------------------\n  \
+                        Match! Copying to clipboard... \n  ------------------------\n")
                     hs.pasteboard.writeDataForUTI(nil, "public.file-url", filePath)
                     -- hs.alert("New Screenshot Copied to Clipboard", 0.75)
                     hs.notify.new({
@@ -119,14 +120,14 @@ end
 ---
 --- Returns.
 ---  * None
-function obj:start()
+function obj:start() -- luacheck: ignore
     obj.logger.df("-- Starting Clippy")
     obj.screenshotWatcher:start()
 end
   --- Clippy:stop()
   --- Method
   --- Stops clippy
-  --- 
+  ---
   --- Parameters.
   ---  * None
   ---

@@ -5,7 +5,7 @@
 ---
 
 
--- 
+--
 -- Almost none of this is original work, just combined some existing solutions
 -- See Readme for more info
 --
@@ -31,12 +31,12 @@ obj.logger = hs.logger.new("CTRL-ESC")
 obj.prev_mods = {}
 
 -- get length of table so we can check how many keys
--- method borrowed from 
+-- method borrowed from
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 local function len(t)
     local length = 0
-    for k, v in pairs(t) do
-    	length = length + 1
+    for k, v in pairs(t) do -- luacheck: ignore
+        length = length + 1
     end
     return length
 end
@@ -47,15 +47,15 @@ function obj:mod_event_handler(event)
     local cur_mods = event:getFlags()
 
     if cur_mods["ctrl"] and len(cur_mods) == 1 and len(self.prev_mods) == 0 then
-        -- we want to go from NO modifiers pressed to only one pressed 
-        -- in order to consider sending escape. 
+        -- we want to go from NO modifiers pressed to only one pressed
+        -- in order to consider sending escape.
         -- for example, in the case that user holds down:
         -- [ CMD ] -> [ CMD, CTRL ] -> [ CTRL ] -> [ ]
         -- We DO NOT want to send esc with this pattern
         self.send_esc = true
     elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
         -- so, if our conditions are met, we send the esc keyevent
-        -- note: newKeyEvent seems much much faster than keyStroke 
+        -- note: newKeyEvent seems much much faster than keyStroke
         -- for somereason
         hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
         hs.eventtap.event.newKeyEvent({}, 'escape', false):post()

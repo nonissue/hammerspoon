@@ -60,7 +60,7 @@ print_r = utils.print_r
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
-local hyper = {"cmd", "alt"}
+-- local hyper = {"cmd", "alt"}
 
 -- console window hotkey
 hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)

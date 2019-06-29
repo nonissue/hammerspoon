@@ -5,3 +5,6 @@ std = {
         "table", "assertIsEqual", "assert", "ipairs", "os", "require", "string", "pairs", "math"
     }
 }
+
+ignore = {"212"}
+max_comment_line_length = 200
