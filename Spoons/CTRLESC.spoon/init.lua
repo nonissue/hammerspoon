@@ -1,3 +1,10 @@
+--- === CTRLESC ===
+---
+--- Rebind caps lock to escape when pressed alone,
+--- control modifier when pressed with other keys
+---
+
+
 -- 
 -- Almost none of this is original work, just combined some existing solutions
 -- See Readme for more info
@@ -9,14 +16,11 @@
 -- Docs
 -- Remove any utilities/functions speciifc to my config
 -- Pull on a new hammerspoon config and see if it works
-
-
 local obj = {}
 obj.__index = obj
 
 
 -- obj.logger.i('Initializing CTRL-ESC.spoon logger...')
-
 obj.name = "CTRLESC"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
