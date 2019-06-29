@@ -17,16 +17,12 @@ obj.hotkeyShow = nil
 obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2016mbpr"
 obj.wasCreated = false
 
--- clipboard stuff
-
--- https.//github.com/CommandPost/CommandPost/blob/45f1cbfb6f97f7a47de9a5db05fd89c49a85ea6a/src/plugins/finalcutpro/text2speech/init.lua
--- https.//github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
--- https.//github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
--- https.//github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
-
-
--- watches for new screenshots in target location and copies them to clipboard
-
+--[[
+https://github.com/CommandPost/CommandPost/blob/develop/src/plugins/finalcutpro/text2speech/init.lua
+https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
+https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
+https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
+]]
 
 function obj.imageToClipboard(files, flagTables)
 
