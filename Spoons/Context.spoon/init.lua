@@ -1,18 +1,7 @@
---[[
-    Todo:
-    - [ ] combine alerts when multiple callbacks are fired
-    - [x] move SSIDs in hs key value store
-    - [x] make sure all wake events are handle (screen, system)
-    - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
-    - [x] move displays to hs key value store
-    - [ ] move list of drives to eject to hs key value store
-]]
-
---[[
-    Values stored in hs.settings:
-    -- homeSSIDs
-]]
-
+--- === Context ===
+---
+--- Change settings based on location and displays
+---
 local obj = {}
 obj.__index = obj
 
@@ -45,6 +34,21 @@ obj.currentGPU = nil
 
 -- spoon options
 obj.shownInMenu = false
+obj.display_ids = {}
+obj.drives = {}
+
+--[[
+    Todo:
+    - [ ] combine alerts when multiple callbacks are fired
+    - [x] move SSIDs in hs key value store
+    - [x] make sure all wake events are handle (screen, system)
+    - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
+    - [x] move displays to hs key value store
+    - [ ] move list of drives to eject to hs key value store
+    Values stored in hs.settings:
+    -- homeSSIDs
+]]
+
 
 -- fetched from hs key/value store
 local homeSSIDs = hs.settings.get("homeSSIDs")
@@ -64,12 +68,9 @@ local function atHome(SSID)
     return has_value(homeSSIDs, SSID)
 end
 
-------------------------------------------------------------------------------
---- Fucntions that describe system changes
-------------------------------------------------------------------------------
-
 --- Context.moveDockLeft()
---- Method
+--- Function
+--- movedockleft
 ---
 --- Parameters:
 --- * None
@@ -87,6 +88,7 @@ end
 
 --- Context.moveDockDown()
 --- Method
+--- movedockdown
 ---
 --- Parameters:
 --- * None
@@ -104,6 +106,7 @@ end
 
 --- Context.checkAndEject()
 --- Method
+--- check and eject
 ---
 --- Parameters:
 --- * target - a string containing the name of the drive we wish to eject
@@ -122,6 +125,7 @@ end
 
 --- Context.homeArrived()
 --- Method
+--- home arrived
 ---
 --- Parameters:
 --- * None
@@ -144,6 +148,7 @@ end
 
 --- Context.homeDeparted()
 --- Method
+--- home departed
 ---
 --- Parameters:
 --- * None
@@ -160,6 +165,7 @@ end
 
 --- Context.ssidChangedCallback()
 --- Method
+--- ssidChangedCallback
 ---
 --- Parameters:
 --- * None
@@ -188,12 +194,13 @@ function obj.ssidChangedCallback()
     obj.currentSSID = newSSID
 end
 
-------------------------------------------------------------------------------
---- Callback functions (which are called based on certain changes)
-------------------------------------------------------------------------------
+-- --------------------------------------------------------------------------
+-- Callback functions (which are called based on certain changes)
+-- ---------------------------------------------------------------------------
 
 --- Context.cafChangedCallback()
 --- Method
+--- cafChangeCallback
 ---
 --- Parameters:
 --- * eventType - a number which represents the ID of the eventType
@@ -217,6 +224,7 @@ end
 
 --- Context.screenWatcherCallback()
 --- Method
+--- screenWatcherCallback
 ---
 --- Parameters:
 --- * None
@@ -225,6 +233,7 @@ end
 ---  * None
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
+    print("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
 
     -- ugly as hell way to find out which display is in use
     -- uses sed to cut all text between "Intel" and "Displays"
@@ -245,91 +254,59 @@ function obj.screenWatcherCallback()
     local res, success, exit = hs.execute("system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | \
         grep Radeon | tr -d '[:space:]'")
-    if res == "" then obj.currentGPU = "integrated" else obj.currentGPU = "discrete" end
-    -- hs.alert("[SW] gpu: " .. obj.currentGPU)
-    -- local test = hs.notify.new({title = "Test", subtitle = "Test Subtitle", alwaysPresent = true, autoWithdraw = false})
 
+    if res == "" then
+        obj.currentGPU = "integrated"
+    else
+        obj.currentGPU = "discrete"
+    end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
         hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use", alwaysPresent = true, autoWithdraw = false}):send()
-        -- hs.notify.show("GPU Status", "Warning", "Dedicated GPU in use")
     end
 
-    -- if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.currentScreens then
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-
-
-        -- 0 = integrated
-        -- 1 = discrete
-        -- 2 = auto switch
-        -- handle unnecessary/redundant screenWatcher callbacks
-    elseif hs.screen.find("Cinema HD") then
+    elseif hs.screen.find(obj.display_ids['cinema']) then
         -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
         -- Changed above line to use "Cinema HD" as display ID was not reliable?
         -- if we have a different amount of displays and one of them is
         -- our cinema display, we are @desk
         obj.logger.i("[SW] no change")
-
-
-        -- 0 = integrated
-        -- 1 = discrete
-        -- 2 = auto switch
-        -- if success and not res == obj.gpuSwitchStatus then
-        --     obj.gpuSwitchStatus = res
-        --     if res == 0 then
-        --         hs.alert("[SW} Automatic GPU Switch disabled (integrated only)")
-        --         -- obj.gpuSwitchStatus = 0
-        --     elseif res == 1 then
-        --         -- obj.gpuSwitchStatus = 1
-        --         hs.alert("[SW} Automatic GPU Switch disabled (discrete only)")
-        --     elseif res == 2 then
-        --         hs.alert("[SW] Automatic GPU Switch enabled")
-        --         -- obj.gpuSwitchStatus = 2
-        --     else
-        --         obj.logger.e("Couldn't get gpuSwitch status")
-        --     end
-        -- else
-        --     obj.logger.i("[SW] no gpuswitch change")
-        --     obj.logger.i("[SW] gpuswitch = " .. res)
-        -- end
-
-        -- hs.alert("[SW] desk", 1)
         obj.docked = "docked"
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.docked == "@desk" then
         obj.logger.i("[SW] undocking")
-        -- hs.alert("[SW] undocking", 3)
-
         obj.docked = "mobile"
         obj.moveDockLeft()
 
-        -- Move these to a hs key value store?
-        obj.checkAndEject("ExternalSSD")
-        obj.checkAndEject("Win-Stuff")
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
-        obj.logger.i("[SW] mobile")
-        -- hs.alert("[SW] mobile", 3)
-
+        for i = 1, #obj.drives do obj.checkAndEject(obj.drives[i]) end
+        -- obj.checkAndEject("ExternalSSD") -- move to key value store?
+        -- obj.checkAndEject("Win-Stuff")
+    elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids['sidecar']) then
+        -- print("\n----------\nContext.display_ids: \n" .. i(obj.display_ids) .. "\n---------")
+        obj.logger.i("[SW] Sidecar Mode")
+        obj.moveDockDown()
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find(obj.display_ids['mbp']) then
+        obj.logger.i("[SW] Mobile")
         obj.docked = "mobile"
-
-        obj:moveDockLeft()
+        obj.moveDockLeft()
     else
         obj.logger.e("[SW] Error!")
-        hs.alert("ERROR: Unhandled screenWatcher case", 1)
-
+        -- hs.alert("ERROR: Unhandled screenWatcher case", 1)
         obj.docked = "error"
     end
 
     obj.lastNumberOfScreens = newNumberOfScreens
 end
 
-------------------------------------------------------------------------------
---- Watchers
-------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- Watchers
+-- ---------------------------------------------------------------------------
 
 --- Context.initWifiWatcher()
 --- Method
+--- initWifiWatcher
 ---
 --- Parameters:
 --- * None
@@ -348,6 +325,7 @@ end
 
 --- Context.initCafWatcher()
 --- Method
+--- initCafWatcher
 ---
 --- Parameters:
 --- * None
@@ -360,6 +338,7 @@ end
 
 --- Context.initScreenWatcher()
 --- Method
+--- initScreenWatcher
 ---
 --- Parameters:
 ---  * None
@@ -376,12 +355,13 @@ function obj.initScreenWatcher()
     obj.screenWatcher = hs.screen.watcher.new(obj.screenWatcherCallback)
 end
 
-------------------------------------------------------------------------------
---- Default spoon api methods
-------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+-- Default spoon api methods
+-- ---------------------------------------------------------------------------
 
 --- Context:init()
 --- Method
+--- init
 ---
 --- Parameters:
 ---  * None
@@ -393,6 +373,15 @@ function obj:init()
         self.menubar:delete()
     end
 
+    obj.display_ids = hs.settings.get('context.display_ids') or {}
+    obj.drives = hs.settings.get('context.drives') or {}
+
+    -- if options then
+    --     obj.shownInMenu = options.showMenu or obj.shownInMenu
+    --     obj.display_ids = options.display_ids or {}
+    --     obj.drives = options.drives or {}
+    -- end
+
     obj.initWifiWatcher()
     obj.initCafWatcher()
     obj.initScreenWatcher()
@@ -402,6 +391,7 @@ end
 
 --- Context:start()
 --- Method
+--- start
 ---
 --- Parameters:
 ---  * options - An optional table containing spoon configuration options
@@ -416,13 +406,19 @@ function obj:start(options)
         self.hotkeyShow:enable()
     end
 
-    obj.wifiWatcher:start()
-    obj.cafWatcher:start()
-    obj.screenWatcher:start()
+    -- obj.displays = options.display_ids or {}
+    -- obj.drives = options.drives or {}
+    print(i(options))
 
     if options then
         obj.shownInMenu = options.showMenu or obj.shownInMenu
+        obj.display_ids = options.display_ids or {}
+        obj.drives = options.drives or {}
     end
+
+    obj.wifiWatcher:start()
+    obj.cafWatcher:start()
+    obj.screenWatcher:start()
 
     -- creates menubar item if desired
     -- currently menu functions dont do anything
@@ -451,6 +447,7 @@ end
 
 --- Context:stop()
 --- Method
+--- stop
 ---
 --- Parameters:
 ---  * None

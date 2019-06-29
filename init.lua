@@ -101,7 +101,13 @@ hs.loadSpoon('CTRLESC'):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP"})
-hs.loadSpoon("Context"):start({ showMenu = false })
+local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
+local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
+
+hs.settings.set("context.drives", drives)
+hs.settings.set("context.display_ids", display_ids)
+
+hs.loadSpoon("Context"):start({ showMenu = false, display_ids = display_ids, drives = drives})
 
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
@@ -183,7 +189,8 @@ hs.loadSpoon("Clippy"):start()
 -- require("sql3-test")
 -- hs.loadSpoon("QuickAdd")
 -- require("callbacks")
-hs.loadSpoon("SysInfo")
+-- hs.loadSpoon("SysInfo")
+-- hs.loadSpoon("Shade")
 -- spoon.SysInfo:startFor(0.2)
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --

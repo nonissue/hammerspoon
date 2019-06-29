@@ -1,3 +1,7 @@
+--- === Clippy ===
+---
+--- Copy last screenshot to clipboard and save to disk
+---
 
 local obj = {}
 obj.__index = obj
@@ -20,7 +24,10 @@ obj.wasCreated = false
 -- https.//github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
 -- https.//github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
 
+
 -- watches for new screenshots in target location and copies them to clipboard
+
+
 function obj.imageToClipboard(files, flagTables)
 
     if files[1] == ".DS_Store" and #files == 1 then
@@ -90,7 +97,7 @@ function obj.imageToClipboard(files, flagTables)
 end
 
 
---- Clippy.init()
+--- Clippy:init()
 --- Method
 --- Initialize our Clippy spoon
 ---
@@ -99,38 +106,40 @@ end
 ---
 --- Returns.
 ---  * None
-function obj.init()
+function obj:init()
     obj.screenshotWatcher = hs.pathwatcher.new(obj.screenshotPath, obj.imageToClipboard)
 end
 
 --- Clippy:start()
 --- Method
+--- Starts clippy
 ---
 --- Parameters.
 ---  * options - An optional table containing spoon configuration options
 ---
 --- Returns.
 ---  * None
-function obj.start()
+function obj:start()
     obj.logger.df("-- Starting Clippy")
     obj.screenshotWatcher:start()
 end
   --- Clippy:stop()
   --- Method
-  ---
+  --- Stops clippy
+  --- 
   --- Parameters.
   ---  * None
   ---
   --- Returns.
   ---  * None
-function obj.stop()
+function obj:stop()
     obj.logger.df("-- Stopping Clippy")
     obj.screenshotWatcher:stop()
     obj.wasCreated = false
 end
 
 --- Clippy.disable()
---- Method
+--- Function
 ---
 --- Parameters.
 ---  * None
