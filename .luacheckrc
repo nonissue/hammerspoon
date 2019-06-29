@@ -7,4 +7,3 @@ std = {
 }
 
 ignore = {"212"}
-max_comment_line_length = 200
