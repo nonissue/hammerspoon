@@ -108,15 +108,12 @@ function obj:addToReadingListTest(url)
     local ok, result
 
     if (not url) then
-        local _, _ =
-            hs.osascript.applescript(
-            [[
-                tell application "Safari"
-                    set result to URL of document 1
-                end tell
-                tell application "Safari" to add reading list item result
-            ]]
-        )
+        local _, _ = hs.osascript.applescript([[
+            tell application "Safari"
+                set result to URL of document 1
+            end tell
+            tell application "Safari" to add reading list item result
+        ]])
     else
         obj.logger.e("URL: " .. url)
         local script = string.format([[tell application "Safari" to add reading list item %s]], url)
@@ -140,38 +137,36 @@ end
 
 function obj.mailToSelf()
     local firefox = hs.application.get("Firefox")
-    -- local safari = hs.application.get("Safari")
     local frontApp = hs.application.frontmostApplication()
 
     -- this shit is too unreliable
     if frontApp == firefox then hs.alert("Can't currently save url from firefox") return end
 
-        -- local ok, firefoxsaveres = hs.osascript.applescript(
-        --     [[
-        --         use scripting additions
-        --         use framework "Foundation"
-        --         tell application "System Events" to tell process "firefox"
-        --             set frontmost to true
-        --             set the_title to name of windows's item 1
-        --             set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
-        --             set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
+        -- local ok, firefoxsaveres = hs.osascript.applescript([[
+        --     use scripting additions
+        --     use framework "Foundation"
+        --     tell application "System Events" to tell process "firefox"
+        --         set frontmost to true
+        --         set the_title to name of windows's item 1
+        --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
+        --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
+        --     end tell
+        --     tell application "System Events"
+        --         keystroke "l" using command down
+        --         delay 1
+        --         keystroke "c" using command down
+        --     end tell
+        --     set the_url to the clipboard
+        --     tell application "Mail"
+        --         set theMessage to make new outgoing message with properties ¬
+        --             {subject:"MTS: " & the_title, content:the_url, visible:true}
+        --         tell theMessage
+        --             make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+        --             send
         --         end tell
-        --         tell application "System Events"
-        --             keystroke "l" using command down
-        --             delay 1
-        --             keystroke "c" using command down
-        --         end tell
-        --         set the_url to the clipboard
-        --         tell application "Mail"
-        --             set theMessage to make new outgoing message with properties ¬
-        --                 {subject:"MTS: " & the_title, content:the_url, visible:true}
-        --             tell theMessage
-        --                 make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-        --                 send
-        --             end tell
-        --         end tell
-        --     ]]
-        -- )
+        --     end tell
+        -- ]])
+
         -- return the_title & ": " & the the_url as text
 
         -- if not ok then
@@ -190,11 +185,11 @@ function obj.mailToSelf()
 
     local script =
         [[
-        tell application "Safari"
-            set currentURL to URL of document 1
-        end tell
-        return currentURL
-    ]]
+            tell application "Safari"
+                set currentURL to URL of document 1
+            end tell
+            return currentURL
+        ]]
 
     -- hs.alert("current url is" .. hs.applescript(script))
     local ok, _ = hs.applescript(script)
