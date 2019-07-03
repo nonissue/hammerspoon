@@ -8,6 +8,7 @@
 --- SysInfo
 --- Display small graphical indicators to show current system config and stats
 --- Idea is to prevent cluttering menubar.
+--- Right now is basically just a demo of a horizontal progress bar.
 
 local obj = {}
 obj.__index = obj
@@ -105,7 +106,7 @@ function obj:startFor(minutes)
         local mainRes = mainScreen:fullFrame()
         obj.canvas:frame({x = mainRes.x, y = mainRes.h - 8, w = mainRes.w, h = 8})
         -- Set minimum visual step to 2px (i.e. Make sure every trigger updates 2px on screen at least.)
-        local minimumStep = 2
+        -- local minimumStep = 2
         local secCount = math.ceil(60 * minutes)
         obj.loopCount = 0
         if mainRes.w / secCount >= 2 then

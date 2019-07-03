@@ -53,7 +53,7 @@ local updateInterval = 5
 local presetCount = 3
 
 
---[[ 
+--[[
     init our empty chooser choice tables
     each item is a row in the table with the following structure:
     {
@@ -114,9 +114,9 @@ for i = 1, presetCount do
     })
 end
 
-table.insert(obj.startMenuChoices, 
+table.insert(obj.startMenuChoices,
     {
-        title = obj:styleText("??m"), 
+        title = obj:styleText("??m"),
         fn = function() obj.chooser:show() end
     }
 )
@@ -191,15 +191,15 @@ function obj:setTitleStyled(text)
 end
 
 -- why not just deal with minutes?
-function obj:formatSeconds(seconds)
+function obj:formatSeconds(s)
     -- from https://gist.github.com/jesseadams/791673
-    local seconds = tonumber(seconds)
+    local seconds = tonumber(s)
     if seconds then
-        hours = string.format("%02.f", math.floor(seconds / 3600));
-        mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
-        secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
+        local hours = string.format("%02.f", math.floor(seconds / 3600));
+        local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
+        local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
         return "☾ " .. hours ..":".. mins..":"..secs
-    else 
+    else
         return false
     end
 end
@@ -312,18 +312,18 @@ end
 function obj:deleteTimer()
     self.timerEvent:stop()
     self.timerEvent = nil
-    self.menuFont = defaultFont 
+    self.menuFont = defaultFont
     self:setTitleStyled(self.menuBarIcon)
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
 end
 
 function obj:initChooser()
     -- the menubar isnt set by default by the menubar.new call
-    -- with the parameter "false", but because we set the title 
+    -- with the parameter "false", but because we set the title
     -- right after, it ends up being shown
 
     -- Initialize our chooser
-    -- we use a work around here to capture to capture user input that 
+    -- we use a work around here to capture to capture user input that
     -- doesnt match any of our preset options by checking <if (choice)>
     -- If the user 'query' doesn't match an option, we provide them with
     -- a new option that appears to let them set a custom timer!
@@ -344,7 +344,7 @@ function obj:initChooser()
 
     -- QueryChangedCallback
     -- User hasn't entered any input, we show default options
-    -- if they start entering input, we immediately replace the 
+    -- if they start entering input, we immediately replace the
     -- preset options with a new option to set a custom timer
     -- the premise is that: the user will only enter text
     -- if they dont want a default option, otherwise they will
@@ -374,6 +374,7 @@ end
 
 function obj:start()
     -- print("-- Starting Zzz")
+    obj.logger.i("Starting Zzz")
     self:init()
 
     return self
@@ -381,6 +382,7 @@ end
 
 function obj:stop()
     -- hs.alert("-- Stopping Zzz.spoon")
+    obj.logger.i("Stopping Zzz")
 
     if self.chooser then
         self.chooser:cancel()
@@ -404,12 +406,12 @@ function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
+    obj.logger.i('Initiializing Zzz')
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end
 
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
-    -- self:setTitleStyled("𝐙")
     self:setTitleStyled(self.menuBarIcon)
 
     self:initChooser()

@@ -233,7 +233,7 @@ end
 ---  * None
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
-    print("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
+    obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
 
     -- ugly as hell way to find out which display is in use
     -- uses sed to cut all text between "Intel" and "Displays"
@@ -407,9 +407,7 @@ function obj:start(options)
         self.hotkeyShow:enable()
     end
 
-    -- obj.displays = options.display_ids or {}
-    -- obj.drives = options.drives or {}
-    print(i(options))
+    obj.logger.d(i(options))
 
     if options then
         obj.shownInMenu = options.showMenu or obj.shownInMenu

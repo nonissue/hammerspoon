@@ -10,7 +10,7 @@
 
 -- load basic modules / utils first
 package.path = package.path .. ";lib/?.lua"
-local styles = require("styles")
+styles = require("styles")
 local utils = require("utilities")
 require("console")
 
@@ -190,8 +190,7 @@ hs.loadSpoon("Clippy"):start()
 -- hs.loadSpoon("QuickAdd")
 -- require("callbacks")
 -- hs.loadSpoon("SysInfo")
--- hs.loadSpoon("Shade")
--- spoon.SysInfo:startFor(0.2)
+-- spoon.SysInfo:startFor(0.1)
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
@@ -217,7 +216,7 @@ hs.hotkey.showHotkeys(mash, "space")
 -- Close all open notifications
 local function dismissAllNotifications()
     local success, result = hs.applescript([[
-        tell application "System Events"
+    tell application "System Events"
         tell process "Notification Center"
             set theWindows to every window
             repeat with i from 1 to number of items in theWindows
