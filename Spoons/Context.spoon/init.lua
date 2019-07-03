@@ -254,7 +254,6 @@ function obj.screenWatcherCallback()
     local res, success, exit = --luacheck: ignore
         hs.execute("system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'")
-
     if res == "" then
         obj.currentGPU = "integrated"
     else
@@ -294,7 +293,6 @@ function obj.screenWatcherCallback()
         obj.moveDockLeft()
     else
         obj.logger.e("[SW] Error!")
-        -- hs.alert("ERROR: Unhandled screenWatcher case", 1)
         obj.docked = "error"
     end
 
