@@ -10,7 +10,7 @@
 
 -- load basic modules / utils first
 package.path = package.path .. ";lib/?.lua"
-styles = require("styles")
+local styles = require("styles")
 local utils = require("utilities")
 require("console")
 
