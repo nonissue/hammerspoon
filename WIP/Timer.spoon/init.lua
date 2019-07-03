@@ -39,7 +39,6 @@ obj.modifyTimerChoices = {}
 obj.modifyMenuChoices = {}
 
 local timerInterval = 15
--- local updateInterval = 5
 local presetCount = 3
 
 for i = 1, presetCount do
@@ -61,12 +60,12 @@ end
 
 table.insert(obj.startMenuChoices,
     {
-        title = "0.1m",
+        title = "0.15m",
         fn = function() obj:handleAction(obj.startMenuChoices[4]) end,
         ["id"] = 4,
         ["action"] = "create",
-        ["m"] = 0.1,
-        ["text"] = "0.1 minutes",
+        ["m"] = 0.15,
+        ["text"] = "0.15 minutes",
     }
 )
 
@@ -117,18 +116,15 @@ obj.modifyMenuChoices = {
         fn = function() obj:handleAction(obj.modifyTimerChoices[3]) end,
     },
 }
-
 -- Call when timer ends?
 function obj:timerDoneAlert()
-    -- local timerDone = function(result) print("Callback Result: " .. result) end
     hs.dialog.blockAlert("Message", "Informative Text", "Snooze", "Okay!", "NSCriticalAlertStyle")
-    -- hs.dialog.alert(500, 500, timerDone, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle") -- luacheck: ignore
 end
 
 -- why not just deal with minutes?
 function obj:formatSeconds(s)
     -- from https://gist.github.com/jesseadams/791673
-    local seconds = tonumber(s)
+    local seconds = math.ceil(s) -- use math.ceil as secs left is too precise
     if seconds then
         local hours = string.format("%02.f", math.floor(seconds / 3600));
         local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
@@ -141,9 +137,7 @@ end
 
 function obj:setTitleStyled(text)
     self.timerMenu:setTitle(
-        hs.styledtext.new(
-            text
-        )
+        text
     )
 end
 
@@ -195,8 +189,16 @@ function obj:startTimer(timerInMins)
             tonumber(timerInMins) * 60,
             function()
                 self.logger.df("Timer finished, sleeping!")
-                hs.alert("Timer event finished!", 5)
-                self:timerDoneAlert()
+                -- self:timerDoneAlert()
+                -- os.execute("/usr/local/bin/dnd-cli off")
+                hs.notify.new({
+                    title = "Timer Finished!",
+                    subtitle = "You set a timer, now it's finished!",
+                    hasActionButton = true,
+                    actionButtonTitle = "Snooze",
+                    withdrawAfter = 0,
+                    alwaysPresent = true, autoWithdraw = false
+                }):send()
                 self:deleteTimer()
             end
         )
@@ -222,7 +224,7 @@ function obj:updateMenu()
                 hs.alert("Sleeping in 10 seconds...")
                 -- obj.menuFont = almostDone
             end
-
+            -- hs.alert(timeLeft, 1)
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
         1

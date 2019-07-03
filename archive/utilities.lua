@@ -36,7 +36,7 @@ function print_r ( t )
   print()
 end
 
--- only used one place? 
+-- only used one place?
 -- plugins/battery/burnrate.lua
 function round(num, numDecimalPlaces)
     local mult = 10^(numDecimalPlaces or 0)
