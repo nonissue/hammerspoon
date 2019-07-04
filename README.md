@@ -1,3 +1,9 @@
+# 19-07-03: NEW COMPLETE DOCUMENTATION COMMING SOON
+
+Email me questions or open issues if there's anything particular you'd like address!
+
+
+
 # a hammerspoon config
 
 This is pretty unstable and changes frequently. 
