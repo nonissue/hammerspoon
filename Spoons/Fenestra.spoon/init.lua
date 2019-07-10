@@ -8,8 +8,13 @@
 -- layouts (http://lowne.github.io/hammerspoon-extensions/)
 -- snapping (ibid)
 
--- hs.window.animationDuration = 0
-local fw = hs.window.focusedWindow
+--[[
+    Todo:
+        - Window snapping?
+        - Forced layouts?
+        - Vertical adjustments?
+            - Use similar hotkeys as existing ones, just with ⬆ and ⬇ arrow keys
+]]
 
 local obj = {}
 obj.__index = obj
@@ -41,7 +46,6 @@ hs.grid.GRIDHEIGHT = 4
 
 -- grid ui
 hs.grid.ui.textSize = 40
--- hs.grid.ui.cellStrokeColor = {0,0,0}
 hs.grid.ui.highlightColor = {0, 1, 0, 0.3}
 hs.grid.ui.highlightStrokeColor = {0, 1, 0, 0.4}
 hs.grid.ui.cellStrokeColor = {1, 1, 1, 1}
@@ -91,6 +95,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["maxWin"],
         function()
+            obj.logger.i("Full screen")
             undostack:addToStack()
             self.maxWin()
         end
@@ -98,6 +103,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["leftHalf"],
         function()
+            obj.logger.i("Left one half")
             undostack:addToStack()
             self:leftHalf()
         end
@@ -105,6 +111,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["rightHalf"],
         function()
+            obj.logger.i("Right one half")
             undostack:addToStack()
             self:rightHalf()
         end
@@ -112,6 +119,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["leftMaj"],
         function()
+            obj.logger.i("Left two thirds")
             undostack:addToStack()
             self:leftMaj()
         end
@@ -119,6 +127,7 @@ function obj:bindHotkeys(keys)
     hs.hotkey.bindSpec(
         keys["rightMin"],
         function()
+            obj.logger.i("Right one third")
             undostack:addToStack()
             self:rightMin()
         end
@@ -127,7 +136,7 @@ function obj:bindHotkeys(keys)
         keys["pushWest"],
         function()
             undostack:addToStack()
-            obj.logger.d("Push Win Hotkey")
+            obj.logger.i("Push Win Hotkey")
             self:pushWest()
         end
     )
@@ -135,7 +144,7 @@ function obj:bindHotkeys(keys)
         keys["pushEast"],
         function()
             undostack:addToStack()
-            obj.logger.d("Pull Win Hotkey")
+            obj.logger.i("Pull Win Hotkey")
             self:pushEast()
         end
     )
@@ -143,13 +152,12 @@ function obj:bindHotkeys(keys)
         keys["pushNext"],
         function()
             undostack:addToStack()
-            obj.logger.d("Push Next Hotkey")
+            obj.logger.i("Push Next Hotkey")
             self:pushNext()
         end
     )
     hs.hotkey.bindSpec(
         keys["undo"],
-        -- "Undoing last layout change",
         function()
             undostack:undo()
         end
@@ -164,24 +172,17 @@ end
 function obj:pushWest()
     obj.logger.d("Push Win Function")
     hs.window.focusedWindow():moveOneScreenWest()
-    -- hs.window:moveOneScreenWest()
-    -- hs.grid.pushWindowNextScreen()
 end
 
 function obj:pushEast()
     hs.window.focusedWindow():moveOneScreenEast()
-    -- hs.window:moveOneScreenEast()
-    -- hs.grid.pullWindowNextScreen()
 end
 
-
 function obj:pushNext()
-    -- hs.window.focusedWindow():moveToScreen(hs.window:focusedWindow():screen():next())
     local currentWindow = hs.window.focusedWindow()
     local nextScreen = currentWindow:screen():next()
     currentWindow:moveToScreen(nextScreen)
 end
-
 
 function obj:placeWindow(x, y, w, h)
     local function fn(cell)
@@ -215,7 +216,6 @@ end
 -- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
 -- allows us to undo the window arrangement changes
 -- keeps history
-
 function undostack:addToStack(wins)
     if self.skip then
         return
@@ -228,7 +228,7 @@ function undostack:addToStack(wins)
     size = size + 100
     if size > self.stackMax then
         for x = 1, size - self.stackMax do
-            self.stack[1] = nil
+            self.stack[x] = nil
         end
     end
 end
@@ -275,23 +275,6 @@ function undostack:undo()
         hs.alert("Nothing to Undo", 0.5)
     end
 end
-
--- end of undo functionality
-
--- function obj:start()
---     hs.logger.i("-- Starting fenestra")
---     return self
--- end
-
--- function obj:stop()
---     hs.logger.i("-- Stopping fenestra")
-
---     if self.hotkeyShow then
---         self.hotkeyShow:disable()
---     end
-
---     return self
--- end
 
 function obj:init()
     obj.logger.i("-- Loading Fenestra")
