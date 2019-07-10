@@ -2,6 +2,15 @@
 ---
 -- PaywallBuster
 
+--[[
+    Update:
+    THese methods are becoming less and less succeesful.
+    Might want to roll my own using google's search indexer IP address
+]]
+
+
+
+
 local obj = {}
 obj.__index = obj
 
@@ -16,13 +25,6 @@ obj.chooser = nil
 obj.hotkeyShow = nil
 
 obj.logger = hs.logger.new("PaywallBuster")
-
--- local function script_path()
---   local str = debug.getinfo(2, "S").source:sub(2)
---   return str:match("(.*/)")
--- end
-
--- obj.spoonPath = script_path()
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
