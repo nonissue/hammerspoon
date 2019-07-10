@@ -7,6 +7,7 @@ Todo:
 - [ ] Simplify tables
 - [ ] Allow custom function to be called at timer end
 - [ ] Interface to allow custom input for timer
+- [ ] integrate with SysInfo timer display?
 
 
 Call when timer ends?

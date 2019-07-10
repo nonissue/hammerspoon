@@ -14,6 +14,8 @@
         - Forced layouts?
         - Vertical adjustments?
             - Use similar hotkeys as existing ones, just with ⬆ and ⬇ arrow keys
+            - Would have to somehow refer to the current placement of the window for
+            - x coordinates.
 ]]
 
 local obj = {}

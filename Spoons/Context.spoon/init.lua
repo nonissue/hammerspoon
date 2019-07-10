@@ -281,10 +281,7 @@ function obj.screenWatcherCallback()
         obj.moveDockLeft()
 
         for i = 1, #obj.drives do obj.checkAndEject(obj.drives[i]) end
-        -- obj.checkAndEject("ExternalSSD") -- move to key value store?
-        -- obj.checkAndEject("Win-Stuff")
     elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids['sidecar']) then
-        -- print("\n----------\nContext.display_ids: \n" .. i(obj.display_ids) .. "\n---------")
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find(obj.display_ids['mbp']) then
