@@ -17,7 +17,6 @@
             - Would have to somehow refer to the current placement of the window for
             - x coordinates.
 ]]
-
 local obj = {}
 obj.__index = obj
 

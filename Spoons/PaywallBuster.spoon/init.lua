@@ -8,9 +8,6 @@
     Might want to roll my own using google's search indexer IP address
 ]]
 
-
-
-
 local obj = {}
 obj.__index = obj
 
