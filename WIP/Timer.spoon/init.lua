@@ -70,6 +70,13 @@ table.insert(obj.startMenuChoices,
     }
 )
 
+table.insert(obj.startMenuChoices,
+    {
+        title = "??m",
+        fn = function() obj.customInput:show() end
+    }
+)
+
 obj.modifyTimerChoices = {
     {
         ["id"] = 1,
@@ -154,8 +161,8 @@ function obj:handleAction(choice)
     elseif choice['m'] == nil then
         -- handle custom timer
         self.logger.d("Custom timer started")
-        self:startTimer(tonumber(self.chooser:query()))
-        self.chooser:query(nil)
+        self:startTimer(tonumber(self.customInput:query()))
+        self.customInput:query(nil)
     else
         -- handle normal choice
         self.logger.d("Default timer started")
@@ -232,6 +239,43 @@ function obj:updateMenu()
     )
 end
 
+function obj:customTimer()
+    self.customInput = hs.chooser.new(
+        function(choice)
+            if not (choice) then
+                print(self.customInput:query())
+            else
+                self:handleAction(choice)
+            end
+        end
+    )
+
+    self.customInput:rows(0)
+    self.customInput:placeholderText("Duration (m): ")
+
+    self.customInput:queryChangedCallback(
+        function(query)
+            local choice = {
+                {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
+            }
+            local queryNum = tonumber(query)
+            if query == ''  then
+                print("hi!")
+                self.customInput:rows(0)
+                self.customInput:choices(choice)
+            elseif queryNum then
+                self.customInput:rows(0)
+                self.customInput:choices(choice)
+            end
+        end
+    )
+
+    self.customInput:width(18)
+    self.customInput:bgDark(true)
+    return self
+end
+
+
 function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
@@ -240,6 +284,9 @@ function obj:init()
     if self.timerMenu then
         self.timerMenu:delete()
     end
+
+
+    self:customTimer()
 
     self.timerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
     self:setTitleStyled(self.menuBarIcon)
