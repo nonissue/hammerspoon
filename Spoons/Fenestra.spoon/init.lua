@@ -39,6 +39,7 @@ local undostack = {
     skip = false
 }
 
+
 -- grid size
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
@@ -76,6 +77,8 @@ obj.defaultHotkeys = {
     pushWest = {{"cmd", "alt", "ctrl"}, "W"},
     pushEast = {{"cmd", "alt", "ctrl"}, "E"},
     pushNext = {{"ctrl", "alt", "cmd"}, "P"},
+    pushUp = {{"ctrl", "alt", "cmd"}, "Up"},
+    pushDown = {{"ctrl", "alt", "cmd"}, "Down"},
     undo = {{"cmd", "alt", "ctrl"}, "Z"}
 }
 
@@ -134,6 +137,22 @@ function obj:bindHotkeys(keys)
         end
     )
     hs.hotkey.bindSpec(
+        keys["pushUp"],
+        function()
+            undostack:addToStack()
+            obj.logger.i("Push Win Hotkey")
+            self:pushUp()
+        end
+    )
+    hs.hotkey.bindSpec(
+        keys["pushDown"],
+        function()
+            undostack:addToStack()
+            obj.logger.i("Push Win Hotkey")
+            self:pushDown()
+        end
+    )
+    hs.hotkey.bindSpec(
         keys["pushWest"],
         function()
             undostack:addToStack()
@@ -183,6 +202,18 @@ function obj:pushNext()
     local currentWindow = hs.window.focusedWindow()
     local nextScreen = currentWindow:screen():next()
     currentWindow:moveToScreen(nextScreen)
+end
+
+function obj.pushUp()
+    local cw = hs.window.focusedWindow()
+    local cwgrid = hs.grid.get(cw)
+    hs.grid.set(cw, {cwgrid.x, 0, cwgrid.w, 2})
+end
+
+function obj.pushDown()
+    local cw = hs.window.focusedWindow()
+    local cwgrid = hs.grid.get(cw)
+    hs.grid.set(cw, {cwgrid.x, 2, cwgrid.w, 2})
 end
 
 function obj:placeWindow(x, y, w, h)
