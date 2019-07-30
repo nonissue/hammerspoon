@@ -284,7 +284,7 @@ function obj:updateMenu()
 
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
-        1
+        2
     )
 end
 
@@ -406,7 +406,7 @@ function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
-    obj.logger.i('Initiializing Zzz')
+    obj.logger.i('Initializing Zzz')
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end

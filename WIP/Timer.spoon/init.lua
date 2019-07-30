@@ -6,8 +6,15 @@
 Todo:
 - [ ] Simplify tables
 - [ ] Allow custom function to be called at timer end
-- [ ] Interface to allow custom input for timer
+- [x] Interface to allow custom input for timer
 - [ ] integrate with SysInfo timer display?
+- [ ] Add better menubar display rathan than updating countdown every second
+- [ ] Handle snoozing
+- [ ] Handle enabling/disabling dnd if necessary
+    - ie. if it is enabled, disable it to send notification.
+    - if notification is acknowledged, return dnd to original state
+    - if dnd is enabled and user chooses snooze, renable dnd, then disable
+      after snoze interval is done
 
 
 Call when timer ends?
@@ -160,8 +167,13 @@ function obj:handleAction(choice)
         self:adjustTimer(choice['m'])
     elseif choice['m'] == nil then
         -- handle custom timer
+        local userInput = tonumber(self.customInput:query())
+        if userInput == nil then
+            hs.alert("Invalid custom timer value")
+            return
+        end
         self.logger.d("Custom timer started")
-        self:startTimer(tonumber(self.customInput:query()))
+        self:startTimer(userInput)
         self.customInput:query(nil)
     else
         -- handle normal choice
@@ -197,8 +209,7 @@ function obj:startTimer(timerInMins)
             tonumber(timerInMins) * 60,
             function()
                 self.logger.df("Timer finished, sleeping!")
-                -- self:timerDoneAlert()
-                -- os.execute("/usr/local/bin/dnd-cli off")
+                os.execute("/usr/local/bin/dnd-cli off")
                 hs.notify.new({
                     title = "Timer Finished!",
                     subtitle = "You set a timer, now it's finished!",
@@ -208,6 +219,12 @@ function obj:startTimer(timerInMins)
                     alwaysPresent = true, autoWithdraw = false
                 }):send()
                 self:deleteTimer()
+
+                hs.timer.doAfter(5,
+                    function()
+                        os.execute("/usr/local/bin/dnd-cli on")
+                    end
+                )
             end
         )
     end
@@ -228,15 +245,35 @@ function obj:updateMenu()
         function()
             local timeLeft = self.timerEvent:nextTrigger()
             if math.floor(timeLeft) == 10 then
-                self.logger.d("Sleeping in 10 seconds")
-                hs.alert("Sleeping in 10 seconds...")
-                -- obj.menuFont = almostDone
+                self.logger.d("Timer up in 10 seconds")
+                hs.alert("Timer up in 10 seconds...")
             end
-            -- hs.alert(timeLeft, 1)
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
-        1
+        2
     )
+end
+
+obj.customTimerMessages = {
+    -- add colors?
+    initial = {
+        {["id"] = 0, ["text"] = "Start", subText="Enter a custom time"},
+    },
+    error = {
+        {["id"] = 0, ["text"] = "Error", subText="Only enter numbers!"},
+    },
+    submit = {
+        {["id"] = 0, ["text"] = "Start", subText="Press return to start timer!"},
+    }
+}
+
+
+function obj:getChooserChoices(msg)
+    if msg then
+        return obj.customTimerMessages[msg]
+    else
+        return obj.customTimerMessages["initial"]
+    end
 end
 
 function obj:customTimer()
@@ -250,22 +287,20 @@ function obj:customTimer()
         end
     )
 
-    self.customInput:rows(0)
+    self.customInput:choices(obj:getChooserChoices())
+    self.customInput:rows(1)
     self.customInput:placeholderText("Duration (m): ")
 
     self.customInput:queryChangedCallback(
         function(query)
-            local choice = {
-                {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
-            }
             local queryNum = tonumber(query)
             if query == ''  then
                 print("hi!")
-                self.customInput:rows(0)
-                self.customInput:choices(choice)
+                self.customInput:choices(obj:getChooserChoices("initial"))
             elseif queryNum then
-                self.customInput:rows(0)
-                self.customInput:choices(choice)
+                self.customInput:choices(obj:getChooserChoices("submit"))
+            else
+                self.customInput:choices(obj:getChooserChoices("error"))
             end
         end
     )
@@ -275,16 +310,39 @@ function obj:customTimer()
     return self
 end
 
+function obj:stop()
+    obj.logger.i('Stopping Timer.spoon')
+    if self.timerMenu then
+        self.timerMenu:delete()
+    end
+
+    if self.customInput then
+        self.customInput:delete()
+        self.customInput = nil
+    end
+
+    if self.timerEvent then
+        self:deleteTimer()
+    end
+end
+
+function obj:start()
+    obj:init()
+end
 
 function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
-    obj.logger.i('Initiializing Zzz')
+    obj.logger.i('Initializing Timer.spoon')
     if self.timerMenu then
         self.timerMenu:delete()
     end
 
+    if self.customInput then
+        self.customInput:delete()
+        self.customInput = nil
+    end
 
     self:customTimer()
 
