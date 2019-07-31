@@ -39,7 +39,6 @@ local undostack = {
     skip = false
 }
 
-
 -- grid size
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0

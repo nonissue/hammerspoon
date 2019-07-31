@@ -191,7 +191,7 @@ hs.loadSpoon("Clippy"):start()
 -- require("callbacks")
 -- hs.loadSpoon("SysInfo")
 -- spoon.SysInfo:startFor(0.1)
-hs.loadSpoon("Timer")
+hs.loadSpoon("Alarm")
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
