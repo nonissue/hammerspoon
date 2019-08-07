@@ -38,7 +38,8 @@ obj.timerEvent = nil
 obj.hotkeyShow = nil
 
 obj.timers = {}
-obj.menuBarIcon = "⌚︎"
+-- obj.menuBarIcon = "⌚︎"
+obj.menuBarIcon = "↻"
 
 obj.createAlarmChoices = {}
 obj.startMenuChoices = {}
@@ -148,10 +149,9 @@ function obj:formatSeconds(s)
         local hours = string.format("%02.f", math.floor(seconds / 3600));
         local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
         local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
-        
-        
+
         -- return "⣿⣿⣿⣿⣦⣀⣀⣀⣀⣀"
-        return "⌚︎ " .. hours ..":".. mins..":"..secs
+        return self.menuBarIcon .. " " .. hours ..":".. mins..":"..secs
     else
         return false
     end
@@ -234,7 +234,7 @@ function obj:startAlarm(timerInMins)
                     withdrawAfter = 0,
                     alwaysPresent = true, autoWithdraw = false
                 }):send()
-                self:deleteTimer()
+                self:deleteAlarm()
 
                 hs.timer.doAfter(5,
                     function()
@@ -250,7 +250,7 @@ function obj:startAlarm(timerInMins)
     end
 end
 
-function obj:deleteTimer()
+function obj:deleteAlarm()
     self.timerEvent:stop()
     self.timerEvent = nil
     self:setTitleStyled(self.menuBarIcon)
@@ -341,7 +341,7 @@ function obj:stop()
     end
 
     if self.timerEvent then
-        self:deleteTimer()
+        self:deleteAlarm()
     end
 end
 
