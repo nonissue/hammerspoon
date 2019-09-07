@@ -100,7 +100,7 @@ hs.loadSpoon('CTRLESC'):start()
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
-hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5"})
+hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II"})
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 

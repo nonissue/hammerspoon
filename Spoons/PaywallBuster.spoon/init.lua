@@ -6,6 +6,22 @@
     Update:
     THese methods are becoming less and less succeesful.
     Might want to roll my own using google's search indexer IP address
+    
+    some ideas lifted from here:
+    https://github.com/iamadamdev/bypass-paywalls-firefox/
+
+    https://stackoverflow.com/questions/20937287/how-to-intercept-a-web-request
+    
+    Also, if we allow javascript from apple events, we might be able to injectjs
+    in pages using applescript?
+
+    At this point it looks like I should just write a safari app extension
+    https://github.com/infernoboy/JavaScript-Blocker-5
+    https://developer.apple.com/documentation/safariservices/creating_a_content_blocker
+    https://developer.apple.com/documentation/safariservices/safari_app_extensions/injecting_a_script_into_a_webpage
+    https://ulyngs.github.io/blog/posts/2018-11-02-how-to-build-safari-app-extensions/
+    https://medium.com/snips-ai/how-to-block-third-party-scripts-with-a-few-lines-of-javascript-f0b08b9c4c0
+    https://developer.apple.com/documentation/safariservices/safari_app_extensions?changes=_2&language=objc
 ]]
 
 local obj = {}
@@ -65,6 +81,12 @@ local chooserTable = {
         ["id"] = 6,
         ["text"] = "iOS User Agent",
         subText = "Changes Safari UA string to 'Safari iOS'.",
+        ["baseURL"] = ""
+    },
+    {
+        ["id"] = 7,
+        ["text"] = "WSJ",
+        subText = "Workaround for the WSJ",
         ["baseURL"] = ""
     }
 }
@@ -161,10 +183,21 @@ function obj:busterChooserCallback(choice)
     elseif choice["id"] == 5 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 6 then
+        -- figure out a way to make the obj:bust function more flexible
+        -- to handle this
         local frontmostURL = obj.getURL()
         local UAString = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPhone"}
         hs.appfinder.appFromName("Safari"):selectMenuItem(UAString)
         obj.setURL(frontmostURL)
+    elseif choice["id"] == 7 then
+        -- figure out a way to make the obj:bust function more flexible
+        -- to handle this
+        -- also, this method seems to work, but will break if the url already
+        -- has ?mod=rsswn at the end
+        local frontmostURL = obj.getURL()
+        local newURL = hs.http.encodeForQuery(frontmostURL) .. "?mod=rsswn"
+        hs.application.launchOrFocus("Safari")
+        self.createWindow(frontmostURL, newURL)
     else
         local URL = self.chooser:query()
         obj:createCustom(URL)
