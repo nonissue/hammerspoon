@@ -97,7 +97,7 @@ hs.loadSpoon('CTRLESC'):start()
 --    system is muted and screenlock is set to a short time
 --
 -- PARAMS:
--- [Optional] Accepts a boolean which dictates whether the menubar item is shown
+-- [Optional] Accepts a boolean which dictates whether the menubar item is shownd
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II"})

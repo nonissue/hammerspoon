@@ -57,7 +57,10 @@ local chooserTable = {
         ["id"] = 2,
         ["text"] = "Facebook Outlinking",
         subText = "Passes URL to Facebook handler for outgoing requests",
-        ["baseURL"] = "https://www.facebook.com/flx/warn/?u="
+        ["baseURL"] = "https://www.facebook.com/flx/warn/?u=",
+        modifiers = {
+            prefix = "https://www.facebook.com/flx/warn/?u="
+        }
     },
     {
         ["id"] = 3,
@@ -87,7 +90,9 @@ local chooserTable = {
         ["id"] = 7,
         ["text"] = "WSJ",
         subText = "Workaround for the WSJ",
-        ["baseURL"] = ""
+        modifiers = {
+            affix = "?mod=rsswn"
+        }
     }
 }
 
@@ -154,6 +159,27 @@ function obj.getURL()
     end
 end
 
+-- modifiers:
+-- prefix: domain to prefix before our url (eg. https://outline.com/)
+-- affix: query or string to append to the url
+function obj:createURL(modifiers)
+    -- hmm, the url we are creating can have the following parts:
+    -- prefix domain (eg. outline.com) that goes before the article url
+        -- url would look like: http://outline.com/http://nytimes.com/article
+    -- article url
+        -- eg. http://nytimes.com/article
+    -- affix
+        -- eg. "?mod=rsswn" -> http://nytimes.com/article?mod=rsswn
+    local prefix = modifiers.prefix or ""
+    local affix = modifiers.affix or ""
+    local currentURL = obj.getURL()
+
+    -- don't seem to need to encode the url, not sure
+    -- why i do that elsewhere 🤔
+    return prefix .. currentURL .. affix
+
+end
+
 function obj:bust(baseURL)
     local currentURL = obj.getURL()
     if (currentURL) then
@@ -175,7 +201,9 @@ function obj:busterChooserCallback(choice)
         hs.osascript.applescript(privateBrowsing)
         obj.setURL(frontmostURL)
     elseif choice["id"] == 2 then
-        obj:bust(choice["baseURL"])
+        local test = obj:createURL(choice.modifiers)
+        self.createWindow(test, test)
+        -- obj:bust(choice["baseURL"])
     elseif choice["id"] == 3 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 4 then
@@ -194,10 +222,12 @@ function obj:busterChooserCallback(choice)
         -- to handle this
         -- also, this method seems to work, but will break if the url already
         -- has ?mod=rsswn at the end
-        local frontmostURL = obj.getURL()
-        local newURL = hs.http.encodeForQuery(frontmostURL) .. "?mod=rsswn"
-        hs.application.launchOrFocus("Safari")
-        self.createWindow(frontmostURL, newURL)
+        local test = obj:createURL(choice.modifiers)
+        self.createWindow(test, test)
+        -- local frontmostURL = obj.getURL()
+        -- local newURL = hs.http.encodeForQuery(frontmostURL) .. "?mod=rsswn"
+        -- hs.application.launchOrFocus("Safari")
+        -- self.createWindow(frontmostURL, newURL)
     else
         local URL = self.chooser:query()
         obj:createCustom(URL)

@@ -15,10 +15,10 @@
     "stripped_doc" : [
 
     ],
+    "type" : "Module",
     "Deprecated" : [
 
     ],
-    "type" : "Module",
     "desc" : "UNKNOWN DESC",
     "Constructor" : [
 
@@ -31,7 +31,7 @@
           "Starts PaywallBuster",
           ""
         ],
-        "desc" : "Starts PaywallBuster",
+        "name" : "start",
         "def" : "PaywallBuster:start()",
         "notes" : [
 
@@ -41,7 +41,7 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
+        "desc" : "Starts PaywallBuster",
         "parameters" : [
           " * None",
           ""
@@ -53,7 +53,7 @@
           "Stops PaywallBuster",
           ""
         ],
-        "desc" : "Stops PaywallBuster",
+        "name" : "stop",
         "def" : "PaywallBuster:stop()",
         "notes" : [
           " * N\/A"
@@ -64,14 +64,14 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
+        "desc" : "Stops PaywallBuster",
         "parameters" : [
           " * None",
           ""
         ]
       }
     ],
-    "Command" : [
+    "Field" : [
 
     ],
     "items" : [
@@ -81,7 +81,7 @@
           "Starts PaywallBuster",
           ""
         ],
-        "desc" : "Starts PaywallBuster",
+        "name" : "start",
         "def" : "PaywallBuster:start()",
         "notes" : [
 
@@ -91,7 +91,7 @@
         "returns" : [
           " * The PaywallBuster object"
         ],
-        "name" : "start",
+        "desc" : "Starts PaywallBuster",
         "parameters" : [
           " * None",
           ""
@@ -103,7 +103,7 @@
           "Stops PaywallBuster",
           ""
         ],
-        "desc" : "Stops PaywallBuster",
+        "name" : "stop",
         "def" : "PaywallBuster:stop()",
         "notes" : [
           " * N\/A"
@@ -114,14 +114,14 @@
           " * The PaywallBuster object",
           ""
         ],
-        "name" : "stop",
+        "desc" : "Stops PaywallBuster",
         "parameters" : [
           " * None",
           ""
         ]
       }
     ],
-    "Field" : [
+    "Command" : [
 
     ],
     "name" : "PaywallBuster"
