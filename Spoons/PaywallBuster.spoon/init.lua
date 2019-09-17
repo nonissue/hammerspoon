@@ -218,16 +218,8 @@ function obj:busterChooserCallback(choice)
         hs.appfinder.appFromName("Safari"):selectMenuItem(UAString)
         obj.setURL(frontmostURL)
     elseif choice["id"] == 7 then
-        -- figure out a way to make the obj:bust function more flexible
-        -- to handle this
-        -- also, this method seems to work, but will break if the url already
-        -- has ?mod=rsswn at the end
         local test = obj:createURL(choice.modifiers)
         self.createWindow(test, test)
-        -- local frontmostURL = obj.getURL()
-        -- local newURL = hs.http.encodeForQuery(frontmostURL) .. "?mod=rsswn"
-        -- hs.application.launchOrFocus("Safari")
-        -- self.createWindow(frontmostURL, newURL)
     else
         local URL = self.chooser:query()
         obj:createCustom(URL)
@@ -253,8 +245,6 @@ function obj:init()
                 return
                 -- print(self.chooser:query())
             else
-                --   hs.alert("No choice made?")
-                --   return
                 self:busterChooserCallback(choice)
             end
         end

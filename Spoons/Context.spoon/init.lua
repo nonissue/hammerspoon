@@ -233,7 +233,7 @@ end
 ---  * None
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
-    obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
+    -- obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
 
     -- ugly as hell way to find out which display is in use
     -- uses sed to cut all text between "Intel" and "Displays"

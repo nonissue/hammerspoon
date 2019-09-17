@@ -3,6 +3,7 @@ local mod = {}
 local supermash = {"cmd", "alt", "ctrl"}
 local sounds_dir = os.getenv("HOME") .. "/.hammerspoon/media/sounds/"
 
+local alert = hs.sound.getByFile(sounds_dir .. "alert.caf")
 local inception = hs.sound.getByFile(sounds_dir .. "inception.mp3")
 local airhorn = hs.sound.getByFile(sounds_dir .. "mlg-airhorn.mp3")
 

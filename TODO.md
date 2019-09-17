@@ -2,6 +2,25 @@
 
 Updated: 19-04-24
 
+## Lua / Meta
+
+### Error Catching
+
+*19-09-08*
+
+```lua
+    -- returns false when normally HS will crash
+        function test() 
+            if zzz == nil then 
+                error() 
+            end 
+            print(zzz .. "hi") 
+        end
+
+        pcall(test)
+```
+https://www.lua.org/pil/8.4.html
+
 ## Next
 
 * BEFORE ANYTHING ELSE:
