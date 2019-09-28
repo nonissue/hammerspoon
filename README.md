@@ -1,8 +1,6 @@
-# 19-07-03: NEW COMPLETE DOCUMENTATION COMMING SOON
+*New Docs going soon*
 
 Email me questions or open issues if there's anything particular you'd like address!
-
-
 
 # a hammerspoon config
 
