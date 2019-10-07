@@ -211,7 +211,7 @@ local function showKirby()
 end
 
 hs.hotkey.bind(mash, "K", showKirby)
-hs.hotkey.showHotkeys(mash, "space")
+-- hs.hotkey.showHotkeys(mash, "space")
 
 -- COPIED FROM: https://github.com/af/dotfiles/blob/63370411e709e006b26f07781376da1e6d7ae2c8/hammerspoon/utils.lua#L51
 -- Close all open notifications

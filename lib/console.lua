@@ -84,7 +84,8 @@ fnutils.each({
     { "Console",          "com.apple.Console", },
     { "Terminal",         "com.apple.Terminal" },
     { "Safari",           "com.apple.Safari" },
-    { "Activity", "com.apple.ActivityMonitor"},
+    { "iTerm",            "com.googlecode.iTerm2" },
+    { "Activity",         "com.apple.ActivityMonitor" },
 }, function(entry)
     local app, bundleID = table.unpack(entry)
     table.insert(consoleToolbar, {
@@ -108,7 +109,7 @@ local myConsoleToolbar = toolbar.new("_asmConsole_001")
                         print("+++ Oops! You better assign me something to do!")
                    end)
 
-hs.console.inputBackgroundColor({white = 0.9, alpha = 1})
+hs.console.inputBackgroundColor({white = 1, alpha = 1})
 hs.console.consoleCommandColor({blue = 1, alpha = 1})
 hs.console.consolePrintColor({black = 1, alpha = 1})
 hs.console.toolbar(myConsoleToolbar)
