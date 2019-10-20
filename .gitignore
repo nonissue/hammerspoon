@@ -8,7 +8,7 @@ totest
 media/
 .idea
 docs.json
-scratch/
+# scratch/
 /lua
 /lua_modules
 screens/
