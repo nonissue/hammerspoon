@@ -4,7 +4,7 @@ obj.__index = obj
 -- Metadata
 obj.name = "utilities"
 c = require("hs.canvas")
-a = c.new{x=700,y=1,h=50,w=50}:appendElements( {
+a = c.new{x=700,y=1,h=250,w=250}:appendElements( {
 -- first we start with a rectangle that covers the full canvas
     action = "skip", padding = 0, type = "rectangle"
   }, {
@@ -16,7 +16,8 @@ a = c.new{x=700,y=1,h=50,w=50}:appendElements( {
     fillColor = { alpha = 0.5, blue = 1.0  },
     -- frame = { x = "0", y = "0", h = ".75", w = ".75", },
   }, {
-    action = "clip", padding = 0, radius = ".2", type = "circle",
+    action = "clip", padding = 0, radius = ".28", type = "circle",
+    -- antialias = false
     -- fillColor = { alpha = 1, blue = 1.0  },
   }, {
 -- now, draw a rectangle in the upper left
@@ -24,7 +25,7 @@ a = c.new{x=700,y=1,h=50,w=50}:appendElements( {
     fillColor = { alpha = 0, green = 1.0  },
     frame = { x = "0", y = "0", h = ".75", w = ".75", },
     type = "rectangle",
-    withShadow = true,
+    -- withShadow = true,
   }, {
 -- and a circle in the lower right
     action = "fill",
@@ -32,15 +33,17 @@ a = c.new{x=700,y=1,h=50,w=50}:appendElements( {
     fillColor = { alpha = 0.9, white = 1  },
     radius = ".375",
     type = "circle",
+    antialias = false
     -- withShadow = true,
   }, {
       action = "fill",
       center = {x = "0.5", y = "0.5"},
-      fillColor = { alpha = 1, red = 1  },
+      fillColor = { alpha = 1, black = 1  },
       radius = "0.3",
       startAngle = 0,
-        endAngle = 90,
+        endAngle = 45,
         type = "arc",
+        withShadow = true,
   }, {
 -- reset our clipping changes added with elements 1, 2, and 3
     type = "resetClip"
@@ -60,7 +63,7 @@ hs.timer.doWhile(
     function() return y ~= true end,
     function()
         -- the following 2 lines could also be replaced with 
-        a:rotateElement(7, x, {x = 0, y = 0})
+        a:rotateElement(7, x, {x = 125, y = 125})
         -- {x = 50, y = 50})
 
         -- local sz = a:size()
@@ -69,7 +72,7 @@ hs.timer.doWhile(
                                     --   :translate(sz.w / -2, sz.h / -2)
         x = x + 1
     end,
-.1)
+.2)
 
 -- print_r()
 
