@@ -12,7 +12,7 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
-require("console")
+-- require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -245,3 +245,6 @@ hs.textDroppedToDockIconCallback = function(value)
     hs.alert(string.format("Text dropped to dock icon: %s", value))
 end
 
+package.path = package.path .. ";scratch/?.lua"
+local scratch = require("canvas-test")
+-- scratch = nil
