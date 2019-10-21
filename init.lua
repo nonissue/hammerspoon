@@ -246,5 +246,5 @@ hs.textDroppedToDockIconCallback = function(value)
 end
 
 package.path = package.path .. ";scratch/?.lua"
-local scratch = require("canvas-test")
+-- local scratch = require("canvas-test")
 -- scratch = nil
