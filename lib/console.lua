@@ -43,6 +43,17 @@ table.insert(consoleToolbar, {
     default = false,
 })
 
+table.insert(consoleToolbar, {
+    id = "editConfig",
+    label = "Edit HS Config",
+    tooltip = "Opens HS config in VSCode",
+    image = image.imageFromAppBundle('org.hammerspoon.Hammerspoon'),
+    fn = function(bar, attachedTo, item)
+        hs.execute("/usr/local/bin/code ~/.hammerspoon")
+    end,
+    default = false}
+)
+
 local makeModuleListForMenu = function()
     local searchList = {}
     for i,v in ipairs(doc._jsonForModules) do
@@ -82,7 +93,7 @@ end)
 fnutils.each({
     { "Code",             "com.microsoft.VSCode", },
     { "Console",          "com.apple.Console", },
-    { "Terminal",         "com.apple.Terminal" },
+    -- { "Terminal",         "com.apple.Terminal" },
     { "Safari",           "com.apple.Safari" },
     { "iTerm",            "com.googlecode.iTerm2" },
     { "Activity",         "com.apple.ActivityMonitor" },
@@ -99,6 +110,9 @@ fnutils.each({
         default = true,
     })
 end)
+
+
+
 
 local myConsoleToolbar = toolbar.new("_asmConsole_001")
       :addItems(consoleToolbar)

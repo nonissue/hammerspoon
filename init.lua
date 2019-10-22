@@ -12,7 +12,7 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
--- require("console")
+require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -181,7 +181,7 @@ hs.loadSpoon("Clippy"):start()
 -- WIP, not finished at all
 ------------------------------------------------------------------------------
 -- hs.loadSpoon("Crib")
--- spoon.Crib:bindHotkeys(spoon.Crib.defaultHotkeys)
+-- spoon.Crib:bindHotkeys(spoon.Crib.def aultHotkeys)
 ------------------------------------------------------------------------------
 
 -- WIP Stuff
