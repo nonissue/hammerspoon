@@ -12,22 +12,43 @@
 package.path = package.path .. ";lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
+
+-- TODO: Let user enable/display spoons as desired.
+-- i feel like these two should be spoons
+-- because they rely on watchers
+-- TODO: Move the below to spoons
+local hs_reload = require("hammerspoon_config_reload")
+hs_reload.init()
+
+-- console customization and UI is located elsewhere, so we impor tit
 require("console")
+
+-- Add WIP Spoons to path
+package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
+
+-- Add WIP files to path
+package.path = package.path .. ";WIP/?.lua"
+
+-- load scratch stuff
+package.path = package.path .. ";scratch/?.lua"
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end
 
+-- check for cli, and if missing, install
+-- can't remember if/what depends on this
 if not hs.ipc.cliStatus() then
     local cliInstallResult = hs.ipc.cliInstall()
     if cliInstallResult then
-        require('hs.ipc')
+        require("hs.ipc")
     else
-        hs.alert('hs.ipc error!')
+        hs.alert("hs.ipc error!")
     end
 else
-    require('hs.ipc')
+    hs.ipc.cliSaveHistory(true)
+    require("hs.ipc")
 end
 
 -- set logger level
@@ -36,19 +57,10 @@ hs.logger.defaultLogLevel = "debug"
 -- This is great, disables all the superfluous hotkey logging
 require("hs.hotkey").setLogLevel("warning")
 
--- Add WIP Spoons to path
-package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
-
--- Add WIP files to path
-package.path = package.path .. ";WIP/?.lua"
-
-hostname = hs.host.localizedName()
-hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
-
 -- a MUST / disables window movement jank
 hs.window.animationDuration = 0
 
--- aliases
+-- aliases/globals
 i = hs.inspect
 fw = hs.window.focusedWindow
 bind = hs.hotkey.bind
@@ -57,20 +69,10 @@ reload = hs.reload
 pbcopy = hs.pasteboard.setContents
 print_t = utils.print_r
 print_r = utils.print_r
+hostname = hs.host.localizedName()
 
 -- hotkey groups
 local mash = {"cmd", "alt", "ctrl"}
--- local hyper = {"cmd", "alt"}
-
--- console window hotkey
-hs.hotkey.bind(mash, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)
-
--- TODO: Let user enable/display spoons as desired.
--- i feel like these two should be spoons
--- because they rely on watchers
--- TODO: Move the below to spoons
-local hs_reload = require("hammerspoon_config_reload")
-hs_reload.init()
 
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
@@ -84,7 +86,7 @@ hs_reload.init()
 -- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
 ------------------------------------------------------------------------------
 -- hs.loadSpoon('CTRLESC')
-hs.loadSpoon('CTRLESC'):start()
+hs.loadSpoon("CTRLESC"):start()
 
 ------------------------------------------------------------------------------
 -- Context.spoon / by me
@@ -100,6 +102,7 @@ hs.loadSpoon('CTRLESC'):start()
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shownd
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
+-- todo: move this all elsewhere so it's private
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II"})
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
@@ -107,8 +110,8 @@ local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
-hs.loadSpoon("Context"):start({ showMenu = false, display_ids = display_ids, drives = drives})
-
+hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drives = drives})
+-- end todo
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
 ------------------------------------------------------------------------------
@@ -121,7 +124,14 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 -- Ultimately this probably isn't necessary, but I do occasionally use it
 ------------------------------------------------------------------------------
 hs.loadSpoon("PaywallBuster")
-hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
+-- TODO: bind default hotkey in spoon
+hs.hotkey.bind(
+    mash,
+    "B",
+    function()
+        spoon.PaywallBuster:show()
+    end
+)
 
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
@@ -134,7 +144,13 @@ hs.hotkey.bind(mash, "B", function() spoon.PaywallBuster:show() end)
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
 -- TODO: use default hotkeys
-hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
+hs.hotkey.bind(
+    mash,
+    "S",
+    function()
+        spoon.Zzz.chooser:show()
+    end
+)
 
 ------------------------------------------------------------------------------
 -- Resolute.spoon / by me
@@ -145,9 +161,14 @@ hs.hotkey.bind(mash, "S", function() spoon.Zzz.chooser:show() end)
 ------------------------------------------------------------------------------
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
--- hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
 -- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
-hs.hotkey.bind(mash, "L", function() spoon.Resolute:show() end)
+hs.hotkey.bind(
+    mash,
+    "L",
+    function()
+        spoon.Resolute:show()
+    end
+)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
@@ -203,48 +224,47 @@ hs.loadSpoon("Alarm")
 -- random stuff
 -- local yay = "ᕙ(⇀‸↼‶)ᕗ"
 -- local boo = "ლ(ಠ益ಠლ)"
-local kirby = "¯\\_(ツ)_/¯"
+-- changed kirby to display better in alert
+local kirby = "  ¯\\_(ツ)_/¯"
 
 local function showKirby()
-    hs.alert(kirby, styles.alert_loader, 5)
+    hs.alert(kirby, 5)
     hs.pasteboard.setContents("¯\\_(ツ)_/¯")
 end
 
-hs.hotkey.bind(mash, "K", showKirby)
--- hs.hotkey.showHotkeys(mash, "space")
+local emojis = {
+    {
+        ["text"] = "¯\\_(ツ)_/¯",
+        ["subText"] = "Kirby",
+        ["uuid"] = "0001"
+    },
+    {
+        ["text"] = "ᕙ(⇀‸↼‶)ᕗ",
+        ["subText"] = "yay",
+        ["uuid"] = "0002"
+    },
+    {
+        ["text"] = "ლ(ಠ益ಠლ)",
+        ["subText"] = "boo",
+        ["uuid"] = "0003"
+    }
+}
 
--- COPIED FROM: https://github.com/af/dotfiles/blob/63370411e709e006b26f07781376da1e6d7ae2c8/hammerspoon/utils.lua#L51
--- Close all open notifications
-local function dismissAllNotifications()
-    local success, result = hs.applescript([[
-    tell application "System Events"
-        tell process "Notification Center"
-            set theWindows to every window
-            repeat with i from 1 to number of items in theWindows
-                set this_item to item i of theWindows
-                try
-                    click button 1 of this_item
-                end try
-            end repeat
-        end tell
-    end tell
-    ]])
-    if not success then
-        hs.logger.e("Error dismissing notifcations")
-        hs.logger.e(result)
+local function emojiChooserCallback(choice)
+    hs.alert(choice['text'])
+    hs.pasteboard.setContents(choice['text'])
+end
+
+local emojiChooser = hs.chooser.new(
+    function(choice)
+        if not (choice) then
+            return
+        else
+            emojiChooserCallback(choice)
+        end
     end
-end
+):rows(3):width(20):choices(emojis)
 
-hs.hotkey.bind(mash, "N", dismissAllNotifications)
+hs.hotkey.bind(mash, "K", function() emojiChooser:show() end)
 
--- hs.textDroppedToDockIconCallback()
--- hs.dockIconClickCallback()
--- hs.dockIcon(true)
--- initial testing with using the 'send to' contextual menu functionality
-hs.textDroppedToDockIconCallback = function(value)
-    hs.alert(string.format("Text dropped to dock icon: %s", value))
-end
-
-package.path = package.path .. ";scratch/?.lua"
--- local scratch = require("canvas-test")
--- scratch = nil
+-- hs.hotkey.showHotkeys(mash, "space")

@@ -111,9 +111,6 @@ fnutils.each({
     })
 end)
 
-
-
-
 local myConsoleToolbar = toolbar.new("_asmConsole_001")
       :addItems(consoleToolbar)
       :canCustomize(true)
@@ -127,3 +124,6 @@ hs.console.inputBackgroundColor({white = 1, alpha = 1})
 hs.console.consoleCommandColor({blue = 1, alpha = 1})
 hs.console.consolePrintColor({black = 1, alpha = 1})
 hs.console.toolbar(myConsoleToolbar)
+
+-- set hotkey for hiding and showing the console
+hs.hotkey.bind({"cmd", "alt", "ctrl"}, "y", function() hs.toggleConsole() hs.window.frontmostWindow():focus() end)

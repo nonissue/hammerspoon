@@ -5,8 +5,12 @@
 
 -- utils = require('utilies')
 
+
+
 local mod={}
 local configFileWatcher
+
+local hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 mod.config = {
    auto_reload = true,

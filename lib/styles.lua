@@ -160,7 +160,8 @@ obj.alert.slow = {
 --   * Note: sizes array goes from small to large
 --   * So inc array index to increase sizes in proportion
 -- * obj.alert.colors.default (default colors)
-obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.alert.colors.default)
+obj.alert_default = obj.createStyle(obj.alert.defaults, obj.alert.sizes[2], obj.alert.colors.darkmode)
+
 
 -- should only update fields i want to change rather than regenerating default style every time
 obj.alert_lrg = obj.createStyle(obj.alert.sizes[5])

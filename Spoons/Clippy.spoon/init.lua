@@ -17,13 +17,24 @@ obj.hotkeyShow = nil
 obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2016mbpr"
 obj.wasCreated = false
 
---[[
-https://github.com/CommandPost/CommandPost/blob/develop/src/plugins/finalcutpro/text2speech/init.lua
-https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
-https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
-https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
-]]
 
+-- https://github.com/CommandPost/CommandPost/blob/develop/src/plugins/finalcutpro/text2speech/init.lua
+-- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
+-- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
+-- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
+
+
+
+--- Clippy.imageToClipboard(files, flagtables)
+--- Method
+--- Search repositories for a pattern
+---
+--- Parameters:
+---  * files - files passed along from our filewatcher
+---  * flags - file flags passed as context from our filewatcher
+---
+--- Returns:
+---  * Nothing
 function obj.imageToClipboard(files, flagTables)
 
     if files[1] == ".DS_Store" and #files == 1 then
@@ -98,10 +109,10 @@ end
 --- Method
 --- Initialize our Clippy spoon
 ---
---- Parameters.
+--- Parameters:
 ---  * None
 ---
---- Returns.
+--- Returns:
 ---  * None
 function obj:init()
     obj.screenshotWatcher = hs.pathwatcher.new(obj.screenshotPath, obj.imageToClipboard)
@@ -111,10 +122,10 @@ end
 --- Method
 --- Starts clippy
 ---
---- Parameters.
+--- Parameters:
 ---  * options - An optional table containing spoon configuration options
 ---
---- Returns.
+--- Returns:
 ---  * None
 function obj:start() -- luacheck: ignore
     obj.logger.df("-- Starting Clippy")
@@ -124,10 +135,10 @@ end
   --- Method
   --- Stops clippy
   ---
-  --- Parameters.
+  --- Parameters:
   ---  * None
   ---
-  --- Returns.
+  --- Returns:
   ---  * None
 function obj:stop()
     obj.logger.df("-- Stopping Clippy")
@@ -137,11 +148,12 @@ end
 
 --- Clippy.disable()
 --- Function
+--- disables clippy
 ---
---- Parameters.
+--- Parameters:
 ---  * None
 ---
---- Returns.
+--- Returns:
 ---  * None
 function obj.disable()
     obj.screenshotWatcher:stop()
