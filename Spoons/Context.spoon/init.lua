@@ -261,7 +261,10 @@ function obj.screenWatcherCallback()
         obj.currentGPU = "discrete"
     end
     -- rcreate menu on change
-    obj.createMenu()
+    -- obj.createMenu()
+    if obj.menubar ~= nil then
+        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+    end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
         hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use",
@@ -390,9 +393,9 @@ end
 
 function getGPU() return obj.currentGPU end
 
-function obj.createMenu()
+function obj.createMenu(gpu)
     print(obj.currentGPU)
-    obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
+    -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
     -- obj.menubar:setMenu(nil)
     local newMenu = {
         {
@@ -410,14 +413,15 @@ function obj.createMenu()
         },
         {
             -- title = "error",
-            title = hs.styledtext.new("GPU: " .. getGPU()),
+            title = hs.styledtext.new("GPU: " .. gpu),
             fn = function()
                 hs.alert("docked clicked")
             end
         }
     }
     
-    obj.menubar:setMenu(newMenu)
+    return newMenu
+    -- obj.menubar:setMenu(newMenu)
 end
 
 --- Context:start()
@@ -452,7 +456,9 @@ function obj:start(options)
     -- creates menubar item if desired
     -- currently menu functions dont do anything
     if obj.shownInMenu then
-        obj.createMenu()
+        -- obj.createMenu()
+        obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
+        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
         -- hs.alert(obj.docked, 5)
         -- local currentMenu = createMenu()
 
