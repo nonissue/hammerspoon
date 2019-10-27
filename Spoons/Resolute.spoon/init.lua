@@ -27,6 +27,7 @@ end
 -- TODO:
 -- this should be automated somehow?
 
+
 -- We can get available modes with hs.screen:availableModes()
 -- But the list is too long, and we only care about a few options
 -- Might be nice to automatically choose some based on screen,
@@ -36,6 +37,13 @@ local mbpr15 = {
     {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
     {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
     {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
+}
+
+local acer4k = {
+    -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
+    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
+    -- {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
+    -- {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
 
 function obj:bindHotkeys(keys)
@@ -110,13 +118,20 @@ function obj.createMenubar(display)
 end
 
 function obj:show()
-    -- self.current = hs.window.frontmostWindow()
+    -- added logic to show different resolution choices on different screens
+    -- works on whichever screen is currently focused
+    if hs.screen.mainScreen():name() == "Color LCD" then
+        self.resChooser:choices(mbpr15)
+    else 
+        self.resChooser:choices(acer4k)
+    end
     self.resChooser:show()
     return self
 end
 
 function obj:init()
     -- TODO: add logic to detect current display
+    -- if screens 
     local targetDisplay = mbpr15
 
     if self.menubar then
