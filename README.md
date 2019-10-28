@@ -1,4 +1,6 @@
-*New Docs going soon*
+*New docs coming soon*
+
+![stars](https://img.shields.io/github/stars/nonissue/hammerspoon?style=for-the-badge) ![license](https://img.shields.io/github/license/nonissue/hammerspoon?style=for-the-badge)
 
 Email me questions or open issues if there's anything particular you'd like address!
 
