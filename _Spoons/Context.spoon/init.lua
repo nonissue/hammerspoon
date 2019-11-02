@@ -397,14 +397,14 @@ function obj.createMenu(gpu)
     -- obj.menubar:setMenu(nil)
     local newMenu = {
         {
-            title = hs.styledtext.new("Loc:" .. obj.location),
+            title = hs.styledtext.new("Loc: " .. obj.location),
             fn = function()
-                hs.alert("location clicked")
+                hs.alert("Current Wifi: " .. obj.currentSSID)
             end
         },
         {
             -- title = "error",
-            title = hs.styledtext.new("Docked: " .. (obj.docked or "false")),
+            title = hs.styledtext.new("Docked: " .. (obj.docked and "true" or "false")),
             fn = function()
                 hs.alert("docked clicked")
             end
@@ -413,7 +413,8 @@ function obj.createMenu(gpu)
             -- title = "error",
             title = hs.styledtext.new("GPU: " .. gpu),
             fn = function()
-                hs.alert("docked clicked")
+                hs.alert("Launching activity monitor...")
+                hs.application.launchOrFocus("Activity Monitor")
             end
         }
     }
@@ -459,8 +460,6 @@ function obj:start(options)
         obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
         -- hs.alert(obj.docked, 5)
         -- local currentMenu = createMenu()
-
-
     end
 
     return self

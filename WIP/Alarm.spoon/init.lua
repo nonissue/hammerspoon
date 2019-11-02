@@ -22,10 +22,6 @@ timerDone = function(result) print("Callback Result: " .. result) end
 hs.dialog.alert(500, 500, timerDone, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle")
 ]]
 
-
-
-
-
 local obj = {}
 obj.__index = obj
 
@@ -51,8 +47,8 @@ obj.startMenuCustomChoices = {}
 obj.modifyAlarmChoices = {}
 obj.modifyMenuChoices = {}
 
-local sounds_dir = os.getenv("HOME") .. "/.hammerspoon/archive/media/sounds/"
-obj.alert_sound = hs.sound.getByFile(sounds_dir .. "alert.caf")
+-- local sounds_dir = os.getenv("HOME") .. "/.hammerspoon/archive/media/sounds/"
+-- obj.alert_sound = hs.sound.getByFile(sounds_dir .. "alert.caf")
 
 local timerInterval = 15
 local presetCount = 3
@@ -233,7 +229,7 @@ function obj:startAlarm(timerInMins)
             function()
                 self.logger.df("Timer finished, sleeping!")
                 os.execute("/usr/local/bin/dnd-cli off")
-                spoon.Alarm.alert_sound:play() -- plays sound
+                -- spoon.Alarm.alert_sound:play() -- plays sound
                 hs.notify.new({
                     title = "Timer Finished!",
                     subtitle = "You set a timer, now it's finished!",
@@ -278,7 +274,7 @@ function obj:updateMenu()
             end
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
-        2
+        1
     )
 end
 
