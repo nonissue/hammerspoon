@@ -440,7 +440,7 @@ function obj:start(options)
         self.hotkeyShow:enable()
     end
 
-    obj.logger.d(i(options))
+    -- obj.logger.d(i(options))
 
     if options then
         obj.shownInMenu = options.showMenu or obj.shownInMenu

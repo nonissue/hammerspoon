@@ -51,7 +51,7 @@ obj.modifyMenuChoices = {}
 -- obj.alert_sound = hs.sound.getByFile(sounds_dir .. "alert.caf")
 
 local timerInterval = 15
-local presetCount = 3
+local presetCount = 5
 
 for i = 1, presetCount do
     table.insert(obj.createAlarmChoices, {
@@ -234,6 +234,7 @@ function obj:startAlarm(timerInMins)
                     title = "Timer Finished!",
                     subtitle = "You set a timer, now it's finished!",
                     hasActionButton = true,
+                    -- NOTE: Snooze not enabled
                     actionButtonTitle = "Snooze",
                     withdrawAfter = 0,
                     alwaysPresent = true, autoWithdraw = false
