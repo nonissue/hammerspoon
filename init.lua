@@ -9,7 +9,7 @@
 ------------------------------------------------------------------------------
 
 -- load basic modules / utils first
-package.path = package.path .. ";lib/?.lua"
+package.path = package.path .. ";_lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
 
@@ -26,11 +26,14 @@ require("console")
 -- Add WIP Spoons to path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 
+-- Add my Spoons to path
+package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
+
 -- Add WIP files to path
 package.path = package.path .. ";WIP/?.lua"
 
 -- load scratch stuff
-package.path = package.path .. ";scratch/?.lua"
+package.path = package.path .. ";_scratch/?.lua"
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -187,7 +190,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
-hs.loadSpoon("AfterDark"):start({showMenu = true})
+-- hs.loadSpoon("AfterDark"):start({showMenu = true})
 
 ------------------------------------------------------------------------------
 -- Clippy.spoon / by me
@@ -268,3 +271,5 @@ local emojiChooser = hs.chooser.new(
 hs.hotkey.bind(mash, "K", function() emojiChooser:show() end)
 
 -- hs.hotkey.showHotkeys(mash, "space")
+
+-- require("dots")
