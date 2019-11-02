@@ -14,3 +14,4 @@ docs.json
 screens/
 hs/
 .vscode/
+.luarocks/

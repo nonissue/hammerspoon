@@ -183,12 +183,15 @@ hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 ------------------------------------------------------------------------------
--- [WIP] AfterDark.spoon / by me
+-- AfterDark.spoon / by me
 ------------------------------------------------------------------------------
 -- Dark mode toggle in menubar
 -- PARAMS:
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
+--
+-- NOTE: 19-11-01 Interesting proof of concept, but I don't really use it
+-- So disabled for now
 ------------------------------------------------------------------------------
 -- hs.loadSpoon("AfterDark"):start({showMenu = true})
 
