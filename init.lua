@@ -9,7 +9,7 @@
 ------------------------------------------------------------------------------
 
 -- load basic modules / utils first
-package.path = package.path .. ";lib/?.lua"
+package.path = package.path .. ";_lib/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
 
@@ -20,17 +20,20 @@ local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
--- console customization and UI is located elsewhere, so we impor tit
+-- console customization and UI is located elsewhere, so we import it
 require("console")
 
 -- Add WIP Spoons to path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 
+-- Add my Spoons to path
+package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
+
 -- Add WIP files to path
 package.path = package.path .. ";WIP/?.lua"
 
 -- load scratch stuff
-package.path = package.path .. ";scratch/?.lua"
+package.path = package.path .. ";_scratch/?.lua"
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -180,14 +183,17 @@ hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 ------------------------------------------------------------------------------
--- [WIP] AfterDark.spoon / by me
+-- AfterDark.spoon / by me
 ------------------------------------------------------------------------------
 -- Dark mode toggle in menubar
 -- PARAMS:
 -- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
+--
+-- NOTE: 19-11-01 Interesting proof of concept, but I don't really use it
+-- So disabled for now
 ------------------------------------------------------------------------------
-hs.loadSpoon("AfterDark"):start({showMenu = true})
+-- hs.loadSpoon("AfterDark"):start({showMenu = true})
 
 ------------------------------------------------------------------------------
 -- Clippy.spoon / by me
@@ -221,17 +227,7 @@ hs.loadSpoon("Alarm")
 --                                NONSENSE                                  --
 ------------------------------------------------------------------------------
 
--- random stuff
--- local yay = "ᕙ(⇀‸↼‶)ᕗ"
--- local boo = "ლ(ಠ益ಠლ)"
--- changed kirby to display better in alert
-local kirby = "  ¯\\_(ツ)_/¯"
-
-local function showKirby()
-    hs.alert(kirby, 5)
-    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-end
-
+-- random
 local emojis = {
     {
         ["text"] = "¯\\_(ツ)_/¯",
@@ -266,5 +262,3 @@ local emojiChooser = hs.chooser.new(
 ):rows(3):width(20):choices(emojis)
 
 hs.hotkey.bind(mash, "K", function() emojiChooser:show() end)
-
--- hs.hotkey.showHotkeys(mash, "space")
