@@ -45,7 +45,7 @@ obj.drives = {}
     - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
     - [x] move displays to hs key value store
     - [ ] move list of drives to eject to hs key value store
-    - [ ] somehow intuit which display is cur 
+    - [ ] somehow intuit which display is focused
     Values stored in hs.settings:
     -- homeSSIDs
 ]]
@@ -391,8 +391,6 @@ function obj:init()
     return self
 end
 
-function getGPU() return obj.currentGPU end
-
 function obj.createMenu(gpu)
     print(obj.currentGPU)
     -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
@@ -419,7 +417,7 @@ function obj.createMenu(gpu)
             end
         }
     }
-    
+
     return newMenu
     -- obj.menubar:setMenu(newMenu)
 end

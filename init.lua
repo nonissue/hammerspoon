@@ -20,7 +20,7 @@ local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 
--- console customization and UI is located elsewhere, so we impor tit
+-- console customization and UI is located elsewhere, so we import it
 require("console")
 
 -- Add WIP Spoons to path
@@ -224,17 +224,7 @@ hs.loadSpoon("Alarm")
 --                                NONSENSE                                  --
 ------------------------------------------------------------------------------
 
--- random stuff
--- local yay = "ᕙ(⇀‸↼‶)ᕗ"
--- local boo = "ლ(ಠ益ಠლ)"
--- changed kirby to display better in alert
-local kirby = "  ¯\\_(ツ)_/¯"
-
-local function showKirby()
-    hs.alert(kirby, 5)
-    hs.pasteboard.setContents("¯\\_(ツ)_/¯")
-end
-
+-- random
 local emojis = {
     {
         ["text"] = "¯\\_(ツ)_/¯",
@@ -269,7 +259,3 @@ local emojiChooser = hs.chooser.new(
 ):rows(3):width(20):choices(emojis)
 
 hs.hotkey.bind(mash, "K", function() emojiChooser:show() end)
-
--- hs.hotkey.showHotkeys(mash, "space")
-
--- require("dots")
