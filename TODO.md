@@ -2,6 +2,25 @@
 
 Updated: 19-04-24
 
+## Lua / Meta
+
+### Error Catching
+
+*19-09-08*
+
+```lua
+    -- returns false when normally HS will crash
+        function test() 
+            if zzz == nil then 
+                error() 
+            end 
+            print(zzz .. "hi") 
+        end
+
+        pcall(test)
+```
+https://www.lua.org/pil/8.4.html
+
 ## Next
 
 * BEFORE ANYTHING ELSE:
@@ -16,17 +35,18 @@ Updated: 19-04-24
     * [ ] SafariKeys
   * [ ] quickreference notes chooser (with things like server details, etc)
   * [ ] Set spoon hotkeys properly (like Fenestra does?)
+  * [ ] Improve config reload time
   * [ ] Create menubar spoon that controls config of other spoons
   * ~~[ ] Make them proper git submodules~~ EDIT: git submodules suck
   * [ ] Clean them up if necessary
   * [ ] REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
   * [ ] add spoon loader spoon and hammerspoon config k/v store
-  * [ ] test spoons on empty config
+  * [~] test spoons on empty config
   * [ ] remove any styled text as it may cause mem leaks
   * SUBMIT THEM
   * [ ] use key/value store for configurable variables/defaults
     * [ ] screen resolutions
-    * [ ] Drives to eject
+    * [x] Drives to eject
     * [x] wifi ssid
     * [ ] ...
 * [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods

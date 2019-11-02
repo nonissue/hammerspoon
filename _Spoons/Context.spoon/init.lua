@@ -45,6 +45,7 @@ obj.drives = {}
     - [ ] make sure everything is cleaned up if spoon is destroyed/unloaded
     - [x] move displays to hs key value store
     - [ ] move list of drives to eject to hs key value store
+    - [ ] somehow intuit which display is cur 
     Values stored in hs.settings:
     -- homeSSIDs
 ]]
@@ -259,6 +260,11 @@ function obj.screenWatcherCallback()
     else
         obj.currentGPU = "discrete"
     end
+    -- rcreate menu on change
+    -- obj.createMenu()
+    if obj.menubar ~= nil then
+        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+    end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
         hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use",
@@ -385,6 +391,39 @@ function obj:init()
     return self
 end
 
+function getGPU() return obj.currentGPU end
+
+function obj.createMenu(gpu)
+    print(obj.currentGPU)
+    -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
+    -- obj.menubar:setMenu(nil)
+    local newMenu = {
+        {
+            title = hs.styledtext.new("Loc:" .. obj.location),
+            fn = function()
+                hs.alert("location clicked")
+            end
+        },
+        {
+            -- title = "error",
+            title = hs.styledtext.new("Docked: " .. (obj.docked or "false")),
+            fn = function()
+                hs.alert("docked clicked")
+            end
+        },
+        {
+            -- title = "error",
+            title = hs.styledtext.new("GPU: " .. gpu),
+            fn = function()
+                hs.alert("docked clicked")
+            end
+        }
+    }
+    
+    return newMenu
+    -- obj.menubar:setMenu(newMenu)
+end
+
 --- Context:start()
 --- Method
 --- start
@@ -417,23 +456,13 @@ function obj:start(options)
     -- creates menubar item if desired
     -- currently menu functions dont do anything
     if obj.shownInMenu then
-        obj.menu = {
-            {
-                title = hs.styledtext.new(obj.location),
-                fn = function()
-                    hs.alert("location clicked")
-                end
-            },
-            {
-                title = hs.styledtext.new(obj.docked),
-                fn = function()
-                    hs.alert("docked clicked")
-                end
-            }
-        }
-
+        -- obj.createMenu()
         obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
-        obj.menubar:setMenu(obj.menu)
+        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+        -- hs.alert(obj.docked, 5)
+        -- local currentMenu = createMenu()
+
+
     end
 
     return self
