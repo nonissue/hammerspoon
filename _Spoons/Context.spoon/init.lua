@@ -290,9 +290,9 @@ function obj.screenWatcherCallback()
     elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids['sidecar']) then
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find(obj.display_ids['mbp']) then
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
         obj.logger.i("[SW] Mobile")
-        obj.docked = "mobile"
+        obj.docked = false
         obj.moveDockLeft()
     else
         obj.logger.e("[SW] Error!")

@@ -108,6 +108,7 @@ hs.loadSpoon("CTRLESC"):start()
 -- todo: move this all elsewhere so it's private
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II"})
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
+-- display ids apparently change? could be flux changing profile...
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
 hs.settings.set("context.drives", drives)
