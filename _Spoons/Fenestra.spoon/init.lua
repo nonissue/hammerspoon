@@ -76,6 +76,7 @@ obj.defaultHotkeys = {
     pushWest = {{"cmd", "alt", "ctrl"}, "W"},
     pushEast = {{"cmd", "alt", "ctrl"}, "E"},
     pushNext = {{"ctrl", "alt", "cmd"}, "P"},
+    -- pushPrevious?
     pushUp = {{"ctrl", "alt", "cmd"}, "Up"},
     pushDown = {{"ctrl", "alt", "cmd"}, "Down"},
     undo = {{"cmd", "alt", "ctrl"}, "Z"}
