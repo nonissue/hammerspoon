@@ -220,6 +220,18 @@ hs.loadSpoon("Clippy"):start()
 -- hs.loadSpoon("SysInfo")
 -- spoon.SysInfo:startFor(0.1)
 hs.loadSpoon("Alarm")
+
+ht = hs.loadSpoon("HammerText")
+ht.keywords = {
+    jjem = "andy@nonissue.org",
+    jjsr = "site:reddit.com ",
+    jjname = "Max Rydahl Andersen",
+    jjdate = function()
+        return os.date("%B %d, %Y")
+    end
+}
+ht:start()
+
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
@@ -248,11 +260,12 @@ local emojis = {
 }
 
 local function emojiChooserCallback(choice)
-    hs.alert(choice['text'])
-    hs.pasteboard.setContents(choice['text'])
+    hs.alert(choice["text"])
+    hs.pasteboard.setContents(choice["text"])
 end
 
-local emojiChooser = hs.chooser.new(
+local emojiChooser =
+    hs.chooser.new(
     function(choice)
         if not (choice) then
             return
@@ -262,4 +275,10 @@ local emojiChooser = hs.chooser.new(
     end
 ):rows(3):width(20):choices(emojis)
 
-hs.hotkey.bind(mash, "K", function() emojiChooser:show() end)
+hs.hotkey.bind(
+    mash,
+    "K",
+    function()
+        emojiChooser:show()
+    end
+)
