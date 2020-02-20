@@ -221,16 +221,16 @@ hs.loadSpoon("Clippy"):start()
 -- spoon.SysInfo:startFor(0.1)
 hs.loadSpoon("Alarm")
 
-ht = hs.loadSpoon("HammerText")
-ht.keywords = {
-    jjem = "andy@nonissue.org",
-    jjsr = "site:reddit.com ",
-    jjname = "Max Rydahl Andersen",
-    jjdate = function()
-        return os.date("%B %d, %Y")
-    end
-}
-ht:start()
+-- ht = hs.loadSpoon("HammerText")
+-- ht.keywords = {
+--     jjem = "andy@nonissue.org",
+--     jjsr = "site:reddit.com ",
+--     jjname = "Max Rydahl Andersen",
+--     jjdate = function()
+--         return os.date("%B %d, %Y")
+--     end
+-- }
+-- ht:start()
 
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --

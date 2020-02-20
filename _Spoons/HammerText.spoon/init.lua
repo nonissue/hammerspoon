@@ -31,7 +31,9 @@
 --[[
 Nonissue notes:
     December 27, 2019
-I think this causes memory leaks/performance problems, but I can't be sure
+I think this causes memory leaks/performance problems, but I can't be sure.
+- [ ] Doesn't handle command-deleting a string (Possibly fixed December 28, 2019)
+- [ ] Doesn't handle selecting and then deleting a word
 ]]
 local obj = {}
 obj.__index = obj
@@ -46,6 +48,8 @@ obj.author = "Multiple Authors"
 --- Logger object used within the Spoon. Can be accessed to set the default log level for the messages coming from the Spoon.
 obj.logger = hs.logger.new("HammerText")
 
+obj.keyWatcher = nil
+
 --- HammerText.keywords
 --- Variable
 --- Map of keywords to strings or functions that return a string
@@ -55,7 +59,7 @@ obj.keywords = {
     ["..addr"] = "My address"
 }
 
-function expander()
+function obj:expander()
     local word = ""
     local keyMap = require "hs.keycodes".map
     local keyWatcher
@@ -67,9 +71,15 @@ function expander()
         function(ev)
             local keyCode = ev:getKeyCode()
             local char = ev:getCharacters()
+            local flags = ev:getFlags()
 
+            print_r(flags)
             -- if "delete" key is pressed
             if keyCode == keyMap["delete"] then
+                if flags["cmd"] then
+                    word = ""
+                    return false
+                end
                 if #word > 0 then
                     -- remove the last char from a string with support to utf8 characters
                     local t = {}
@@ -78,14 +88,14 @@ function expander()
                     end
                     table.remove(t, #t)
                     word = utf8.char(table.unpack(t))
-                    obj.logger.df("Word after deleting:", word)
+                    obj.logger.i("Word after deleting: ", word)
                 end
                 return false -- pass the "delete" keystroke on to the application
             end
 
             -- append char to "word" buffer
             word = word .. char
-            obj.logger.df("Word after appending:", word)
+            obj.logger.i("Word after appending: ", word)
 
             -- if one of these "navigational" keys is pressed
             if
@@ -97,7 +107,7 @@ function expander()
                 word = "" -- clear the buffer
             end
 
-            obj.logger.df("Word to check if hotstring:", word)
+            obj.logger.i("Word to check if hotstring:", word)
 
             -- finally, if "word" is a hotstring
             local output = obj.keywords[word]
@@ -112,6 +122,7 @@ function expander()
                 end
                 output = o
             end
+
             if output then
                 for i = 1, utf8.len(word), 1 do
                     hs.eventtap.keyStroke({}, "delete", 0)
@@ -136,7 +147,15 @@ end
 ---  * None
 function obj:start()
     print("Heeey! Hammertext is running")
-    expander()
+    obj.keyWatcher = obj:expander()
+end
+
+function obj:stop()
+    if (obj.keyWatcher) then
+        obj.keyWatcher:stop()
+        obj.logger.i("Stopped HammerText eventtap watcher")
+    end
+    -- expander()
 end
 
 return obj
