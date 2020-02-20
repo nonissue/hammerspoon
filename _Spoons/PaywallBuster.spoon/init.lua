@@ -23,7 +23,6 @@
     https://medium.com/snips-ai/how-to-block-third-party-scripts-with-a-few-lines-of-javascript-f0b08b9c4c0
     https://developer.apple.com/documentation/safariservices/safari_app_extensions?changes=_2&language=objc
 ]]
-
 local obj = {}
 obj.__index = obj
 
@@ -76,9 +75,9 @@ local chooserTable = {
     },
     {
         ["id"] = 5,
-        ["text"] = "Outline.com",
-        subText = "sends current url to outline.com",
-        ["baseURL"] = "https://outline.com/"
+        ["text"] = "Firefox",
+        subText = "sends current url to Firefox",
+        ["baseURL"] = ""
     },
     {
         ["id"] = 6,
@@ -108,7 +107,8 @@ local privateBrowsing =
     end tell
 ]]
 
-local getURL = [[
+local getURL =
+    [[
     tell application "Safari"
     set currentURL to URL of front document
     end tell
@@ -159,17 +159,21 @@ function obj.getURL()
     end
 end
 
+function obj.sendToFirefox(URL)
+    hs.osascript.applescript('tell application "Firefox Developer Edition" to open location "' .. URL .. '"')
+end
+
 -- modifiers:
 -- prefix: domain to prefix before our url (eg. https://outline.com/)
 -- affix: query or string to append to the url
 function obj:createURL(modifiers)
     -- hmm, the url we are creating can have the following parts:
     -- prefix domain (eg. outline.com) that goes before the article url
-        -- url would look like: http://outline.com/http://nytimes.com/article
+    -- url would look like: http://outline.com/http://nytimes.com/article
     -- article url
-        -- eg. http://nytimes.com/article
+    -- eg. http://nytimes.com/article
     -- affix
-        -- eg. "?mod=rsswn" -> http://nytimes.com/article?mod=rsswn
+    -- eg. "?mod=rsswn" -> http://nytimes.com/article?mod=rsswn
     local prefix = modifiers.prefix or ""
     local affix = modifiers.affix or ""
     local currentURL = obj.getURL()
@@ -177,7 +181,6 @@ function obj:createURL(modifiers)
     -- don't seem to need to encode the url, not sure
     -- why i do that elsewhere 🤔
     return prefix .. currentURL .. affix
-
 end
 
 function obj:bust(baseURL)
@@ -201,15 +204,17 @@ function obj:busterChooserCallback(choice)
         hs.osascript.applescript(privateBrowsing)
         obj.setURL(frontmostURL)
     elseif choice["id"] == 2 then
+        -- obj:bust(choice["baseURL"])
         local test = obj:createURL(choice.modifiers)
         self.createWindow(test, test)
-        -- obj:bust(choice["baseURL"])
     elseif choice["id"] == 3 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 4 then
         obj:bust(choice["baseURL"])
     elseif choice["id"] == 5 then
-        obj:bust(choice["baseURL"])
+        -- obj:bust(choice["baseURL"])
+        obj.sendToFirefox(obj.getURL())
+        hs.application.launchOrFocus("Firefox Developer Edition")
     elseif choice["id"] == 6 then
         -- figure out a way to make the obj:bust function more flexible
         -- to handle this
@@ -241,9 +246,9 @@ function obj:init()
         hs.chooser.new(
         function(choice)
             if not (choice) then
+                -- print(self.chooser:query())
                 self.chooser:hide()
                 return
-                -- print(self.chooser:query())
             else
                 self:busterChooserCallback(choice)
             end
