@@ -20,6 +20,18 @@ obj.logger = hs.logger.new("SafariKeys")
 local mash = {"cmd", "alt", "ctrl"}
 local hyper = {"cmd", "alt"}
 
+-- Utilities
+function isSafariActive()
+    local frontApp = hs.application.frontmostApplication():name()
+
+    if frontApp ~= "Safari" then
+        obj.logger.i("Frontmost app is '" .. frontApp .. "'. Not Safari. Ignoring...")
+        return false
+    end
+
+    return true
+end
+
 obj.defaultHotkeys = {
     tabToNewWin = {mash, "T"},
     mailToSelf = {mash, "U"},
@@ -60,7 +72,11 @@ end
 -- Probably a better way tn o do it.
 ------------------------------------------------------------------------------
 function obj:cycleUserAgent()
-    hs.application.launchOrFocus("Safari")
+    if not isSafariActive() then
+        return
+    end
+    -- hs.application.launchOrFocus("Safari")
+
     local safari = hs.appfinder.appFromName("Safari")
 
     local str_default = {"Develop", "User Agent", "Default (Automatically Chosen)"}
@@ -246,7 +262,10 @@ end
 -- could maybe send it to next monitor immediately if there is one?
 ------------------------------------------------------------------------------
 function obj:tabToNewWindow()
-    hs.application.launchOrFocus("Safari")
+    if not isSafariActive() then
+        return
+    end
+    -- hs.application.launchOrFocus("Safari")
     local safari = hs.appfinder.appFromName("Safari")
 
     local target_item_in_menu = {"Window", "Move Tab to New Window"}
@@ -261,7 +280,11 @@ end
 -- Merges all separate windows into one window
 ------------------------------------------------------------------------------
 function obj:mergeAllWindows()
-    hs.application.launchOrFocus("Safari")
+    if not isSafariActive() then
+        return
+    end
+
+    -- hs.application.launchOrFocus("Safari")
     local safari = hs.appfinder.appFromName("Safari")
 
     local target_item_in_menu = {"Window", "Merge All Windows"}
@@ -275,13 +298,10 @@ end
 -- Pins or unpins current tab
 ------------------------------------------------------------------------------
 function obj:pinOrUnpinTab()
-    local frontApp = hs.application.frontmostApplication():name()
-
-    if frontApp ~= "Safari" then
+    if not isSafariActive() then
         return
     end
 
-    hs.application.launchOrFocus("Safari")
     local safari = hs.appfinder.appFromName("Safari")
 
     local pin_tab = {"Window", "Pin Tab"}
