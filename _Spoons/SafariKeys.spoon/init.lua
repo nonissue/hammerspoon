@@ -5,6 +5,10 @@
 local obj = {}
 obj.__index = obj
 
+-- Don't run some of these if safari isn't frontmost application
+-- could write a factory function to wrap module method passed to hs.fnutils
+-- to that function
+
 -- Metadata
 obj.name = "SafariKeys"
 obj.version = "1.0"
@@ -108,12 +112,15 @@ function obj:addToReadingListTest(url)
     local ok, result
 
     if (not url) then
-        local _, _ = hs.osascript.applescript([[
+        local _, _ =
+            hs.osascript.applescript(
+            [[
             tell application "Safari"
                 set result to URL of document 1
             end tell
             tell application "Safari" to add reading list item result
-        ]])
+        ]]
+        )
     else
         obj.logger.e("URL: " .. url)
         local script = string.format([[tell application "Safari" to add reading list item %s]], url)
@@ -140,48 +147,51 @@ function obj.mailToSelf()
     local frontApp = hs.application.frontmostApplication()
 
     -- this shit is too unreliable
-    if frontApp == firefox then hs.alert("Can't currently save url from firefox") return end
+    if frontApp == firefox then
+        hs.alert("Can't currently save url from firefox")
+        return
+    end
 
-        -- local ok, firefoxsaveres = hs.osascript.applescript([[
-        --     use scripting additions
-        --     use framework "Foundation"
-        --     tell application "System Events" to tell process "firefox"
-        --         set frontmost to true
-        --         set the_title to name of windows's item 1
-        --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
-        --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
-        --     end tell
-        --     tell application "System Events"
-        --         keystroke "l" using command down
-        --         delay 1
-        --         keystroke "c" using command down
-        --     end tell
-        --     set the_url to the clipboard
-        --     tell application "Mail"
-        --         set theMessage to make new outgoing message with properties ¬
-        --             {subject:"MTS: " & the_title, content:the_url, visible:true}
-        --         tell theMessage
-        --             make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
-        --             send
-        --         end tell
-        --     end tell
-        -- ]])
+    -- local ok, firefoxsaveres = hs.osascript.applescript([[
+    --     use scripting additions
+    --     use framework "Foundation"
+    --     tell application "System Events" to tell process "firefox"
+    --         set frontmost to true
+    --         set the_title to name of windows's item 1
+    --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr '[' ' '")
+    --         set the_title to (do shell script "echo " & quoted form of the_title & " | tr ']' ' '")
+    --     end tell
+    --     tell application "System Events"
+    --         keystroke "l" using command down
+    --         delay 1
+    --         keystroke "c" using command down
+    --     end tell
+    --     set the_url to the clipboard
+    --     tell application "Mail"
+    --         set theMessage to make new outgoing message with properties ¬
+    --             {subject:"MTS: " & the_title, content:the_url, visible:true}
+    --         tell theMessage
+    --             make new to recipient with properties {name:"Mail to Self", address:"hammerspoon@nonissue.org"}
+    --             send
+    --         end tell
+    --     end tell
+    -- ]])
 
-        -- return the_title & ": " & the the_url as text
+    -- return the_title & ": " & the the_url as text
 
-        -- if not ok then
-        --     hs.logger.e("error saving url from firefox")
-        --     return
-        -- end
+    -- if not ok then
+    --     hs.logger.e("error saving url from firefox")
+    --     return
+    -- end
 
-        -- if frontApp == firefox then
-        --     -- hs.alert("Frontmost app is firefox")
-        --     if result and ok then
-        --         hs.alert("frontmost url = result: " .. result)
-        --         hs.alert("URL:" .. result)
-        --     end
-        --     return
-        -- end
+    -- if frontApp == firefox then
+    --     -- hs.alert("Frontmost app is firefox")
+    --     if result and ok then
+    --         hs.alert("frontmost url = result: " .. result)
+    --         hs.alert("URL:" .. result)
+    --     end
+    --     return
+    -- end
 
     local script =
         [[
@@ -265,6 +275,12 @@ end
 -- Pins or unpins current tab
 ------------------------------------------------------------------------------
 function obj:pinOrUnpinTab()
+    local frontApp = hs.application.frontmostApplication():name()
+
+    if frontApp ~= "Safari" then
+        return
+    end
+
     hs.application.launchOrFocus("Safari")
     local safari = hs.appfinder.appFromName("Safari")
 
