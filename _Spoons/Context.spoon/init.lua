@@ -49,8 +49,6 @@ obj.drives = {}
     Values stored in hs.settings:
     -- homeSSIDs
 ]]
-
-
 -- fetched from hs key/value store
 local homeSSIDs = hs.settings.get("homeSSIDs")
 
@@ -123,7 +121,6 @@ function obj.checkAndEject(target)
     end
 end
 
-
 --- Context.homeArrived()
 --- Method
 --- home arrived
@@ -157,7 +154,7 @@ end
 --- Returns:
 ---  * None
 function obj.homeDeparted()
-    hs.audiodevice.defaultOutputDevice():setMuted(true)
+    -- hs.audiodevice.defaultOutputDevice():setMuted(true)
     hs.alert("~(☛ ⌂)", 1)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
@@ -210,8 +207,8 @@ end
 ---  * None
 function obj.cafChangedCallback(eventType)
     -- I think both are handled?
-        -- hs.caffeinate.watcher.screensDidWake
-        -- hs.caffeinate.watcher.systemDidWake
+    -- hs.caffeinate.watcher.screensDidWake
+    -- hs.caffeinate.watcher.systemDidWake
     local didWake = hs.caffeinate.watcher.systemDidWake
 
     if (eventType == didWake and (not atHome(obj.currentSSID))) then
@@ -252,9 +249,13 @@ function obj.screenWatcherCallback()
     -- if we find "Displays" after Chipset Mode: Intel but before a blank line
     -- then we know displays are attached to integrated gpu
     -- system_profiler SPDisplaysDataType | sed -e '/Chipset Model: Intel/,/^\\s*$/!d' | grep Displays
-    local res, success, exit = --luacheck: ignore
-        hs.execute("system_profiler SPDisplaysDataType | \
-        sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'")
+    local res,
+        success,
+        exit = --luacheck: ignore
+        hs.execute(
+        "system_profiler SPDisplaysDataType | \
+        sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
+    )
     if res == "" then
         obj.currentGPU = "integrated"
     else
@@ -267,13 +268,20 @@ function obj.screenWatcherCallback()
     end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
-        hs.notify.new({title = "GPU Status", subtitle = "Warning", informativeText = "Dedicated GPU in use",
-        alwaysPresent = true, autoWithdraw = false}):send()
+        hs.notify.new(
+            {
+                title = "GPU Status",
+                subtitle = "Warning",
+                informativeText = "Dedicated GPU in use",
+                alwaysPresent = true,
+                autoWithdraw = false
+            }
+        ):send()
     end
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-    elseif hs.screen.find(obj.display_ids['cinema']) then
+    elseif hs.screen.find(obj.display_ids["cinema"]) then
         -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
         -- Changed above line to use "Cinema HD" as display ID was not reliable?
         -- if we have a different amount of displays and one of them is
@@ -286,8 +294,10 @@ function obj.screenWatcherCallback()
         obj.docked = "mobile"
         obj.moveDockLeft()
 
-        for i = 1, #obj.drives do obj.checkAndEject(obj.drives[i]) end
-    elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids['sidecar']) then
+        for i = 1, #obj.drives do
+            obj.checkAndEject(obj.drives[i])
+        end
+    elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
@@ -375,8 +385,8 @@ function obj:init()
         self.menubar:delete()
     end
 
-    obj.display_ids = hs.settings.get('context.display_ids') or {}
-    obj.drives = hs.settings.get('context.drives') or {}
+    obj.display_ids = hs.settings.get("context.display_ids") or {}
+    obj.drives = hs.settings.get("context.drives") or {}
 
     -- if options then
     --     obj.shownInMenu = options.showMenu or obj.shownInMenu
@@ -458,8 +468,8 @@ function obj:start(options)
         -- obj.createMenu()
         obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
         obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
-        -- hs.alert(obj.docked, 5)
-        -- local currentMenu = createMenu()
+    -- hs.alert(obj.docked, 5)
+    -- local currentMenu = createMenu()
     end
 
     return self
