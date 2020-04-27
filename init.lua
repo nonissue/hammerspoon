@@ -197,6 +197,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
 
 hs.loadSpoon("ToggleDarkMode"):start({showMenu = true})
+hs.loadSpoon("EasyTOTP")
 
 ------------------------------------------------------------------------------
 -- Clippy.spoon / by me
