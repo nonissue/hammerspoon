@@ -46,8 +46,7 @@ end
 
 obj.spoonPath = script_path()
 
--- Import basexx utilities
--- local basexx = dofile(obj.spoonPath.."basexx.lua")
+-- Import basexx utilities342680
 local totp_generator = dofile(obj.spoonPath.."/totp_generator.lua")
 
 function obj:get_token()
