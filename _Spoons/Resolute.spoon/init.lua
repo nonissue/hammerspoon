@@ -24,7 +24,7 @@ local function script_path()
   
   obj.spoonPath = script_path()
 
-obj.zoomIcon = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.dock.pdf'):setSize({w=16,h=16})
+obj.menubarIcon268034 = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.dock.pdf'):setSize({w=16,h=16})
 obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.expand.vertical.pdf'):setSize({w=16,h=16})
 obj.zoomedOutIcon = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.compress.vertical.pdf'):setSize({w=16,h=16})
 
@@ -47,17 +47,9 @@ end
 local mbpr15 = {
     -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
     {["id"] = 2, ["icon"] = obj.zoomedInIcon, ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
-    {["id"] = 3, ["icon"] = obj.zoomIcon, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
+    {["id"] = 3, ["icon"] = obj.menubarIcon268034, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
     {["id"] = 4, ["icon"] = obj.zoomedOutIcon, ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
-
-local mbpr15new = {
-    -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
-    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
-    {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
-    {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
-}
-
 
 local acer4k = {
     -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
