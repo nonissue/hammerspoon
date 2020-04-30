@@ -41,6 +41,8 @@ obj.timers = {}
 -- obj.menuBarIcon = "⌚︎"
 obj.menuBarIcon = "↻"
 
+
+
 obj.createAlarmChoices = {}
 obj.startMenuChoices = {}
 obj.startMenuCustomChoices = {}
@@ -49,6 +51,16 @@ obj.modifyMenuChoices = {}
 
 -- local sounds_dir = os.getenv("HOME") .. "/.hammerspoon/archive/media/sounds/"
 -- obj.alert_sound = hs.sound.getByFile(sounds_dir .. "alert.caf")
+
+-- -- Utility for getting current paths
+local function script_path()
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
+end
+  
+obj.spoonPath = script_path()
+
+obj.timerIcon = hs.image.imageFromPath(obj.spoonPath .. '/timer.pdf'):setSize({w=16,h=16})
 
 local timerInterval = 15
 local presetCount = 5
@@ -154,7 +166,7 @@ function obj:formatSeconds(s)
         local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
 
         -- return "⣿⣿⣿⣿⣦⣀⣀⣀⣀⣀"
-        return self.menuBarIcon .. " " .. hours ..":".. mins..":"..secs
+        return " " .. hours ..":".. mins..":"..secs
     else
         return false
     end
@@ -258,7 +270,7 @@ end
 function obj:deleteAlarm()
     self.timerEvent:stop()
     self.timerEvent = nil
-    self:setTitleStyled(self.menuBarIcon)
+    self:setTitleStyled("")
     self.alarmMenu:setMenu(self.startMenuChoices)
 end
 
@@ -371,7 +383,8 @@ function obj:init()
     self:customTimer()
 
     self.alarmMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
-    self:setTitleStyled(self.menuBarIcon)
+    -- self:setTitleStyled(self.menuBarIcon)
+    self.alarmMenu:setIcon(obj.timerIcon)
 
     -- adds a menubar click callback to invoke show/hide chooser
     -- so sleep timer can be set with mouse only
