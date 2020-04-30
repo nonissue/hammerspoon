@@ -38,7 +38,17 @@ obj.timerEvent = nil
 obj.hotkeyShow = nil
 
 obj.timers = {}
-obj.menuBarIcon = "𝐙"
+
+local function script_path()
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
+end
+  
+obj.spoonPath = script_path()
+
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. '/moon.stars.pdf'):setSize({w=16,h=16})
+
+-- obj.menuBarIcon = "𝐙"
 
 -- I should probably just normalize everything to seconds?
 local minMins = 0
@@ -313,7 +323,7 @@ function obj:deleteTimer()
     self.timerEvent:stop()
     self.timerEvent = nil
     self.menuFont = defaultFont
-    self:setTitleStyled(self.menuBarIcon)
+    self:setTitleStyled("")
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
 end
 
@@ -412,7 +422,7 @@ function obj:init()
     end
 
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
-    self:setTitleStyled(self.menuBarIcon)
+    self.sleepTimerMenu:setIcon(self.menubarIcon)
 
     self:initChooser()
     -- adds a menubar click callback to invoke show/hide chooser
@@ -424,7 +434,7 @@ end
 function obj:addTimer(name, title, type)
     local timer = {}
 
-    local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setTitle(title)
+    local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setIcon(obj.menubarIcon)
     table.insert(obj.timers, {
         [name] = {
             menu,
