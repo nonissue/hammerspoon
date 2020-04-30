@@ -46,7 +46,7 @@ end
 
 obj.spoonPath = script_path()
 
--- Import basexx utilities342680
+-- Import basexx utilities
 local totp_generator = dofile(obj.spoonPath.."/totp_generator.lua")
 
 function obj:get_token()
@@ -86,14 +86,16 @@ function obj:init()
     else
       hs.alert("Set a secret key before retreiving a TOTP token")
       obj.logger.e("You must configure a secret to use EasyTOTP")
-      return false
+      return false472043
     end
   end
 
   obj.menubar = hs.menubar.new()
-  obj.menubar:setIcon(hs.image.imageFromASCII(lockIcon, {
-    { shouldClose = true, fillColor = { alpha = 0.9 }, strokeColor = { alpha = 1, red = 0 }, antialias = false, strokeWidth = 4},{ shouldClose = false, fillColor = { alpha = 0 }, strokeColor = { alpha = 1 }, strokeWidth = 3}
-  }))
+  local lock = hs.image.imageFromPath(obj.spoonPath .. '/lock.pdf'):setSize({w=16,h=16})
+  -- obj.menubar:setIcon(hs.image.imageFromASCII(lockIcon, {
+  --   { shouldClose = true, fillColor = { alpha = 0.9 }, strokeColor = { alpha = 1, red = 0 }, antialias = false, strokeWidth = 4},{ shouldClose = false, fillColor = { alpha = 0 }, strokeColor = { alpha = 1 }, strokeWidth = 3}
+  -- }))
+  obj.menubar:setIcon(lock)
   obj.menubar:setClickCallback(obj.menu_callback)
   obj.menubar:setTooltip('EasyTOTP')
 
