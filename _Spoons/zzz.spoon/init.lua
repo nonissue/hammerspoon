@@ -20,7 +20,7 @@
         * Dunno if this is possible?
     * [ ] clean up / optimize table creation
     * [ ] Reduce volume and brightness by XX% over sleep time period?
-]]--
+]] --
 
 local obj = {}
 obj.__index = obj
@@ -43,10 +43,10 @@ local function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
 end
-  
+
 obj.spoonPath = script_path()
 
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. '/moon.stars.pdf'):setSize({w=16,h=16})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.stars.pdf"):setSize({w = 16, h = 16})
 
 -- obj.menuBarIcon = "𝐙"
 
@@ -61,7 +61,6 @@ local maxSecs = maxMins * 60
 local sleepInterval = 15
 local updateInterval = 5
 local presetCount = 3
-
 
 --[[
     init our empty chooser choice tables
@@ -78,11 +77,8 @@ local presetCount = 3
         ['text'] = <string>,
             text to appear in chooser
     }
-]]--
-
-
-local defaultFont = {
-    font = "Menlo",
+]] local defaultFont = {
+    font = "Menlo"
     -- color = {hex = "#EEEEEE"}
 }
 
@@ -108,26 +104,48 @@ obj.modifyMenuChoices = {}
 
 -- generate presets dynamically based on sleepInterval/presentCount
 for i = 1, presetCount do
-    table.insert(obj.createTimerChoices, {
-        ["id"] = i,
-        ["action"] = "create",
-        ["m"] = i * sleepInterval,
-        ["text"] = i * sleepInterval .. " minutes",
-    })
-    table.insert(obj.startMenuChoices, {
-        title = obj:styleText(tostring(i * sleepInterval .. "m")),
-        fn = function() obj:timerChooserCallback(obj.createTimerChoices[i]) end,
-        ["id"] = i,
-        ["action"] = "create",
-        ["m"] = i * sleepInterval,
-        ["text"] = i * sleepInterval .. "m",
-    })
+    table.insert(
+        obj.createTimerChoices,
+        {
+            ["id"] = i,
+            ["action"] = "create",
+            ["m"] = i * sleepInterval,
+            ["text"] = i * sleepInterval .. " minutes"
+        }
+    )
+    table.insert(
+        obj.startMenuChoices,
+        {
+            title = obj:styleText(tostring(i * sleepInterval .. "m")),
+            fn = function()
+                obj:timerChooserCallback(obj.createTimerChoices[i])
+            end,
+            ["id"] = i,
+            ["action"] = "create",
+            ["m"] = i * sleepInterval,
+            ["text"] = i * sleepInterval .. "m"
+        }
+    )
 end
 
-table.insert(obj.startMenuChoices,
+table.insert(
+    obj.startMenuChoices,
     {
         title = obj:styleText("??m"),
-        fn = function() obj.chooser:show() end
+        fn = function()
+            obj.chooser:show()
+        end
+    }
+)
+
+table.insert(
+    obj.startMenuChoices,
+    {
+        title = obj:styleText("-1"),
+        ["id"] = 5,
+        ["action"] = "create",
+        ["m"] = -1,
+        ["text"] = "debug"
     }
 )
 
@@ -152,7 +170,7 @@ obj.modifyTimerChoices = {
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5 minutes"
-    },
+    }
 }
 
 obj.modifyMenuChoices = {
@@ -162,7 +180,9 @@ obj.modifyMenuChoices = {
         ["m"] = 0,
         ["text"] = "Stop Timer",
         title = obj:styleText("Stop"),
-        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[1]) end,
+        fn = function()
+            obj:timerChooserCallback(obj.modifyTimerChoices[1])
+        end
     },
     {
         ["id"] = 2,
@@ -170,7 +190,9 @@ obj.modifyMenuChoices = {
         ["m"] = 5,
         ["text"] = "+5m",
         title = obj:styleText("+5m"),
-        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[2]) end,
+        fn = function()
+            obj:timerChooserCallback(obj.modifyTimerChoices[2])
+        end
     },
     {
         ["id"] = 3,
@@ -178,26 +200,23 @@ obj.modifyMenuChoices = {
         ["m"] = -5,
         ["text"] = "-5m",
         title = obj:styleText("-5m"),
-        fn = function() obj:timerChooserCallback(obj.modifyTimerChoices[3]) end,
-    },
+        fn = function()
+            obj:timerChooserCallback(obj.modifyTimerChoices[3])
+        end
+    }
 }
 
 -- hotkey binding not working
 function obj:bindHotkeys(mapping)
     local def = {
-        showTimerMenu = hs.fnutils.partial(self:show(), self),
+        showTimerMenu = hs.fnutils.partial(self:show(), self)
     }
 
     hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
 function obj:setTitleStyled(text)
-    self.sleepTimerMenu:setTitle(
-        hs.styledtext.new(
-            text,
-            self.menuFont
-        )
-    )
+    self.sleepTimerMenu:setTitle(hs.styledtext.new(text, self.menuFont))
 end
 
 -- why not just deal with minutes?
@@ -205,10 +224,10 @@ function obj:formatSeconds(s)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(s)
     if seconds then
-        local hours = string.format("%02.f", math.floor(seconds / 3600));
-        local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
-        local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
-        return "☾ " .. hours ..":".. mins..":"..secs
+        local hours = string.format("%02.f", math.floor(seconds / 3600))
+        local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)))
+        local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60))
+        return hours .. ":" .. mins .. ":" .. secs
     else
         return false
     end
@@ -226,7 +245,8 @@ function obj:startTimer(timerInMins)
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
         -- self:updateBrightnessAndVol(timerInMins)
         -- hs.brightness.set(50) -- only works if automatically adjust brightness is off
-        self.timerEvent = hs.timer.doAfter(
+        self.timerEvent =
+            hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()
                 self.logger.df("Timer finished, sleeping!")
@@ -251,7 +271,7 @@ function obj:updateBrightnessAndVol(timerInMins)
         function()
             brightness = brightness - step
             hs.alert(brightness)
-            hs.alert(step )
+            hs.alert(step)
             hs.brightness.set(brightness)
         end,
         interval
@@ -260,14 +280,14 @@ end
 
 function obj:timerChooserCallback(choice)
     -- switch on action
-    if choice['action'] == 'stop' and self.timerEvent then
+    if choice["action"] == "stop" and self.timerEvent then
         -- handle stop timer
         self.logger.d("Timer stopped")
         self:deleteTimer()
-    elseif choice['action'] == 'adjust' and self.timerEvent then
+    elseif choice["action"] == "adjust" and self.timerEvent then
         -- handle inc/dec timer
-        self:adjustTimer(choice['m'])
-    elseif choice['m'] == nil then
+        self:adjustTimer(choice["m"])
+    elseif choice["m"] == nil then
         -- handle custom timer
         self.logger.d("Custom timer started")
         self:startTimer(tonumber(self.chooser:query()))
@@ -275,10 +295,14 @@ function obj:timerChooserCallback(choice)
     else
         -- handle normal choice
         self.logger.d("Default timer started")
-        self:startTimer(tonumber(choice['m']))
+        self:startTimer(tonumber(choice["m"]))
     end
 end
 
+-- Handles updating countdown in menubar
+-- Also includes logic for warning before sleep occurs
+-- And a check to make sure the timer > 0 which can happen when
+-- computer is slept manually before countdown has finished.
 function obj:updateMenu()
     hs.timer.doWhile(
         function()
@@ -292,6 +316,11 @@ function obj:updateMenu()
                 obj.menuFont = almostDone
             end
 
+            if math.floor(timeLeft) < 0 then
+                self.logger.d("Computer put to sleep before time elapsed. Deleting sleep timer.")
+                hs.alert("System was put to sleep manually, deleting timer.")
+                self:deleteTimer()
+            end
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
         2
@@ -338,7 +367,8 @@ function obj:initChooser()
     -- If the user 'query' doesn't match an option, we provide them with
     -- a new option that appears to let them set a custom timer!
     -- See queryChangeCallback() call below for more info
-    self.chooser = hs.chooser.new(
+    self.chooser =
+        hs.chooser.new(
         function(choice)
             if not (choice) then
                 print(self.chooser:query())
@@ -362,12 +392,12 @@ function obj:initChooser()
     self.chooser:queryChangedCallback(
         function(query)
             local queryNum = tonumber(query)
-            if query == ''  then
+            if query == "" then
                 self.chooser:choices(self:getCurrentChoices())
             elseif queryNum then
-            -- elseif queryNum > minSecs and queryNum < maxMins then
+                -- elseif queryNum > minSecs and queryNum < maxMins then
                 local choices = {
-                    {["id"] = 0, ["text"] = "Custom", subText="Enter a custom time"},
+                    {["id"] = 0, ["text"] = "Custom", subText = "Enter a custom time"}
                 }
                 self.chooser:choices(choices)
             else
@@ -412,11 +442,10 @@ function obj:stop()
 end
 
 function obj:init()
-
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
-    obj.logger.i('Initializing Zzz')
+    obj.logger.i("Initializing Zzz")
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end
@@ -435,19 +464,20 @@ function obj:addTimer(name, title, type)
     local timer = {}
 
     local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setIcon(obj.menubarIcon)
-    table.insert(obj.timers, {
-        [name] = {
-            menu,
+    table.insert(
+        obj.timers,
+        {
+            [name] = {
+                menu
+            }
         }
-    })
+    )
 
     -- table.insert(obj.timers, {
     --     ["name"] = name,
     --     ["title"] = title,
     --     ["type"] = type,
     -- })
-
 end
-
 
 return obj
