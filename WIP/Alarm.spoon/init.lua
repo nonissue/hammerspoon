@@ -3,25 +3,22 @@
 -- Simple timer with alert
 
 --[[
+NOTE: 
+- The complexity of this is just insane, it could be so much simpler
+- Removed `dnd-cli` as it doesn't seem to work in cat.
+
 Todo:
 - [ ] Simplify tables
 - [ ] Allow custom function to be called at timer end
 - [x] Interface to allow custom input for timer
 - [ ] integrate with SysInfo timer display?
 - [ ] Add better menubar display rathan than updating countdown every second
-- [ ] Handle snoozing
-- [ ] Handle enabling/disabling dnd if necessary
-    - ie. if it is enabled, disable it to send notification.
-    - if notification is acknowledged, return dnd to original state
-    - if dnd is enabled and user chooses snooze, renable dnd, then disable
-      after snoze interval is done
-
+- [ ] Handle snoozing / Add repeatable alerts
 
 Call when timer ends?
 timerDone = function(result) print("Callback Result: " .. result) end
 hs.dialog.alert(500, 500, timerDone, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle")
 ]]
-
 local obj = {}
 obj.__index = obj
 
@@ -38,10 +35,7 @@ obj.timerEvent = nil
 obj.hotkeyShow = nil
 
 obj.timers = {}
--- obj.menuBarIcon = "⌚︎"
 obj.menuBarIcon = "↻"
-
-
 
 obj.createAlarmChoices = {}
 obj.startMenuChoices = {}
@@ -57,46 +51,60 @@ local function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
 end
-  
+
 obj.spoonPath = script_path()
 
-obj.timerIcon = hs.image.imageFromPath(obj.spoonPath .. '/timer.pdf'):setSize({w=16,h=16})
+obj.timerIcon = hs.image.imageFromPath(obj.spoonPath .. "/timer.pdf"):setSize({w = 16, h = 16})
 
 local timerInterval = 15
 local presetCount = 5
 
 for i = 1, presetCount do
-    table.insert(obj.createAlarmChoices, {
-        ["id"] = i,
-        ["action"] = "create",
-        ["m"] = i * timerInterval,
-        ["text"] = i * timerInterval .. " minutes",
-    })
-    table.insert(obj.startMenuChoices, {
-        title = tostring(i * timerInterval .. "m"),
-        fn = function() obj:handleAction(obj.createAlarmChoices[i]) end,
-        ["id"] = i,
-        ["action"] = "create",
-        ["m"] = i * timerInterval,
-        ["text"] = i * timerInterval .. "m",
-    })
+    table.insert(
+        obj.createAlarmChoices,
+        {
+            ["id"] = i,
+            ["action"] = "create",
+            ["m"] = i * timerInterval,
+            ["text"] = i * timerInterval .. " minutes"
+        }
+    )
+    table.insert(
+        obj.startMenuChoices,
+        {
+            title = tostring(i * timerInterval .. "m"),
+            fn = function()
+                obj:handleAction(obj.createAlarmChoices[i])
+            end,
+            ["id"] = i,
+            ["action"] = "create",
+            ["m"] = i * timerInterval,
+            ["text"] = i * timerInterval .. "m"
+        }
+    )
 end
 
-table.insert(obj.startMenuChoices,
+table.insert(
+    obj.startMenuChoices,
     {
         title = "0.15m",
-        fn = function() obj:handleAction(obj.startMenuChoices[4]) end,
+        fn = function()
+            obj:handleAction(obj.startMenuChoices[4])
+        end,
         ["id"] = 4,
         ["action"] = "create",
         ["m"] = 0.15,
-        ["text"] = "0.15 minutes",
+        ["text"] = "0.15 minutes"
     }
 )
 
-table.insert(obj.startMenuChoices,
+table.insert(
+    obj.startMenuChoices,
     {
         title = "??m",
-        fn = function() obj.customInput:show() end
+        fn = function()
+            obj.customInput:show()
+        end
     }
 )
 
@@ -118,7 +126,7 @@ obj.modifyAlarmChoices = {
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5 minutes"
-    },
+    }
 }
 
 obj.modifyMenuChoices = {
@@ -128,7 +136,9 @@ obj.modifyMenuChoices = {
         ["m"] = 0,
         ["text"] = "Stop Alarm",
         title = "Stop",
-        fn = function() obj:handleAction(obj.modifyAlarmChoices[1]) end,
+        fn = function()
+            obj:handleAction(obj.modifyAlarmChoices[1])
+        end
     },
     {
         ["id"] = 2,
@@ -136,7 +146,9 @@ obj.modifyMenuChoices = {
         ["m"] = 5,
         ["text"] = "+5m",
         title = "+5m",
-        fn = function() obj:handleAction(obj.modifyAlarmChoices[2]) end,
+        fn = function()
+            obj:handleAction(obj.modifyAlarmChoices[2])
+        end
     },
     {
         ["id"] = 3,
@@ -144,8 +156,10 @@ obj.modifyMenuChoices = {
         ["m"] = -5,
         ["text"] = "-5m",
         title = "-5m",
-        fn = function() obj:handleAction(obj.modifyAlarmChoices[3]) end,
-    },
+        fn = function()
+            obj:handleAction(obj.modifyAlarmChoices[3])
+        end
+    }
 }
 -- Call when timer ends?
 function obj:timerDoneAlert()
@@ -153,7 +167,6 @@ function obj:timerDoneAlert()
 end
 
 function obj:updateProgressBar(elapsed, total)
-
 end
 
 -- why not just deal with minutes?
@@ -161,33 +174,31 @@ function obj:formatSeconds(s)
     -- from https://gist.github.com/jesseadams/791673
     local seconds = math.ceil(s) -- use math.ceil as secs left is too precise
     if seconds then
-        local hours = string.format("%02.f", math.floor(seconds / 3600));
-        local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)));
-        local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60));
+        local hours = string.format("%02.f", math.floor(seconds / 3600))
+        local mins = string.format("%02.f", math.floor(seconds / 60 - (hours * 60)))
+        local secs = string.format("%02.f", math.floor(seconds - hours * 3600 - mins * 60))
 
         -- return "⣿⣿⣿⣿⣦⣀⣀⣀⣀⣀"
-        return " " .. hours ..":".. mins..":"..secs
+        return " " .. hours .. ":" .. mins .. ":" .. secs
     else
         return false
     end
 end
 
 function obj:setTitleStyled(text)
-    self.alarmMenu:setTitle(
-        text
-    )
+    self.alarmMenu:setTitle(text)
 end
 
 function obj:handleAction(choice)
     -- switch on action
-    if choice['action'] == 'stop' and self.timerEvent then
+    if choice["action"] == "stop" and self.timerEvent then
         -- handle stop timer
         self.logger.d("Alarm stopped")
         self:deleteAlarm()
-    elseif choice['action'] == 'adjust' and self.timerEvent then
+    elseif choice["action"] == "adjust" and self.timerEvent then
         -- handle inc/dec timer
-        self:adjustAlarm(choice['m'])
-    elseif choice['m'] == nil then
+        self:adjustAlarm(choice["m"])
+    elseif choice["m"] == nil then
         -- handle custom timer
         local userInput = tonumber(self.customInput:query())
         if userInput == nil then
@@ -200,7 +211,7 @@ function obj:handleAction(choice)
     else
         -- handle normal choice
         self.logger.d("Default timer started")
-        self:startAlarm(tonumber(choice['m']))
+        self:startAlarm(tonumber(choice["m"]))
     end
 end
 
@@ -233,37 +244,31 @@ function obj:startAlarm(timerInMins)
     else
         self.logger.df("Alarm started!")
         self.timerDuration = timerInMins * 60
-        -- hs.alert("Timer duration: " .. self.timerDuration)
         self:updateMenu()
         self.alarmMenu:setMenu(self.modifyMenuChoices)
-        self.timerEvent = hs.timer.doAfter(
+        self.timerEvent =
+            hs.timer.doAfter(
             tonumber(timerInMins) * 60,
             function()
                 self.logger.df("Timer finished, sleeping!")
-                os.execute("/usr/local/bin/dnd-cli off")
-                -- spoon.Alarm.alert_sound:play() -- plays sound
-                hs.notify.new({
-                    title = "Timer Finished!",
-                    subtitle = "You set a timer, now it's finished!",
-                    hasActionButton = true,
-                    -- NOTE: Snooze not enabled
-                    actionButtonTitle = "Snooze",
-                    withdrawAfter = 0,
-                    alwaysPresent = true, autoWithdraw = false
-                }):send()
-                self:deleteAlarm()
 
-                hs.timer.doAfter(5,
-                    function()
-                        os.execute("/usr/local/bin/dnd-cli on")
-                    end
-                )
+                -- spoon.Alarm.alert_sound:play() -- plays sound
+                hs.notify.new(
+                    {
+                        title = "Timer Finished!",
+                        subtitle = "You set a timer, now it's finished!",
+                        hasActionButton = true,
+                        -- NOTE: Snooze not enabled
+                        actionButtonTitle = "Snooze",
+                        withdrawAfter = 0,
+                        alwaysPresent = true,
+                        autoWithdraw = false
+                    }
+                ):send()
+                self:deleteAlarm()
             end
         )
         self.progress = self.timerEvent:nextTrigger() / self.timerDuration
-        -- hs.alert("Timer duration: " .. self.timerDuration)
-        -- hs.alert("Timer duration: " .. self.timerEvent:nextTrigger())
-        hs.alert("Progress" .. self.progress)
     end
 end
 
@@ -294,13 +299,13 @@ end
 obj.customTimerMessages = {
     -- add colors?
     initial = {
-        {["id"] = 0, ["text"] = "Start", subText="Enter a custom time"},
+        {["id"] = 0, ["text"] = "Start", subText = "Enter a custom time"}
     },
     error = {
-        {["id"] = 0, ["text"] = "Error", subText="Only enter numbers!"},
+        {["id"] = 0, ["text"] = "Error", subText = "Only enter numbers!"}
     },
     submit = {
-        {["id"] = 0, ["text"] = "Start", subText="Press return to start timer!"},
+        {["id"] = 0, ["text"] = "Start", subText = "Press return to start timer!"}
     }
 }
 
@@ -313,7 +318,8 @@ function obj:getChooserChoices(msg)
 end
 
 function obj:customTimer()
-    self.customInput = hs.chooser.new(
+    self.customInput =
+        hs.chooser.new(
         function(choice)
             if not (choice) then
                 print(self.customInput:query())
@@ -330,7 +336,7 @@ function obj:customTimer()
     self.customInput:queryChangedCallback(
         function(query)
             local queryNum = tonumber(query)
-            if query == ''  then
+            if query == "" then
                 print("hi!")
                 self.customInput:choices(obj:getChooserChoices("initial"))
             elseif queryNum then
@@ -347,7 +353,7 @@ function obj:customTimer()
 end
 
 function obj:stop()
-    obj.logger.i('Stopping Timer.spoon')
+    obj.logger.i("Stopping Timer.spoon")
     if self.alarmMenu then
         self.alarmMenu:delete()
     end
@@ -370,7 +376,7 @@ function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
-    obj.logger.i('Initializing Timer.spoon')
+    obj.logger.i("Initializing Timer.spoon")
     if self.alarmMenu then
         self.alarmMenu:delete()
     end
