@@ -1,6 +1,8 @@
 --- === Context ===
 ---
 --- Change settings based on location and displays
+--- Also, indicate current 'system' context with menubar item
+--- eg. indicate which gpu is currently being used on computers with iGPU and dGPUs
 ---
 local obj = {}
 obj.__index = obj
