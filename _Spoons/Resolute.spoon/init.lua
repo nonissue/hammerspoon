@@ -1,3 +1,13 @@
+--- === Fenestra ===
+--- A spoon for quickly changing the resolution on a Macbook Pro either through
+--- a menubar menu, or using hs.chooser. I often switch between the native res (1680x1050)
+--- and the 'larger' option (1440x900).
+---
+--- You can also use this to switch resolutions on other displays
+---
+--- Currently, the list of resolutions you can choose from has to be created manually.
+--- As an example, the options I have selected are available below in the table 'mbpr15'
+
 local obj = {}
 obj.__index = obj
 
@@ -12,7 +22,6 @@ obj.logger = hs.logger.new("Resolute")
 obj.resChooser = nil
 obj.hotkeyShow = nil
 obj.menubar = nil
-obj.menuIcon = "☲"
 obj.resMenu = {}
 obj.current = nil
 
@@ -20,25 +29,29 @@ obj.current = nil
 local function script_path()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
-  end
-  
-  obj.spoonPath = script_path()
-
-obj.menubarIcon268034 = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.dock.pdf'):setSize({w=16,h=16})
-obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.expand.vertical.pdf'):setSize({w=16,h=16})
-obj.zoomedOutIcon = hs.image.imageFromPath(obj.spoonPath .. '/rectangle.compress.vertical.pdf'):setSize({w=16,h=16})
-
-function obj:bindHotkeys(mapping)
-    local def = {
-        showResoluteChooser = hs.fnutils.partial(self:show(), self)
-    }
-
-    hs.spoons.bindHotkeysToSpec(def, mapping)
 end
+
+obj.spoonPath = script_path()
+
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.dock.pdf"):setSize({w = 16, h = 16})
+obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.expand.vertical.pdf"):setSize({w = 16, h = 16})
+obj.zoomedOutIcon =
+    hs.image.imageFromPath(obj.spoonPath .. "/rectangle.compress.vertical.pdf"):setSize({w = 16, h = 16})
+
+-- function obj:bindHotkeys(mapping)
+--     local def = {
+--         showResoluteChooser = hs.fnutils.partial(self:show(), self)
+--     }
+
+--     hs.spoons.bindHotkeysToSpec(def, mapping)
+-- end
+
+obj.defaultHotkeys = {
+    showResolute = {{"ctrl", "cmd", "alt"}, "L"}
+}
 
 -- TODO:
 -- this should be automated somehow?
-
 
 -- We can get available modes with hs.screen:availableModes()
 -- But the list is too long, and we only care about a few options
@@ -46,23 +59,41 @@ end
 -- but it's tough to know what will look good
 local mbpr15 = {
     -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
-    {["id"] = 2, ["icon"] = obj.zoomedInIcon, ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
-    {["id"] = 3, ["icon"] = obj.menubarIcon268034, ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
-    {["id"] = 4, ["icon"] = obj.zoomedOutIcon, ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
+    {
+        ["id"] = 2,
+        ["image"] = obj.zoomedInIcon,
+        ["subText"] = "1440x900",
+        ["text"] = "Larger",
+        ["res"] = {w = 1440, h = 900, s = 2}
+    },
+    {
+        ["id"] = 3,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "1680x1050",
+        ["text"] = "Default",
+        ["res"] = {w = 1680, h = 1050, s = 2}
+    },
+    {
+        ["id"] = 4,
+        ["image"] = obj.zoomedOutIcon,
+        ["subText"] = "1920x1200",
+        ["text"] = "Smaller",
+        ["res"] = {w = 1920, h = 1200, s = 2}
+    }
 }
 
 local acer4k = {
     -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
-    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}},
+    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}}
     -- {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
     -- {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
 
 function obj:bindHotkeys(keys)
-    assert(keys["showResoluteChooser"], "Hotkey variable is 'showResoluteChooser'")
+    local hotkeys = keys or obj.defaultHotkeys
 
     hs.hotkey.bindSpec(
-        keys["showResoluteChooser"],
+        hotkeys["showResolute"],
         function()
             self:show()
         end
@@ -92,10 +123,8 @@ function obj.changeRes(choice)
 
     -- recreate current resmenu
     obj:menubarItems(mbpr15)
-
     -- set current title based on res
     obj.menubar:setIcon(obj.menuIcon)
-    -- obj.menubar:setTitle(obj.menuIcon)
     -- set current resmenu
     obj.menubar:setMenu(obj.resMenu)
 end
@@ -115,7 +144,7 @@ function obj:menubarItems(res)
         -- make menubar item menu indicate current res
         if hs.screen.mainScreen():currentMode().w == res[i]["res"].w then
             -- set new menu title reflecting current res
-            obj.menuIcon = res[i]["icon"]
+            obj.menuIcon = res[i]["image"]
             -- indicate which submenu item is selected
             obj.resMenu[i]["checked"] = true
         end
@@ -135,7 +164,7 @@ function obj:show()
     -- works on whichever screen is currently focused
     if hs.screen.mainScreen():name() == "Color LCD" then
         self.resChooser:choices(mbpr15)
-    else 
+    else
         self.resChooser:choices(acer4k)
     end
     self.resChooser:show()
@@ -144,7 +173,7 @@ end
 
 function obj:init()
     -- TODO: add logic to detect current display
-    -- if screens 
+    -- if screens
     local targetDisplay = mbpr15
 
     if self.menubar then
@@ -181,9 +210,9 @@ function obj:init()
     self.resChooser:placeholderText("Select a resolution")
     self.resChooser:searchSubText(true)
     self.resChooser:width(30)
-    self.resChooser:bgDark(true)
-    self.resChooser:fgColor({hex = "#ccc"})
-    self.resChooser:subTextColor({hex = "#888"})
+    -- self.resChooser:bgDark(true)
+    -- self.resChooser:fgColor({hex = "#ccc"})
+    -- self.resChooser:subTextColor({hex = "#888"})
 
     return self
 end
