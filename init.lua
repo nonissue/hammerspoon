@@ -165,14 +165,7 @@ hs.hotkey.bind(
 ------------------------------------------------------------------------------
 -- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
--- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
-hs.hotkey.bind(
-    mash,
-    "L",
-    function()
-        spoon.Resolute:show()
-    end
-)
+spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
