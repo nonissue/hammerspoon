@@ -6,9 +6,8 @@ Updated: 19-04-24
 
 ### Error Catching
 
-_19-09-08_
-
 ```lua
+    -- https://www.lua.org/pil/8.4.html
     -- returns false when normally HS will crash
         function test()
             if zzz == nil then
@@ -20,12 +19,9 @@ _19-09-08_
         pcall(test)
 ```
 
-https://www.lua.org/pil/8.4.html
-
 ## Next
 
 - BEFORE ANYTHING ELSE:
-
   - [ ] Write docs for spoons
     - [ ] Fenestra
     - [ ] AfterDark
@@ -36,26 +32,26 @@ https://www.lua.org/pil/8.4.html
     - [ ] CTRLESC
     - [ ] SafariKeys
   - [ ] Set spoon hotkeys properly (like Fenestra does?)
+    - [x] Resolute
+    - [x] Fenestra
+    - [x] Zzz
+    - [x] SafariKeys
+    - [ ] PaywallBuster
   - [ ] Improve config reload time
   - [ ] Create menubar spoon that controls config of other spoons
   - [ ] REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
   - [~] test spoons on empty config
-  - [ ] add spoon loader spoon and hammerspoon config k/v store
   - [ ] remove any styled text as it may cause mem leaks
   - SUBMIT THEM
   - [ ] use key/value store for configurable variables/defaults
     - [ ] screen resolutions
     - [x] Drives to eject
     - [x] wifi ssid
-    - [ ] ...
-
 - [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods
 
 ### Changes/Fixes
 
-- [ ] move hotkey binding from spoons to main init!
 - [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)
-- [ ] TESTING
 
 ### Features
 
@@ -73,7 +69,6 @@ https://www.lua.org/pil/8.4.html
 ### Misc
 
 - [ ] marquee/animated ticker with updates in menubar
-- ~~[ ] current weather?~~ Don't really care about this
 - [ ] Spoon: App context switcher (using chooser)?
   - eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
     - eg. 'scratch.js' -> opens javascript sandbox?
@@ -96,3 +91,4 @@ https://www.lua.org/pil/8.4.html
 - [A] quickreference notes chooser (with things like server details, etc)
 - [A] Safari: move all tabs after current tab to new window
   - [A] this is slow, but works: <https://stackoverflow.com/questions/54066100/applescript-to-split-safari-tabs-into-new-window>
+- [A] current weather? Don't really care about this
