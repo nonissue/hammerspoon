@@ -304,7 +304,7 @@ local function textInflater(choice)
     hs.eventtap.keyStrokes(choice["text"])
 end
 
-local emojiChooser =
+local textInflaterChooser =
     hs.chooser.new(
     function(choice)
         if not (choice) then
@@ -319,6 +319,6 @@ hs.hotkey.bind(
     mash,
     "J",
     function()
-        emojiChooser:show()
+        textInflaterChooser:show()
     end
 )
