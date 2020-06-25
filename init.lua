@@ -258,6 +258,7 @@ local emojis = {
 local function emojiChooserCallback(choice)
     hs.alert(choice["text"])
     hs.pasteboard.setContents(choice["text"])
+    hs.eventtap.keyStrokes(choice["text"])
 end
 
 local emojiChooser =
@@ -269,7 +270,7 @@ local emojiChooser =
             emojiChooserCallback(choice)
         end
     end
-):rows(3):width(20):choices(emojis)
+):rows(3):width(20):choices(emojis):searchSubText(true)
 
 hs.hotkey.bind(
     mash,
