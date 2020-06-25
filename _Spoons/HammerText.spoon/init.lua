@@ -2,6 +2,8 @@
     === HammerText ===
     Based on: https://github.com/Hammerspoon/hammerspoon/issues/1042
 
+    WARNING: Does not work reliably / unstable. I haven't spent much time debugging it.
+
     How to "install":
     - Simply copy and paste this code in your "init.lua".
 
@@ -31,9 +33,17 @@
 --[[
 Nonissue notes:
     December 27, 2019
-I think this causes memory leaks/performance problems, but I can't be sure.
-- [ ] Doesn't handle command-deleting a string (Possibly fixed December 28, 2019)
-- [ ] Doesn't handle selecting and then deleting a word
+        I think this causes memory leaks/performance problems, but I can't be sure.
+        - [ ] Doesn't handle command-deleting a string (Possibly fixed December 28, 2019)
+        - [ ] Doesn't handle selecting and then deleting a word
+
+    Issues (Updated 2020-06-23)
+    - [x]   Doesn't work when 'typing over' selected text
+                - Oh, I think it is capturing keyboard shortcuts (Ie. When '⌘ + a' is pressed, a shouldn't be captured )
+                - UPDATE: this, i think, is handled now
+    - [ ]   HammerText doesn't discern between inputs, so if you start typing in one field, change focus (by say, 
+            clicking on a new window, or invoke spotlight), it adds any new input to the existing 'word', even though
+            the string is split across two windows
 ]]
 local obj = {}
 obj.__index = obj
@@ -73,7 +83,7 @@ function obj:expander()
             local char = ev:getCharacters()
             local flags = ev:getFlags()
 
-            print_r(flags)
+            -- print_r(flags)
             -- if "delete" key is pressed
             if keyCode == keyMap["delete"] then
                 if flags["cmd"] then
@@ -93,9 +103,16 @@ function obj:expander()
                 return false -- pass the "delete" keystroke on to the application
             end
 
-            -- append char to "word" buffer
-            word = word .. char
-            obj.logger.i("Word after appending: ", word)
+            -- Handle case where char used in keyboard shortcut could be captured
+            if next(flags) == nil then
+                obj.logger.i("no flags detected")
+                obj.logger.i("Word after appending: ", word)
+                word = word .. char
+            end
+
+            if next(flags) ~= nil then
+                return false
+            end
 
             -- if one of these "navigational" keys is pressed
             if
