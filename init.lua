@@ -298,6 +298,12 @@ local inflates = {
     }
 }
 
+local function textInflaterCallback(choice)
+    hs.alert(choice["text"])
+    hs.pasteboard.setContents(choice["text"])
+    hs.eventtap.keyStrokes(choice["text"])
+end
+
 local function textInflater(choice)
     hs.alert(choice["text"])
     hs.pasteboard.setContents(choice["text"])
@@ -310,7 +316,7 @@ local textInflaterChooser =
         if not (choice) then
             return
         else
-            emojiChooserCallback(choice)
+            textInflaterCallback(choice)
         end
     end
 ):rows(3):width(20):choices(inflates):searchSubText(true)
