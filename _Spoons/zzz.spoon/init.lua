@@ -316,11 +316,12 @@ function obj:updateMenu()
                 obj.menuFont = almostDone
             end
 
-            if math.floor(timeLeft) < 0 then
-                self.logger.d("Computer put to sleep before time elapsed. Deleting sleep timer.")
-                hs.alert("System was put to sleep manually, deleting timer.")
-                self:deleteTimer()
-            end
+            -- I think this is a regression
+            -- if math.floor(timeLeft) < 0 then
+            --     self.logger.d("Computer put to sleep before time elapsed. Deleting sleep timer.")
+            --     hs.alert("System was put to sleep manually, deleting timer.")
+            --     self:deleteTimer()
+            -- end
             self:setTitleStyled(obj:formatSeconds(timeLeft))
         end,
         2
