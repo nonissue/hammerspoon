@@ -279,3 +279,46 @@ hs.hotkey.bind(
         emojiChooser:show()
     end
 )
+
+local inflates = {
+    {
+        ["text"] = "site:reddit.com ",
+        ["subText"] = "sr site reddit search",
+        ["uuid"] = "0001"
+    },
+    {
+        ["text"] = "123 Fake Street",
+        ["subText"] = "address",
+        ["uuid"] = "0002"
+    },
+    {
+        ["text"] = "John Queue Smith",
+        ["subText"] = "name",
+        ["uuid"] = "0003"
+    }
+}
+
+local function textInflater(choice)
+    hs.alert(choice["text"])
+    hs.pasteboard.setContents(choice["text"])
+    hs.eventtap.keyStrokes(choice["text"])
+end
+
+local emojiChooser =
+    hs.chooser.new(
+    function(choice)
+        if not (choice) then
+            return
+        else
+            emojiChooserCallback(choice)
+        end
+    end
+):rows(3):width(20):choices(inflates):searchSubText(true)
+
+hs.hotkey.bind(
+    mash,
+    "J",
+    function()
+        emojiChooser:show()
+    end
+)
