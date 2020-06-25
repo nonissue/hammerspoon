@@ -8,6 +8,10 @@
 --- Currently, the list of resolutions you can choose from has to be created manually.
 --- As an example, the options I have selected are available below in the table 'mbpr15'
 
+--- State:
+--- mbpr15 table
+--- I think that's it?
+
 local obj = {}
 obj.__index = obj
 
