@@ -12,6 +12,12 @@
 --- mbpr15 table
 --- I think that's it?
 
+--- TODO:
+
+--- Anywhere 'targetDisplay' var is used, extract logic to check which display we care about
+--- mainScreen -> Focused screen, so we good there
+--- How do we handle multiple displays?
+
 local obj = {}
 obj.__index = obj
 
@@ -93,6 +99,30 @@ local acer4k = {
     -- {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
 }
 
+local cinema30 = {
+    {
+        ["id"] = 1,
+        ["image"] = obj.zoomedInIcon,
+        ["subText"] = "1920x1200",
+        ["text"] = "1920x1200",
+        ["res"] = {w = 1920, h = 1200, s = 1}
+    },
+    {
+        ["id"] = 2,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "2560x1600",
+        ["text"] = "Default",
+        ["res"] = {w = 2560, h = 1600, s = 1}
+    },
+    {
+        ["id"] = 3,
+        ["image"] = obj.zoomedOutIcon,
+        ["subText"] = "2560x1440",
+        ["text"] = "2560x1440",
+        ["res"] = {w = 2560, h = 1440, s = 1}
+    }
+}
+
 function obj:bindHotkeys(keys)
     local hotkeys = keys or obj.defaultHotkeys
 
@@ -125,8 +155,15 @@ function obj.changeRes(choice)
     -- clear current resmenu
     obj.resMenu = {}
 
+    local targetDisplay
+    if (hs.screen.mainScreen():name() == "Cinema HD") then
+        targetDisplay = cinema30
+    else
+        targetDisplay = mbpr15
+    end
+
     -- recreate current resmenu
-    obj:menubarItems(mbpr15)
+    obj:menubarItems(targetDisplay)
     -- set current title based on res
     obj.menubar:setIcon(obj.menuIcon)
     -- set current resmenu
@@ -146,7 +183,10 @@ function obj:menubarItems(res)
             }
         )
         -- make menubar item menu indicate current res
-        if hs.screen.mainScreen():currentMode().w == res[i]["res"].w then
+        if
+            hs.screen.mainScreen():currentMode().w == res[i]["res"].w and
+                hs.screen.mainScreen():currentMode().h == res[i]["res"].h
+         then
             -- set new menu title reflecting current res
             obj.menuIcon = res[i]["image"]
             -- indicate which submenu item is selected
@@ -166,19 +206,36 @@ end
 function obj:show()
     -- added logic to show different resolution choices on different screens
     -- works on whichever screen is currently focused
-    if hs.screen.mainScreen():name() == "Color LCD" then
-        self.resChooser:choices(mbpr15)
+    local targetDisplay
+    if (hs.screen.mainScreen():name() == "Cinema HD") then
+        targetDisplay = cinema30
     else
-        self.resChooser:choices(acer4k)
+        targetDisplay = mbpr15
     end
+
+    self.resChooser:choices(targetDisplay)
+
+    -- if hs.screen.mainScreen():name() == "Color LCD" then
+    --     self.resChooser:choices(mbpr15)
+    -- elseif hs.screen.mainScreen():name() == "Cinema HD" then
+    --     self.resChooser:choices(cinema30)
+    -- else
+    --     self.resChooser:choices(mbpr15)
+    -- end
     self.resChooser:show()
     return self
 end
 
 function obj:init()
     -- TODO: add logic to detect current display
-    -- if screens
-    local targetDisplay = mbpr15
+    -- if using cinema display, don't show in menubar
+    local targetDisplay
+
+    if (hs.screen.mainScreen():name() == "Cinema HD") then
+        targetDisplay = cinema30
+    else
+        targetDisplay = mbpr15
+    end
 
     if self.menubar then
         self.menubar:delete()
