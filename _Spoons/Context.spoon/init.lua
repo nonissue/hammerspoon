@@ -4,6 +4,10 @@
 --- Also, indicate current 'system' context with menubar item
 --- eg. indicate which gpu is currently being used on computers with iGPU and dGPUs
 ---
+--- TODO:
+
+--- Handle ACD 30" @ line 288
+
 local obj = {}
 obj.__index = obj
 
