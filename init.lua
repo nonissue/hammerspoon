@@ -187,7 +187,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- NOTE: 19-11-01 Interesting proof of concept, but I don't really use it
 -- So disabled for now
 ------------------------------------------------------------------------------
--- hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
+hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
 
 -- hs.loadSpoon("ToggleDarkMode"):start({showMenu = true})
 hs.loadSpoon("EasyTOTP")
