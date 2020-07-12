@@ -106,7 +106,7 @@ hs.loadSpoon("CTRLESC"):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 -- todo: move this all elsewhere so it's private
-hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II"})
+hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest"})
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 -- display ids apparently change? could be flux changing profile...
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
