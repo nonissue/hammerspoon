@@ -164,6 +164,7 @@ function obj.homeDeparted()
     hs.alert("~(☛ ⌂)", 1)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
+
     obj.location = "@away"
 end
 
@@ -177,7 +178,19 @@ end
 --- Returns:
 ---  * None
 function obj.ssidChangedCallback()
+    -- this only accounts for the SSID changing, and not
+    -- disconnecting from a current network, but not reconnecting
     local newSSID = hs.wifi.currentNetwork()
+    obj.logger.i(hs.wifi.currentNetwork())
+
+    -- if newSSID == nil then
+    --     obj.logger.i('Catch disconnetion')
+    --     obj.homeDeparted()
+    --     obj.location = "@away"
+    --     obj.currentSSID = newSSID
+        
+
+    -- end
 
     if (obj.currentSSID == newSSID) then
         obj.logger.i("no change")
@@ -196,6 +209,12 @@ function obj.ssidChangedCallback()
     end
 
     obj.currentSSID = newSSID
+
+
+    -- Try calling this, which is poorly named, but recreates the menu
+    -- Need to separate state changes from ui updates...
+    obj.screenWatcherCallback()
+    
 end
 
 -- --------------------------------------------------------------------------
@@ -269,6 +288,7 @@ function obj.screenWatcherCallback()
     end
     -- rcreate menu on change
     -- obj.createMenu()
+    -- Move this to end of function?
     if obj.menubar ~= nil then
         obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
     end
@@ -286,8 +306,9 @@ function obj.screenWatcherCallback()
     end
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
+        -- elseif hs.screen.find(obj.display_ids["cinema"]) then
         obj.logger.i("[SW] no change")
-    elseif hs.screen.find(obj.display_ids["cinema"]) then
+    elseif hs.screen.find("Cinema HD") then
         -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
         -- Changed above line to use "Cinema HD" as display ID was not reliable?
         -- if we have a different amount of displays and one of them is
@@ -337,6 +358,8 @@ function obj.initWifiWatcher()
     if not obj.location then
         obj.ssidChangedCallback()
     end
+
+
 
     obj.wifiWatcher = hs.wifi.watcher.new(obj.ssidChangedCallback)
 end
@@ -409,11 +432,12 @@ end
 
 function obj.createMenu(gpu)
     print(obj.currentGPU)
+   
     -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
     -- obj.menubar:setMenu(nil)
     local newMenu = {
         {
-            title = hs.styledtext.new("Loc: " .. obj.location),
+            title = hs.styledtext.new("Loc: " .. (obj.location or "unknown")),
             fn = function()
                 hs.alert("Current Wifi: " .. obj.currentSSID)
             end
