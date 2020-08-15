@@ -328,3 +328,25 @@ hs.hotkey.bind(
         textInflaterChooser:show()
     end
 )
+
+local FRemap = require("foundation_remapping")
+local remapper = FRemap.new()
+
+-- hidutil property -m 'keyboard' -g 'Product'
+-- hidutil property -m '{"ProductID":632}' --get "Product"
+
+remapper:remap("[", "]") -- when press a, type b
+remapper:unregister()
+-- https://github.com/cfenollosa/aekii
+-- https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller/issues/103#issuecomment-320736223
+-- figure out locking caps lock keycode, then try and rebind it?
+-- https://github.com/pqrs-org/Karabiner-Elements/issues/2035
+
+-- Thanks to qaisjp, giving up caps lock entirely do the trick for me. I only used caps lock for IME switching, which can be worked around by a shortcut preference at macOS preference ➤ keyboard ➤ shortcuts ➤ 'Select the previous input source'.
+
+-- If your favorite shortcut is not ordinary, e.g. Left⇧ + Right⇧, do it with an extra step.
+
+-- In Karabiner map your favorite combination to F19
+-- Bind 'Select the previous input source' to F19
+
+-- https://apple.stackexchange.com/questions/283252/how-do-i-remap-a-key-in-macos-sierra-e-g-right-alt-to-right-control

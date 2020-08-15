@@ -7,6 +7,16 @@
 --- TODO:
 
 --- Handle ACD 30" @ line 288
+--- use watchable to make logic simpler?
+--- https://www.hammerspoon.org/docs/hs.watchable.html
+--- eg. watch values, update menu when values change
+--- have it working below!
+--- hmmm, batch updates?
+
+--- event fires -->
+--- event handler processes event, ascertains what has changed -->
+--- change corresponding observable in obj.contextValues -->
+--- watched detects change, rebuilds menu
 
 local obj = {}
 obj.__index = obj
@@ -38,12 +48,17 @@ obj.lastNumberOfScreens = #hs.screen.allScreens()
 
 obj.currentGPU = nil
 
+obj.contextValues = hs.watchable.new("context", true)
+
 -- spoon options
 obj.shownInMenu = false
 obj.display_ids = {}
 obj.drives = {}
 
+-- get value with obj.contextValuesWatcher:value('location')
+
 --[[
+    UPDATE: This whole thing needs a rewrite, way too complicated.
     Todo:
     - [ ] combine alerts when multiple callbacks are fired
     - [x] move SSIDs in hs key value store
@@ -147,7 +162,8 @@ function obj.homeArrived()
     hs.audiodevice.defaultOutputDevice():setMuted(false)
 
     hs.alert(" ☛ ⌂ ", 3)
-    obj.location = "@home"
+    obj.contextValues.location = "home"
+    obj.location = "home"
 end
 
 --- Context.homeDeparted()
@@ -164,8 +180,8 @@ function obj.homeDeparted()
     hs.alert("~(☛ ⌂)", 1)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
-
-    obj.location = "@away"
+    obj.contextValues.location = "away"
+    obj.location = "away"
 end
 
 --- Context.ssidChangedCallback()
@@ -188,17 +204,15 @@ function obj.ssidChangedCallback()
     --     obj.homeDeparted()
     --     obj.location = "@away"
     --     obj.currentSSID = newSSID
-        
-
     -- end
 
     if (obj.currentSSID == newSSID) then
         obj.logger.i("no change")
     elseif (atHome(newSSID)) and (not has_value(homeSSIDs, obj.currentSSID)) then
-        obj.logger.i("@home")
+        obj.logger.i("home")
         obj.homeArrived()
     elseif not atHome(newSSID) then
-        obj.logger.i("@away")
+        obj.logger.i("away")
         obj.homeDeparted()
     else
         if newSSID ~= nil then
@@ -209,12 +223,11 @@ function obj.ssidChangedCallback()
     end
 
     obj.currentSSID = newSSID
-
+    obj.contextValues.currentSSID = newSSID
 
     -- Try calling this, which is poorly named, but recreates the menu
     -- Need to separate state changes from ui updates...
     obj.screenWatcherCallback()
-    
 end
 
 -- --------------------------------------------------------------------------
@@ -256,6 +269,8 @@ end
 ---  * None
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
+    obj.logger.i("[SW] Fired")
+    -- hs.alert("[SW] Fired")
     -- obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
 
     -- ugly as hell way to find out which display is in use
@@ -274,6 +289,10 @@ function obj.screenWatcherCallback()
     -- if we find "Displays" after Chipset Mode: Intel but before a blank line
     -- then we know displays are attached to integrated gpu
     -- system_profiler SPDisplaysDataType | sed -e '/Chipset Model: Intel/,/^\\s*$/!d' | grep Displays
+    --
+    -- Use UUIDs for logic
+    -- Cinema HD: 12C25E80-CE33-A29C-DA8C-E02B2E982D59
+    -- Color LCD: 120F5D25-16F2-160F-2DC6-FE73F87D696C
     local res,
         success,
         exit = --luacheck: ignore
@@ -282,16 +301,18 @@ function obj.screenWatcherCallback()
         sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
     )
     if res == "" then
-        obj.currentGPU = "integrated"
+        obj.currentGPU = "iGPU"
+        obj.contextValues.currentGPU = "iGPU"
     else
-        obj.currentGPU = "discrete"
+        obj.currentGPU = "dGPU"
+        obj.contextValues.currentGPU = "dGPU"
     end
     -- rcreate menu on change
     -- obj.createMenu()
     -- Move this to end of function?
-    if obj.menubar ~= nil then
-        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
-    end
+    -- if obj.menubar ~= nil then
+    --     obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+    -- end
     -- maybe check how long the dedicated gpu has been in use?
     if obj.currentGPU == "discrete" then
         hs.notify.new(
@@ -306,7 +327,6 @@ function obj.screenWatcherCallback()
     end
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
-        -- elseif hs.screen.find(obj.display_ids["cinema"]) then
         obj.logger.i("[SW] no change")
     elseif hs.screen.find("Cinema HD") then
         -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
@@ -315,10 +335,12 @@ function obj.screenWatcherCallback()
         -- our cinema display, we are @desk
         obj.logger.i("[SW] no change")
         obj.docked = "docked"
+        obj.contextValues.docked = "docked"
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.docked == "@desk" then
         obj.logger.i("[SW] undocking")
         obj.docked = "mobile"
+        obj.contextValues.docked = "mobile"
         obj.moveDockLeft()
 
         for i = 1, #obj.drives do
@@ -327,12 +349,20 @@ function obj.screenWatcherCallback()
     elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") then
+    elseif
+        #hs.screen.allScreens() == 1 and
+            (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == "120F5D25-16F2-160F-2DC6-FE73F87D696C")
+     then
+        -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
+        -- Need to find by id but don't know if that's stable. Hmmm.
+        -- Okay, UUID seems stable after restarting, connecting external display.
         obj.logger.i("[SW] Mobile")
-        obj.docked = false
+        obj.docked = "mobile"
+        obj.contextValues.docked = "mobile"
         obj.moveDockLeft()
     else
         obj.logger.e("[SW] Error!")
+        obj.contextValues.docked = "error"
         obj.docked = "error"
     end
 
@@ -358,8 +388,6 @@ function obj.initWifiWatcher()
     if not obj.location then
         obj.ssidChangedCallback()
     end
-
-
 
     obj.wifiWatcher = hs.wifi.watcher.new(obj.ssidChangedCallback)
 end
@@ -427,38 +455,72 @@ function obj:init()
     obj.initCafWatcher()
     obj.initScreenWatcher()
 
+    obj.watchers()
+
     return self
 end
 
-function obj.createMenu(gpu)
-    print(obj.currentGPU)
-   
+function obj.createMenu(location, docked, gpu)
+    -- print(obj.currentGPU)
+
     -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
     -- obj.menubar:setMenu(nil)
     local newMenu = {
         {
-            title = hs.styledtext.new("Loc: " .. (obj.location or "unknown")),
+            title = hs.styledtext.new(
+                "@" .. (location or obj.location or "error"),
+                {font = "TT Interfaces DemiBold", size = "30"}
+            ),
             fn = function()
                 hs.alert("Current Wifi: " .. obj.currentSSID)
-            end
+            end,
+            indent = 0
         },
         {
-            -- title = "error",
-            title = hs.styledtext.new("Docked: " .. (obj.docked and "true" or "false")),
+            title = hs.styledtext.new((docked or obj.docked or "error"), {font = "TT Interfaces Demibold", size = "10"}),
             fn = function()
                 hs.alert("docked clicked")
-            end
+            end,
+            indent = 0
         },
         {
-            -- title = "error",
-            title = hs.styledtext.new("GPU: " .. gpu),
+            title = hs.styledtext.new(
+                (gpu or obj.currentGPU or "error"),
+                {font = "TT Interfaces Demibold", size = "10"}
+            ),
             fn = function()
                 hs.alert("Launching activity monitor...")
                 hs.application.launchOrFocus("Activity Monitor")
-            end
+            end,
+            indent = 0
+        },
+        {
+            title = "-"
+        },
+        {
+            title = hs.styledtext.new(
+                "Reset",
+                {
+                    font = {name = "TT Interfaces Bold", size = 14},
+                    -- baselineOffset = 10,
+                    color = {hex = "#FF6F00"},
+                    paragraphStyle = {
+                        headIndent = 5,
+                        -- tailIndent = 1,
+                        paragraphSpacingBefore = 0,
+                        lineSpacing = 5
+                        -- maximumLineHeight = 1
+                    }
+                }
+            ),
+            fn = function()
+                obj.menubar:setMenu(obj.createMenu(_, _, _))
+            end,
+            indent = -1
         }
     }
 
+    -- spoon.Context.menubar:setMenu(spoon.Context.createMenu(_, _, _))
     return newMenu
     -- obj.menubar:setMenu(newMenu)
 end
@@ -497,7 +559,7 @@ function obj:start(options)
     if obj.shownInMenu then
         -- obj.createMenu()
         obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
-        obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+        obj.menubar:setMenu(obj.createMenu(_, _, obj.currentGPU))
     -- hs.alert(obj.docked, 5)
     -- local currentMenu = createMenu()
     end
@@ -530,6 +592,26 @@ function obj:stop()
     obj.currentSSID = nil
 
     return self
+end
+
+function obj.watchers()
+    -- obj.contextValues.location = "@away"
+    -- obj.contextValues.location = "@home"
+    -- obj.contextValues.currentGPU = "integrated"
+    obj.contextValuesWatcher =
+        hs.watchable.watch(
+        "context.*",
+        function(_, _, key, old_value, new_value)
+            hs.alert(
+                "Watcher!\n" ..
+                    tostring(key) .. " was changed from " .. tostring(old_value) .. " to " .. tostring(new_value)
+            )
+            hs.alert(obj.contextValues.location)
+            obj.menubar:setMenu(
+                obj.createMenu(obj.contextValues.location, obj.contextValues.docked, obj.contextValues.currentGPU)
+            )
+        end
+    )
 end
 
 return obj

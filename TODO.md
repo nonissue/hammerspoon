@@ -22,6 +22,9 @@ Updated: 19-04-24
 ## Next
 
 - BEFORE ANYTHING ELSE:
+  - [ ] Upload images somewhere... https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/imgur.lua
+  - [ ] Use hs.watchable for Context spoon
+  - [ ] use try catch? https://github.com/matthewfallshaw/hammerspoon-config/blob/e038e30f649383cd9f6e3711c52ed1ac2d826f78/utilities/try_catch.lua
   - [ ] Write docs for spoons
     - [ ] Fenestra
     - [ ] AfterDark
