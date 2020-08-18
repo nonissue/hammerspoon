@@ -12,6 +12,11 @@
 --- eg. watch values, update menu when values change
 --- have it working below!
 --- hmmm, batch updates?
+--- [ ] observables implemented, and are firing menu recreation.
+--- [ ] just need to simplify logic handling for actions
+--- note: making something like this without good patterns
+--- highlights the utility of sometihng like redux379752
+--- watcher callback -> update applicable contextValues key -> actions fired on key change
 
 --- event fires -->
 --- event handler processes event, ascertains what has changed -->
@@ -176,7 +181,7 @@ end
 --- Returns:
 ---  * None
 function obj.homeDeparted()
-    -- hs.audiodevice.defaultOutputDevice():setMuted(true)
+    hs.audiodevice.defaultOutputDevice():setMuted(true)
     hs.alert("~(☛ ⌂)", 1)
     os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
@@ -461,10 +466,6 @@ function obj:init()
 end
 
 function obj.createMenu(location, docked, gpu)
-    -- print(obj.currentGPU)
-
-    -- obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
-    -- obj.menubar:setMenu(nil)
     local newMenu = {
         {
             title = hs.styledtext.new(
@@ -506,8 +507,7 @@ function obj.createMenu(location, docked, gpu)
                     color = {hex = "#FF6F00"},
                     paragraphStyle = {
                         headIndent = 5,
-                        -- tailIndent = 1,
-                        paragraphSpacingBefore = 0,
+                        tailIndex = 1,
                         lineSpacing = 5
                         -- maximumLineHeight = 1
                     }
