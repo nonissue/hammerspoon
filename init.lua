@@ -187,7 +187,7 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- NOTE: 19-11-01 Interesting proof of concept, but I don't really use it
 -- So disabled for now
 ------------------------------------------------------------------------------
-hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
+-- hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
 
 -- hs.loadSpoon("ToggleDarkMode"):start({showMenu = true})
 hs.loadSpoon("EasyTOTP")
@@ -215,7 +215,7 @@ hs.loadSpoon("Clippy"):start()
 -- require("callbacks")
 -- hs.loadSpoon("SysInfo")
 -- spoon.SysInfo:startFor(0.1)
-hs.loadSpoon("Alarm")
+-- hs.loadSpoon("Alarm")
 
 -- ht = hs.loadSpoon("HammerText")
 -- ht.keywords = {
@@ -329,14 +329,15 @@ hs.hotkey.bind(
     end
 )
 
-local FRemap = require("foundation_remapping")
-local remapper = FRemap.new()
+--[[
+hidutil property -m 'keyboard' -g 'Product'
+hidutil property -m '{"ProductID":632}' --get "Product"
+]]
+-- local FRemap = require("foundation_remapping")
+-- local remapper = FRemap.new()
+-- remapper:remap("[", "]") -- when press a, type b
+-- remapper:unregister()
 
--- hidutil property -m 'keyboard' -g 'Product'
--- hidutil property -m '{"ProductID":632}' --get "Product"
-
-remapper:remap("[", "]") -- when press a, type b
-remapper:unregister()
 -- https://github.com/cfenollosa/aekii
 -- https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller/issues/103#issuecomment-320736223
 -- figure out locking caps lock keycode, then try and rebind it?
@@ -351,7 +352,7 @@ remapper:unregister()
 
 -- https://apple.stackexchange.com/questions/283252/how-do-i-remap-a-key-in-macos-sierra-e-g-right-alt-to-right-control
 
-touchbar = require("hs._asm.undocumented.touchbar")
+-- touchbar = require("hs._asm.undocumented.touchbar")
 
 -- quick and dirty example -- I'll put up a better one shortly
 -- note that not all of the methods used here have an effect since we only support modal touch bars atm
@@ -360,52 +361,52 @@ touchbar = require("hs._asm.undocumented.touchbar")
 -- quick and dirty example -- I'll put up a better one shortly
 -- note that not all of the methods used here have an effect since we only support modal touch bars atm
 
-tb = require("hs._asm.undocumented.touchbar")
+-- tb = require("hs._asm.undocumented.touchbar")
 
-bar = tb.bar.new()
+-- bar = tb.bar.new()
 
-items, allowed, required, default = {}, {}, {}, {}
-for i = 1, 10, 1 do
-    local label = "item" .. tostring(i)
-    table.insert(
-        items,
-        tb.item.newButton(label, hs.image.imageFromName(hs.image.systemImageNames.Bonjour), label):callback(
-            function(item)
-                print("Button " .. tostring(i) .. " was pressed")
-                if i == 1 then
-                    bar:minimizeModalBar()
-                end -- will return icon to system tray
-                if i == 2 then
-                    bar:dismissModalBar()
-                end -- will *NOT* return icon to system tray
-            end
-        )
-    )
-    if i < 3 then
-        table.insert(required, label)
-    end
-    if i < 5 then
-        table.insert(default, label)
-    end
-    table.insert(allowed, label)
-end
+-- items, allowed, required, default = {}, {}, {}, {}
+-- for i = 1, 10, 1 do
+--     local label = "item" .. tostring(i)
+--     table.insert(
+--         items,
+--         tb.item.newButton(label, hs.image.imageFromName(hs.image.systemImageNames.Bonjour), label):callback(
+--             function(item)
+--                 print("Button " .. tostring(i) .. " was pressed")
+--                 if i == 1 then
+--                     bar:minimizeModalBar()
+--                 end -- will return icon to system tray
+--                 if i == 2 then
+--                     bar:dismissModalBar()
+--                 end -- will *NOT* return icon to system tray
+--             end
+--         )
+--     )
+--     if i < 3 then
+--         table.insert(required, label)
+--     end
+--     if i < 5 then
+--         table.insert(default, label)
+--     end
+--     table.insert(allowed, label)
+-- end
 
-for k, v in pairs(tb.bar.builtInIdentifiers) do
-    table.insert(allowed, v)
-end
+-- for k, v in pairs(tb.bar.builtInIdentifiers) do
+--     table.insert(allowed, v)
+-- end
 
-bar:templateItems(items):customizableIdentifiers(allowed):requiredIdentifiers(required):defaultIdentifiers(default):customizationLabel(
-    "sample"
-):escapeKeyReplacement("item3")
---    :principleItem("item3")
+-- bar:templateItems(items):customizableIdentifiers(allowed):requiredIdentifiers(required):defaultIdentifiers(default):customizationLabel(
+--     "sample"
+-- ):escapeKeyReplacement("item3")
+-- --    :principleItem("item3")
 
-closeBox = true
+-- closeBox = true
 
-sampleCallback = function(self)
-    self:presentModalBar(bar, closeBox)
-end
+-- sampleCallback = function(self)
+--     self:presentModalBar(bar, closeBox)
+-- end
 
-sysTrayIcon =
-    tb.item.newButton(hs.image.imageFromName(hs.image.systemImageNames.ApplicationIcon), "HSSystemButton"):callback(
-    sampleCallback
-):addToSystemTray(true)
+-- sysTrayIcon =
+--     tb.item.newButton(hs.image.imageFromName(hs.image.systemImageNames.ApplicationIcon), "HSSystemButton"):callback(
+--     sampleCallback
+-- ):addToSystemTray(true)

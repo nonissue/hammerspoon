@@ -12,8 +12,9 @@
 --- eg. watch values, update menu when values change
 --- have it working below!
 --- hmmm, batch updates?
---- [ ] observables implemented, and are firing menu recreation.
---- [ ] just need to simplify logic handling for actions
+--- [x] observables implemented, and are firing menu recreation.
+--- [ ] just need to simplify logic handling for action
+--- [ ] reload resolute on docked <-> undocked transition
 --- note: making something like this without good patterns
 --- highlights the utility of sometihng like redux379752
 --- watcher callback -> update applicable contextValues key -> actions fired on key change
@@ -500,7 +501,7 @@ function obj.createMenu(location, docked, gpu)
         },
         {
             title = hs.styledtext.new(
-                "Reset",
+                "Refresh",
                 {
                     font = {name = "TT Interfaces Bold", size = 14},
                     -- baselineOffset = 10,

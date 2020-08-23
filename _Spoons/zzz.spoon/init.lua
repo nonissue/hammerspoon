@@ -131,6 +131,13 @@ end
 table.insert(
     obj.startMenuChoices,
     {
+        title = "-"
+    }
+)
+
+table.insert(
+    obj.startMenuChoices,
+    {
         title = obj:styleText("??m"),
         fn = function()
             obj.chooser:show()

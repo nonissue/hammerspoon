@@ -17,6 +17,8 @@
 --- Anywhere 'targetDisplay' var is used, extract logic to check which display we care about
 --- mainScreen -> Focused screen, so we good there
 --- How do we handle multiple displays?
+--- can menubar items be different on different screens?
+--- or add refresh option?
 
 local obj = {}
 obj.__index = obj
