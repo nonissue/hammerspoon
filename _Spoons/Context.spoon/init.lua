@@ -473,30 +473,24 @@ function obj.createMenu(location, docked, gpu)
         {
             title = hs.styledtext.new(
                 "@" .. (location or obj.location or "error"),
-                {font = "TT Interfaces DemiBold", size = "10"}
+                {font = "TT Interfaces", size = "10"}
             ),
             fn = function()
                 hs.alert("Current Wifi: " .. obj.currentSSID)
-            end,
-            indent = 0
+            end
         },
         {
-            title = hs.styledtext.new((docked or obj.docked or "error"), {font = "TT Interfaces Demibold", size = "10"}),
+            title = hs.styledtext.new((docked or obj.docked or "error"), {font = "TT Interfaces", size = "10"}),
             fn = function()
                 hs.alert("docked clicked")
-            end,
-            indent = 0
+            end
         },
         {
-            title = hs.styledtext.new(
-                (gpu or obj.currentGPU or "error"),
-                {font = "TT Interfaces Demibold", size = "10"}
-            ),
+            title = hs.styledtext.new((gpu or obj.currentGPU or "error"), {font = "TT Interfaces", size = "10"}),
             fn = function()
                 hs.alert("Launching activity monitor...")
                 hs.application.launchOrFocus("Activity Monitor")
-            end,
-            indent = 0
+            end
         },
         {
             title = "-"
@@ -505,21 +499,20 @@ function obj.createMenu(location, docked, gpu)
             title = hs.styledtext.new(
                 "Refresh",
                 {
-                    font = {name = "TT Interfaces Bold", size = 14},
+                    font = {name = "TT Interfaces", size = 14},
                     -- baselineOffset = 10,
                     color = {hex = "#FF6F00"},
                     paragraphStyle = {
                         headIndent = 5,
                         tailIndex = 1,
                         lineSpacing = 5
-                        -- maximumLineHeight = 1
+                        -- maximumLineHeight = 10
                     }
                 }
             ),
             fn = function()
                 obj.menubar:setMenu(obj.createMenu(_, _, _))
-            end,
-            indent = -1
+            end
         }
     }
 

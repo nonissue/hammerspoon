@@ -102,20 +102,20 @@ hs.loadSpoon("CTRLESC"):start()
 --    system is muted and screenlock is set to a short time
 --
 -- PARAMS:
--- [Optional] Accepts a boolean which dictates whether the menubar item is shownd
+-- [Optional] Accepts a boolean which dictates whether the menubar item is shown
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 -- todo: move this all elsewhere so it's private
 hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest"})
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 -- display ids apparently change? could be flux changing profile...
+-- NVM, use UUIDs
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
 hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drives = drives})
--- end todo
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
 ------------------------------------------------------------------------------
