@@ -46,7 +46,7 @@ end
 
 obj.spoonPath = script_path()
 
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.stars.pdf"):setSize({w = 16, h = 16})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.circle.fill.pdf"):setSize({w = 20, h = 20})
 
 -- obj.menuBarIcon = "𝐙"
 

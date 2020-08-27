@@ -45,6 +45,7 @@ end
 
 obj.spoonPath = script_path()
 
+-- change icon to match circle icons
 obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.dock.pdf"):setSize({w = 16, h = 16})
 obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.expand.vertical.pdf"):setSize({w = 16, h = 16})
 obj.zoomedOutIcon =

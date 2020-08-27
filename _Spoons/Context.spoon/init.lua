@@ -43,7 +43,8 @@ obj.screenWatcher = nil
 obj.cafWatcher = nil
 
 obj.menubar = nil
-obj.menuIcon = "@"
+-- obj.menuIcon = "@"
+
 obj.menu = {}
 obj.location = nil
 obj.docked = nil
@@ -60,6 +61,18 @@ obj.contextValues = hs.watchable.new("context", true)
 obj.shownInMenu = false
 obj.display_ids = {}
 obj.drives = {}
+
+local function script_path()
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
+end
+
+obj.spoonPath = script_path()
+
+-- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
+-- or if there is a warning (eg. dgpu enabled?)
+obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({w = 20, h = 20})
+-- obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.number.circle.fill.pdf"):setSize({w = 18, h = 18})
 
 -- get value with obj.contextValuesWatcher:value('location')
 
@@ -162,7 +175,7 @@ function obj.homeArrived()
     -- requires modified sudoers file.
     -- For Example!
     -- IN /etc/sudoers.d/power_mgmt (sudo visudo -f /etc/sudoers.d/power_mgmt)
-    -- andrewwilliams ALL=(root) NOPASSWD: /usr/bin/pmset *
+    -- <yourusername> ALL=(root) NOPASSWD: /usr/bin/pmset *
     os.execute("sudo pmset -b displaysleep 2 sleep 10")
     os.execute("sudo pmset -c displaysleep 5 sleep 15")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
@@ -204,13 +217,6 @@ function obj.ssidChangedCallback()
     -- disconnecting from a current network, but not reconnecting
     local newSSID = hs.wifi.currentNetwork()
     obj.logger.i(hs.wifi.currentNetwork())
-
-    -- if newSSID == nil then
-    --     obj.logger.i('Catch disconnetion')
-    --     obj.homeDeparted()
-    --     obj.location = "@away"
-    --     obj.currentSSID = newSSID
-    -- end
 
     if (obj.currentSSID == newSSID) then
         obj.logger.i("no change")
@@ -334,12 +340,8 @@ function obj.screenWatcherCallback()
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-    elseif hs.screen.find("Cinema HD") then
-        -- wat. somehow this changed? 18-11-02: it is now 69489832, was 69489838
-        -- Changed above line to use "Cinema HD" as display ID was not reliable?
-        -- if we have a different amount of displays and one of them is
-        -- our cinema display, we are @desk
-        obj.logger.i("[SW] no change")
+    elseif hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") then
+        obj.logger.i("[SW] no change") -- how do i know this is no change?
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
         obj.moveDockDown()
@@ -471,7 +473,7 @@ function obj.createMenu(location, docked, gpu)
         {
             title = hs.styledtext.new(
                 "@" .. (location or obj.location or "error"),
-                {font = "TT Interfaces DemiBold", size = "30"}
+                {font = "TT Interfaces DemiBold", size = "10"}
             ),
             fn = function()
                 hs.alert("Current Wifi: " .. obj.currentSSID)
@@ -559,7 +561,7 @@ function obj:start(options)
     -- currently menu functions dont do anything
     if obj.shownInMenu then
         -- obj.createMenu()
-        obj.menubar = hs.menubar.new():setTitle(obj.menuIcon)
+        obj.menubar = hs.menubar.new():setIcon(obj.menuIcon)
         obj.menubar:setMenu(obj.createMenu(_, _, obj.currentGPU))
     -- hs.alert(obj.docked, 5)
     -- local currentMenu = createMenu()
@@ -596,9 +598,6 @@ function obj:stop()
 end
 
 function obj.watchers()
-    -- obj.contextValues.location = "@away"
-    -- obj.contextValues.location = "@home"
-    -- obj.contextValues.currentGPU = "integrated"
     obj.contextValuesWatcher =
         hs.watchable.watch(
         "context.*",

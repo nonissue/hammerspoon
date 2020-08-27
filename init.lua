@@ -157,6 +157,12 @@ hs.hotkey.bind(
 )
 
 ------------------------------------------------------------------------------
+-- EasyTOTP.spoon / by me
+------------------------------------------------------------------------------
+-- Get current TOTP token, copy to clipboard and type in frontmost window
+------------------------------------------------------------------------------
+hs.loadSpoon("EasyTOTP")
+------------------------------------------------------------------------------
 -- Resolute.spoon / by me
 ------------------------------------------------------------------------------
 -- Menubar item + modal for quickly changing display resolution
@@ -190,7 +196,6 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 -- hs.loadSpoon("AfterDark"):start({showMenu = true, animate = true})
 
 -- hs.loadSpoon("ToggleDarkMode"):start({showMenu = true})
-hs.loadSpoon("EasyTOTP")
 
 ------------------------------------------------------------------------------
 -- Clippy.spoon / by me

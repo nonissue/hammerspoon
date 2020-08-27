@@ -30,7 +30,7 @@ end
 
 obj.spoonPath = script_path()
 
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/lock.pdf"):setSize({w = 16, h = 16})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.lock.circle.fill.pdf"):setSize({w = 20, h = 20})
 
 -- Import basexx utilities
 local totp_generator = dofile(obj.spoonPath .. "/totp_generator.lua")
@@ -50,6 +50,7 @@ end
 function obj:type_token()
     local token = obj:get_token()
     hs.eventtap.keyStrokes(token)
+    -- add return key, or configurable option to send return key
 end
 
 function obj.menu_callback()
