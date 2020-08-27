@@ -19,6 +19,7 @@
 --- How do we handle multiple displays?
 --- can menubar items be different on different screens?
 --- or add refresh option?
+--- [ ] update menubar icons
 
 local obj = {}
 obj.__index = obj
@@ -46,10 +47,10 @@ end
 obj.spoonPath = script_path()
 
 -- change icon to match circle icons
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.dock.pdf"):setSize({w = 16, h = 16})
-obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.expand.vertical.pdf"):setSize({w = 16, h = 16})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.dock.pdf"):setSize({w = 20, h = 20})
+obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.expand.vertical.pdf"):setSize({w = 20, h = 20})
 obj.zoomedOutIcon =
-    hs.image.imageFromPath(obj.spoonPath .. "/rectangle.compress.vertical.pdf"):setSize({w = 16, h = 16})
+    hs.image.imageFromPath(obj.spoonPath .. "/rectangle.compress.vertical.pdf"):setSize({w = 20, h = 20})
 
 -- function obj:bindHotkeys(mapping)
 --     local def = {
