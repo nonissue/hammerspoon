@@ -67,7 +67,7 @@ hs.grid.HINTS = {
 -- these are the basics i want for now
 -- but im going to reevaliate them in future
 obj.defaultHotkeys = {
-    showGrid = {{"ctrl"}, "Space"},
+    showGrid = {{"ctrl", "alt", "cmd"}, "Space"},
     maxWin = {{"alt"}, "Space"},
     leftHalf = {{"cmd", "alt"}, "left"},
     rightHalf = {{"cmd", "alt"}, "right"},
