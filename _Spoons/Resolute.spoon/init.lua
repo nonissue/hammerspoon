@@ -47,10 +47,10 @@ end
 obj.spoonPath = script_path()
 
 -- change icon to match circle icons
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.dock.pdf"):setSize({w = 20, h = 20})
-obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/rectangle.expand.vertical.pdf"):setSize({w = 20, h = 20})
-obj.zoomedOutIcon =
-    hs.image.imageFromPath(obj.spoonPath .. "/rectangle.compress.vertical.pdf"):setSize({w = 20, h = 20})
+-- UPDATE: Using TV icon across all resolutions as it's simpler
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
+-- obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
+-- obj.zoomedOutIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
 
 -- function obj:bindHotkeys(mapping)
 --     local def = {
@@ -75,7 +75,7 @@ local mbpr15 = {
     -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
     {
         ["id"] = 2,
-        ["image"] = obj.zoomedInIcon,
+        ["image"] = obj.menubarIcon,
         ["subText"] = "1440x900",
         ["text"] = "Larger",
         ["res"] = {w = 1440, h = 900, s = 2}
@@ -89,7 +89,7 @@ local mbpr15 = {
     },
     {
         ["id"] = 4,
-        ["image"] = obj.zoomedOutIcon,
+        ["image"] = obj.menubarIcon,
         ["subText"] = "1920x1200",
         ["text"] = "Smaller",
         ["res"] = {w = 1920, h = 1200, s = 2}
