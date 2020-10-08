@@ -45,7 +45,6 @@ obj.cafWatcher = nil
 obj.menubar = nil
 -- obj.menuIcon = "@"
 
-obj.menu = {}
 obj.location = nil
 obj.docked = nil
 

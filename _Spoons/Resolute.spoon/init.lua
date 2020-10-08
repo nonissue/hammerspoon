@@ -18,8 +18,13 @@
 --- mainScreen -> Focused screen, so we good there
 --- How do we handle multiple displays?
 --- can menubar items be different on different screens?
+---     • OOOH: https://github.com/Hammerspoon/hammerspoon/issues/2332
 --- or add refresh option?
---- [ ] update menubar icons
+--- [x] update menubar icons
+--- [ ] Remove logic that updates menubarIcon when resolution changes, since it is the same (menu still updates)
+--- [ ] hotkey to invoke menu
+---     • spoon.Resolute.menubar:popupMenu(hs.geometry.rect(1080.0,28.0,0.0,0.0), true)
+---     • get coords with spoon.Resolute.menubar:frame(), then need to shift down ~28.0
 
 local obj = {}
 obj.__index = obj
@@ -106,7 +111,7 @@ local acer4k = {
 local cinema30 = {
     {
         ["id"] = 1,
-        ["image"] = obj.zoomedInIcon,
+        ["image"] = obj.menubarIcon,
         ["subText"] = "1920x1200",
         ["text"] = "1920x1200",
         ["res"] = {w = 1920, h = 1200, s = 1}
@@ -120,7 +125,7 @@ local cinema30 = {
     },
     {
         ["id"] = 3,
-        ["image"] = obj.zoomedOutIcon,
+        ["image"] = obj.menubarIcon,
         ["subText"] = "2560x1440",
         ["text"] = "2560x1440",
         ["res"] = {w = 2560, h = 1440, s = 1}
