@@ -57,6 +57,7 @@ function obj.menu_callback()
     hs.alert("Token -> Pasteboard: " .. obj:get_token(), 3)
     obj:set_clipboard()
     obj:type_token()
+    hs.eventtap.keyStroke({}, "return")
 end
 
 function obj:init()
