@@ -335,6 +335,7 @@ function obj.screenWatcherCallback()
                 autoWithdraw = false
             }
         ):send()
+        hs.alert("Current GPU")
     end
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
@@ -470,22 +471,19 @@ end
 function obj.createMenu(location, docked, gpu)
     local newMenu = {
         {
-            title = hs.styledtext.new(
-                "@" .. (location or obj.location or "error"),
-                {font = "TT Interfaces", size = "10"}
-            ),
+            title = hs.styledtext.new("@" .. (location or obj.location or "error"), {}),
             fn = function()
                 hs.alert("Current Wifi: " .. obj.currentSSID)
             end
         },
         {
-            title = hs.styledtext.new((docked or obj.docked or "error"), {font = "TT Interfaces", size = "10"}),
+            title = hs.styledtext.new((docked or obj.docked or "error"), {}),
             fn = function()
                 hs.alert("docked clicked")
             end
         },
         {
-            title = hs.styledtext.new((gpu or obj.currentGPU or "error"), {font = "TT Interfaces", size = "10"}),
+            title = hs.styledtext.new((gpu or obj.currentGPU or "error"), {}),
             fn = function()
                 hs.alert("Launching activity monitor...")
                 hs.application.launchOrFocus("Activity Monitor")
@@ -498,15 +496,10 @@ function obj.createMenu(location, docked, gpu)
             title = hs.styledtext.new(
                 "Refresh",
                 {
-                    font = {name = "TT Interfaces", size = 14},
+                    -- font = {size = 12},
                     -- baselineOffset = 10,
                     color = {hex = "#FF6F00"},
-                    paragraphStyle = {
-                        headIndent = 5,
-                        tailIndex = 1,
-                        lineSpacing = 5
-                        -- maximumLineHeight = 10
-                    }
+                    paragraphStyle = {}
                 }
             ),
             fn = function()
@@ -594,10 +587,7 @@ function obj.watchers()
         hs.watchable.watch(
         "context.*",
         function(_, _, key, old_value, new_value)
-            hs.alert(
-                "Watcher!\n" ..
-                    tostring(key) .. " was changed from " .. tostring(old_value) .. " to " .. tostring(new_value)
-            )
+            hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
             hs.alert(obj.contextValues.location)
             obj.menubar:setMenu(
                 obj.createMenu(obj.contextValues.location, obj.contextValues.docked, obj.contextValues.currentGPU)
