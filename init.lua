@@ -291,11 +291,39 @@ TextInlfator:init()
 --[[
 hidutil property -m 'keyboard' -g 'Product'
 hidutil property -m '{"ProductID":632}' --get "Product"
-]]
+
+FRemap = require("foundation_remapping")
+remapper = FRemap.new()
+-- hidutil property -m '{"LocationID": 52510720, "PrimaryUsage": 6}' --get 'Product'
+-- remapper = FRemap.new({vendorID = 0x0405, productID = 0x077d})
+remapper = FRemap.new({vendorID = 1917, productID = 1029})
+
+-- remapper = FRemap.new({LocationID = 52510720, productID = 0x077d})
+-- remapper:remap(0x1e, 0xe0)
+-- caps lock is 57 / 0x39, lctrl is 224 / 0xe0
+
+-- damn so this works to remap Home to lctl
+-- THIS WORKS CONFIRMED
+-- i(remapper:remap("CapsLock", "lctl"))
+i(remapper:remap("Home", "lctl"))
+
+-- power button to escape
+i(remapper:remap(0x700000066, "lctl"):register())
+-- i(remapper:remap(0x700000039, "lctl"):register())
+-- i(remapper:remap(0x700000039, 0x700000082):register()) -- caps lock to locking caps lock
+-- i(remapper:remap(0x700000039, 0x700000082):register()) -- caps lock to locking caps lock
+print(i(remapper:register()))
+
+-- i(remapper:remap(0x70000007f, 'lctl'):register())
+
+-- i(remapper:remap("Home", "lctl"))
+-- i(remapper:remap('LockCapsLock', 'lctl'))
+print(i(remapper:register()))
+
 -- local FRemap = require("foundation_remapping")
--- local remapper = FRemap.new()
 -- remapper:remap("[", "]") -- when press a, type b
 -- remapper:unregister()
+]]
 
 -- https://github.com/cfenollosa/aekii
 -- https://github.com/RehabMan/OS-X-Voodoo-PS2-Controller/issues/103#issuecomment-320736223
