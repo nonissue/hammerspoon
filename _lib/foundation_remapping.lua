@@ -5,6 +5,12 @@
 -- Technical Note TN2450 Remapping Keys in macOS 10.12 Sierra)
 -- https://developer.apple.com/library/content/technotes/tn2450/
 
+-- NOTES:
+-- hidutil property -m '{"ProductID":0x0405,"VendorID":0x077d}' --get "ProductID" --get "UserKepMapping"
+-- hidutil property -m '{"ProductID":0x0405,"VendorID":0x077d}' --set '{"UserKeyMapping":[0x66,0xe0]}'
+-- Find product id and vendor id in about this mac > sys report > usb
+-- local remapper = FRemap.new({vendorID=0x0405, productID=0x077d})
+
 local FOUNDATION_REMAPPING_VERSION = "0.1.1"
 
 local log = hs.logger.new("foundation_remapping", "debug")
@@ -90,7 +96,7 @@ CFundationRemap.hidkeys = {
     Pause = 0x48, -- Pause
     [0x72] = 0x49,
     Insert = 0x49,
-     -- Insert conflict with help
+    -- Insert conflict with help
     [0x73] = 0x4a, -- Home
     [0x74] = 0x4b, -- Page Up
     [0x75] = 0x4c, -- Delete Forward
@@ -120,7 +126,7 @@ CFundationRemap.hidkeys = {
     [0x0a] = 0x64, -- \ and | ISO only
     [0x6e] = 0x65,
     Application = 0x65,
-     -- Application
+    -- Application
     [0x7f] = 0x66, --This is the power key, scan code in ADB is 7f 7f, not 7f ff
     [0x51] = 0x67, -- pad =
     -- [0x69] = 0x68, --  F13 on Andy keyboards conflict with PrintScreen
@@ -157,7 +163,7 @@ CFundationRemap.hidkeys = {
     International1 = 0x87,
     [0x5e] = 0x87,
     JISUnderScore = 0x87,
-     -- Ro (JIS) International1 _ ろ
+    -- Ro (JIS) International1 _ ろ
     International2 = 0x88,
     PCKana = 0x88, -- PC Kana|Roma-ji
     International3 = 0x89,
@@ -168,7 +174,7 @@ CFundationRemap.hidkeys = {
     International5 = 0x8b,
     NFER = 0x8b,
     Muhenkan = 0x8b,
-     -- NFER 無変換
+    -- NFER 無変換
     International6 = 0x8c, -- ,
     International7 = 0x8d, -- DoubleByte/SingleByte
     International8 = 0x8e, -- undef
@@ -185,7 +191,7 @@ CFundationRemap.hidkeys = {
     [0x3b] = 0xe0,
     lctrl = 0xe0,
     lctl = 0xe0,
-     --Left Control.  raw is 0x36, virtual is 0x3b
+    --Left Control.  raw is 0x36, virtual is 0x3b
     [0x38] = 0xe1,
     lshift = 0xe1, --Left Shift
     [0x3a] = 0xe2,
@@ -193,7 +199,7 @@ CFundationRemap.hidkeys = {
     lopt = 0xe2, --Left option/alt key
     [0x37] = 0xe3,
     lcmd = 0xe3,
-     --Left command key
+    --Left command key
     [0x3e] = 0xe4,
     rctrl = 0xe4,
     rctl = 0xe4, --Right Control, use 0x3e virtual

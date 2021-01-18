@@ -28,7 +28,7 @@ local inflates = {
         ["uuid"] = "0002"
     },
     {
-        ["text"] = os.date("%y/%m/%d"),
+        ["text"] = os.date("%y-%m-%d"),
         ["subText"] = "current date",
         ["uuid"] = "0004"
     }

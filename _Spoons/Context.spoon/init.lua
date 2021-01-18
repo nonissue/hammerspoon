@@ -494,11 +494,36 @@ function obj.createMenu(location, docked, gpu)
         },
         {
             title = hs.styledtext.new(
-                "Refresh",
+                "Toggle UI",
                 {
                     -- font = {size = 12},
                     -- baselineOffset = 10,
-                    color = {hex = "#FF6F00"},
+                    paragraphStyle = {}
+                }
+            ),
+            fn = function()
+                obj.darkModeScript =
+                    [[
+                    tell application "System Events"
+                        tell appearance preferences
+                            set dark mode to not dark mode
+                        end tell
+                    end tell
+                    ]]
+
+                hs.osascript.applescript(obj.darkModeScript)
+
+                obj.menubar:setMenu(obj.createMenu(_, _, _))
+            end
+        },
+        {
+            title = "-"
+        },
+        {
+            title = hs.styledtext.new(
+                "Refresh",
+                {
+                    color = {hex = "#9B2C2C"},
                     paragraphStyle = {}
                 }
             ),
