@@ -19,7 +19,10 @@ obj.wasCreated = false
 
 obj.newScreenshot = nil
 obj.currentScreenshot = nil
-
+obj.stop = 0
+obj.skip = 0
+-- for an explanation of this variable, see first if block in obj.imageToClipboard
+obj.lastRuntime = 0
 -- https://github.com/CommandPost/CommandPost/blob/develop/src/plugins/finalcutpro/text2speech/init.lua
 -- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
 -- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
@@ -36,10 +39,22 @@ obj.currentScreenshot = nil
 --- Returns:
 ---  * Nothing
 function obj.imageToClipboard(files, flagTables)
+    -- Simple way to debounce things as there several file events within the span of a few seconds
+    -- when a screenshot is created, and pathwatcher fires for all of them.
+    -- To prevent this, when we have successfully copied a screenshot to the pasteboard,
+    -- we set obj.lastRuntime, which is compared to the current time on each invocation.
+    -- if less than a second has passed since the last run, we return to avoid redundant invocations
+    if os.time() - obj.lastRuntime < 2 then
+        print("DEBUG: Clippy pathwatcher debounced")
+        return
+    end
+
+    -- We definitely don't care if it's a .DS_Store file, lawl
     if files[1] == ".DS_Store" and #files == 1 then
         return
     end
 
+    -- NOTE: not sure if this check is necessary?
     -- if any of the sub tables in our flagtables
     -- have itemCreated = true, then we know a new file was created.
     -- If it isn't passed as a flag for any events, then we don't care
@@ -52,87 +67,68 @@ function obj.imageToClipboard(files, flagTables)
 
     obj.wasCreated = true
 
-    -- print("\n------------------------\n")
-
-    for z = 1, #files do
-        local file = files[z]
-    end
-    -- print("\n------------------------\n")
-    -- print("\tFilelist:")
     for y = 1, #files do
         local file = files[y]
         local fileName = file:match("([^/]+)$")
-        local skip = 0
 
-        -- print("\t- " .. file)
-
-        if file ~= nil and string.sub(file, -4) == ".png" and string.sub(fileName, 1, 3) == "apw" then
-            -- print(file)
-            -- print("\n\n\n" .. hs.fs.attributes(file).creation .. "\n\n\n")
-            -- print("\n\n\n" .. "we care about this file" .. file .. "\n\n\n")
-            skip = 0
+        -- hacky way to skip iterations of the for loop
+        if
+            file ~= nil and string.sub(file, -4) == ".png" and string.sub(fileName, 1, 3) == "apw" and
+                flagTables[y]["itemIsDir"] ~= true
+         then
+            obj.skip = 0
         elseif string.sub(fileName, -4) ~= ".png" then
-            -- print("we dont care about this file")
-            skip = 1
+            obj.skip = 1
         elseif string.sub(fileName, 1, 3) ~= "apw" then
-            -- print("we dont care about this file")
-            skip = 1
+            obj.skip = 1
         end
 
-        if skip == 1 then
-            -- print(file)
-            -- print(fileName)
-            print(
-                "\n\n\t\tSkipping:" ..
-                    "\n\t\t\tpath:\t\t" ..
-                        file .. "\n\t\t\tfileName:\t" .. fileName .. "\n\t\tReason:\n\t\t\tFails criteria\n"
-            )
+        -- more skip loop
+        if obj.skip == 1 then
+            if obj.debug == true then
+                print(
+                    "\n\n\t\tSkipping:" ..
+                        "\n\t\t\tpath:\t\t" ..
+                            file .. "\n\t\t\tfileName:\t" .. fileName .. "\n\t\tReason:\n\t\t\tFails criteria\n"
+                )
+            end
         else
             difference = os.time() - hs.fs.attributes(file).creation
-
-            -- print("\nFiles. " .. i(files) .. "\n")
-
-            -- get just the file name without the path
             local fileName = file:match("([^/]+)$")
 
             if difference > 100 then
-                -- hs.alert("file isnt a new screenshot!")
-                -- hs.alert(file)
-                -- print("isnt a new file")
-                print(
-                    "\n\n\t\tSkipping:" ..
-                        "\n\t\t\tpath: " ..
-                            file .. "\n\t\t\tfileName: " .. fileName .. "\n\t\tReason: Not a new screenshot\n"
-                )
-
-                break
-            else
-                print("Proceeding with file" .. file)
+                if obj.debug == true then
+                    print(
+                        "\n\n\t\tSkipping:" ..
+                            "\n\t\t\tpath: " ..
+                                file .. "\n\t\t\tfileName: " .. fileName .. "\n\t\tReason: Not a new screenshot\n"
+                    )
+                end
             end
 
-            -- print("FILE: " .. file)
-            -- print(os.time(os.date("!*t")))
-
             local filePath = file
-
-            obj.newScreenshot = hs.image.imageFromPath(filePath)
-            obj.currentScreenshot = hs.pasteboard.readImage("clippyboard")
-
-            -- print("\nfilename. " .. fileName .. "\nfilePath. " .. filePath)
 
             -- if file doesn't start with prefix set in our macos defaults
             -- then we don't care about it. when a screenshot is created,
             -- it seems like a bunch of temporary files with a period prepended
             -- are created and then removed, which breaks our utility.
             -- We also make sure this is a "file creation" event before continuing
-            if obj.wasCreated then
-                -- hs.pasteboard.readDataForUTI("public.file-url") == filePath and
-                if obj.currentScreenshot:size().w == obj.newScreenshot:size().w then
-                    hs.alert("if", 5) "\n   ------------------------\n \n ERROR  ------------------------\n \
-                        Already in clipboard! Copying to clipboard... \n  ------------------------\n"
-                else
+            obj.newScreenshot = hs.image.imageFromPath(filePath)
+            obj.currentScreenshot = hs.pasteboard.readImage("clippyboard")
+            if obj.currentScreenshot:size().w == obj.newScreenshot:size().w then
+                print("\n\n\t------------------------\n\nERROR! Already in clipboard!\n\t------------------------\n")
+                obj.skip = 1
+                return
+            end
+
+            if obj.skip == 1 then
+                print("we should be skipping now...")
+                break
+            else
+                if obj.wasCreated then
                     print(
-                        "\n\n\t------------------------\n\tMatch! Copying to clipboard...\n\t------------------------\n"
+                        "\n\n\t------------------------\n\t💯 Match! Copying:\n" ..
+                            "\t• " .. fileName .. "\n\tto clipboard.\n\t------------------------\n"
                     )
                     hs.pasteboard.writeObjects(obj.newScreenshot)
                     hs.notify.new(
@@ -145,13 +141,15 @@ function obj.imageToClipboard(files, flagTables)
                         }
                     ):send()
 
+                    obj.lastRuntime = os.time()
                     obj.wasCreated = false
+                    obj.skip = 1
                     -- Don't need to go through rest of files if we have a match
+
+                    -- Either a file was modified, deleted or created by macos
+                    -- print("file watcher called, but file is either temporary, or has been removed")
                     break
                 end
-            else
-                -- Either a file was modified, deleted or created by macos
-                print("file watcher called, but file is either temporary, or has been removed")
             end
         end
     end
