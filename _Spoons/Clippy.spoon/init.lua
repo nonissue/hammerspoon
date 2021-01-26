@@ -115,7 +115,7 @@ function obj.imageToClipboard(files, flagTables)
             -- We also make sure this is a "file creation" event before continuing
             obj.newScreenshot = hs.image.imageFromPath(filePath)
             obj.currentScreenshot = hs.pasteboard.readImage("clippyboard")
-            if obj.currentScreenshot:size().w == obj.newScreenshot:size().w then
+            if obj.currentScreenshot ~= nil and obj.currentScreenshot:size().w == obj.newScreenshot:size().w then
                 print("\n\n\t------------------------\n\nERROR! Already in clipboard!\n\t------------------------\n")
                 obj.skip = 1
                 return
