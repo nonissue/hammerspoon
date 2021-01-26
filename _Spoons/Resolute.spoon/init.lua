@@ -69,15 +69,12 @@ obj.defaultHotkeys = {
     showResolute = {{"ctrl", "cmd", "alt"}, "L"}
 }
 
--- TODO:
--- this should be automated somehow?
-
 -- We can get available modes with hs.screen:availableModes()
 -- But the list is too long, and we only care about a few options
 -- Might be nice to automatically choose some based on screen,
 -- but it's tough to know what will look good
+-- NOTE: Is used for both chooserChoices and menubar menuitems
 local mbpr15 = {
-    -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
     {
         ["id"] = 2,
         ["image"] = obj.menubarIcon,
@@ -152,7 +149,7 @@ function obj.changeRes(choice)
     local h = choice["h"]
     local s = choice["s"]
 
-    -- change res
+    -- change screen resolution
     hs.screen.mainScreen():setMode(w, h, s)
 
     -- The code below updates the menubar menu to indicate new resolution
@@ -179,12 +176,13 @@ function obj.changeRes(choice)
     obj.menubar:setMenu(obj.resMenu)
 end
 
+-- should be `updateMenubarItems(res)`?
 function obj:menubarItems(res)
     for i = 1, #res do
         table.insert(
             self.resMenu,
             {
-                title = hs.styledtext.new(" " .. res[i]["text"], {font = hs.styledtext.defaultFonts.menu}),
+                title = hs.styledtext.new("" .. res[i]["text"]),
                 fn = function()
                     self.changeRes(res[i]["res"])
                 end,
@@ -202,6 +200,22 @@ function obj:menubarItems(res)
             obj.resMenu[i]["checked"] = true
         end
     end
+
+    -- Shared across all menubar menuitems
+    hs.fnutils.concat(
+        obj.resMenu,
+        {
+            {
+                title = "-"
+            },
+            {
+                title = "Refresh",
+                fn = function()
+                    obj:init()
+                end
+            }
+        }
+    )
 end
 
 function obj.createMenubar(display)
