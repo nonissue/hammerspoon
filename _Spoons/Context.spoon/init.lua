@@ -338,9 +338,12 @@ function obj.screenWatcherCallback()
         hs.alert("Current GPU")
     end
 
+    local Acer4K = hs.screen.find("B286HK")
+    local CinemaDisplay = hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") -- UUID of cinema display
+
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-    elseif hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") then
+    elseif Acer4K or CinemaDisplay then
         obj.logger.i("[SW] no change") -- how do i know this is no change?
         obj.docked = "docked"
         obj.contextValues.docked = "docked"

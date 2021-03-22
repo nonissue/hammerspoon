@@ -24,16 +24,17 @@ hs_reload.init()
 require("console")
 
 -- Add WIP Spoons to path
-package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
+-- package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 
 -- Add my Spoons to path
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 
 -- Add WIP files to path
-package.path = package.path .. ";WIP/?.lua"
+-- package.path = package.path .. ";WIP/?.lua"
 
 -- load scratch stuff
 package.path = package.path .. ";_scratch/?.lua"
+-- package.path = hs.configDir .. ";_scratch/TextInflator.lua"
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -115,7 +116,7 @@ local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
-hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drives = drives})
+-- hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drives = drives})
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
 ------------------------------------------------------------------------------
@@ -127,15 +128,15 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 ------------------------------------------------------------------------------
 -- Ultimately this probably isn't necessary, but I do occasionally use it
 ------------------------------------------------------------------------------
-hs.loadSpoon("PaywallBuster")
 -- TODO: bind default hotkey in spoon
-hs.hotkey.bind(
-    mash,
-    "B",
-    function()
-        spoon.PaywallBuster:show()
-    end
-)
+-- hs.loadSpoon("PaywallBuster")
+-- hs.hotkey.bind(
+--     mash,
+--     "B",
+--     function()
+--         spoon.PaywallBuster:show()
+--     end
+-- )
 
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
@@ -170,8 +171,8 @@ hs.loadSpoon("EasyTOTP")
 -- May change that in future
 ------------------------------------------------------------------------------
 -- TODO: use default hotkeys
-hs.loadSpoon("Resolute")
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
+-- hs.loadSpoon("Resolute")
+-- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
@@ -285,8 +286,8 @@ hs.hotkey.bind(
     end
 )
 
-TextInlfator = require("TextInflator")
-TextInlfator:init()
+TextInflator = require("TextInflator")
+TextInflator:init()
 
 --[[
 hidutil property -m 'keyboard' -g 'Product'

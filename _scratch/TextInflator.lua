@@ -2,7 +2,7 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "shortcutz"
+obj.name = "TextInflator"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
