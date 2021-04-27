@@ -1,4 +1,4 @@
-# a hammerspoon config
+# a hammerspoon config [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4a20bdc0897f4991a8697d4b4a467da5)](https://www.codacy.com/gh/nonissue/hammerspoon/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nonissue/hammerspoon&amp;utm_campaign=Badge_Grade)
 
 *New docs coming soon*
 
