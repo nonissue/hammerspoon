@@ -1,8 +1,8 @@
-# [WIP] CTRL-ESC.spoon 
+# [WIP] CTRL-ESC.spoon
 
 ## About
 
-*Note: This is not finished by any stretch of the imagination* 
+_Note: This is not finished by any stretch of the imagination_
 
 Rebinds capslock to be control when pressed with other keys (ie. `CAPSLOCK+C` is registered as `CTRL+C`) or `ESC` when `CAPSLOCK` is pressed on it's own.
 
@@ -12,11 +12,11 @@ There is already a [Spoon](https://github.com/jasonrudolph/ControlEscape.spoon) 
 
 ### Prior Work
 
-* https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
-* https://github.com/jasonrudolph/ControlEscape.spoon
-* https://github.com/jasoncodes/dotfiles/blob/master/hammerspoon/control_escape.lua
-* https://gist.github.com/rjhilgefort/07ce5cdd3832083d7e94113d54372b1c
-* https://gist.github.com/arbelt/b91e1f38a0880afb316dd5b5732759f1
+- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
+- https://github.com/jasonrudolph/ControlEscape.spoon
+- https://github.com/jasoncodes/dotfiles/blob/master/hammerspoon/control_escape.lua
+- https://gist.github.com/rjhilgefort/07ce5cdd3832083d7e94113d54372b1c
+- https://gist.github.com/arbelt/b91e1f38a0880afb316dd5b5732759f1
 
 ## Contact
 
