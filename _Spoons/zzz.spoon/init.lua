@@ -2,26 +2,6 @@
 ---
 -- Sleep timer for mac
 
---[[
-    TODO:
-    * [ ] add spoon options (enable/disable chooser/menu)
-    * [x] remove unused/functions vars
-    * [ ] proper spoon docs
-    * [ ] proper spoon-style key binding
-    * [x] fix lag with timer inc/dec actions
-        * timer has to be deleted then recreated which looks bad
-    * [x] refactor so only one timer object needed
-        * currently using two:
-            doAt for sysleep
-            doEvery for menubar display
-    * [ ] simplify timerChooserCallback() logic
-    * [ ] remove chooser choices, only use chooser for custom timers
-    * [ ] bind menubaritem to hotkey to invoke
-        * Dunno if this is possible?
-    * [ ] clean up / optimize table creation
-    * [ ] Reduce volume and brightness by XX% over sleep time period?
-]] --
-
 local obj = {}
 obj.__index = obj
 
@@ -48,9 +28,6 @@ obj.spoonPath = script_path()
 
 obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.circle.fill.pdf"):setSize({w = 20, h = 20})
 
--- obj.menuBarIcon = "𝐙"
-
--- I should probably just normalize everything to seconds?
 local minMins = 0
 local minSecs = minMins / 60
 
@@ -61,40 +38,7 @@ local maxSecs = maxMins * 60
 local sleepInterval = 15
 local updateInterval = 5
 local presetCount = 3
-
---[[
-    init our empty chooser choice tables
-    each item is a row in the table with the following structure:
-    {
-        ['id'] = <number>,
-            id number for row, 
-        ['action'] = <string>,
-            "create" OR "stop" OR "adjust" to describe intent
-        ['m'] = <number>,
-            number of minutes for action (only matters if create/adjust),
-            i think i might cast this as string by mistake sometimes,
-            but should be num
-        ['text'] = <string>,
-            text to appear in chooser
-    }
-]] local defaultFont = {
-    font = "Menlo"
-    -- color = {hex = "#EEEEEE"}
-}
-
-local almostDone = {
-    font = "Menlo",
-    color = {hex = "#FF6F00"}
-}
-
-obj.menuFont = defaultFont
-
-function obj:styleText(text)
-    return hs.styledtext.new(
-        text
-        -- self.menuFont
-    )
-end
+local updateFreq = 1
 
 obj.createTimerChoices = {}
 obj.startMenuChoices = {}
@@ -116,9 +60,9 @@ for i = 1, presetCount do
     table.insert(
         obj.startMenuChoices,
         {
-            title = obj:styleText(tostring(i * sleepInterval .. "m")),
+            title = hs.styledtext.new(tostring(i * sleepInterval .. "m")),
             fn = function()
-                obj:timerChooserCallback(obj.createTimerChoices[i])
+                obj:processCommand(obj.createTimerChoices[i])
             end,
             ["id"] = i,
             ["action"] = "create",
@@ -128,37 +72,19 @@ for i = 1, presetCount do
     )
 end
 
-table.insert(
-    obj.startMenuChoices,
+-- Static start menubar menu items
+local startMenuStaticOpts = {
     {
         title = "-"
-    }
-)
-
-table.insert(
-    obj.startMenuChoices,
+    },
     {
-        title = obj:styleText("??m"),
+        title = hs.styledtext.new("XXm"),
         fn = function()
             obj.chooser:show()
         end
     }
-)
+}
 
-table.insert(
-    obj.startMenuChoices,
-    {
-        title = obj:styleText("-1"),
-        ["id"] = 5,
-        ["action"] = "create",
-        ["m"] = -1,
-        ["text"] = "debug"
-    }
-)
-
--- static chooser entries
--- increase timer by X minutes decrease timer by Y minutes / stop timer
--- In order to change the timer modifier, change ['m'] below
 obj.modifyTimerChoices = {
     {
         ["id"] = 1,
@@ -186,9 +112,9 @@ obj.modifyMenuChoices = {
         ["action"] = "stop",
         ["m"] = 0,
         ["text"] = "Stop Timer",
-        title = obj:styleText("Stop"),
+        title = hs.styledtext.new("Stop"),
         fn = function()
-            obj:timerChooserCallback(obj.modifyTimerChoices[1])
+            obj:processCommand(obj.modifyTimerChoices[1])
         end
     },
     {
@@ -196,9 +122,9 @@ obj.modifyMenuChoices = {
         ["action"] = "adjust",
         ["m"] = 5,
         ["text"] = "+5m",
-        title = obj:styleText("+5m"),
+        title = hs.styledtext.new("+5m"),
         fn = function()
-            obj:timerChooserCallback(obj.modifyTimerChoices[2])
+            obj:processCommand(obj.modifyTimerChoices[2])
         end
     },
     {
@@ -206,14 +132,13 @@ obj.modifyMenuChoices = {
         ["action"] = "adjust",
         ["m"] = -5,
         ["text"] = "-5m",
-        title = obj:styleText("-5m"),
+        title = hs.styledtext.new("-5m"),
         fn = function()
-            obj:timerChooserCallback(obj.modifyTimerChoices[3])
+            obj:processCommand(obj.modifyTimerChoices[3])
         end
     }
 }
 
--- hotkey binding not working
 function obj:bindHotkeys(mapping)
     local def = {
         showTimerMenu = hs.fnutils.partial(self:show(), self)
@@ -222,13 +147,11 @@ function obj:bindHotkeys(mapping)
     hs.spoons.bindHotkeysToSpec(def, mapping)
 end
 
-function obj:setTitleStyled(text)
-    self.sleepTimerMenu:setTitle(hs.styledtext.new(text, self.menuFont))
+function obj:setTitle(text)
+    self.sleepTimerMenu:setTitle(text)
 end
 
--- why not just deal with minutes?
 function obj:formatSeconds(s)
-    -- from https://gist.github.com/jesseadams/791673
     local seconds = tonumber(s)
     if seconds then
         local hours = string.format("%02.f", math.floor(seconds / 3600))
@@ -240,7 +163,6 @@ function obj:formatSeconds(s)
     end
 end
 
--- hs.timer interval is in seconds
 function obj:startTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
@@ -250,8 +172,6 @@ function obj:startTimer(timerInMins)
         self.logger.df("Timer started!")
         self:updateMenu()
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
-        -- self:updateBrightnessAndVol(timerInMins)
-        -- hs.brightness.set(50) -- only works if automatically adjust brightness is off
         self.timerEvent =
             hs.timer.doAfter(
             tonumber(timerInMins) * 60,
@@ -264,28 +184,8 @@ function obj:startTimer(timerInMins)
     end
 end
 
-function obj:updateBrightnessAndVol(timerInMins)
-    -- not currently used
-    local startBrightness = hs.brightness.get()
-    local brightness = startBrightness
-    local startVol = hs.audiodevice.defaultOutputDevice():outputVolume()
-    local interval = math.floor((timerInMins * 60) / 20)
-    local step = math.floor(startBrightness / 21)
-    hs.timer.doWhile(
-        function()
-            return self.timerEvent
-        end,
-        function()
-            brightness = brightness - step
-            hs.alert(brightness)
-            hs.alert(step)
-            hs.brightness.set(brightness)
-        end,
-        interval
-    )
-end
-
-function obj:timerChooserCallback(choice)
+-- processes command from menubar menus
+function obj:processCommand(choice)
     -- switch on action
     if choice["action"] == "stop" and self.timerEvent then
         -- handle stop timer
@@ -323,9 +223,9 @@ function obj:updateMenu()
                 obj.menuFont = almostDone
             end
 
-            self:setTitleStyled(obj:formatSeconds(timeLeft))
+            self:setTitle(obj:formatSeconds(timeLeft))
         end,
-        2
+        updateFreq
     )
 end
 
@@ -354,7 +254,7 @@ function obj:deleteTimer()
     self.timerEvent:stop()
     self.timerEvent = nil
     self.menuFont = defaultFont
-    self:setTitleStyled("")
+    self:setTitle("")
     self.sleepTimerMenu:setMenu(self.startMenuChoices)
 end
 
@@ -375,7 +275,7 @@ function obj:initChooser()
             if not (choice) then
                 print(self.chooser:query())
             else
-                self:timerChooserCallback(choice)
+                self:processCommand(choice)
             end
         end
     )
@@ -452,6 +352,9 @@ function obj:init()
         self.sleepTimerMenu:delete()
     end
 
+    obj.startMenuChoices = hs.fnutils.concat(obj.startMenuChoices, startMenuStaticOpts)
+
+    -- print(i(startMenuChoices))
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
     self.sleepTimerMenu:setIcon(self.menubarIcon)
 
@@ -460,20 +363,6 @@ function obj:init()
     -- so sleep timer can be set with mouse only
 
     return self
-end
-
-function obj:addTimer(name, title, type)
-    local timer = {}
-
-    local menu = hs.menubar.new():setMenu(obj.startMenuChoices):setIcon(obj.menubarIcon)
-    table.insert(
-        obj.timers,
-        {
-            [name] = {
-                menu
-            }
-        }
-    )
 end
 
 return obj
