@@ -145,12 +145,14 @@ function obj:chooserCallback(choice)
 end
 
 function obj.changeRes(choice)
+    print(i(choice))
+
     local w = choice["w"]
     local h = choice["h"]
     local s = choice["s"]
 
     -- change screen resolution
-    hs.screen.mainScreen():setMode(w, h, s)
+    hs.screen.mainScreen():setMode(w, h, s, 0, 8)
 
     -- The code below updates the menubar menu to indicate new resolution
     -- The menubar menu doesn't refresh automatically, so we generate
