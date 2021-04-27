@@ -13,5 +13,4 @@ media/
 /lua_modules
 screens/
 hs/
-.vscode/
 .luarocks/
