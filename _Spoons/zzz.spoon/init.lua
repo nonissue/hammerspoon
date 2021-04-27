@@ -1,12 +1,26 @@
 --- === Zzz ===
 ---
--- Sleep timer for mac
+--- Sleep timer for mac
+---
+--- Options:
+---     - Specify hotkey to toggle chooser menu that allows you to control spoon
+---         - Call (after loading spoon):
+---             `spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)`
+---           to use default (cmd + ctrl + opt + S)
+---         - To customize hotkey, use:
+---             `spoon.Zzz:bindHotkeys({ toggleChooser = {{yourModifiers}, yourKey}})`
+---         - See `obj.defaultHotkeys` below for more info
+---
+--- Future additions:
+---     - Customizable variables `updateFreq`, `sleepInterval`, `presetCount` when loading the spoon
+---     - Customizable menuBar icon (included options: moon.circle.fill, moon.circle, moon.stars from SF Symbol)
+---
 
 local obj = {}
 obj.__index = obj
 
 obj.name = "Zzz"
-obj.version = "1.0"
+obj.version = "0.5"
 obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
@@ -15,7 +29,10 @@ obj.logger = hs.logger.new("Zzz")
 
 obj.chooser = nil
 obj.timerEvent = nil
-obj.hotkeyShow = nil
+
+obj.defaultHotkeys = {
+    toggleChooser = {{"ctrl", "alt", "cmd"}, "S"}
+}
 
 obj.timers = {}
 
@@ -34,10 +51,13 @@ local minSecs = minMins / 60
 local maxMins = 300
 local maxSecs = maxMins * 60
 
--- Interval between sleep times
+-- Interval between preset choices
 local sleepInterval = 15
+-- Amount to adjust timer by (when running)
 local updateInterval = 5
+-- Number of presets to show in menubar / chooser
 local presetCount = 3
+-- How often the menubar is updated when countdown running (in seconds)
 local updateFreq = 1
 
 obj.createTimerChoices = {}
@@ -46,7 +66,6 @@ obj.startMenuCustomChoices = {}
 obj.modifyTimerChoices = {}
 obj.modifyMenuChoices = {}
 
--- generate presets dynamically based on sleepInterval/presentCount
 for i = 1, presetCount do
     table.insert(
         obj.createTimerChoices,
@@ -62,7 +81,7 @@ for i = 1, presetCount do
         {
             title = hs.styledtext.new(tostring(i * sleepInterval .. "m")),
             fn = function()
-                obj:processCommand(obj.createTimerChoices[i])
+                obj:processChoice(obj.createTimerChoices[i])
             end,
             ["id"] = i,
             ["action"] = "create",
@@ -72,7 +91,6 @@ for i = 1, presetCount do
     )
 end
 
--- Static start menubar menu items
 local startMenuStaticOpts = {
     {
         title = "-"
@@ -85,18 +103,19 @@ local startMenuStaticOpts = {
     }
 }
 
+-- Table of actions for our chooser that modify a running countdown
 obj.modifyTimerChoices = {
     {
         ["id"] = 1,
         ["action"] = "stop",
         ["m"] = 0,
-        ["text"] = "Stop current timer"
+        ["text"] = "Stop current timer!"
     },
     {
         ["id"] = 2,
         ["action"] = "adjust",
         ["m"] = 5,
-        ["text"] = "+5 minutes"
+        ["text"] = "+5 minutes!"
     },
     {
         ["id"] = 3,
@@ -106,6 +125,7 @@ obj.modifyTimerChoices = {
     }
 }
 
+-- Table of actions that modify a running countdown from our menubar
 obj.modifyMenuChoices = {
     {
         ["id"] = 1,
@@ -114,7 +134,9 @@ obj.modifyMenuChoices = {
         ["text"] = "Stop Timer",
         title = hs.styledtext.new("Stop"),
         fn = function()
-            obj:processCommand(obj.modifyTimerChoices[1])
+            -- Reuse the action our chooser uses as it is the shape
+            -- processChoice expects
+            obj:processChoice(obj.modifyTimerChoices[1])
         end
     },
     {
@@ -124,7 +146,9 @@ obj.modifyMenuChoices = {
         ["text"] = "+5m",
         title = hs.styledtext.new("+5m"),
         fn = function()
-            obj:processCommand(obj.modifyTimerChoices[2])
+            -- Reuse the action our chooser uses as it is the shape
+            -- processChoice expects
+            obj:processChoice(obj.modifyTimerChoices[2])
         end
     },
     {
@@ -134,23 +158,42 @@ obj.modifyMenuChoices = {
         ["text"] = "-5m",
         title = hs.styledtext.new("-5m"),
         fn = function()
-            obj:processCommand(obj.modifyTimerChoices[3])
+            -- Reuse the action our chooser uses as it is the shape
+            -- processChoice expects
+            obj:processChoice(obj.modifyTimerChoices[3])
         end
     }
 }
 
-function obj:bindHotkeys(mapping)
-    local def = {
-        showTimerMenu = hs.fnutils.partial(self:show(), self)
-    }
+--- Zzz:bindHotkeys(keys)
+--- Method
+--- Binds hotkey to invoke sleep menu chooser
+---
+--- Parameters:
+---  * keys - An optional table containing the key binding to use
+---
+--- Returns:
+---  * void - nothing return
+function obj:bindHotkeys(keys)
+    local hotkeys = keys or obj.defaultHotkeys
 
-    hs.spoons.bindHotkeysToSpec(def, mapping)
+    hs.hotkey.bindSpec(
+        hotkeys["toggleChooser"],
+        function()
+            obj.chooser:show()
+        end
+    )
 end
 
-function obj:setTitle(text)
-    self.sleepTimerMenu:setTitle(text)
-end
-
+--- Zzz:formatSeconds(s)
+--- Method
+--- Converts raw seconds to formatted string for countdown
+---
+--- Parameters:
+---  * s - A number of seconds
+---
+--- Returns:
+---  * string of the format: HH:MM:SS
 function obj:formatSeconds(s)
     local seconds = tonumber(s)
     if seconds then
@@ -163,11 +206,21 @@ function obj:formatSeconds(s)
     end
 end
 
+--- Zzz:startTimer(timerInMins)
+--- Method
+--- Starts a timer for the specified duration in minutes
+---
+--- Parameters:
+---  * timerInMins - A number of minutes specifying new timer duration (note: real nums accepted)
+---
+--- Returns:
+--- * boolean - true indicates timer started, false indicates failure starting timer
 function obj:startTimer(timerInMins)
     self.sleepTimerMenu:returnToMenuBar()
     if self.timerEvent then
-        self.logger.e("Timer already running?")
-        hs.alert("Timer alreadfy started")
+        self.logger.e("Timer already running!")
+
+        return false
     else
         self.logger.df("Timer started!")
         self:updateMenu()
@@ -182,34 +235,52 @@ function obj:startTimer(timerInMins)
             end
         )
     end
+    return true
 end
 
--- processes command from menubar menus
-function obj:processCommand(choice)
-    -- switch on action
+--- Zzz:processChoice(choice)
+--- Method
+--- Processes choice sent from menubar callback or chooser callback
+---
+--- Parameters:
+---  * choice - a table with the following required keys:
+---     * action - one of the following strings: "create", "adjust", "stop", indicating the intention of the action
+---     * m - number representing the impact of the choice
+---
+--- Returns:
+---  * boolean - true indicates command processed successfully, false indicates failure
+function obj:processChoice(choice)
     if choice["action"] == "stop" and self.timerEvent then
-        -- handle stop timer
         self.logger.d("Timer stopped")
         self:deleteTimer()
+        return true
     elseif choice["action"] == "adjust" and self.timerEvent then
-        -- handle inc/dec timer
         self:adjustTimer(choice["m"])
+        return true
     elseif choice["m"] == nil then
-        -- handle custom timer
         self.logger.d("Custom timer started")
         self:startTimer(tonumber(self.chooser:query()))
         self.chooser:query(nil)
+        return true
     else
-        -- handle normal choice
         self.logger.d("Default timer started")
         self:startTimer(tonumber(choice["m"]))
+        return true
     end
+
+    return false
 end
 
--- Handles updating countdown in menubar
--- Also includes logic for warning before sleep occurs
--- And a check to make sure the timer > 0 which can happen when
--- computer is slept manually before countdown has finished.
+--- Zzz:updateMenu()
+--- Method
+--- Updates the menubar every X seconds when a countdown has been started
+--- updateFreq defaults to every second, but cant be changed
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Nothing
 function obj:updateMenu()
     hs.timer.doWhile(
         function()
@@ -223,25 +294,62 @@ function obj:updateMenu()
                 obj.menuFont = almostDone
             end
 
-            self:setTitle(obj:formatSeconds(timeLeft))
+            self.sleepTimerMenu:setTitle(obj:formatSeconds(timeLeft))
         end,
         updateFreq
     )
 end
 
-function obj:adjustTimer(minutes)
+--- Zzz:adjustTimer(choice)
+--- Method
+--- Adjusts a running timer by specified minutes (up/down)
+---
+--- Parameters:
+---  * m - number indicating amount to modify timer (can be -/+)
+---
+--- Returns:
+---  * boolean - true indicates timer adjusted successfully, false indicates failure
+function obj:adjustTimer(m)
     local currentDuration = self.timerEvent:nextTrigger() / 60
-    if currentDuration + minutes < 0 then
+    if currentDuration + m < 0 then
         self.logger.e("Desired timer adjustment invalid")
-        hs.alert("nah that doesn't make sense")
-        return
+        hs.alert("Cannot adjust timer by " .. m .. " minutes")
+        return false
     else
-        local newTimerTime = self.timerEvent:nextTrigger() + (minutes * 60)
+        local newTimerTime = self.timerEvent:nextTrigger() + (m * 60)
         self.timerEvent:setNextTrigger(newTimerTime)
         self.logger.d("Timer adjusted successfully")
+        return true
     end
 end
 
+--- Zzz:deleteTimer(choice)
+--- Method
+--- Deletes a running countdown
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Nothing
+function obj:deleteTimer()
+    self.timerEvent:stop()
+    self.timerEvent = nil
+    self.menuFont = defaultFont
+    self.sleepTimerMenu:setTitle("")
+    self.sleepTimerMenu:setMenu(self.startMenuChoices)
+end
+
+--- Zzz:getCurrentChoices()
+--- Method
+--- Gets current choices for chooser (if no countdown is running, show start options)
+--- If countdown is running, show options to modify countdown (adjust(+/-),stop)
+---
+--- Parameters:
+---  * m - number indicating amount to modify timer (can be -/+)
+---
+--- Returns:
+---  * A table containing the list of choices the chooser should show
 function obj:getCurrentChoices()
     if self.timerEvent then
         return self.modifyTimerChoices
@@ -250,37 +358,30 @@ function obj:getCurrentChoices()
     end
 end
 
-function obj:deleteTimer()
-    self.timerEvent:stop()
-    self.timerEvent = nil
-    self.menuFont = defaultFont
-    self:setTitle("")
-    self.sleepTimerMenu:setMenu(self.startMenuChoices)
-end
-
+--- Zzz:initChooser()
+--- Method
+--- Initialize our chooser which can be invoked using the custom duration menubar entry
+--- or by binding a hotkey to hide/show chooser. Default is {{"ctrl", "alt", "cmd"}, "S"}}
+--- Our chooser can both start, stop, adjust and remove a countdown, and is also used for
+--- capturing user input for custom countdown durations.
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * The initialized chooser object
 function obj:initChooser()
-    -- the menubar isnt set by default by the menubar.new call
-    -- with the parameter "false", but because we set the title
-    -- right after, it ends up being shown
-
-    -- Initialize our chooser
-    -- we use a work around here to capture to capture user input that
-    -- doesnt match any of our preset options by checking <if (choice)>
-    -- If the user 'query' doesn't match an option, we provide them with
-    -- a new option that appears to let them set a custom timer!
-    -- See queryChangeCallback() call below for more info
     self.chooser =
         hs.chooser.new(
         function(choice)
             if not (choice) then
                 print(self.chooser:query())
             else
-                self:processCommand(choice)
+                self:processChoice(choice)
             end
         end
     )
 
-    -- Initialize chooser choices from sleepTable & rows
     self.chooser:choices(self:getCurrentChoices())
     self.chooser:rows(#self:getCurrentChoices())
 
@@ -314,25 +415,38 @@ function obj:initChooser()
     return self
 end
 
+--- Zzz:start()
+--- Method
+--- Starts our spoon by calling Zzz:init()
+---
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Zzz.spoon
 function obj:start()
-    -- print("-- Starting Zzz")
     obj.logger.i("Starting Zzz")
     self:init()
 
     return self
 end
 
+--- Zzz:stop()
+--- Method
+--- Stops any running countdowns, hides any displayed choosers, deletes menubar entry
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Zzz
 function obj:stop()
-    -- hs.alert("-- Stopping Zzz.spoon")
     obj.logger.i("Stopping Zzz")
 
     if self.chooser then
         self.chooser:cancel()
         self.chooser = nil
-    end
-
-    if self.hotkeyShow then
-        self.hotkeyShow:disable()
     end
 
     if self.timerEvent then
@@ -343,24 +457,33 @@ function obj:stop()
     return self
 end
 
+--- Zzz:init()
+--- Method
+--- Init function checks for existing menubar item and removes it if it exists,
+--- setups Zzz.startMenuChoices table, creates new menubar item, and initialize our
+--- chooser
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+---  * Zzz
 function obj:init()
     -- if statement to prevent dupes especially during dev
     -- We check to see if our menu already exists, and if so
     -- we delete it. Then we create a new one from scratch
     obj.logger.i("Initializing Zzz")
+
     if self.sleepTimerMenu then
         self.sleepTimerMenu:delete()
     end
 
     obj.startMenuChoices = hs.fnutils.concat(obj.startMenuChoices, startMenuStaticOpts)
 
-    -- print(i(startMenuChoices))
     self.sleepTimerMenu = hs.menubar.new():setMenu(obj.startMenuChoices)
     self.sleepTimerMenu:setIcon(self.menubarIcon)
 
     self:initChooser()
-    -- adds a menubar click callback to invoke show/hide chooser
-    -- so sleep timer can be set with mouse only
 
     return self
 end

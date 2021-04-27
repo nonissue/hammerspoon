@@ -148,14 +148,7 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 -- There is also a modal to let users enter custom times
 ------------------------------------------------------------------------------
 hs.loadSpoon("Zzz")
--- TODO: use default hotkeys
-hs.hotkey.bind(
-    mash,
-    "S",
-    function()
-        spoon.Zzz.chooser:show()
-    end
-)
+spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- EasyTOTP.spoon / by me
