@@ -1,0 +1,587 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "type" : "Module",
+    "desc" : "Sleep timer for mac",
+    "Deprecated" : [
+
+    ],
+    "Constructor" : [
+
+    ],
+    "doc" : "Sleep timer for mac\n\nOptions:\n    - Specify hotkey to toggle chooser menu that allows you to control spoon\n        - Call (after loading spoon):\n            `spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)`\n          to use default (cmd + ctrl + opt + S)\n        - To customize hotkey, use:\n            `spoon.Zzz:bindHotkeys({ toggleChooser = {{yourModifiers}, yourKey}})`\n        - See `obj.defaultHotkeys` below for more info\n\nFuture additions:\n    - Customizable variables `updateFreq`, `sleepInterval`, `presetCount` when loading the spoon\n    - Customizable menuBar icon (included options: moon.circle.fill, moon.circle, moon.stars from SF Symbol)",
+    "Field" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "items" : [
+      {
+        "doc" : "Adjusts a running timer by specified minutes (up\/down)\n\nParameters:\n * m - number indicating amount to modify timer (can be -\/+)\n\nReturns:\n * boolean - true indicates timer adjusted successfully, false indicates failure",
+        "stripped_doc" : [
+          "Adjusts a running timer by specified minutes (up\/down)",
+          ""
+        ],
+        "def" : "Zzz:adjustTimer(choice)",
+        "name" : "adjustTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:adjustTimer(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * boolean - true indicates timer adjusted successfully, false indicates failure"
+        ],
+        "desc" : "Adjusts a running timer by specified minutes (up\/down)",
+        "parameters" : [
+          " * m - number indicating amount to modify timer (can be -\/+)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Binds hotkey to invoke sleep menu chooser\n\nParameters:\n * keys - An optional table containing the key binding to use\n\nReturns:\n * void - nothing return",
+        "stripped_doc" : [
+          "Binds hotkey to invoke sleep menu chooser",
+          ""
+        ],
+        "def" : "Zzz:bindHotkeys(keys)",
+        "name" : "bindHotkeys",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:bindHotkeys(keys)",
+        "type" : "Method",
+        "returns" : [
+          " * void - nothing return"
+        ],
+        "desc" : "Binds hotkey to invoke sleep menu chooser",
+        "parameters" : [
+          " * keys - An optional table containing the key binding to use",
+          ""
+        ]
+      },
+      {
+        "doc" : "Deletes a running countdown\n\nParameters:\n * None\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Deletes a running countdown",
+          ""
+        ],
+        "def" : "Zzz:deleteTimer(choice)",
+        "name" : "deleteTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:deleteTimer(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "desc" : "Deletes a running countdown",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Converts raw seconds to formatted string for countdown\n\nParameters:\n * s - A number of seconds\n\nReturns:\n * string of the format: HH:MM:SS",
+        "stripped_doc" : [
+          "Converts raw seconds to formatted string for countdown",
+          ""
+        ],
+        "def" : "Zzz:formatSeconds(s)",
+        "name" : "formatSeconds",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:formatSeconds(s)",
+        "type" : "Method",
+        "returns" : [
+          " * string of the format: HH:MM:SS"
+        ],
+        "desc" : "Converts raw seconds to formatted string for countdown",
+        "parameters" : [
+          " * s - A number of seconds",
+          ""
+        ]
+      },
+      {
+        "doc" : "Gets current choices for chooser (if no countdown is running, show start options)\nIf countdown is running, show options to modify countdown (adjust(+\/-),stop)\n\nParameters:\n * m - number indicating amount to modify timer (can be -\/+)\n\nReturns:\n * A table containing the list of choices the chooser should show",
+        "stripped_doc" : [
+          "Gets current choices for chooser (if no countdown is running, show start options)",
+          "If countdown is running, show options to modify countdown (adjust(+\/-),stop)",
+          ""
+        ],
+        "def" : "Zzz:getCurrentChoices()",
+        "name" : "getCurrentChoices",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:getCurrentChoices()",
+        "type" : "Method",
+        "returns" : [
+          " * A table containing the list of choices the chooser should show"
+        ],
+        "desc" : "Gets current choices for chooser (if no countdown is running, show start options)",
+        "parameters" : [
+          " * m - number indicating amount to modify timer (can be -\/+)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Init function checks for existing menubar item and removes it if it exists,\nsetups Zzz.startMenuChoices table, creates new menubar item, and initialize our\nchooser\n\nParameters:\n * None\n\nReturns:\n * Zzz",
+        "stripped_doc" : [
+          "Init function checks for existing menubar item and removes it if it exists,",
+          "setups Zzz.startMenuChoices table, creates new menubar item, and initialize our",
+          "chooser",
+          ""
+        ],
+        "def" : "Zzz:init()",
+        "name" : "init",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:init()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz"
+        ],
+        "desc" : "Init function checks for existing menubar item and removes it if it exists,",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Initialize our chooser which can be invoked using the custom duration menubar entry\nor by binding a hotkey to hide\/show chooser. Default is {{\"ctrl\", \"alt\", \"cmd\"}, \"S\"}}\nOur chooser can both start, stop, adjust and remove a countdown, and is also used for\ncapturing user input for custom countdown durations.\n\nParameters:\n * None\n\nReturns:\n * The initialized chooser object",
+        "stripped_doc" : [
+          "Initialize our chooser which can be invoked using the custom duration menubar entry",
+          "or by binding a hotkey to hide\/show chooser. Default is {{\"ctrl\", \"alt\", \"cmd\"}, \"S\"}}",
+          "Our chooser can both start, stop, adjust and remove a countdown, and is also used for",
+          "capturing user input for custom countdown durations.",
+          ""
+        ],
+        "def" : "Zzz:initChooser()",
+        "name" : "initChooser",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:initChooser()",
+        "type" : "Method",
+        "returns" : [
+          " * The initialized chooser object"
+        ],
+        "desc" : "Initialize our chooser which can be invoked using the custom duration menubar entry",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Processes choice sent from menubar callback or chooser callback\n\nParameters:\n * choice - a table with the following required keys:\n    * action - one of the following strings: \"create\", \"adjust\", \"stop\", indicating the intention of the action\n    * m - number representing the impact of the choice\n\nReturns:\n * boolean - true indicates command processed successfully, false indicates failure",
+        "stripped_doc" : [
+          "Processes choice sent from menubar callback or chooser callback",
+          ""
+        ],
+        "def" : "Zzz:processChoice(choice)",
+        "name" : "processChoice",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:processChoice(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * boolean - true indicates command processed successfully, false indicates failure"
+        ],
+        "desc" : "Processes choice sent from menubar callback or chooser callback",
+        "parameters" : [
+          " * choice - a table with the following required keys:",
+          "    * action - one of the following strings: \"create\", \"adjust\", \"stop\", indicating the intention of the action",
+          "    * m - number representing the impact of the choice",
+          ""
+        ]
+      },
+      {
+        "doc" : "Starts our spoon by calling Zzz:init()\n\n\nParameters:\n * None\n\nReturns:\n * Zzz.spoon",
+        "stripped_doc" : [
+          "Starts our spoon by calling Zzz:init()",
+          "",
+          ""
+        ],
+        "def" : "Zzz:start()",
+        "name" : "start",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:start()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz.spoon"
+        ],
+        "desc" : "Starts our spoon by calling Zzz:init()",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Starts a timer for the specified duration in minutes\n\nParameters:\n * timerInMins - A number of minutes specifying new timer duration (note: real nums accepted)\n\nReturns:\n* boolean - true indicates timer started, false indicates failure starting timer",
+        "stripped_doc" : [
+          "Starts a timer for the specified duration in minutes",
+          ""
+        ],
+        "def" : "Zzz:startTimer(timerInMins)",
+        "name" : "startTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:startTimer(timerInMins)",
+        "type" : "Method",
+        "returns" : [
+          "* boolean - true indicates timer started, false indicates failure starting timer"
+        ],
+        "desc" : "Starts a timer for the specified duration in minutes",
+        "parameters" : [
+          " * timerInMins - A number of minutes specifying new timer duration (note: real nums accepted)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Stops any running countdowns, hides any displayed choosers, deletes menubar entry\n\nParameters:\n * None\n\nReturns:\n * Zzz",
+        "stripped_doc" : [
+          "Stops any running countdowns, hides any displayed choosers, deletes menubar entry",
+          ""
+        ],
+        "def" : "Zzz:stop()",
+        "name" : "stop",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz"
+        ],
+        "desc" : "Stops any running countdowns, hides any displayed choosers, deletes menubar entry",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Updates the menubar every X seconds when a countdown has been started\nupdateFreq defaults to every second, but cant be changed\n\nParameters:\n * None\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Updates the menubar every X seconds when a countdown has been started",
+          "updateFreq defaults to every second, but cant be changed",
+          ""
+        ],
+        "def" : "Zzz:updateMenu()",
+        "name" : "updateMenu",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:updateMenu()",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "desc" : "Updates the menubar every X seconds when a countdown has been started",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      }
+    ],
+    "Method" : [
+      {
+        "doc" : "Binds hotkey to invoke sleep menu chooser\n\nParameters:\n * keys - An optional table containing the key binding to use\n\nReturns:\n * void - nothing return",
+        "stripped_doc" : [
+          "Binds hotkey to invoke sleep menu chooser",
+          ""
+        ],
+        "def" : "Zzz:bindHotkeys(keys)",
+        "name" : "bindHotkeys",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:bindHotkeys(keys)",
+        "type" : "Method",
+        "returns" : [
+          " * void - nothing return"
+        ],
+        "desc" : "Binds hotkey to invoke sleep menu chooser",
+        "parameters" : [
+          " * keys - An optional table containing the key binding to use",
+          ""
+        ]
+      },
+      {
+        "doc" : "Converts raw seconds to formatted string for countdown\n\nParameters:\n * s - A number of seconds\n\nReturns:\n * string of the format: HH:MM:SS",
+        "stripped_doc" : [
+          "Converts raw seconds to formatted string for countdown",
+          ""
+        ],
+        "def" : "Zzz:formatSeconds(s)",
+        "name" : "formatSeconds",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:formatSeconds(s)",
+        "type" : "Method",
+        "returns" : [
+          " * string of the format: HH:MM:SS"
+        ],
+        "desc" : "Converts raw seconds to formatted string for countdown",
+        "parameters" : [
+          " * s - A number of seconds",
+          ""
+        ]
+      },
+      {
+        "doc" : "Starts a timer for the specified duration in minutes\n\nParameters:\n * timerInMins - A number of minutes specifying new timer duration (note: real nums accepted)\n\nReturns:\n* boolean - true indicates timer started, false indicates failure starting timer",
+        "stripped_doc" : [
+          "Starts a timer for the specified duration in minutes",
+          ""
+        ],
+        "def" : "Zzz:startTimer(timerInMins)",
+        "name" : "startTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:startTimer(timerInMins)",
+        "type" : "Method",
+        "returns" : [
+          "* boolean - true indicates timer started, false indicates failure starting timer"
+        ],
+        "desc" : "Starts a timer for the specified duration in minutes",
+        "parameters" : [
+          " * timerInMins - A number of minutes specifying new timer duration (note: real nums accepted)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Processes choice sent from menubar callback or chooser callback\n\nParameters:\n * choice - a table with the following required keys:\n    * action - one of the following strings: \"create\", \"adjust\", \"stop\", indicating the intention of the action\n    * m - number representing the impact of the choice\n\nReturns:\n * boolean - true indicates command processed successfully, false indicates failure",
+        "stripped_doc" : [
+          "Processes choice sent from menubar callback or chooser callback",
+          ""
+        ],
+        "def" : "Zzz:processChoice(choice)",
+        "name" : "processChoice",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:processChoice(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * boolean - true indicates command processed successfully, false indicates failure"
+        ],
+        "desc" : "Processes choice sent from menubar callback or chooser callback",
+        "parameters" : [
+          " * choice - a table with the following required keys:",
+          "    * action - one of the following strings: \"create\", \"adjust\", \"stop\", indicating the intention of the action",
+          "    * m - number representing the impact of the choice",
+          ""
+        ]
+      },
+      {
+        "doc" : "Updates the menubar every X seconds when a countdown has been started\nupdateFreq defaults to every second, but cant be changed\n\nParameters:\n * None\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Updates the menubar every X seconds when a countdown has been started",
+          "updateFreq defaults to every second, but cant be changed",
+          ""
+        ],
+        "def" : "Zzz:updateMenu()",
+        "name" : "updateMenu",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:updateMenu()",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "desc" : "Updates the menubar every X seconds when a countdown has been started",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Adjusts a running timer by specified minutes (up\/down)\n\nParameters:\n * m - number indicating amount to modify timer (can be -\/+)\n\nReturns:\n * boolean - true indicates timer adjusted successfully, false indicates failure",
+        "stripped_doc" : [
+          "Adjusts a running timer by specified minutes (up\/down)",
+          ""
+        ],
+        "def" : "Zzz:adjustTimer(choice)",
+        "name" : "adjustTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:adjustTimer(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * boolean - true indicates timer adjusted successfully, false indicates failure"
+        ],
+        "desc" : "Adjusts a running timer by specified minutes (up\/down)",
+        "parameters" : [
+          " * m - number indicating amount to modify timer (can be -\/+)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Deletes a running countdown\n\nParameters:\n * None\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Deletes a running countdown",
+          ""
+        ],
+        "def" : "Zzz:deleteTimer(choice)",
+        "name" : "deleteTimer",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:deleteTimer(choice)",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "desc" : "Deletes a running countdown",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Gets current choices for chooser (if no countdown is running, show start options)\nIf countdown is running, show options to modify countdown (adjust(+\/-),stop)\n\nParameters:\n * m - number indicating amount to modify timer (can be -\/+)\n\nReturns:\n * A table containing the list of choices the chooser should show",
+        "stripped_doc" : [
+          "Gets current choices for chooser (if no countdown is running, show start options)",
+          "If countdown is running, show options to modify countdown (adjust(+\/-),stop)",
+          ""
+        ],
+        "def" : "Zzz:getCurrentChoices()",
+        "name" : "getCurrentChoices",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:getCurrentChoices()",
+        "type" : "Method",
+        "returns" : [
+          " * A table containing the list of choices the chooser should show"
+        ],
+        "desc" : "Gets current choices for chooser (if no countdown is running, show start options)",
+        "parameters" : [
+          " * m - number indicating amount to modify timer (can be -\/+)",
+          ""
+        ]
+      },
+      {
+        "doc" : "Initialize our chooser which can be invoked using the custom duration menubar entry\nor by binding a hotkey to hide\/show chooser. Default is {{\"ctrl\", \"alt\", \"cmd\"}, \"S\"}}\nOur chooser can both start, stop, adjust and remove a countdown, and is also used for\ncapturing user input for custom countdown durations.\n\nParameters:\n * None\n\nReturns:\n * The initialized chooser object",
+        "stripped_doc" : [
+          "Initialize our chooser which can be invoked using the custom duration menubar entry",
+          "or by binding a hotkey to hide\/show chooser. Default is {{\"ctrl\", \"alt\", \"cmd\"}, \"S\"}}",
+          "Our chooser can both start, stop, adjust and remove a countdown, and is also used for",
+          "capturing user input for custom countdown durations.",
+          ""
+        ],
+        "def" : "Zzz:initChooser()",
+        "name" : "initChooser",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:initChooser()",
+        "type" : "Method",
+        "returns" : [
+          " * The initialized chooser object"
+        ],
+        "desc" : "Initialize our chooser which can be invoked using the custom duration menubar entry",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Starts our spoon by calling Zzz:init()\n\n\nParameters:\n * None\n\nReturns:\n * Zzz.spoon",
+        "stripped_doc" : [
+          "Starts our spoon by calling Zzz:init()",
+          "",
+          ""
+        ],
+        "def" : "Zzz:start()",
+        "name" : "start",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:start()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz.spoon"
+        ],
+        "desc" : "Starts our spoon by calling Zzz:init()",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Stops any running countdowns, hides any displayed choosers, deletes menubar entry\n\nParameters:\n * None\n\nReturns:\n * Zzz",
+        "stripped_doc" : [
+          "Stops any running countdowns, hides any displayed choosers, deletes menubar entry",
+          ""
+        ],
+        "def" : "Zzz:stop()",
+        "name" : "stop",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz"
+        ],
+        "desc" : "Stops any running countdowns, hides any displayed choosers, deletes menubar entry",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "Init function checks for existing menubar item and removes it if it exists,\nsetups Zzz.startMenuChoices table, creates new menubar item, and initialize our\nchooser\n\nParameters:\n * None\n\nReturns:\n * Zzz",
+        "stripped_doc" : [
+          "Init function checks for existing menubar item and removes it if it exists,",
+          "setups Zzz.startMenuChoices table, creates new menubar item, and initialize our",
+          "chooser",
+          ""
+        ],
+        "def" : "Zzz:init()",
+        "name" : "init",
+        "notes" : [
+
+        ],
+        "signature" : "Zzz:init()",
+        "type" : "Method",
+        "returns" : [
+          " * Zzz"
+        ],
+        "desc" : "Init function checks for existing menubar item and removes it if it exists,",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      }
+    ],
+    "name" : "Zzz"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "type" : "Module",
+    "Deprecated" : [
+
+    ],
+    "desc" : "Rebind caps lock to escape when pressed alone,",
+    "Constructor" : [
+
+    ],
+    "doc" : "Rebind caps lock to escape when pressed alone,\ncontrol modifier when pressed with other keys",
+    "Method" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "Field" : [
+
+    ],
+    "items" : [
+
+    ],
+    "name" : "CTRLESC"
+  }
+]

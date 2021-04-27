@@ -1,0 +1,658 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+      {
+        "doc" : "movedockleft\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "movedockleft",
+        "def" : "Context.moveDockLeft()",
+        "stripped_doc" : [
+          "movedockleft",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.moveDockLeft()",
+        "type" : "Function",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "moveDockLeft",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      }
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "Deprecated" : [
+
+    ],
+    "type" : "Module",
+    "desc" : "Change settings based on location and displays",
+    "Constructor" : [
+
+    ],
+    "doc" : "Change settings based on location and displays",
+    "Method" : [
+      {
+        "doc" : "movedockdown\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "movedockdown",
+        "def" : "Context.moveDockDown()",
+        "stripped_doc" : [
+          "movedockdown",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.moveDockDown()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "moveDockDown",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "check and eject\n\nParameters:\n* target - a string containing the name of the drive we wish to eject\n\nReturns:\n * None",
+        "desc" : "check and eject",
+        "def" : "Context.checkAndEject()",
+        "stripped_doc" : [
+          "check and eject",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.checkAndEject()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "checkAndEject",
+        "parameters" : [
+          "* target - a string containing the name of the drive we wish to eject",
+          ""
+        ]
+      },
+      {
+        "doc" : "home arrived\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "home arrived",
+        "def" : "Context.homeArrived()",
+        "stripped_doc" : [
+          "home arrived",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.homeArrived()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "homeArrived",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "home departed\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "home departed",
+        "def" : "Context.homeDeparted()",
+        "stripped_doc" : [
+          "home departed",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.homeDeparted()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "homeDeparted",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "ssidChangedCallback\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "ssidChangedCallback",
+        "def" : "Context.ssidChangedCallback()",
+        "stripped_doc" : [
+          "ssidChangedCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.ssidChangedCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "ssidChangedCallback",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "cafChangeCallback\n\nParameters:\n* eventType - a number which represents the ID of the eventType\n\nReturns:\n * None",
+        "desc" : "cafChangeCallback",
+        "def" : "Context.cafChangedCallback()",
+        "stripped_doc" : [
+          "cafChangeCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.cafChangedCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "cafChangedCallback",
+        "parameters" : [
+          "* eventType - a number which represents the ID of the eventType",
+          ""
+        ]
+      },
+      {
+        "doc" : "screenWatcherCallback\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "screenWatcherCallback",
+        "def" : "Context.screenWatcherCallback()",
+        "stripped_doc" : [
+          "screenWatcherCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.screenWatcherCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "screenWatcherCallback",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initWifiWatcher\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "initWifiWatcher",
+        "def" : "Context.initWifiWatcher()",
+        "stripped_doc" : [
+          "initWifiWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initWifiWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initWifiWatcher",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initCafWatcher\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "initCafWatcher",
+        "def" : "Context.initCafWatcher()",
+        "stripped_doc" : [
+          "initCafWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initCafWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initCafWatcher",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initScreenWatcher\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "initScreenWatcher",
+        "def" : "Context.initScreenWatcher()",
+        "stripped_doc" : [
+          "initScreenWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initScreenWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initScreenWatcher",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "init\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "init",
+        "def" : "Context:init()",
+        "stripped_doc" : [
+          "init",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:init()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "init",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "start\n\nParameters:\n * options - An optional table containing spoon configuration options\n    showMenu - boolean which indicates whether menubar item is shown\n    animate - boolean which indicates whether ui mode toggle is animated\n\nReturns:\n * None",
+        "desc" : "start",
+        "def" : "Context:start()",
+        "stripped_doc" : [
+          "start",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:start()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "start",
+        "parameters" : [
+          " * options - An optional table containing spoon configuration options",
+          "    showMenu - boolean which indicates whether menubar item is shown",
+          "    animate - boolean which indicates whether ui mode toggle is animated",
+          ""
+        ]
+      },
+      {
+        "doc" : "stop\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "stop",
+        "def" : "Context:stop()",
+        "stripped_doc" : [
+          "stop",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "stop",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      }
+    ],
+    "Field" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "items" : [
+      {
+        "doc" : "movedockleft\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "movedockleft",
+        "def" : "Context.moveDockLeft()",
+        "stripped_doc" : [
+          "movedockleft",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.moveDockLeft()",
+        "type" : "Function",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "moveDockLeft",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "cafChangeCallback\n\nParameters:\n* eventType - a number which represents the ID of the eventType\n\nReturns:\n * None",
+        "desc" : "cafChangeCallback",
+        "def" : "Context.cafChangedCallback()",
+        "stripped_doc" : [
+          "cafChangeCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.cafChangedCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "cafChangedCallback",
+        "parameters" : [
+          "* eventType - a number which represents the ID of the eventType",
+          ""
+        ]
+      },
+      {
+        "doc" : "check and eject\n\nParameters:\n* target - a string containing the name of the drive we wish to eject\n\nReturns:\n * None",
+        "desc" : "check and eject",
+        "def" : "Context.checkAndEject()",
+        "stripped_doc" : [
+          "check and eject",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.checkAndEject()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "checkAndEject",
+        "parameters" : [
+          "* target - a string containing the name of the drive we wish to eject",
+          ""
+        ]
+      },
+      {
+        "doc" : "home arrived\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "home arrived",
+        "def" : "Context.homeArrived()",
+        "stripped_doc" : [
+          "home arrived",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.homeArrived()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "homeArrived",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "home departed\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "home departed",
+        "def" : "Context.homeDeparted()",
+        "stripped_doc" : [
+          "home departed",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.homeDeparted()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "homeDeparted",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "init\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "init",
+        "def" : "Context:init()",
+        "stripped_doc" : [
+          "init",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:init()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "init",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initCafWatcher\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "initCafWatcher",
+        "def" : "Context.initCafWatcher()",
+        "stripped_doc" : [
+          "initCafWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initCafWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initCafWatcher",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initScreenWatcher\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "initScreenWatcher",
+        "def" : "Context.initScreenWatcher()",
+        "stripped_doc" : [
+          "initScreenWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initScreenWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initScreenWatcher",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      },
+      {
+        "doc" : "initWifiWatcher\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "initWifiWatcher",
+        "def" : "Context.initWifiWatcher()",
+        "stripped_doc" : [
+          "initWifiWatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.initWifiWatcher()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "initWifiWatcher",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "movedockdown\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "movedockdown",
+        "def" : "Context.moveDockDown()",
+        "stripped_doc" : [
+          "movedockdown",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.moveDockDown()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "moveDockDown",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "screenWatcherCallback\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "screenWatcherCallback",
+        "def" : "Context.screenWatcherCallback()",
+        "stripped_doc" : [
+          "screenWatcherCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.screenWatcherCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "screenWatcherCallback",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "ssidChangedCallback\n\nParameters:\n* None\n\nReturns:\n * None",
+        "desc" : "ssidChangedCallback",
+        "def" : "Context.ssidChangedCallback()",
+        "stripped_doc" : [
+          "ssidChangedCallback",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context.ssidChangedCallback()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "ssidChangedCallback",
+        "parameters" : [
+          "* None",
+          ""
+        ]
+      },
+      {
+        "doc" : "start\n\nParameters:\n * options - An optional table containing spoon configuration options\n    showMenu - boolean which indicates whether menubar item is shown\n    animate - boolean which indicates whether ui mode toggle is animated\n\nReturns:\n * None",
+        "desc" : "start",
+        "def" : "Context:start()",
+        "stripped_doc" : [
+          "start",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:start()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "start",
+        "parameters" : [
+          " * options - An optional table containing spoon configuration options",
+          "    showMenu - boolean which indicates whether menubar item is shown",
+          "    animate - boolean which indicates whether ui mode toggle is animated",
+          ""
+        ]
+      },
+      {
+        "doc" : "stop\n\nParameters:\n * None\n\nReturns:\n * None",
+        "desc" : "stop",
+        "def" : "Context:stop()",
+        "stripped_doc" : [
+          "stop",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Context:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "name" : "stop",
+        "parameters" : [
+          " * None",
+          ""
+        ]
+      }
+    ],
+    "name" : "Context"
+  }
+]

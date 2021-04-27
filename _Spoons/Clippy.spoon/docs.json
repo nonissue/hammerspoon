@@ -1,0 +1,260 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+      {
+        "doc" : "disables clippy\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "disables clippy",
+          ""
+        ],
+        "desc" : "disables clippy",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy.disable()",
+        "type" : "Function",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy.disable()",
+        "name" : "disable"
+      }
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "type" : "Module",
+    "Deprecated" : [
+
+    ],
+    "desc" : "Copy last screenshot to clipboard and save to disk",
+    "Constructor" : [
+
+    ],
+    "doc" : "Copy last screenshot to clipboard and save to disk",
+    "Method" : [
+      {
+        "doc" : "Search repositories for a pattern\n\nParameters:\n * files - files passed along from our filewatcher\n * flags - file flags passed as context from our filewatcher\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Search repositories for a pattern",
+          ""
+        ],
+        "desc" : "Search repositories for a pattern",
+        "parameters" : [
+          " * files - files passed along from our filewatcher",
+          " * flags - file flags passed as context from our filewatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy.imageToClipboard(files, flagtables)",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "def" : "Clippy.imageToClipboard(files, flagtables)",
+        "name" : "imageToClipboard"
+      },
+      {
+        "doc" : "Initialize our Clippy spoon\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Initialize our Clippy spoon",
+          ""
+        ],
+        "desc" : "Initialize our Clippy spoon",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:init()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:init()",
+        "name" : "init"
+      },
+      {
+        "doc" : "Starts clippy\n\nParameters:\n * options - An optional table containing spoon configuration options\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Starts clippy",
+          ""
+        ],
+        "desc" : "Starts clippy",
+        "parameters" : [
+          " * options - An optional table containing spoon configuration options",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:start()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:start()",
+        "name" : "start"
+      },
+      {
+        "doc" : "Stops clippy\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Stops clippy",
+          ""
+        ],
+        "desc" : "Stops clippy",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:stop()",
+        "name" : "stop"
+      }
+    ],
+    "Command" : [
+
+    ],
+    "Field" : [
+
+    ],
+    "items" : [
+      {
+        "doc" : "disables clippy\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "disables clippy",
+          ""
+        ],
+        "desc" : "disables clippy",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy.disable()",
+        "type" : "Function",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy.disable()",
+        "name" : "disable"
+      },
+      {
+        "doc" : "Search repositories for a pattern\n\nParameters:\n * files - files passed along from our filewatcher\n * flags - file flags passed as context from our filewatcher\n\nReturns:\n * Nothing",
+        "stripped_doc" : [
+          "Search repositories for a pattern",
+          ""
+        ],
+        "desc" : "Search repositories for a pattern",
+        "parameters" : [
+          " * files - files passed along from our filewatcher",
+          " * flags - file flags passed as context from our filewatcher",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy.imageToClipboard(files, flagtables)",
+        "type" : "Method",
+        "returns" : [
+          " * Nothing"
+        ],
+        "def" : "Clippy.imageToClipboard(files, flagtables)",
+        "name" : "imageToClipboard"
+      },
+      {
+        "doc" : "Initialize our Clippy spoon\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Initialize our Clippy spoon",
+          ""
+        ],
+        "desc" : "Initialize our Clippy spoon",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:init()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:init()",
+        "name" : "init"
+      },
+      {
+        "doc" : "Starts clippy\n\nParameters:\n * options - An optional table containing spoon configuration options\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Starts clippy",
+          ""
+        ],
+        "desc" : "Starts clippy",
+        "parameters" : [
+          " * options - An optional table containing spoon configuration options",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:start()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:start()",
+        "name" : "start"
+      },
+      {
+        "doc" : "Stops clippy\n\nParameters:\n * None\n\nReturns:\n * None",
+        "stripped_doc" : [
+          "Stops clippy",
+          ""
+        ],
+        "desc" : "Stops clippy",
+        "parameters" : [
+          " * None",
+          ""
+        ],
+        "notes" : [
+
+        ],
+        "signature" : "Clippy:stop()",
+        "type" : "Method",
+        "returns" : [
+          " * None"
+        ],
+        "def" : "Clippy:stop()",
+        "name" : "stop"
+      }
+    ],
+    "name" : "Clippy"
+  }
+]

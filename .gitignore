@@ -7,7 +7,7 @@ SCRATCH.lua
 totest
 media/
 .idea
-docs.json
+# docs.json
 # scratch/
 /lua
 /lua_modules

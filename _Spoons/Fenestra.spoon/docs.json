@@ -1,0 +1,41 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "Deprecated" : [
+
+    ],
+    "type" : "Module",
+    "desc" : "* Window Manipulaiton",
+    "Constructor" : [
+
+    ],
+    "Field" : [
+
+    ],
+    "Method" : [
+
+    ],
+    "doc" : "Method\n* Window Manipulaiton\n* Borrowed undo implementation from:\n* github.com\/heptal \/\/ https:\/\/goo.gl\/HcebTk",
+    "items" : [
+
+    ],
+    "Command" : [
+
+    ],
+    "name" : "Fenestra"
+  }
+]
