@@ -14,6 +14,8 @@
 
 --- TODO:
 
+--- NOTE: ONLY initialize if using mbpr2016. Don't care about ACD30 or Acer 4k really...
+---
 --- Anywhere 'targetDisplay' var is used, extract logic to check which display we care about
 --- mainScreen -> Focused screen, so we good there
 --- How do we handle multiple displays?
@@ -129,6 +131,8 @@ local cinema30 = {
     }
 }
 
+local unknownDisplay = {}
+
 function obj:bindHotkeys(keys)
     local hotkeys = keys or obj.defaultHotkeys
 
@@ -142,6 +146,20 @@ end
 
 function obj:chooserCallback(choice)
     self.changeRes(choice["res"])
+end
+
+function obj.getDisplay()
+    local targetDisplay
+
+    if (hs.screen.mainScreen():name() == "Cinema HD") then
+        targetDisplay = cinema30
+    elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
+        targetDisplay = mbpr15
+    else
+        targetDisplay = unknownDisplay
+    end
+
+    return targetDisplay
 end
 
 function obj.changeRes(choice)
@@ -163,17 +181,21 @@ function obj.changeRes(choice)
     -- clear current resmenu
     obj.resMenu = {}
 
-    local targetDisplay
-    if (hs.screen.mainScreen():name() == "Cinema HD") then
-        targetDisplay = cinema30
-    else
-        targetDisplay = mbpr15
-    end
+    -- local targetDisplay
+
+    -- if (hs.screen.mainScreen():name() == "Cinema HD") then
+    --     targetDisplay = cinema30
+    -- elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
+    --     targetDisplay = mbpr15
+    -- else
+    --     targetDisplay = unknownDisplay
+    -- end
 
     -- recreate current resmenu
-    obj:menubarItems(targetDisplay)
+
+    obj:menubarItems(obj.getDisplay())
     -- set current title based on res
-    obj.menubar:setIcon(obj.menuIcon)
+    obj.menubar:setIcon(obj.menubarIcon)
     -- set current resmenu
     obj.menubar:setMenu(obj.resMenu)
 end
@@ -197,7 +219,7 @@ function obj:menubarItems(res)
                 hs.screen.mainScreen():currentMode().h == res[i]["res"].h
          then
             -- set new menu title reflecting current res
-            obj.menuIcon = res[i]["image"]
+            obj.menubarIcon = res[i]["image"]
             -- indicate which submenu item is selected
             obj.resMenu[i]["checked"] = true
         end
@@ -222,10 +244,18 @@ end
 
 function obj.createMenubar(display)
     -- create menubar menu for current display
-    obj:menubarItems(display)
+    if (display == nil) then
+        obj:menubarItems({})
+    else
+        obj:menubarItems(display)
+    end
 
+    local icon
     -- initially set title to reflect current res
-    obj.menubar = hs.menubar.new():setIcon(obj.menuIcon):setMenu(obj.resMenu)
+
+    -- if (obj.menubarIcon == nil) then
+    --     icon =
+    obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(obj.resMenu)
 end
 
 function obj:show()
@@ -234,13 +264,15 @@ function obj:show()
     local targetDisplay
     if (hs.screen.mainScreen():name() == "Cinema HD") then
         targetDisplay = cinema30
-    else
+    elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
         targetDisplay = mbpr15
+    else
+        targetDisplay = unknownDisplay
     end
 
     self.resChooser:choices(targetDisplay)
 
-    -- if hs.screen.mainScreen():name() == "Color LCD" then
+    -- if hs.screen.mainScreen():name() == "Built-in Retina Display" then
     --     self.resChooser:choices(mbpr15)
     -- elseif hs.screen.mainScreen():name() == "Cinema HD" then
     --     self.resChooser:choices(cinema30)
@@ -254,13 +286,25 @@ end
 function obj:init()
     -- TODO: add logic to detect current display
     -- if using cinema display, don't show in menubar
-    local targetDisplay
+    -- local targetDisplay
 
-    if (hs.screen.mainScreen():name() == "Cinema HD") then
-        targetDisplay = cinema30
+    -- local targetDisplay
+    -- if (hs.screen.mainScreen():name() == "Cinema HD") then
+    --     targetDisplay = cinema30
+    -- elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
+    --     targetDisplay = mbpr15
+    -- else
+    --     targetDisplay = unknownDisplay
+    -- end
+
+    if (hs.screen.mainScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
+        hs.alert("Resolute: MBPR Detected, loading...")
     else
-        targetDisplay = mbpr15
+        hs.alert("Resolute: Unknown display, not loading!", 1)
+        return self
     end
+
+    local targetDisplay = obj.getDisplay()
 
     if self.menubar then
         self.menubar:delete()
@@ -274,7 +318,7 @@ function obj:init()
         self.resChooser:delete()
     end
 
-    self.createMenubar(targetDisplay)
+    self.createMenubar(obj.getDisplay())
 
     self.resChooser =
         hs.chooser.new(

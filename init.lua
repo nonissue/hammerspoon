@@ -9,25 +9,19 @@
 ------------------------------------------------------------------------------
 
 package.path = package.path .. ";_lib/?.lua"
-local styles = require("styles")
-local utils = require("utilities")
-
-local hs_reload = require("hammerspoon_config_reload")
-hs_reload.init()
-
--- console customization and UI is located elsewhere, so we import it
-require("console")
-
--- Add my Spoons to path
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = package.path .. ";_scratch/?.lua"
+local styles = require("styles")
+local utils = require("utilities")
+local hs_reload = require("hammerspoon_config_reload")
+hs_reload.init()
+require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
     hs.alert.defaultStyle[k] = v
 end
 
--- check for cli, and if missing, install
 -- can't remember if/what depends on this
 if not hs.ipc.cliStatus() then
     local cliInstallResult = hs.ipc.cliInstall()
@@ -41,8 +35,9 @@ else
     require("hs.ipc")
 end
 
-require("hs.hotkey").setLogLevel("warning")
+-- sane defaults
 hs.logger.defaultLogLevel = "debug"
+require("hs.hotkey").setLogLevel("warning")
 hs.window.animationDuration = 0
 
 i = hs.inspect
@@ -97,6 +92,7 @@ hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drive
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
 ------------------------------------------------------------------------------
+
 hs.loadSpoon("SafariKeys")
 spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
@@ -124,6 +120,7 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 -- Menubar also provides snooze/shorten functions
 -- There is also a modal to let users enter custom times
 ------------------------------------------------------------------------------
+
 hs.loadSpoon("Zzz")
 spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 
@@ -132,6 +129,7 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 ------------------------------------------------------------------------------
 -- Get current TOTP token, copy to clipboard and type in frontmost window
 ------------------------------------------------------------------------------
+
 hs.loadSpoon("EasyTOTP")
 
 ------------------------------------------------------------------------------
@@ -141,7 +139,6 @@ hs.loadSpoon("EasyTOTP")
 -- Currently, you have to specify the choices manually
 -- May change that in future
 ------------------------------------------------------------------------------
--- TODO: use default hotkeys
 hs.loadSpoon("Resolute")
 spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 

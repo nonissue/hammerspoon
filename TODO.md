@@ -22,16 +22,18 @@ Updated: 19-04-24
 ## Next
 
 - BEFORE ANYTHING ELSE:
-  - [ ] Upload images somewhere... https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/imgur.lua
-  - [ ] Redo Contexts.spoon from scratch using hs.watchable
+  - [ ] Redo Contexts.spoon from scratch using hs.watchable (WIP)
   - [x] Use hs.watchable for Context spoon
+  - [ ] Rewrite Context
+  - [ ] Rewrite PaywallBuster
+    - [ ] Use `outline.com` with shortened URLs
   - [ ] use try catch? https://github.com/matthewfallshaw/hammerspoon-config/blob/e038e30f649383cd9f6e3711c52ed1ac2d826f78/utilities/try_catch.lua
   - [ ] Write docs for spoons
     - [ ] Fenestra
     - [ ] AfterDark
     - [~] Context
     - [ ] PaywallBuster
-    - [ ] Zzz
+    - [x] Zzz
     - [ ] Resolute
     - [ ] CTRLESC
     - [ ] SafariKeys
@@ -42,36 +44,33 @@ Updated: 19-04-24
     - [x] SafariKeys
     - [ ] PaywallBuster
   - [ ] Improve config reload time
-  - [ ] Create menubar spoon that controls config of other spoons
   - [ ] REMOVE ANY UTILITIES OR FUNCTIONS SPECIFIC TO MY CONFIG
   - [~] test spoons on empty config
   - [ ] remove any styled text as it may cause mem leaks
-  - SUBMIT THEM
+  - [ ] SUBMIT THEM
   - [ ] use key/value store for configurable variables/defaults
     - [ ] screen resolutions
     - [x] Drives to eject
     - [x] wifi ssid
-- [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods
 
 ### Changes/Fixes
 
 - [ ] gen proper docs for my spoons (PaywallBuster, SafariKeys, SystemContexts, Zzz)
-
-### Features
-
-- [ ] Customizable cheat-sheet-style plugin
-  - cheat-sheets for
-    - [ ] tmux
-    - [ ] vim
-    - [ ] my hammerspoon
-- [ ] resolve caps-lock issue with [this](https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e)
-- [ ] Genericize timer spoon, let it be used for multiple things (alerts, screen wake)
-  - Inspiration: <https://github.com/scottcs/dot_hammerspoon/blob/master/.hammerspoon/modules/timer.lua>
+- [ ] Fuck, just found hs.fnutils, can replace a lot of my janky custom methods
 
 ## Future
 
 ### Misc
 
+- [ ] Upload images somewhere... https://github.com/heptal/dotfiles/blob/master/roles/hammerspoon/files/imgur.lua
+- [ ] resolve caps-lock issue with [this](https://gist.github.com/townewgokgok/f2161047b790a2984e438471f383010e)
+- [ ] Genericize timer spoon, let it be used for multiple things (alerts, screen wake)
+  - Inspiration: <https://github.com/scottcs/dot_hammerspoon/blob/master/.hammerspoon/modules/timer.lua>
+- [ ] Customizable cheat-sheet-style plugin
+  - cheat-sheets for
+    - [ ] tmux
+    - [ ] vim
+    - [ ] my hammerspoon
 - [ ] marquee/animated ticker with updates in menubar
 - [ ] Spoon: App context switcher (using chooser)?
   - eg. 'hammerspoon' -> opens hammerspoon console, opens vscode with hammerspoon project open
@@ -96,3 +95,4 @@ Updated: 19-04-24
 - [A] Safari: move all tabs after current tab to new window
   - [A] this is slow, but works: <https://stackoverflow.com/questions/54066100/applescript-to-split-safari-tabs-into-new-window>
 - [A] current weather? Don't really care about this
+- [A] Create menubar spoon that controls config of other spoons
