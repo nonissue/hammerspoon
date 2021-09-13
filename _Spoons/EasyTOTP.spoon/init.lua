@@ -54,7 +54,7 @@ function obj:type_token()
 end
 
 function obj.menu_callback()
-    hs.alert("Token -> Pasteboard: " .. obj:get_token(), 3)
+    hs.alert(obj:get_token(), 3)
     obj:set_clipboard()
     obj:type_token()
 end

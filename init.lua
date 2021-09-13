@@ -13,6 +13,8 @@ package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = package.path .. ";_scratch/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
+better_alerts = require("better-alerts")
+-- better_alerts:alert1()
 local hs_reload = require("hammerspoon_config_reload")
 hs_reload.init()
 require("console")
@@ -83,7 +85,7 @@ hs.loadSpoon("CTRLESC"):start()
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
-hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest"})
+hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest", "RamadaVIP"})
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
@@ -164,3 +166,9 @@ hs.loadSpoon("Clippy"):start()
 
 TextInflator = require("TextInflator")
 TextInflator:init()
+
+-- hs.loadSpoon("KSheet"):init()
+-- KSheetDefaultHotkeys = {
+--     toggle = {{"ctrl", "alt", "cmd"}, "K"}
+-- }
+-- spoon.KSheet:bindHotkeys(KSheetDefaultHotkeys)
