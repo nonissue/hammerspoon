@@ -1,16 +1,12 @@
 .DS_Store
 .#*
-*.sublime-workspace
-*.sublime-project
 SCRATCH.lua
 .vs
-totest
 media/
 .idea
-# docs.json
-# scratch/
 /lua
 /lua_modules
 screens/
 hs/
 .luarocks/
+Spoons/SpoonInstall.spoon
