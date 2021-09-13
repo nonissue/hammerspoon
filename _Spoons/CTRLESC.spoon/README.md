@@ -22,3 +22,7 @@ There is already a [Spoon](https://github.com/jasonrudolph/ControlEscape.spoon) 
 
 email: andy at [mygithubusername].org
 my github username is `nonissue`
+
+### AEKII M3501 Fix
+
+- https://github.com/pqrs-org/Karabiner-Elements/issues/2360
