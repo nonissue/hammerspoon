@@ -93,8 +93,8 @@ local mbp14 = {
     {
         ["id"] = 3,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "More on screen, things are smaller",
-        ["text"] = "1800 x 1169",
+        ["subText"] = "1800 x 1169",
+        ["text"] = "More",
         ["res"] = {
             h = 1169,
             s = 2,
@@ -102,10 +102,6 @@ local mbp14 = {
         }
     }
 }
-
-local function styleChooserChoiceText(text)
-    return hs.styledtext.new(text, {font = {size = 14}})
-end
 
 local LGUltrafine24 = {
     {
@@ -140,27 +136,6 @@ local LGUltrafine24 = {
             s = 2.0,
             w = 2304
         }
-    }
-}
-
-local displayTitle = {
-    {
-        title = hs.screen.primaryScreen():name()
-    },
-    {
-        title = "-"
-    }
-}
-
-local menuOptions = {
-    {
-        title = "-"
-    },
-    {
-        title = "Refresh",
-        fn = function()
-            hs.alert("Refresh Resolute")
-        end
     }
 }
 
@@ -234,13 +209,12 @@ function obj.changeRes(choice)
     local s = choice["s"]
 
     local freq = 120
-
     if (hs.screen.primaryScreen():name() == "LG UltraFine") then
         freq = 60
     end
 
     -- change screen resolution
-    hs.screen.mainScreen():setMode(w, h, s, 60, 8)
+    hs.screen.mainScreen():setMode(w, h, s, freq, 8)
 
     -- The code below updates the menubar menu to indicate new resolution
     -- The menubar menu doesn't refresh automatically, so we generate
@@ -250,16 +224,13 @@ function obj.changeRes(choice)
 
     -- clear current resmenu
     obj.resMenu = {}
-
-    obj:menubarItems(obj.getDisplayOptions())
-    -- set current title based on res
+    -- obj:generateMenubarItems(obj.getDisplayOptions())
     obj.menubar:setIcon(obj.menubarIcon)
-    -- set current resmenu
     obj.menubar:setMenu(obj:generateMenubarItems(obj.getDisplayOptions()))
 end
 
 function obj:generateMenubarItems(displayOptions)
-    local newMenubarItems = {{title = hs.screen.primaryScreen():name()}, {title = "-"}}
+    local newMenubarItems = {{title = hs.screen.primaryScreen():name(), disabled = true}, {title = "-"}}
 
     for i = 1, #displayOptions do
         table.insert(
