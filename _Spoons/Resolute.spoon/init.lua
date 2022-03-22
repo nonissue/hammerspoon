@@ -42,7 +42,6 @@ obj.logger = hs.logger.new("Resolute")
 obj.resChooser = nil
 obj.hotkeyShow = nil
 obj.menubar = nil
-obj.resMenu = {}
 obj.current = nil
 
 -- -- Utility for getting current paths
@@ -213,18 +212,9 @@ function obj.changeRes(choice)
         freq = 60
     end
 
-    -- change screen resolution
     hs.screen.mainScreen():setMode(w, h, s, freq, 8)
 
-    -- The code below updates the menubar menu to indicate new resolution
-    -- The menubar menu doesn't refresh automatically, so we generate
-    -- a new table of options, and then replace the existing one
-    -- Not efficient, but there doesn't seem to be a delay and
-    -- I can't think of a better way to do this
-
-    -- clear current resmenu
-    obj.resMenu = {}
-    -- obj:generateMenubarItems(obj.getDisplayOptions())
+    -- clear current menu
     obj.menubar:setIcon(obj.menubarIcon)
     obj.menubar:setMenu(obj:generateMenubarItems(obj.getDisplayOptions()))
 end
@@ -273,9 +263,8 @@ end
 
 function obj.createMenubar(display)
     -- create menubar menu for current display
+    -- does this need to be a function?
     obj.logger.d("generateDisplayOptions")
-
-    -- obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(hs.fnutils.concat(test, menuOptions))
     obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(obj:generateMenubarItems(display))
 end
 
@@ -294,6 +283,7 @@ function obj:show()
     self.resChooser:choices(targetDisplay)
 
     self.resChooser:show()
+
     return self
 end
 
@@ -321,10 +311,6 @@ function obj:init()
         self.menubar:delete()
     end
 
-    if self.resMenu then
-        self.resMenu = {}
-    end
-
     if self.resChooser then
         self.resChooser:delete()
     end
@@ -347,11 +333,8 @@ function obj:init()
 
     self.resChooser:choices(obj.getDisplayOptions())
     self.resChooser:rows(#obj.getDisplayOptions())
-
     self.resChooser:placeholderText("Select a resolution")
     self.resChooser:searchSubText(true)
-    -- self.resChooser:width(40)
-    -- self.resChooser:bgDark(false)
 
     return self
 end
