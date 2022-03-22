@@ -56,16 +56,6 @@ obj.spoonPath = script_path()
 -- change icon to match circle icons
 -- UPDATE: Using TV icon across all resolutions as it's simpler
 obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
--- obj.zoomedInIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
--- obj.zoomedOutIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
-
--- function obj:bindHotkeys(mapping)
---     local def = {
---         showResoluteChooser = hs.fnutils.partial(self:show(), self)
---     }
-
---     hs.spoons.bindHotkeysToSpec(def, mapping)
--- end
 
 obj.defaultHotkeys = {
     showResolute = {{"ctrl", "cmd", "alt"}, "L"}
@@ -76,62 +66,114 @@ obj.defaultHotkeys = {
 -- Might be nice to automatically choose some based on screen,
 -- but it's tough to know what will look good
 -- NOTE: Is used for both chooserChoices and menubar menuitems
-local mbpr15 = {
-    {
-        ["id"] = 2,
-        ["image"] = obj.menubarIcon,
-        ["subText"] = "1440x900",
-        ["text"] = "Larger",
-        ["res"] = {w = 1440, h = 900, s = 2}
-    },
-    {
-        ["id"] = 3,
-        ["image"] = obj.menubarIcon,
-        ["subText"] = "1680x1050",
-        ["text"] = "Default",
-        ["res"] = {w = 1680, h = 1050, s = 2}
-    },
-    {
-        ["id"] = 4,
-        ["image"] = obj.menubarIcon,
-        ["subText"] = "1920x1200",
-        ["text"] = "Smaller",
-        ["res"] = {w = 1920, h = 1200, s = 2}
-    }
-}
 
-local acer4k = {
-    -- {["id"] = 1, ["icon"] = "☳", ["subText"] = "1280x800", ["text"] = "Largest", ["res"] = {w = 1280, h = 800, s = 2}},
-    {["id"] = 2, ["icon"] = "☱", ["subText"] = "1440x900", ["text"] = "Larger", ["res"] = {w = 1440, h = 900, s = 2}}
-    -- {["id"] = 3, ["icon"] = "☲", ["subText"] = "1680x1050", ["text"] = "Default", ["res"] = {w = 1680, h = 1050, s = 2}},
-    -- {["id"] = 4, ["icon"] = "☴", ["subText"] = "1920x1200", ["text"] = "Smaller", ["res"] = {w = 1920, h = 1200, s = 2}}
-}
-
-local cinema30 = {
+local mbp14 = {
     {
         ["id"] = 1,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "1920x1200",
-        ["text"] = "1920x1200",
-        ["res"] = {w = 1920, h = 1200, s = 1}
+        ["subText"] = "",
+        ["text"] = "Less",
+        ["res"] = {
+            h = 878,
+            s = 2,
+            w = 1352
+        }
     },
     {
         ["id"] = 2,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "2560x1600",
+        ["subText"] = "",
         ["text"] = "Default",
-        ["res"] = {w = 2560, h = 1600, s = 1}
+        ["res"] = {
+            h = 982,
+            s = 2,
+            w = 1512
+        }
     },
     {
         ["id"] = 3,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "2560x1440",
-        ["text"] = "2560x1440",
-        ["res"] = {w = 2560, h = 1440, s = 1}
+        ["subText"] = "",
+        ["text"] = "More Space",
+        ["res"] = {
+            h = 1169,
+            s = 2,
+            w = 1800
+        }
+    }
+}
+
+local LGUltrafine24 = {
+    {
+        ["id"] = 1,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "",
+        ["text"] = "Less",
+        ["res"] = {
+            h = 900,
+            s = 2.0,
+            w = 1600
+        }
+    },
+    {
+        ["id"] = 2,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "",
+        ["text"] = "Default",
+        ["res"] = {
+            h = 1080,
+            s = 2.0,
+            w = 1920
+        }
+    },
+    {
+        ["id"] = 3,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "",
+        ["text"] = "More Space",
+        ["res"] = {
+            h = 1296,
+            s = 2.0,
+            w = 2304
+        }
+    }
+}
+
+local displayTitle = {
+    {
+        title = hs.screen.primaryScreen():name()
+    },
+    {
+        title = "-"
+    }
+}
+
+local menuOptions = {
+    {
+        title = "-"
+    },
+    {
+        title = "Refresh",
+        fn = function()
+            hs.alert("Refresh Resolute")
+        end
     }
 }
 
 local unknownDisplay = {}
+
+obj.displayArrangement = {
+    current = {
+        displays = {
+            hs.screen.allScreens()
+        },
+        number = #hs.screen.allScreens()
+    },
+    previous = {
+        displays = {{}},
+        number = nil
+    }
+}
 
 function obj:bindHotkeys(keys)
     local hotkeys = keys or obj.defaultHotkeys
@@ -144,17 +186,30 @@ function obj:bindHotkeys(keys)
     )
 end
 
+function obj:updateDisplayArrangement()
+    obj.displayArrangement.previous = obj.displayArrangement.current
+
+    obj.displayArrangement.current = {
+        displays = {hs.screen.allScreens()},
+        number = #hs.screen.allScreens()
+    }
+end
+
 function obj:chooserCallback(choice)
     self.changeRes(choice["res"])
 end
 
-function obj.getDisplay()
+function obj.getDisplayOptions()
     local targetDisplay
-
-    if (hs.screen.mainScreen():name() == "Cinema HD") then
+    obj.logger.d("obj.getDisplayOptions called")
+    obj.logger.d("primaryScreen: " .. hs.screen.primaryScreen():name())
+    obj.logger.d("mainScreen: " .. hs.screen.mainScreen():name())
+    if (hs.screen.primaryScreen():name() == "Cinema HD") then
         targetDisplay = cinema30
-    elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
-        targetDisplay = mbpr15
+    elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
+        targetDisplay = mbp14
+    elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
+        targetDisplay = LGUltrafine24
     else
         targetDisplay = unknownDisplay
     end
@@ -169,8 +224,14 @@ function obj.changeRes(choice)
     local h = choice["h"]
     local s = choice["s"]
 
+    local freq = 120
+
+    if (hs.screen.primaryScreen():name() == "LG UltraFine") then
+        freq = 60
+    end
+
     -- change screen resolution
-    hs.screen.mainScreen():setMode(w, h, s, 0, 8)
+    hs.screen.mainScreen():setMode(w, h, s, 60, 8)
 
     -- The code below updates the menubar menu to indicate new resolution
     -- The menubar menu doesn't refresh automatically, so we generate
@@ -181,27 +242,16 @@ function obj.changeRes(choice)
     -- clear current resmenu
     obj.resMenu = {}
 
-    -- local targetDisplay
-
-    -- if (hs.screen.mainScreen():name() == "Cinema HD") then
-    --     targetDisplay = cinema30
-    -- elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
-    --     targetDisplay = mbpr15
-    -- else
-    --     targetDisplay = unknownDisplay
-    -- end
-
-    -- recreate current resmenu
-
-    obj:menubarItems(obj.getDisplay())
+    obj:menubarItems(obj.getDisplayOptions())
     -- set current title based on res
     obj.menubar:setIcon(obj.menubarIcon)
     -- set current resmenu
-    obj.menubar:setMenu(obj.resMenu)
+    obj.menubar:setMenu(obj:generateMenubarItems(obj.getDisplayOptions()))
 end
 
 -- should be `updateMenubarItems(res)`?
 function obj:menubarItems(res)
+    print_r(res)
     for i = 1, #res do
         table.insert(
             self.resMenu,
@@ -224,38 +274,58 @@ function obj:menubarItems(res)
             obj.resMenu[i]["checked"] = true
         end
     end
+end
 
-    -- Shared across all menubar menuitems
-    hs.fnutils.concat(
-        obj.resMenu,
-        {
+-- should be `updateMenubarItems(res)`?
+function obj:generateMenubarItems(displayOptions)
+    local newMenubarItems = {{title = hs.screen.primaryScreen():name()}, {title = "-"}}
+
+    for i = 1, #displayOptions do
+        table.insert(
+            newMenubarItems,
             {
-                title = "-"
-            },
-            {
-                title = "Refresh",
+                title = hs.styledtext.new("" .. displayOptions[i]["text"]),
                 fn = function()
-                    obj:init()
-                end
+                    self.changeRes(displayOptions[i]["res"])
+                end,
+                checked = false
             }
-        }
-    )
+        )
+        -- make menubar item menu indicate current res
+        if
+            hs.screen.mainScreen():currentMode().w == displayOptions[i]["res"].w and
+                hs.screen.mainScreen():currentMode().h == displayOptions[i]["res"].h
+         then
+            -- set new menu title reflecting current res
+            obj.menubarIcon = displayOptions[i]["image"]
+            -- indicate which submenu item is selected
+            newMenubarItems[i + 2]["checked"] = true
+        end
+    end
+
+    hs.fnutils.concat(newMenubarItems, {{title = "-"}, {title = "Refresh"}})
+
+    return newMenubarItems
 end
 
 function obj.createMenubar(display)
     -- create menubar menu for current display
+
     if (display == nil) then
         obj:menubarItems({})
     else
         obj:menubarItems(display)
     end
 
-    local icon
-    -- initially set title to reflect current res
+    local tempOptions = obj:generateMenubarItems(display)
 
-    -- if (obj.menubarIcon == nil) then
-    --     icon =
-    obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(obj.resMenu)
+    obj.logger.d("generateDisplayOptions")
+    obj.logger.d(i(obj:generateMenubarItems(display)))
+
+    local test = tempOptions
+
+    -- obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(hs.fnutils.concat(test, menuOptions))
+    obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(test)
 end
 
 function obj:show()
@@ -272,13 +342,6 @@ function obj:show()
 
     self.resChooser:choices(targetDisplay)
 
-    -- if hs.screen.mainScreen():name() == "Built-in Retina Display" then
-    --     self.resChooser:choices(mbpr15)
-    -- elseif hs.screen.mainScreen():name() == "Cinema HD" then
-    --     self.resChooser:choices(cinema30)
-    -- else
-    --     self.resChooser:choices(mbpr15)
-    -- end
     self.resChooser:show()
     return self
 end
@@ -287,24 +350,22 @@ function obj:init()
     -- TODO: add logic to detect current display
     -- if using cinema display, don't show in menubar
     -- local targetDisplay
-
-    -- local targetDisplay
-    -- if (hs.screen.mainScreen():name() == "Cinema HD") then
-    --     targetDisplay = cinema30
-    -- elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
-    --     targetDisplay = mbpr15
-    -- else
-    --     targetDisplay = unknownDisplay
-    -- end
-
+    obj.logger.setLogLevel("debug")
+    obj.logger.d("MainScreen: " .. hs.screen.mainScreen():name())
+    obj.logger.d("#hs.screen.allScreens(): " .. #hs.screen.allScreens())
     if (hs.screen.mainScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
+        obj.logger.d("Single display detected")
         hs.alert("Resolute: MBPR Detected, loading...")
+    elseif (hs.screen.mainScreen():name() == "LG UltraFine") then
+        obj.logger.d("Multiple Displays detected" .. hs.screen.mainScreen():name())
+        hs.alert("Resolute: LG UltraFine Detected, loading...")
     else
+        obj.logger.e("Screen: " .. hs.screen.mainScreen():name())
         hs.alert("Resolute: Unknown display, not loading!", 1)
         return self
     end
 
-    local targetDisplay = obj.getDisplay()
+    local targetDisplay = obj.getDisplayOptions()
 
     if self.menubar then
         self.menubar:delete()
@@ -318,7 +379,7 @@ function obj:init()
         self.resChooser:delete()
     end
 
-    self.createMenubar(obj.getDisplay())
+    self.createMenubar(obj.getDisplayOptions())
 
     self.resChooser =
         hs.chooser.new(
@@ -340,9 +401,6 @@ function obj:init()
     self.resChooser:placeholderText("Select a resolution")
     self.resChooser:searchSubText(true)
     self.resChooser:width(30)
-    -- self.resChooser:bgDark(true)
-    -- self.resChooser:fgColor({hex = "#ccc"})
-    -- self.resChooser:subTextColor({hex = "#888"})
 
     return self
 end
