@@ -71,7 +71,7 @@ local mbp14 = {
     {
         ["id"] = 1,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
+        ["subText"] = "1352 x 878",
         ["text"] = "Less",
         ["res"] = {
             h = 878,
@@ -82,7 +82,7 @@ local mbp14 = {
     {
         ["id"] = 2,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
+        ["subText"] = "1512 x 982",
         ["text"] = "Default",
         ["res"] = {
             h = 982,
@@ -93,8 +93,8 @@ local mbp14 = {
     {
         ["id"] = 3,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
-        ["text"] = "More Space",
+        ["subText"] = "More on screen, things are smaller",
+        ["text"] = "1800 x 1169",
         ["res"] = {
             h = 1169,
             s = 2,
@@ -103,12 +103,16 @@ local mbp14 = {
     }
 }
 
+local function styleChooserChoiceText(text)
+    return hs.styledtext.new(text, {font = {size = 14}})
+end
+
 local LGUltrafine24 = {
     {
         ["id"] = 1,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
         ["text"] = "Less",
+        ["subText"] = "1600 x 900",
         ["res"] = {
             h = 900,
             s = 2.0,
@@ -118,8 +122,8 @@ local LGUltrafine24 = {
     {
         ["id"] = 2,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
         ["text"] = "Default",
+        ["subText"] = "1920 x 1080",
         ["res"] = {
             h = 1080,
             s = 2.0,
@@ -129,7 +133,7 @@ local LGUltrafine24 = {
     {
         ["id"] = 3,
         ["image"] = obj.menubarIcon,
-        ["subText"] = "",
+        ["subText"] = "2304 x 1296",
         ["text"] = "More Space",
         ["res"] = {
             h = 1296,
@@ -175,6 +179,13 @@ obj.displayArrangement = {
     }
 }
 
+function obj:debugHelper()
+    obj.logger.setLogLevel("debug")
+    obj.logger.d("MainScreen: " .. hs.screen.mainScreen():name())
+    obj.logger.d("PrimaryScreen: " .. hs.screen.primaryScreen():name())
+    obj.logger.d("#hs.screen.allScreens(): " .. #hs.screen.allScreens())
+end
+
 function obj:bindHotkeys(keys)
     local hotkeys = keys or obj.defaultHotkeys
 
@@ -201,9 +212,7 @@ end
 
 function obj.getDisplayOptions()
     local targetDisplay
-    obj.logger.d("obj.getDisplayOptions called")
-    obj.logger.d("primaryScreen: " .. hs.screen.primaryScreen():name())
-    obj.logger.d("mainScreen: " .. hs.screen.mainScreen():name())
+
     if (hs.screen.primaryScreen():name() == "Cinema HD") then
         targetDisplay = cinema30
     elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
@@ -303,10 +312,10 @@ function obj:show()
     -- added logic to show different resolution choices on different screens
     -- works on whichever screen is currently focused
     local targetDisplay
-    if (hs.screen.mainScreen():name() == "Cinema HD") then
-        targetDisplay = cinema30
-    elseif (hs.screen.mainScreen():name() == "Built-in Retina Display") then
-        targetDisplay = mbpr15
+    if (hs.screen.primaryScreen():name() == "LG UltraFine") then
+        targetDisplay = LGUltrafine24
+    elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
+        targetDisplay = mbp14
     else
         targetDisplay = unknownDisplay
     end
@@ -321,15 +330,13 @@ function obj:init()
     -- TODO: add logic to detect current display
     -- if using cinema display, don't show in menubar
     -- local targetDisplay
-    obj.logger.setLogLevel("debug")
-    obj.logger.d("MainScreen: " .. hs.screen.mainScreen():name())
-    obj.logger.d("PrimaryScreen: " .. hs.screen.primaryScreen():name())
-    obj.logger.d("#hs.screen.allScreens(): " .. #hs.screen.allScreens())
+    obj.debugHelper()
+
     if (hs.screen.primaryScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
         obj.logger.d("Single display detected")
         hs.alert("Resolute: MBPR Detected, loading...")
     elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
-        obj.logger.d("Multiple Displays detected" .. hs.screen.mainScreen():name())
+        obj.logger.d("\nMultiple Displays detected - " .. hs.screen.mainScreen():name())
         hs.alert("Resolute: LG UltraFine Detected, loading...")
     else
         obj.logger.e("pScreen: " .. hs.screen.primaryScreen():name())
@@ -367,12 +374,13 @@ function obj:init()
         end
     )
 
-    self.resChooser:choices(obj:generateMenubarItems(obj.getDisplayOptions()))
-    self.resChooser:rows(#targetDisplay)
+    self.resChooser:choices(obj.getDisplayOptions())
+    self.resChooser:rows(#obj.getDisplayOptions())
 
     self.resChooser:placeholderText("Select a resolution")
     self.resChooser:searchSubText(true)
-    self.resChooser:width(30)
+    -- self.resChooser:width(40)
+    -- self.resChooser:bgDark(false)
 
     return self
 end
