@@ -249,34 +249,6 @@ function obj.changeRes(choice)
     obj.menubar:setMenu(obj:generateMenubarItems(obj.getDisplayOptions()))
 end
 
--- should be `updateMenubarItems(res)`?
-function obj:menubarItems(res)
-    print_r(res)
-    for i = 1, #res do
-        table.insert(
-            self.resMenu,
-            {
-                title = hs.styledtext.new("" .. res[i]["text"]),
-                fn = function()
-                    self.changeRes(res[i]["res"])
-                end,
-                checked = false
-            }
-        )
-        -- make menubar item menu indicate current res
-        if
-            hs.screen.mainScreen():currentMode().w == res[i]["res"].w and
-                hs.screen.mainScreen():currentMode().h == res[i]["res"].h
-         then
-            -- set new menu title reflecting current res
-            obj.menubarIcon = res[i]["image"]
-            -- indicate which submenu item is selected
-            obj.resMenu[i]["checked"] = true
-        end
-    end
-end
-
--- should be `updateMenubarItems(res)`?
 function obj:generateMenubarItems(displayOptions)
     local newMenubarItems = {{title = hs.screen.primaryScreen():name()}, {title = "-"}}
 
@@ -303,29 +275,28 @@ function obj:generateMenubarItems(displayOptions)
         end
     end
 
-    hs.fnutils.concat(newMenubarItems, {{title = "-"}, {title = "Refresh"}})
+    hs.fnutils.concat(
+        newMenubarItems,
+        {
+            {title = "-"},
+            {
+                title = "Refresh",
+                fn = function()
+                    obj:init()
+                end
+            }
+        }
+    )
 
     return newMenubarItems
 end
 
 function obj.createMenubar(display)
     -- create menubar menu for current display
-
-    if (display == nil) then
-        obj:menubarItems({})
-    else
-        obj:menubarItems(display)
-    end
-
-    local tempOptions = obj:generateMenubarItems(display)
-
     obj.logger.d("generateDisplayOptions")
-    obj.logger.d(i(obj:generateMenubarItems(display)))
-
-    local test = tempOptions
 
     -- obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(hs.fnutils.concat(test, menuOptions))
-    obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(test)
+    obj.menubar = hs.menubar.new():setIcon(obj.menubarIcon):setMenu(obj:generateMenubarItems(display))
 end
 
 function obj:show()
@@ -352,15 +323,16 @@ function obj:init()
     -- local targetDisplay
     obj.logger.setLogLevel("debug")
     obj.logger.d("MainScreen: " .. hs.screen.mainScreen():name())
+    obj.logger.d("PrimaryScreen: " .. hs.screen.primaryScreen():name())
     obj.logger.d("#hs.screen.allScreens(): " .. #hs.screen.allScreens())
-    if (hs.screen.mainScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
+    if (hs.screen.primaryScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
         obj.logger.d("Single display detected")
         hs.alert("Resolute: MBPR Detected, loading...")
-    elseif (hs.screen.mainScreen():name() == "LG UltraFine") then
+    elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
         obj.logger.d("Multiple Displays detected" .. hs.screen.mainScreen():name())
         hs.alert("Resolute: LG UltraFine Detected, loading...")
     else
-        obj.logger.e("Screen: " .. hs.screen.mainScreen():name())
+        obj.logger.e("pScreen: " .. hs.screen.primaryScreen():name())
         hs.alert("Resolute: Unknown display, not loading!", 1)
         return self
     end
@@ -395,7 +367,7 @@ function obj:init()
         end
     )
 
-    self.resChooser:choices(targetDisplay)
+    self.resChooser:choices(obj:generateMenubarItems(obj.getDisplayOptions()))
     self.resChooser:rows(#targetDisplay)
 
     self.resChooser:placeholderText("Select a resolution")
