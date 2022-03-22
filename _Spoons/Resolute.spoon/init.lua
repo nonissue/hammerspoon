@@ -138,7 +138,7 @@ local LGUltrafine24 = {
     }
 }
 
-local unknownDisplay = {}
+local UNKNOWN_DISPLAY = {}
 
 obj.displayArrangement = {
     current = {
@@ -194,14 +194,14 @@ function obj.getDisplayOptions()
     elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
         targetDisplay = LGUltrafine24
     else
-        targetDisplay = unknownDisplay
+        targetDisplay = UNKNOWN_DISPLAY
     end
 
     return targetDisplay
 end
 
 function obj.changeRes(choice)
-    print(i(choice))
+    obj.logger.d(i(choice))
 
     local w = choice["w"]
     local h = choice["h"]
@@ -214,7 +214,6 @@ function obj.changeRes(choice)
 
     hs.screen.mainScreen():setMode(w, h, s, freq, 8)
 
-    -- clear current menu
     obj.menubar:setIcon(obj.menubarIcon)
     obj.menubar:setMenu(obj:generateMenubarItems(obj.getDisplayOptions()))
 end
@@ -233,14 +232,12 @@ function obj:generateMenubarItems(displayOptions)
                 checked = false
             }
         )
-        -- make menubar item menu indicate current res
         if
+            -- indicate currently selected scaling mode
             hs.screen.mainScreen():currentMode().w == displayOptions[i]["res"].w and
                 hs.screen.mainScreen():currentMode().h == displayOptions[i]["res"].h
          then
-            -- set new menu title reflecting current res
             obj.menubarIcon = displayOptions[i]["image"]
-            -- indicate which submenu item is selected
             newMenubarItems[i + 2]["checked"] = true
         end
     end
@@ -272,12 +269,13 @@ function obj:show()
     -- added logic to show different resolution choices on different screens
     -- works on whichever screen is currently focused
     local targetDisplay
+
     if (hs.screen.primaryScreen():name() == "LG UltraFine") then
         targetDisplay = LGUltrafine24
     elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
         targetDisplay = mbp14
     else
-        targetDisplay = unknownDisplay
+        targetDisplay = UNKNOWN_DISPLAY
     end
 
     self.resChooser:choices(targetDisplay)
@@ -291,21 +289,17 @@ function obj:init()
     -- TODO: add logic to detect current display
     -- if using cinema display, don't show in menubar
     -- local targetDisplay
-    obj.debugHelper()
+    -- obj.debugHelper()
 
     if (hs.screen.primaryScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
         obj.logger.d("Single display detected")
-        hs.alert("Resolute: MBPR Detected, loading...")
     elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
         obj.logger.d("\nMultiple Displays detected - " .. hs.screen.mainScreen():name())
-        hs.alert("Resolute: LG UltraFine Detected, loading...")
     else
         obj.logger.e("pScreen: " .. hs.screen.primaryScreen():name())
-        hs.alert("Resolute: Unknown display, not loading!", 1)
+
         return self
     end
-
-    local targetDisplay = obj.getDisplayOptions()
 
     if self.menubar then
         self.menubar:delete()
@@ -340,13 +334,13 @@ function obj:init()
 end
 
 function obj:start()
-    obj.logger.df("-- Starting resChooser")
+    -- obj.logger.df("-- Starting resChooser")
     self:init()
     return self
 end
 
 function obj:stop()
-    obj.logger.df("-- Stopping resChooser?")
+    -- obj.logger.df("-- Stopping resChooser?")
     self.resChooser:hide()
     if self.hotkeyShow then
         self.hotkeyShow:disable()

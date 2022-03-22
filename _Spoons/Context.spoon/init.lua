@@ -33,6 +33,8 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
+obj.settings = dofile(hs.spoons.resourcePath("Settings.lua")):init()
+
 obj.logger = hs.logger.new("Context")
 obj.hotkeyShow = nil
 
@@ -54,7 +56,7 @@ obj.lastNumberOfScreens = #hs.screen.allScreens()
 
 obj.currentGPU = nil
 
-obj.contextValues = hs.watchable.new("context", true)
+obj.contextValues = hs.watchable.new("context")
 
 -- spoon options
 obj.shownInMenu = false
@@ -304,42 +306,46 @@ function obj.screenWatcherCallback()
     -- Use UUIDs for logic
     -- Cinema HD: 12C25E80-CE33-A29C-DA8C-E02B2E982D59
     -- Color LCD: 120F5D25-16F2-160F-2DC6-FE73F87D696C
-    local res,
-        success,
-        exit = --luacheck: ignore
-        hs.execute(
-        "system_profiler SPDisplaysDataType | \
+    if (hs.settings.get("context_settings_show_gpu")) then
+        local res,
+            success,
+            exit = --luacheck: ignore
+            hs.execute(
+            "system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
-    )
-    if res == "" then
-        obj.currentGPU = "iGPU"
-        obj.contextValues.currentGPU = "iGPU"
-    else
-        obj.currentGPU = "dGPU"
-        obj.contextValues.currentGPU = "dGPU"
-    end
-    -- rcreate menu on change
-    -- obj.createMenu()
-    -- Move this to end of function?
-    -- if obj.menubar ~= nil then
-    --     obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
-    -- end
-    -- maybe check how long the dedicated gpu has been in use?
-    if obj.currentGPU == "discrete" then
-        hs.notify.new(
-            {
-                title = "GPU Status",
-                subtitle = "Warning",
-                informativeText = "Dedicated GPU in use",
-                alwaysPresent = true,
-                autoWithdraw = false
-            }
-        ):send()
-        hs.alert("Current GPU")
+        )
+        if res == "" then
+            obj.currentGPU = "iGPU"
+            obj.contextValues.currentGPU = "iGPU"
+        else
+            obj.currentGPU = "dGPU"
+            obj.contextValues.currentGPU = "dGPU"
+        end
+        -- rcreate menu on change
+        -- obj.createMenu()
+        -- Move this to end of function?
+        -- if obj.menubar ~= nil then
+        --     obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
+        -- end
+        -- maybe check how long the dedicated gpu has been in use?
+        if obj.currentGPU == "discrete" then
+            hs.notify.new(
+                {
+                    title = "GPU Status",
+                    subtitle = "Warning",
+                    informativeText = "Dedicated GPU in use",
+                    alwaysPresent = true,
+                    autoWithdraw = false
+                }
+            ):send()
+            hs.alert("Current GPU")
+        end
     end
 
     local Acer4K = hs.screen.find("B286HK")
     local CinemaDisplay = hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") -- UUID of cinema display
+    local MBP_14_UUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+    local ULTRAFINE_24_UUID = nil -- TODO
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
@@ -348,7 +354,10 @@ function obj.screenWatcherCallback()
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
         obj.moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("Color LCD") and obj.docked == "@desk" then
+    elseif
+        #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
+            obj.docked == "@desk"
+     then
         obj.logger.i("[SW] undocking")
         obj.docked = "mobile"
         obj.contextValues.docked = "mobile"
@@ -362,7 +371,7 @@ function obj.screenWatcherCallback()
         obj.moveDockDown()
     elseif
         #hs.screen.allScreens() == 1 and
-            (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == "120F5D25-16F2-160F-2DC6-FE73F87D696C")
+            (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == MBP_14_UUID)
      then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
@@ -471,42 +480,85 @@ function obj:init()
     return self
 end
 
+-- ---------------------------------------------------------------------------
+-- Context.createMenu
+-- ---------------------------------------------------------------------------
+
+--- Context.createMenu()
+--- Method
+--- createMenu
+---
+--- Parameters:
+---  * None
+---
+--- Returns:
+--- New Menubar
 function obj.createMenu(location, docked, gpu)
-    local newMenu = {
-        {
-            title = hs.styledtext.new("@" .. (location or obj.location or "error"), {}),
-            fn = function()
-                hs.alert("Current Wifi: " .. obj.currentSSID)
-            end
-        },
-        {
-            title = hs.styledtext.new((docked or obj.docked or "error"), {}),
-            fn = function()
-                hs.alert("docked clicked")
-            end
-        },
-        {
-            title = hs.styledtext.new((gpu or obj.currentGPU or "error"), {}),
-            fn = function()
-                hs.alert("Launching activity monitor...")
-                hs.application.launchOrFocus("Activity Monitor")
-            end
-        },
-        {
-            title = "-"
-        },
-        {
-            title = hs.styledtext.new(
-                "Toggle UI",
+    local newMenu = {}
+
+    if (hs.settings.get("context_settings_show_location")) then
+        hs.fnutils.concat(
+            newMenu,
+            {
                 {
-                    -- font = {size = 12},
-                    -- baselineOffset = 10,
-                    paragraphStyle = {}
+                    title = hs.styledtext.new(
+                        "  @ " .. (location or obj.location or "error"),
+                        {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                    ),
+                    fn = function()
+                        hs.alert("Current Wifi: " .. obj.currentSSID)
+                    end
                 }
-            ),
-            fn = function()
-                obj.darkModeScript =
-                    [[
+            }
+        )
+    end
+
+    hs.fnutils.concat(
+        newMenu,
+        {
+            {
+                title = hs.styledtext.new(
+                    "  " .. (docked or obj.docked or "error"),
+                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                ),
+                fn = function()
+                    hs.alert("docked clicked")
+                end
+            }
+        }
+    )
+
+    if (hs.settings.get("context_settings_show_gpu")) then
+        hs.fnutils.concat(
+            newMenu,
+            {
+                title = hs.styledtext.new(
+                    (gpu or obj.currentGPU or "error"),
+                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                ),
+                fn = function()
+                    hs.alert("Launching activity monitor...")
+                    hs.application.launchOrFocus("Activity Monitor")
+                end
+            }
+        )
+    end
+
+    if (hs.settings.get("context_settings_show_appearance_toggle")) then
+        hs.fnutils.concat(
+            newMenu,
+            {
+                {
+                    title = "-"
+                },
+                {
+                    title = hs.styledtext.new(
+                        "  Toggle UI",
+                        {font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {}}
+                    ),
+                    fn = function()
+                        obj.darkModeScript =
+                            [[
                     tell application "System Events"
                         tell appearance preferences
                             set dark mode to not dark mode
@@ -514,31 +566,72 @@ function obj.createMenu(location, docked, gpu)
                     end tell
                     ]]
 
-                hs.osascript.applescript(obj.darkModeScript)
+                        hs.osascript.applescript(obj.darkModeScript)
 
-                obj.menubar:setMenu(obj.createMenu(_, _, _))
-            end
-        },
-        {
-            title = "-"
-        },
-        {
-            title = hs.styledtext.new(
-                "Refresh",
-                {
-                    color = {hex = "#9B2C2C"},
-                    paragraphStyle = {}
+                        obj.menubar:setMenu(obj.createMenu(_, _, _))
+                    end
                 }
-            ),
-            fn = function()
-                obj.menubar:setMenu(obj.createMenu(_, _, _))
-            end
-        }
-    }
+            }
+        )
+    end
 
-    -- spoon.Context.menubar:setMenu(spoon.Context.createMenu(_, _, _))
+    hs.fnutils.concat(
+        newMenu,
+        {
+            {
+                title = "-"
+            },
+            {
+                title = hs.styledtext.new(
+                    "  Refresh   ",
+                    {
+                        color = {blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8},
+                        -- underlineStyle = 1,
+                        font = hs.styledtext.defaultFonts.userFixedPitch.name
+                    }
+                ),
+                fn = function()
+                    obj.menubar:setMenu(obj.createMenu(_, _, _))
+                end
+            }
+        }
+    )
+
+    -- Example of user configuring what spoon displays
+    -- and persisting user config!
+    -- see ./settings.lua
+    local function getSetupState()
+        if (hs.settings.get("context_settings_setup_done")) then
+            return "✔︎"
+        else
+            return "𝙭 "
+        end
+    end
+
+    hs.fnutils.concat(
+        newMenu,
+        {
+            {
+                title = hs.styledtext.new(
+                    getSetupState() .. " Setup",
+                    {
+                        color = {alpha = 0.6},
+                        font = hs.styledtext.defaultFonts.userFixedPitch.name
+                    }
+                ),
+                -- checked = getSetupState(),
+                fn = function()
+                    if (getSetupState()) then
+                        hs.settings.clear("context_settings_setup_done")
+                    else
+                        hs.settings.setDate("context_settings_setup_done", os.date(hs.settings.dateFormat))
+                    end
+                end
+            }
+        }
+    )
+
     return newMenu
-    -- obj.menubar:setMenu(newMenu)
 end
 
 --- Context:start()
@@ -573,11 +666,8 @@ function obj:start(options)
     -- creates menubar item if desired
     -- currently menu functions dont do anything
     if obj.shownInMenu then
-        -- obj.createMenu()
         obj.menubar = hs.menubar.new():setIcon(obj.menuIcon)
         obj.menubar:setMenu(obj.createMenu(_, _, obj.currentGPU))
-    -- hs.alert(obj.docked, 5)
-    -- local currentMenu = createMenu()
     end
 
     return self
@@ -613,7 +703,7 @@ end
 function obj.watchers()
     obj.contextValuesWatcher =
         hs.watchable.watch(
-        "context.*",
+        "context_settings_test.*",
         function(_, _, key, old_value, new_value)
             hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
             hs.alert(obj.contextValues.location)
