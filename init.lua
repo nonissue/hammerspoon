@@ -13,9 +13,8 @@ package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = package.path .. ";_scratch/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
-better_alerts = require("better-alerts")
--- better_alerts:alert1()
 local hs_reload = require("hammerspoon_config_reload")
+
 hs_reload.init()
 require("console")
 
