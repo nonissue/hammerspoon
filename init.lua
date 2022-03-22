@@ -25,17 +25,18 @@ for k, v in pairs(styles.alert_default) do
 end
 
 -- can't remember if/what depends on this
-if not hs.ipc.cliStatus() then
-    local cliInstallResult = hs.ipc.cliInstall()
-    if cliInstallResult then
-        require("hs.ipc")
-    else
-        hs.alert("hs.ipc error!")
-    end
-else
-    hs.ipc.cliSaveHistory(true)
-    require("hs.ipc")
-end
+
+-- if not hs.ipc.cliStatus() then
+--     local cliInstallResult = hs.ipc.cliInstall()
+--     if cliInstallResult then
+--         require("hs.ipc")
+--     else
+--         hs.alert("hs.ipc error!")
+--     end
+-- else
+--     hs.ipc.cliSaveHistory(true)
+--     require("hs.ipc")
+-- end
 
 -- sane defaults
 hs.logger.defaultLogLevel = "debug"
@@ -132,7 +133,7 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 -- Get current TOTP token, copy to clipboard and type in frontmost window
 ------------------------------------------------------------------------------
 
-hs.loadSpoon("EasyTOTP")
+-- hs.loadSpoon("EasyTOTP")
 
 ------------------------------------------------------------------------------
 -- Resolute.spoon / by me
