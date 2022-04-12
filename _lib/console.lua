@@ -1,3 +1,11 @@
+-- largely lifted from
+-- https://github.com/asmagill/hammerspoon-config-take2/blob/master/utils/_actions/consoleTweaks.lua
+
+-- colors from:
+-- https://rosepinetheme.com/palette
+
+-- icons from SF Symbols, processed in affinity designer, filled with color: #626671
+
 local console = require("hs.console")
 local canvas = require("hs.canvas")
 local image = require("hs.image")
@@ -5,7 +13,6 @@ local screen = require("hs.screen")
 local application = require("hs.application")
 
 -- for search functionality
-local doc = require "hs.doc"
 
 local _c = canvas.new {x = 0, y = 0, h = 200, w = 200}
 _c[1] = {
@@ -44,52 +51,34 @@ local _i_editConfig = hs.image.imageFromPath(imageBasePath .. "hammer.circle.pdf
 
 local colorizeConsolePerDarkMode = function()
     if console.darkMode() then
-        -- console.outputBackgroundColor {white = 0}
-        -- console.consoleCommandColor {white = 1}
-
-        hs.console.inputBackgroundColor({hex = "#222222"})
-        hs.console.outputBackgroundColor({hex = "#111111"})
+        hs.console.alpha(.98)
         hs.console.consoleCommandColor({hex = "#f6c177"})
         hs.console.consolePrintColor({hex = "#AEABC1"})
         hs.console.consoleResultColor({hex = "#c4a7e7"})
-        console.windowBackgroundColor {list = "System", name = "windowBackgroundColor"}
-        console.alpha(.99)
+        hs.console.inputBackgroundColor({hex = "#222222"})
+        hs.console.outputBackgroundColor({hex = "#111111"})
+        hs.console.windowBackgroundColor {list = "System", name = "windowBackgroundColor"}
     else
+        --
         -- FYI these are the defaults
-        console.outputBackgroundColor {list = "System", name = "textBackgroundColor"}
-        console.consoleCommandColor {white = 0}
-        console.windowBackgroundColor {list = "System", name = "windowBackgroundColor"}
-        hs.console.inputBackgroundColor({hex = "#faf4ed"})
+        -- ?? dunno if true
+
+        -- hs.console.outputBackgroundColor {list = "System", name = "textBackgroundColor"}
+        -- hs.console.windowBackgroundColor {list = "System", name = "windowBackgroundColor"}
+        -- hs.console.windowBackgroundColor({red=.6,blue=.7,green=.7})
+        -- hs.console.outputBackgroundColor({red=.8,blue=.8,green=.8})
+
+        -- Custom nonissue
+        hs.console.alpha(.99)
+        hs.console.consoleCommandColor({hex = "#7D1131"})
         hs.console.consolePrintColor({hex = "#575279"})
         hs.console.consoleResultColor({hex = "#286983"})
-        -- hs.console.consoleCommandColor({hex = "#b4637a"})
-        hs.console.consoleCommandColor({hex = "#7D1131"})
-
-        --     console.windowBackgroundColor({red=.6,blue=.7,green=.7})
-        --     console.outputBackgroundColor({red=.8,blue=.8,green=.8})
-        console.alpha(.99)
+        hs.console.inputBackgroundColor({hex = "#faf4ed"})
     end
 end
 
 console.behaviorAsLabels({"moveToActiveSpace"})
 -- console.behaviorAsLabels({"canJoinAllSpaces"})
-
-local makeModuleListForMenu = function()
-    local searchList = {}
-    for i, v in ipairs(doc._jsonForModules) do
-        table.insert(searchList, v.name)
-    end
-    for i, v in ipairs(doc._jsonForSpoons) do
-        table.insert(searchList, "spoon." .. v.name)
-    end
-    table.sort(
-        searchList,
-        function(a, b)
-            return a:lower() < b:lower()
-        end
-    )
-    return searchList
-end
 
 --console.titleVisibility("hidden")
 console.toolbar():addItems {
