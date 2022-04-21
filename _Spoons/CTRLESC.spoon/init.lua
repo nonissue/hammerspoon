@@ -4,7 +4,6 @@
 --- control modifier when pressed with other keys
 ---
 
-
 --
 -- Almost none of this is original work, just combined some existing solutions
 -- See Readme for more info
@@ -18,7 +17,6 @@
 -- Pull on a new hammerspoon config and see if it works
 local obj = {}
 obj.__index = obj
-
 
 -- obj.logger.i('Initializing CTRL-ESC.spoon logger...')
 obj.name = "CTRLESC"
@@ -55,12 +53,12 @@ function obj:mod_event_handler(event)
         -- [ CMD ] -> [ CMD, CTRL ] -> [ CTRL ] -> [ ]
         -- We DO NOT want to send esc with this pattern
         self.send_esc = true
-    elseif self.prev_mods['ctrl'] and len(cur_mods) == 0 and self.send_esc then
+    elseif self.prev_mods["ctrl"] and len(cur_mods) == 0 and self.send_esc then
         -- so, if our conditions are met, we send the esc keyevent
         -- note: newKeyEvent seems much much faster than keyStroke
         -- for somereason
-        hs.eventtap.event.newKeyEvent({}, 'escape', true):post()
-        hs.eventtap.event.newKeyEvent({}, 'escape', false):post()
+        hs.eventtap.event.newKeyEvent({}, "escape", true):post()
+        hs.eventtap.event.newKeyEvent({}, "escape", false):post()
 
         -- then we set our flag back to false
         self.send_esc = false
@@ -76,14 +74,19 @@ end
 function obj:init()
     self.send_esc = false
 
-    self.ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.flagsChanged},
+    self.ctrl_tap =
+        hs.eventtap.new(
+        {hs.eventtap.event.types.flagsChanged},
         function(event)
             obj:mod_event_handler(event)
-        end)
-    self.non_ctrl_tap = hs.eventtap.new({hs.eventtap.event.types.keyDown},
+        end
+    )
+    self.non_ctrl_tap =
+        hs.eventtap.new(
+        {hs.eventtap.event.types.keyDown},
         function(event)
             self.send_esc = false
-	        return false
+            return false
         end
     )
 end

@@ -37,6 +37,11 @@ local inflates = {
         ["text"] = hs.settings.get("context.address"),
         ["subText"] = "address",
         ["uuid"] = "0004"
+    },
+    {
+        ["text"] = "pLjRJXyumJ",
+        ["subText"] = "JarPw",
+        ["uuid"] = "0005"
     }
 }
 

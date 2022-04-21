@@ -85,7 +85,19 @@ hs.loadSpoon("CTRLESC"):start()
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
-hs.settings.set("homeSSIDs", {"BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest", "RamadaVIP"})
+hs.settings.set(
+    "homeSSIDs",
+    {
+        "BROMEGA",
+        "ComfortInn VIP",
+        "BROMEGA-5",
+        "1614 Apple II",
+        "RamadaGuest",
+        "RamadaVIP",
+        "RamadaExecutive",
+        "RamadaExecutive_5G"
+    }
+)
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
@@ -160,6 +172,10 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 ------------------------------------------------------------------------------
 hs.loadSpoon("Clippy"):start()
 
+------------------------------------------------------------------------------
+-- Wip
+------------------------------------------------------------------------------
+-- hs.loadSpoon("Layers"):start()
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------

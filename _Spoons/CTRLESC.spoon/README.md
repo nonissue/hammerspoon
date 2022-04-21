@@ -1,8 +1,6 @@
-# [WIP] CTRL-ESC.spoon
+# CTRL-ESC.spoon
 
 ## About
-
-_Note: This is not finished by any stretch of the imagination_
 
 Rebinds capslock to be control when pressed with other keys (ie. `CAPSLOCK+C` is registered as `CTRL+C`) or `ESC` when `CAPSLOCK` is pressed on it's own.
 
