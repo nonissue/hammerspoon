@@ -10,6 +10,7 @@
 
 package.path = package.path .. ";_lib/?.lua"
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
+package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 package.path = package.path .. ";_scratch/?.lua"
 local styles = require("styles")
 local utils = require("utilities")
@@ -25,20 +26,20 @@ end
 
 -- can't remember if/what depends on this
 
--- if not hs.ipc.cliStatus() then
---     local cliInstallResult = hs.ipc.cliInstall()
---     if cliInstallResult then
---         require("hs.ipc")
---     else
---         hs.alert("hs.ipc error!")
---     end
--- else
---     hs.ipc.cliSaveHistory(true)
---     require("hs.ipc")
--- end
+if not hs.ipc.cliStatus() then
+    local cliInstallResult = hs.ipc.cliInstall()
+    if cliInstallResult then
+        require("hs.ipc")
+    else
+        hs.alert("hs.ipc error!")
+    end
+else
+    hs.ipc.cliSaveHistory(true)
+    require("hs.ipc")
+end
 
 -- sane defaults
-hs.logger.defaultLogLevel = "debug"
+hs.logger.defaultLogLevel = 5
 require("hs.hotkey").setLogLevel("warning")
 hs.window.animationDuration = 0
 
@@ -176,6 +177,9 @@ hs.loadSpoon("Clippy"):start()
 -- Wip
 ------------------------------------------------------------------------------
 -- hs.loadSpoon("Layers"):start()
+-- Look for Spoons in ~/.hammerspoon/MySpoons as well
+-- hs.loadSpoon("HammerText")
+-- hs.loadSpoon("CMDTAB"):start()
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
@@ -188,3 +192,58 @@ TextInflator:init()
 --     toggle = {{"ctrl", "alt", "cmd"}, "K"}
 -- }
 -- spoon.KSheet:bindHotkeys(KSheetDefaultHotkeys)
+
+-- Map the middle mouse to the alt key
+-- function captureMouseButtons()
+--     eventtapOtherMouseDown =
+--         hs.eventtap.new(
+--         {hs.eventtap.event.types.otherMouseDown},
+--         function(event)
+--             if (event:getType() == hs.eventtap.event.types.otherMouseDown) then
+--                 hs.alert.show("otherMouseDown" .. event:getType())
+--
+--                 return true, {hs.eventtap.event.newKeyEvent({"alt"}, hs.keycodes.map.alt, true)}
+--             end
+--             return false -- shouldn't ever reach here, but just in case
+--         end
+--     ):start()
+--
+--     eventtapOtherMouseUp =
+--         hs.eventtap.new(
+--         {hs.eventtap.event.types.otherMouseUp},
+--         function(event)
+--             if (event:getType() == hs.eventtap.event.types.otherMouseUp) then
+--                 hs.alert.show("otherMouseUp" .. event:getType())
+--                 return true, {hs.eventtap.event.newKeyEvent({}, hs.keycodes.map.alt, false)}
+--             end
+--             return false -- shouldn't ever reach here, but just in case
+--         end
+--     ):start()
+-- end
+
+-- wst =
+--     hs.websocket.new(
+--     "wss://client.pushover.net/push",
+--     function(e, m)
+--         if e == "open" then
+--             wst:send(
+--                 "login:5h8zicnjp715k6qimv41r6jjueuht3c937ahpgvi:s4kbk6erc3ojz8m7ya7g8f4fy69h695nk4az7u8acy4ciaxv99jen1epx4u6",
+--                 false
+--             )
+--         else
+--             hs.alert(string.format("event: %s", e))
+--             hs.alert(string.format("message: %s", m))
+--             print(string.format("event: %s", e))
+--             print(string.format("message: %s", m))
+--         end
+--     end
+-- )
+
+-- if (wst:status() == "open") then
+-- local sendres =
+--     wst:send(
+--     "login:5h8zicnjp715k6qimv41r6jjueuht3c937ahpgvi:s4kbk6erc3ojz8m7ya7g8f4fy69h695nk4az7u8acy4ciaxv99jen1epx4u6",
+--     false
+-- )
+-- hs.alert(sendres)
+-- end

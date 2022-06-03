@@ -25,7 +25,6 @@ _c:delete()
 
 local imageBasePath = hs.configdir .. "/_lib/_assets/"
 
-print("\n\n\n" .. imageBasePath .. "/questionmark.circle.svg")
 local _i_help = hs.image.imageFromPath(imageBasePath .. "questionmark.circle.pdf"):setSize({w = 20, h = 20})
 local _i_darkModeToggle = hs.image.imageFromPath(imageBasePath .. "moon.circle.pdf"):setSize({w = 20, h = 20})
 local _i_clearConsole = hs.image.imageFromPath(imageBasePath .. "xmark.circle.pdf"):setSize({w = 20, h = 20})
@@ -80,7 +79,7 @@ end
 console.behaviorAsLabels({"moveToActiveSpace"})
 -- console.behaviorAsLabels({"canJoinAllSpaces"})
 
---console.titleVisibility("hidden")
+-- console.titleVisibility("hidden")
 console.toolbar():addItems {
     {
         id = "clear",
@@ -113,28 +112,6 @@ console.toolbar():addItems {
         end,
         default = true
     },
-    -- dunno what this does?
-    -- {
-    --     id = "reseat",
-    --     image = _i_reseatConsole,
-    --     fn = function(...)
-    --         local hammerspoon = application.applicationsForBundleID(hs.processInfo.bundleID)[1]
-    --         local consoleWindow = hammerspoon:mainWindow()
-    --         if consoleWindow then
-    --             local consoleFrame = consoleWindow:frame()
-    --             local screenFrame = screen.mainScreen():frame()
-    --             local newConsoleFrame = {
-    --                 x = screenFrame.x + (screenFrame.w - consoleFrame.w) / 2,
-    --                 y = screenFrame.y + (screenFrame.h - consoleFrame.h),
-    --                 w = consoleFrame.w,
-    --                 h = consoleFrame.h
-    --             }
-    --             consoleWindow:setFrame(newConsoleFrame)
-    --         end
-    --     end,
-    --     label = "Reseat",
-    --     tooltip = "Reseat Console"
-    -- },
     {
         id = "darkMode",
         image = _i_darkModeToggle,
@@ -150,13 +127,13 @@ console.toolbar():addItems {
         label = "HS Docs Web",
         tooltip = "Opens HS documentation website",
         image = _i_help,
-        -- image = image.imageFromAppBundle("com.apple.Safari"),
         fn = function(bar, attachedTo, item)
             hs.urlevent.openURLWithBundle("https://www.hammerspoon.org/docs/index.html", "com.apple.Safari")
         end,
         default = true
     }
 }
+
 -- since they don't exist when the toolbar is first attached, we have to re-insert them here
 --   consider adding something in _coresetup to check users config dir for toolbar additions?
 console.toolbar():insertItem("darkMode", #console.toolbar():visibleItems() + 1):insertItem(
@@ -169,5 +146,14 @@ console.toolbar():insertItem("darkMode", #console.toolbar():visibleItems() + 1):
 
 console.smartInsertDeleteEnabled(false)
 colorizeConsolePerDarkMode()
+
+hs.hotkey.bind(
+    {"cmd", "alt", "ctrl"},
+    "y",
+    function()
+        hs.toggleConsole()
+        hs.window.frontmostWindow():focus()
+    end
+)
 
 return true -- so require has something to save
