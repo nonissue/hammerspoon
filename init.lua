@@ -7,7 +7,6 @@
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
-
 package.path = package.path .. ";_lib/?.lua"
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
@@ -20,9 +19,7 @@ hs_reload.init()
 require("console")
 
 -- bind our alert style to default alert style
-for k, v in pairs(styles.alert_default) do
-    hs.alert.defaultStyle[k] = v
-end
+for k, v in pairs(styles.alert_default) do hs.alert.defaultStyle[k] = v end
 
 -- can't remember if/what depends on this
 
@@ -86,23 +83,18 @@ hs.loadSpoon("CTRLESC"):start()
 local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
 local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
-hs.settings.set(
-    "homeSSIDs",
-    {
-        "BROMEGA",
-        "ComfortInn VIP",
-        "BROMEGA-5",
-        "1614 Apple II",
-        "RamadaGuest",
-        "RamadaVIP",
-        "RamadaExecutive",
-        "RamadaExecutive_5G"
-    }
-)
+hs.settings.set("homeSSIDs", {
+    "BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest",
+    "RamadaVIP", "RamadaExecutive", "RamadaExecutive_5G"
+})
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
-hs.loadSpoon("Context"):start({showMenu = true, display_ids = display_ids, drives = drives})
+hs.loadSpoon("Context"):start({
+    showMenu = false,
+    display_ids = display_ids,
+    drives = drives
+})
 
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
@@ -180,12 +172,16 @@ hs.loadSpoon("Clippy"):start()
 -- Look for Spoons in ~/.hammerspoon/MySpoons as well
 -- hs.loadSpoon("HammerText")
 -- hs.loadSpoon("CMDTAB"):start()
+-- hs.loadSpoon("HammerMenu"):start()
 ------------------------------------------------------------------------------
 --                                END OF SPOONS                             --
 ------------------------------------------------------------------------------
 
 TextInflator = require("TextInflator")
 TextInflator:init()
+
+-- hs.loadSpoon("LoPo"):init()
+-- hs.loadSpoon("LoPo"):start()
 
 -- hs.loadSpoon("KSheet"):init()
 -- KSheetDefaultHotkeys = {
