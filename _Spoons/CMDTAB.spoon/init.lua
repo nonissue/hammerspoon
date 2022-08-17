@@ -3,11 +3,11 @@
 --- When using command tab to switch to a running app,
 --- open a new window if none are open
 ---
+--- 
 
 local obj = {}
 obj.__index = obj
 
--- obj.logger.i('Initializing CTRL-ESC.spoon logger...')
 obj.name = "CMDTAB"
 obj.version = "1.0"
 obj.author = "andy williams <andy@nonissue.org>"
@@ -69,7 +69,7 @@ function obj:handleModifierEvent(event)
     end
 
     if cur_mods["cmd"] and len(cur_mods) == 1 then
-        obj.logger.i("INFO: ⌘↓ DETECTED")
+        obj.logger.i("INFO: ⌘ KEY DOWN DETECTED")
         obj.logger.i("INFO: Watching for tab key...")
 
         self.cmd_down = true
@@ -115,8 +115,6 @@ function obj:handleKeyUpEvent(event)
     end
 
     if self.cmd_down and cur_keycode == 48 then
-        -- obj.menubar:setTitle("CMDTAB: ACTIVE")
-        -- hs.alert("CMDTAB mode entered")
         obj.logger.i("INFO: Entering window switcher")
         self.cmdTabMode = true
     else
@@ -140,7 +138,7 @@ function obj:init()
 
     self.keyUpWatcher =
         hs.eventtap.new(
-        {hs.eventtap.event.types.keyUp},
+        {hs.eventtap.event.types.keyDown},
         function(event)
             if not event:getFlags("cmd") then
                 return false
@@ -157,8 +155,6 @@ function obj:start()
     self.modifierWatcher:start()
     self.keyUpWatcher:start()
 
-    -- obj.menubar = hs.menubar.new()
-    -- obj.menubar:setTitle("CMDTAB: IDLE")
 end
 
 function obj:stop()
