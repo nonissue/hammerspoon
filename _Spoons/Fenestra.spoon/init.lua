@@ -3,11 +3,9 @@
 --- * Window Manipulaiton
 --- * Borrowed undo implementation from:
 --- * github.com/heptal // https://goo.gl/HcebTk
-
 -- other interesting ideas:
 -- layouts (http://lowne.github.io/hammerspoon-extensions/)
 -- snapping (ibid)
-
 --[[
     Todo:
         - Window snapping?
@@ -16,8 +14,7 @@
             - Use similar hotkeys as existing ones, just with ⬆ and ⬇ arrow keys
             - Would have to somehow refer to the current placement of the window for
             - x coordinates.
-]]
-local obj = {}
+]] local obj = {}
 obj.__index = obj
 
 -- Metadata
@@ -33,11 +30,7 @@ obj.logger = hs.logger.new("Fenestra")
 
 -- undo logic from @songchenwen:
 -- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
-local undostack = {
-    stack = {},
-    stackMax = 100,
-    skip = false
-}
+local undostack = {stack = {}, stackMax = 100, skip = false}
 
 -- grid size
 hs.grid.MARGINX = 0
@@ -79,7 +72,8 @@ obj.defaultHotkeys = {
     -- pushPrevious?
     pushUp = {{"ctrl", "alt", "cmd"}, "Up"},
     pushDown = {{"ctrl", "alt", "cmd"}, "Down"},
-    undo = {{"cmd", "alt", "ctrl"}, "Z"}
+    undo = {{"cmd", "alt", "ctrl"}, "Z"},
+    centerWindow = {{"cmd", "alt", "ctrl"}, "C"}
 }
 
 -- hotkey binding not working
@@ -89,99 +83,66 @@ function obj:bindHotkeys(keys)
     assert(keys["leftHalf"], "Hotkey variable is 'leftHalf'")
     -- should finish asserts?
 
-    hs.hotkey.bindSpec(
-        keys["showGrid"],
-        function()
-            undostack:addToStack()
-            hs.grid.show()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["maxWin"],
-        function()
-            obj.logger.i("Full screen")
-            undostack:addToStack()
-            self.maxWin()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["leftHalf"],
-        function()
-            obj.logger.i("Left one half")
-            undostack:addToStack()
-            self:leftHalf()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["rightHalf"],
-        function()
-            obj.logger.i("Right one half")
-            undostack:addToStack()
-            self:rightHalf()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["leftMaj"],
-        function()
-            obj.logger.i("Left two thirds")
-            undostack:addToStack()
-            self:leftMaj()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["rightMin"],
-        function()
-            obj.logger.i("Right one third")
-            undostack:addToStack()
-            self:rightMin()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["pushUp"],
-        function()
-            undostack:addToStack()
-            obj.logger.i("Push Win Hotkey")
-            self:pushUp()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["pushDown"],
-        function()
-            undostack:addToStack()
-            obj.logger.i("Push Win Hotkey")
-            self:pushDown()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["pushWest"],
-        function()
-            undostack:addToStack()
-            obj.logger.i("Push Win Hotkey")
-            self:pushWest()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["pushEast"],
-        function()
-            undostack:addToStack()
-            obj.logger.i("Pull Win Hotkey")
-            self:pushEast()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["pushNext"],
-        function()
-            undostack:addToStack()
-            obj.logger.i("Push Next Hotkey")
-            self:pushNext()
-        end
-    )
-    hs.hotkey.bindSpec(
-        keys["undo"],
-        function()
-            undostack:undo()
-        end
-    )
+    hs.hotkey.bindSpec(keys["showGrid"], function()
+        undostack:addToStack()
+        hs.grid.show()
+    end)
+    hs.hotkey.bindSpec(keys["maxWin"], function()
+        obj.logger.i("Full screen")
+        undostack:addToStack()
+        self.maxWin()
+    end)
+    hs.hotkey.bindSpec(keys["leftHalf"], function()
+        obj.logger.i("Left one half")
+        undostack:addToStack()
+        self:leftHalf()
+    end)
+    hs.hotkey.bindSpec(keys["rightHalf"], function()
+        obj.logger.i("Right one half")
+        undostack:addToStack()
+        self:rightHalf()
+    end)
+    hs.hotkey.bindSpec(keys["leftMaj"], function()
+        obj.logger.i("Left two thirds")
+        undostack:addToStack()
+        self:leftMaj()
+    end)
+    hs.hotkey.bindSpec(keys["rightMin"], function()
+        obj.logger.i("Right one third")
+        undostack:addToStack()
+        self:rightMin()
+    end)
+    hs.hotkey.bindSpec(keys["pushUp"], function()
+        undostack:addToStack()
+        obj.logger.i("Push Win Hotkey")
+        self:pushUp()
+    end)
+    hs.hotkey.bindSpec(keys["pushDown"], function()
+        undostack:addToStack()
+        obj.logger.i("Push Win Hotkey")
+        self:pushDown()
+    end)
+    hs.hotkey.bindSpec(keys["pushWest"], function()
+        undostack:addToStack()
+        obj.logger.i("Push Win Hotkey")
+        self:pushWest()
+    end)
+    hs.hotkey.bindSpec(keys["pushEast"], function()
+        undostack:addToStack()
+        obj.logger.i("Pull Win Hotkey")
+        self:pushEast()
+    end)
+    hs.hotkey.bindSpec(keys["pushNext"], function()
+        undostack:addToStack()
+        obj.logger.i("Push Next Hotkey")
+        self:pushNext()
+    end)
+    hs.hotkey.bindSpec(keys["centerWindow"], function()
+        undostack:addToStack()
+        obj.logger.i("Center Win")
+        self:centerWindow()
+    end)
+    hs.hotkey.bindSpec(keys["undo"], function() undostack:undo() end)
 end
 
 function obj.maxWin()
@@ -194,9 +155,7 @@ function obj:pushWest()
     hs.window.focusedWindow():moveOneScreenWest()
 end
 
-function obj:pushEast()
-    hs.window.focusedWindow():moveOneScreenEast()
-end
+function obj:pushEast() hs.window.focusedWindow():moveOneScreenEast() end
 
 function obj:pushNext()
     local currentWindow = hs.window.focusedWindow()
@@ -228,47 +187,35 @@ function obj:placeWindow(x, y, w, h)
     hs.grid.adjustWindow(fn)
 end
 
-function obj:leftHalf()
-    obj:placeWindow(0, 0, 5, 4)
-end
+function obj:leftHalf() obj:placeWindow(0, 0, 5, 4) end
 
-function obj:rightHalf()
-    obj:placeWindow(5, 0, 5, 4)
-end
+function obj:rightHalf() obj:placeWindow(5, 0, 5, 4) end
 
-function obj:leftMaj()
-    obj:placeWindow(0, 0, 7, 4)
-end
+function obj:leftMaj() obj:placeWindow(0, 0, 7, 4) end
 
-function obj:rightMin()
-    obj:placeWindow(7, 0, 3, 4)
-end
+function obj:rightMin() obj:placeWindow(7, 0, 3, 4) end
 
+function obj:centerWindow()
+    local cw = hs.window.focusedWindow()
+    cw:centerOnScreen()
+end
 -- undo functions from
 -- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
 -- allows us to undo the window arrangement changes
 -- keeps history
 function undostack:addToStack(wins)
-    if self.skip then
-        return
-    end
-    if not wins then
-        wins = {hs.window.focusedWindow()}
-    end
+    if self.skip then return end
+    if not wins then wins = {hs.window.focusedWindow()} end
     local size = #self.stack
     self.stack[size + 1] = self:getCurrentWindowsLayout(wins)
     size = size + 100
     if size > self.stackMax then
-        for x = 1, size - self.stackMax do
-            self.stack[x] = nil
-        end
+        for x = 1, size - self.stackMax do self.stack[x] = nil end
     end
 end
 
 function undostack:getCurrentWindowsLayout(wins)
-    if not wins then
-        wins = {hs.window.focusedWindow()}
-    end
+    if not wins then wins = {hs.window.focusedWindow()} end
     local current = {}
     for i = 1, #wins do
         local w = wins[i]
@@ -282,9 +229,7 @@ function undostack:getCurrentWindowsLayout(wins)
 end
 
 local function compareFrame(t1, t2)
-    if t1 == t2 then
-        return true
-    end
+    if t1 == t2 then return true end
     if t1 and t2 then
         return t1.x == t2.x and t1.y == t2.y and t1.w == t2.w and t1.h == t2.h
     end
