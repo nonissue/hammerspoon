@@ -16,7 +16,7 @@ local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 
 hs_reload.init()
-require("console")
+-- require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do hs.alert.defaultStyle[k] = v end
@@ -50,7 +50,7 @@ print_t = utils.print_r
 print_r = utils.print_r
 hostname = hs.host.localizedName()
 
-local mash = {"cmd", "alt", "ctrl"}
+local mash = { "cmd", "alt", "ctrl" }
 
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
@@ -80,8 +80,8 @@ hs.loadSpoon("CTRLESC"):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 
-local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
-local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
+local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
+local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
 
 hs.settings.set("homeSSIDs", {
     "BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest",
@@ -243,3 +243,23 @@ TextInflator:init()
 -- )
 -- hs.alert(sendres)
 -- end
+
+--[[ 
+
+ALLOW APPLESCRIPT VIA HAMMERSPOON TO ACCESS REMINDERS/CONTACTS/CALENDAR
+
+There is a bug with doing something like this:
+
+    local _, _, test = hs.osascript._osascript(
+                        'tell application "Reminders" to return properties of lists',
+                        "AppleScript")
+
+    print_r(test)
+
+WE NEED TO RUN THIS ONCE FOR EACH APP FIRST TO ALLOW ACCESS
+
+    hs.execute('osascript -e \'tell application "Reminders" to return default account\'')
+
+Repeat as needed for each app.
+
+]]
