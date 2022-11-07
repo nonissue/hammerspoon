@@ -14,7 +14,22 @@
             - Use similar hotkeys as existing ones, just with ⬆ and ⬇ arrow keys
             - Would have to somehow refer to the current placement of the window for
             - x coordinates.
-]] local obj = {}
+]] --
+-- 22-10-28 BUG:
+-- Sometimes moveScreenToNextWindow fails, as does "maximizing" a window.
+-- This seems to occur:
+-- 1. Mainly or only in safari
+-- 2. When I'm using three displays (MBP Display, LG Ultrafine, Acer 4k)
+-- The arrangement:
+--
+-- [ACER][LG]
+-- [MBP]
+--
+-- info here:
+-- https://github.com/Hammerspoon/hammerspoon/issues/3277
+-- https://github.com/Hammerspoon/hammerspoon/issues/3224
+-- https://github.com/Hammerspoon/hammerspoon/issues/3223
+local obj = {}
 obj.__index = obj
 
 -- Metadata
@@ -28,11 +43,13 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 -- init logger
 obj.logger = hs.logger.new("Fenestra")
 
+-- hs.screen.strictScreenInDirection = true
 -- undo logic from @songchenwen:
 -- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
-local undostack = {stack = {}, stackMax = 100, skip = false}
+local undostack = { stack = {}, stackMax = 100, skip = false }
 
 -- grid size
+
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
 hs.grid.GRIDWIDTH = 10
@@ -40,9 +57,9 @@ hs.grid.GRIDHEIGHT = 4
 
 -- grid ui
 hs.grid.ui.textSize = 40
-hs.grid.ui.highlightColor = {0, 1, 0, 0.3}
-hs.grid.ui.highlightStrokeColor = {0, 1, 0, 0.4}
-hs.grid.ui.cellStrokeColor = {1, 1, 1, 1}
+hs.grid.ui.highlightColor = { 0, 1, 0, 0.3 }
+hs.grid.ui.highlightStrokeColor = { 0, 1, 0, 0.4 }
+hs.grid.ui.cellStrokeColor = { 1, 1, 1, 1 }
 hs.grid.ui.cellStrokeWidth = 2
 hs.grid.ui.highlightStrokeWidth = 20
 hs.grid.ui.showExtraKeys = false
@@ -50,30 +67,30 @@ hs.grid.ui.showExtraKeys = false
 -- custom grid hints
 -- because i dont want to use fn keys
 hs.grid.HINTS = {
-    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"},
-    {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"},
-    {"Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"},
-    {"A", "S", "D", "F", "G", "H", "J", "K", "L", ";"},
-    {"Z", "X", "C", "V", "B", "N", "M", ",", ".", "/"}
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
+    { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
+    { "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P" },
+    { "A", "S", "D", "F", "G", "H", "J", "K", "L", ";" },
+    { "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/" }
 }
 
 -- these are the basics i want for now
 -- but im going to reevaliate them in future
 obj.defaultHotkeys = {
-    showGrid = {{"ctrl", "alt", "cmd"}, "Space"},
-    maxWin = {{"alt"}, "Space"},
-    leftHalf = {{"cmd", "alt"}, "left"},
-    rightHalf = {{"cmd", "alt"}, "right"},
-    leftMaj = {{"cmd", "alt", "ctrl"}, "left"},
-    rightMin = {{"cmd", "alt", "ctrl"}, "right"},
-    pushWest = {{"cmd", "alt", "ctrl"}, "W"},
-    pushEast = {{"cmd", "alt", "ctrl"}, "E"},
-    pushNext = {{"ctrl", "alt", "cmd"}, "P"},
+    showGrid = { { "ctrl", "alt", "cmd" }, "Space" },
+    maxWin = { { "alt" }, "Space" },
+    leftHalf = { { "cmd", "alt" }, "left" },
+    rightHalf = { { "cmd", "alt" }, "right" },
+    leftMaj = { { "cmd", "alt", "ctrl" }, "left" },
+    rightMin = { { "cmd", "alt", "ctrl" }, "right" },
+    pushWest = { { "cmd", "alt", "ctrl" }, "W" },
+    pushEast = { { "cmd", "alt", "ctrl" }, "E" },
+    moveWindowToNextScreen = { { "ctrl", "alt", "cmd" }, "N" },
     -- pushPrevious?
-    pushUp = {{"ctrl", "alt", "cmd"}, "Up"},
-    pushDown = {{"ctrl", "alt", "cmd"}, "Down"},
-    undo = {{"cmd", "alt", "ctrl"}, "Z"},
-    centerWindow = {{"cmd", "alt", "ctrl"}, "C"}
+    pushUp = { { "ctrl", "alt", "cmd" }, "Up" },
+    pushDown = { { "ctrl", "alt", "cmd" }, "Down" },
+    undo = { { "cmd", "alt", "ctrl" }, "Z" },
+    centerWindow = { { "cmd", "alt", "ctrl" }, "C" }
 }
 
 -- hotkey binding not working
@@ -132,10 +149,10 @@ function obj:bindHotkeys(keys)
         obj.logger.i("Pull Win Hotkey")
         self:pushEast()
     end)
-    hs.hotkey.bindSpec(keys["pushNext"], function()
+    hs.hotkey.bindSpec(keys["moveWindowToNextScreen"], function()
         undostack:addToStack()
-        obj.logger.i("Push Next Hotkey")
-        self:pushNext()
+        obj.logger.i("Push Window To Next Screen Hotkey")
+        self:moveWindowToNextScreen()
     end)
     hs.hotkey.bindSpec(keys["centerWindow"], function()
         undostack:addToStack()
@@ -146,33 +163,42 @@ function obj:bindHotkeys(keys)
 end
 
 function obj.maxWin()
-    hs.window.focusedWindow()
-    hs.grid.maximizeWindow()
+    local cw = hs.window.focusedWindow()
+    hs.grid.maximizeWindow(cw)
 end
 
 function obj:pushWest()
-    obj.logger.d("Push Win Function")
-    hs.window.focusedWindow():moveOneScreenWest()
+    obj.logger.d("Push West Function")
+    local cw = hs.window.frontmostWindow()
+
+    cw:moveOneScreenWest(_, true, 0)
 end
 
 function obj:pushEast() hs.window.focusedWindow():moveOneScreenEast() end
 
-function obj:pushNext()
+function obj:moveWindowToNextScreen()
+    obj.logger.i("Move Window To Next Screen")
     local currentWindow = hs.window.focusedWindow()
+    obj.logger.i(currentWindow)
+    obj.logger.i(currentWindow:screen())
+    obj.logger.i(currentWindow:screen():next())
+    obj.logger.i(currentWindow:frame())
     local nextScreen = currentWindow:screen():next()
-    currentWindow:moveToScreen(nextScreen)
+    currentWindow:moveToScreen(nextScreen, false, true, 0)
+    currentWindow:maximize()
+    -- currentWindow:
 end
 
 function obj.pushUp()
     local cw = hs.window.focusedWindow()
     local cwgrid = hs.grid.get(cw)
-    hs.grid.set(cw, {cwgrid.x, 0, cwgrid.w, 2})
+    hs.grid.set(cw, { cwgrid.x, 0, cwgrid.w, 2 })
 end
 
 function obj.pushDown()
     local cw = hs.window.focusedWindow()
     local cwgrid = hs.grid.get(cw)
-    hs.grid.set(cw, {cwgrid.x, 2, cwgrid.w, 2})
+    hs.grid.set(cw, { cwgrid.x, 2, cwgrid.w, 2 })
 end
 
 function obj:placeWindow(x, y, w, h)
@@ -197,15 +223,16 @@ function obj:rightMin() obj:placeWindow(7, 0, 3, 4) end
 
 function obj:centerWindow()
     local cw = hs.window.focusedWindow()
-    cw:centerOnScreen()
+    cw:centerOnScreen(_, true, 0)
 end
+
 -- undo functions from
 -- https://github.com/songchenwen/dotfiles/blob/master/hammerspoon/undo.lua
 -- allows us to undo the window arrangement changes
 -- keeps history
 function undostack:addToStack(wins)
     if self.skip then return end
-    if not wins then wins = {hs.window.focusedWindow()} end
+    if not wins then wins = { hs.window.focusedWindow() } end
     local size = #self.stack
     self.stack[size + 1] = self:getCurrentWindowsLayout(wins)
     size = size + 100
@@ -215,7 +242,7 @@ function undostack:addToStack(wins)
 end
 
 function undostack:getCurrentWindowsLayout(wins)
-    if not wins then wins = {hs.window.focusedWindow()} end
+    if not wins then wins = { hs.window.focusedWindow() } end
     local current = {}
     for i = 1, #wins do
         local w = wins[i]
