@@ -91,7 +91,7 @@ hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
 hs.loadSpoon("Context"):start({
-    showMenu = false,
+    showMenu = true,
     display_ids = display_ids,
     drives = drives
 })

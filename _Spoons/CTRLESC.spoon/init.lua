@@ -15,6 +15,9 @@
 -- Docs
 -- Remove any utilities/functions speciifc to my config
 -- Pull on a new hammerspoon config and see if it works
+
+
+-- GLOBE keycode (mbp) = 63
 local obj = {}
 obj.__index = obj
 
@@ -75,16 +78,23 @@ function obj:init()
     self.send_esc = false
 
     self.ctrl_tap =
-        hs.eventtap.new(
-        {hs.eventtap.event.types.flagsChanged},
+    hs.eventtap.new(
+        { hs.eventtap.event.types.flagsChanged },
         function(event)
+            -- obj.logger.e("ctrl_tap fired")
+            -- obj.logger.e(i(event))
+            -- obj.logger.e(event:getKeyCode())
+            -- hs.alert("caps fired")
             obj:mod_event_handler(event)
         end
     )
     self.non_ctrl_tap =
-        hs.eventtap.new(
-        {hs.eventtap.event.types.keyDown},
+    hs.eventtap.new(
+        { hs.eventtap.event.types.keyDown },
         function(event)
+            -- obj.logger.e("non_ctrl_tap fired")
+            -- obj.logger.e(i(event))
+            -- obj.logger.e(event:getKeyCode())
             self.send_esc = false
             return false
         end
