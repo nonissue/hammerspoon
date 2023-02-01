@@ -370,7 +370,8 @@ function obj.screenWatcherCallback()
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and
-        (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == MBP_14_UUID)
+        (
+        hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
     then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
@@ -381,6 +382,9 @@ function obj.screenWatcherCallback()
         obj.moveDockLeft()
     else
         obj.logger.e("[SW] Error!")
+        obj.logger.e("[SW] All screens: ")
+        obj.logger.e(i(hs.screen.allScreens()))
+        obj.logger.e("[SW] all screens #" .. #hs.screen.allScreens())
         obj.contextValues.docked = "error"
         obj.docked = "error"
     end
