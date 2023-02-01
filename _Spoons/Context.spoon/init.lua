@@ -72,7 +72,7 @@ obj.spoonPath = script_path()
 
 -- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
 -- or if there is a warning (eg. dgpu enabled?)
-obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({w = 20, h = 20})
+obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({ w = 20, h = 20 })
 -- obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.number.circle.fill.pdf"):setSize({w = 18, h = 18})
 
 -- get value with obj.contextValuesWatcher:value('location')
@@ -308,9 +308,9 @@ function obj.screenWatcherCallback()
     -- Color LCD: 120F5D25-16F2-160F-2DC6-FE73F87D696C
     if (hs.settings.get("context_settings_show_gpu")) then
         local res,
-            success,
-            exit = --luacheck: ignore
-            hs.execute(
+        success,
+        exit = --luacheck: ignore
+        hs.execute(
             "system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
         )
@@ -344,20 +344,20 @@ function obj.screenWatcherCallback()
 
     local Acer4K = hs.screen.find("B286HK")
     local CinemaDisplay = hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") -- UUID of cinema display
-    local MBP_14_UUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
-    local ULTRAFINE_24_UUID = nil -- TODO
+    local MBP_14_UUID = hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230")
+    local LGUltrafine = hs.screen.find("LG Ultrafine")
+    local ULTRAFINE_24_UUID = hs.screen.find("A690D7DD-9EB8-40EF-9910-EFC67701A3BC")
 
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-    elseif Acer4K or CinemaDisplay then
+    elseif Acer4K or CinemaDisplay or ULTRAFINE_24_UUID then
         obj.logger.i("[SW] no change") -- how do i know this is no change?
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
         obj.moveDockDown()
-    elseif
-        #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
-            obj.docked == "@desk"
-     then
+    elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
+        obj.docked == "@desk"
+    then
         obj.logger.i("[SW] undocking")
         obj.docked = "mobile"
         obj.contextValues.docked = "mobile"
@@ -369,10 +369,9 @@ function obj.screenWatcherCallback()
     elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
-    elseif
-        #hs.screen.allScreens() == 1 and
-            (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == MBP_14_UUID)
-     then
+    elseif #hs.screen.allScreens() == 1 and
+        (hs.screen.find("Color LCD") or hs.screen.mainScreen():getUUID() == MBP_14_UUID)
+    then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
         -- Okay, UUID seems stable after restarting, connecting external display.
@@ -503,7 +502,7 @@ function obj.createMenu(location, docked, gpu)
                 {
                     title = hs.styledtext.new(
                         "  @ " .. (location or obj.location or "error"),
-                        {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                        { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                     ),
                     fn = function()
                         hs.alert("Current Wifi: " .. obj.currentSSID)
@@ -519,7 +518,7 @@ function obj.createMenu(location, docked, gpu)
             {
                 title = hs.styledtext.new(
                     "  " .. (docked or obj.docked or "error"),
-                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                 ),
                 fn = function()
                     hs.alert("docked clicked")
@@ -534,7 +533,7 @@ function obj.createMenu(location, docked, gpu)
             {
                 title = hs.styledtext.new(
                     (gpu or obj.currentGPU or "error"),
-                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                 ),
                 fn = function()
                     hs.alert("Launching activity monitor...")
@@ -554,11 +553,11 @@ function obj.createMenu(location, docked, gpu)
                 {
                     title = hs.styledtext.new(
                         "  Toggle UI",
-                        {font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {}}
+                        { font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {} }
                     ),
                     fn = function()
                         obj.darkModeScript =
-                            [[
+                        [[
                     tell application "System Events"
                         tell appearance preferences
                             set dark mode to not dark mode
@@ -585,7 +584,7 @@ function obj.createMenu(location, docked, gpu)
                 title = hs.styledtext.new(
                     "  Refresh   ",
                     {
-                        color = {blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8},
+                        color = { blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8 },
                         -- underlineStyle = 1,
                         font = hs.styledtext.defaultFonts.userFixedPitch.name
                     }
@@ -615,7 +614,7 @@ function obj.createMenu(location, docked, gpu)
                 title = hs.styledtext.new(
                     getSetupState() .. " Setup",
                     {
-                        color = {alpha = 0.6},
+                        color = { alpha = 0.6 },
                         font = hs.styledtext.defaultFonts.userFixedPitch.name
                     }
                 ),
@@ -702,7 +701,7 @@ end
 
 function obj.watchers()
     obj.contextValuesWatcher =
-        hs.watchable.watch(
+    hs.watchable.watch(
         "context_settings_test.*",
         function(_, _, key, old_value, new_value)
             hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
