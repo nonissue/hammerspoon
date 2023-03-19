@@ -244,7 +244,7 @@ TextInflator:init()
 -- hs.alert(sendres)
 -- end
 
---[[ 
+--[[
 
 ALLOW APPLESCRIPT VIA HAMMERSPOON TO ACCESS REMINDERS/CONTACTS/CALENDAR
 
