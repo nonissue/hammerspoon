@@ -57,7 +57,7 @@ print_t = utils.print_r
 print_r = utils.print_r
 hostname = hs.host.localizedName()
 
-local mash = {"cmd", "alt", "ctrl"}
+local mash = { "cmd", "alt", "ctrl" }
 
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
@@ -87,8 +87,8 @@ hs.loadSpoon("CTRLESC"):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 
-local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
-local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
+local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
+local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
 
 hs.settings.set(
     "homeSSIDs",
