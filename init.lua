@@ -7,6 +7,11 @@
 -- If you have concerns (about my sanity or anything else) feel free to
 -- email me at the above address
 ------------------------------------------------------------------------------
+
+--- WIP
+-- spaces = require("hs._asm.undocumented.spaces")
+---
+
 package.path = package.path .. ";_lib/?.lua"
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
