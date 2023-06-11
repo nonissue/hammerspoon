@@ -1,4 +1,4 @@
---[[ 
+--[[
     TODO:
         - [ ] Clear watchers? not sure if we have to
         - [ ] obj:showSettings
@@ -46,6 +46,8 @@ function obj:setDefaultSettings()
             end
         )
     end
+
+    hs.settings.set("context_settings_setup_done", false)
 end
 
 function obj:init()
@@ -55,7 +57,7 @@ function obj:init()
         -- context.settings -> table of keys/values
         obj.logger.i("CONTEXT SETUP NOT DONE")
         obj.logger.i("Setting defaults...")
-        obj.setDefaultSettings()
+        obj:setDefaultSettings()
     else
         obj.logger.i("CONTEXT SETUP DONE")
     end

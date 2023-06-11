@@ -310,10 +310,10 @@ function obj.screenWatcherCallback()
         local res,
         success,
         exit = --luacheck: ignore
-        hs.execute(
-            "system_profiler SPDisplaysDataType | \
+            hs.execute(
+                "system_profiler SPDisplaysDataType | \
         sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
-        )
+            )
         if res == "" then
             obj.currentGPU = "iGPU"
             obj.contextValues.currentGPU = "iGPU"
@@ -371,7 +371,7 @@ function obj.screenWatcherCallback()
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and
         (
-        hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
+            hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
     then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
@@ -607,7 +607,7 @@ function obj.createMenu(location, docked, gpu)
         if (hs.settings.get("context_settings_setup_done")) then
             return "✔︎"
         else
-            return "𝙭 "
+            return "×"
         end
     end
 
@@ -705,16 +705,16 @@ end
 
 function obj.watchers()
     obj.contextValuesWatcher =
-    hs.watchable.watch(
-        "context_settings_test.*",
-        function(_, _, key, old_value, new_value)
-            hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
-            hs.alert(obj.contextValues.location)
-            obj.menubar:setMenu(
-                obj.createMenu(obj.contextValues.location, obj.contextValues.docked, obj.contextValues.currentGPU)
-            )
-        end
-    )
+        hs.watchable.watch(
+            "context_settings_test.*",
+            function(_, _, key, old_value, new_value)
+                hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
+                hs.alert(obj.contextValues.location)
+                obj.menubar:setMenu(
+                    obj.createMenu(obj.contextValues.location, obj.contextValues.docked, obj.contextValues.currentGPU)
+                )
+            end
+        )
 end
 
 return obj
