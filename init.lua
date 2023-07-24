@@ -24,7 +24,9 @@ hs_reload.init()
 -- require("console")
 
 -- bind our alert style to default alert style
-for k, v in pairs(styles.alert_default) do hs.alert.defaultStyle[k] = v end
+for k, v in pairs(styles.alert_default) do
+    hs.alert.defaultStyle[k] = v
+end
 
 -- can't remember if/what depends on this
 
@@ -55,7 +57,7 @@ print_t = utils.print_r
 print_r = utils.print_r
 hostname = hs.host.localizedName()
 
-local mash = { "cmd", "alt", "ctrl" }
+local mash = {"cmd", "alt", "ctrl"}
 
 ------------------------------------------------------------------------------
 --                              START OF SPOONS                             --
@@ -85,21 +87,32 @@ hs.loadSpoon("CTRLESC"):start()
 -- Defaults to false if nothing is passed
 ------------------------------------------------------------------------------
 
-local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
-local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
+local drives = {"ExternalSSD", "Win-Stuff", "Photos"}
+local display_ids = {mbp = 2077750265, cinema = 69489832, sidecar = 4128829}
 
-hs.settings.set("homeSSIDs", {
-    "BROMEGA", "ComfortInn VIP", "BROMEGA-5", "1614 Apple II", "RamadaGuest",
-    "RamadaVIP", "RamadaExecutive", "RamadaExecutive_5G"
-})
+hs.settings.set(
+    "homeSSIDs",
+    {
+        "BROMEGA",
+        "ComfortInn VIP",
+        "BROMEGA-5",
+        "1614 Apple II",
+        "RamadaGuest",
+        "RamadaVIP",
+        "RamadaExecutive",
+        "RamadaExecutive_5G"
+    }
+)
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
-hs.loadSpoon("Context"):start({
-    showMenu = true,
-    display_ids = display_ids,
-    drives = drives
-})
+hs.loadSpoon("Context"):start(
+    {
+        showMenu = true,
+        display_ids = display_ids,
+        drives = drives
+    }
+)
 
 ------------------------------------------------------------------------------
 -- SafariKeys.spoon / by me
@@ -184,6 +197,10 @@ hs.loadSpoon("Clippy"):start()
 
 TextInflator = require("TextInflator")
 TextInflator:init()
+
+
+
+hs.loadSpoon("CMDESC"):start()
 
 -- hs.loadSpoon("LoPo"):init()
 -- hs.loadSpoon("LoPo"):start()
