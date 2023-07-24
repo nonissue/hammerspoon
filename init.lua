@@ -198,8 +198,6 @@ hs.loadSpoon("Clippy"):start()
 TextInflator = require("TextInflator")
 TextInflator:init()
 
-
-
 hs.loadSpoon("CMDESC"):start()
 
 -- hs.loadSpoon("LoPo"):init()
