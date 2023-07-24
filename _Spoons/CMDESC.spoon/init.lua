@@ -2,6 +2,15 @@
 ---
 --[[
 
+HOLY FUCK I THOUGHT THE SHORTCUT FOR CYCLING APP WINDOWS win_scr_frame
+
+⌘ + ~
+
+So I was like, how the fuck do we get ~?
+
+Spent all this time figuring out how to hit ~ (shift + keycode 50)
+But.. it's just ⌘ + `
+
 Keycodes
 
 Escape = 53
@@ -11,6 +20,8 @@ Tilde = mods(shift) + 50
 This types a tilde:
 
 hs.eventtap.event.newKeyEvent({"cmd", "shift"}, 50, true):post()
+
+oh shit, it seems to be really working?
 
 ]]
 local obj = {}
@@ -80,9 +91,12 @@ function obj:mod_event_handler(event)
     end
 
     if self.cmd_held_down_alone and cur_keycode == 53 then
-        hs.alert("Fucking thats it bud! CMD ESCAPE")
+        hs.alert("⌘ + ~")
+
+        obj.logger.i("Success! Firing: ⌘ + ~")
         -- event:setFlags({shift = true})
-        hs.eventtap.event.newKeyEvent({"cmd", "shift"}, 50, true):post()
+        hs.eventtap.event.newKeyEvent({"cmd"}, 50, true):post()
+        -- hs.eventtap.event.newKeyEvent({"cmd", "shift"}, 50, true):post()
         self.cmd_held_down_alone = false
     end
 
