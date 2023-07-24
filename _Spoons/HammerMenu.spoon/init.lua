@@ -71,7 +71,7 @@ function obj:init() obj.logger.i("HammerMenu.spoon Initializing") end
 
 function obj:start()
     obj.logger.i("HammerMenu.spoon Starting")
-    obj.createMenu()
+    obj:createMenu()
 
     -- obj.menubar = hs.menubar.new()
     -- obj.menubar:setTitle("CMDTAB: IDLE")

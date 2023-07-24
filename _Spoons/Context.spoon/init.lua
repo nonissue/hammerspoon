@@ -108,6 +108,18 @@ local function atHome(SSID)
     return has_value(homeSSIDs, SSID)
 end
 
+-- direction: 
+-- type: string
+-- accepted: bottom, left, right,
+function obj.moveDock(direction)
+    hs.applescript.applescript([[ 
+        tell application "System Events" to set the autohide of the dock preferences to true
+        tell application "System Events" to set the screen edge of the dock preferences to ]] .. direction
+    )
+end
+
+
+
 --- Context.moveDockLeft()
 --- Function
 --- movedockleft
@@ -354,7 +366,8 @@ function obj.screenWatcherCallback()
         obj.logger.i("[SW] no change") -- how do i know this is no change?
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
-        obj.moveDockDown()
+        -- obj.moveDockDown()
+        obj.moveDockLeft()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
         obj.docked == "@desk"
     then
