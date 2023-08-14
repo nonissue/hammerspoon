@@ -11,6 +11,8 @@ So I was like, how the fuck do we get ~?
 Spent all this time figuring out how to hit ~ (shift + keycode 50)
 But.. it's just ⌘ + `
 
+EDIT: Nope, it's shift + grave 
+
 Keycodes
 
 Escape = 53
@@ -61,7 +63,9 @@ function obj:mod_event_handler(event)
     local function log_shit()
         if (obj.logging) then
             obj.logger.i(
-                "\n\n\tcmd dwn: " .. tostring(self.cmd_held_down_alone) .. "\t\tcur_mods: " .. len(cur_mods) .. "\t\tprev_mods: " .. len(self.prev_mods) .."\n"
+                "\n\n\tcmd dwn: " ..
+                    tostring(self.cmd_held_down_alone) ..
+                        "\t\tcur_mods: " .. len(cur_mods) .. "\t\tprev_mods: " .. len(self.prev_mods) .. "\n"
             )
         end
     end
@@ -95,7 +99,9 @@ function obj:mod_event_handler(event)
 
         obj.logger.i("Success! Firing: ⌘ + ~")
         -- event:setFlags({shift = true})
-        hs.eventtap.event.newKeyEvent({"cmd"}, 50, true):post()
+        -- hs.eventtap.event.newKeyEvent({"cmd"}, 50, true):post()
+        hs.eventtap.event.newKeyEvent({"shift"}, "`", true):post()
+        hs.eventtap.event.newKeyEvent({"shift"}, "`", false):post()
         -- hs.eventtap.event.newKeyEvent({"cmd", "shift"}, 50, true):post()
         self.cmd_held_down_alone = false
     end
@@ -149,8 +155,6 @@ end
 
 function obj:start()
     self.logger.df("CMDESC.spoon started")
-
-
 
     self.cmd_tap:start()
     self.non_cmd_tap:start()
