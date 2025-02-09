@@ -1,7 +1,13 @@
 --- === DownShift ===
 ---
+--- MUCH later: 25-02-09
+---     WTF is this for? DO I use it? I don't think so.
+---     Committing DownShift as is and deleting.
+---
+---
 --- Working I think
 --- Concerned window filter is really noisy and may have performance implications
+---
 
 --- hs.application.name => SC2
 --- bundleID: com.blizzard.starcraft2
