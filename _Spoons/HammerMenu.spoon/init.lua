@@ -33,34 +33,34 @@ obj.menuItems = {
         title = hs.styledtext.new("test"),
         fn = function() hs.alert("Test") end,
         checked = false
-    }, {title = "-"}, {
-        title = "Zzz",
-        fn = function() hs.alert("Clicked") end,
-        menu = obj.zzz.menuItems
-    }
+    }, { title = "-" }, {
+    title = "Zzz",
+    fn = function() hs.alert("Clicked") end,
+    menu = obj.zzz.menuItems
+}
 }
 
 -- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
 -- or if there is a warning (eg. dgpu enabled?)
 obj.menuIcon = hs.image.imageFromPath(obj.spoonPath ..
-                                          "/hammer.circle.fill.test.pdf"):setSize(
-                   {w = 20, h = 20})
+    "/hammer.circle.fill.test.pdf"):setSize(
+    { w = 20, h = 20 })
 
 function obj:formatSeconds(s)
     local seconds = tonumber(s)
     if seconds then
         local hours = string.format("%02.f", math.floor(seconds / 3600))
         local mins = string.format("%02.f",
-                                   math.floor(seconds / 60 - (hours * 60)))
+            math.floor(seconds / 60 - (hours * 60)))
         local secs = string.format("%02.f", math.floor(
-                                       seconds - hours * 3600 - mins * 60))
+            seconds - hours * 3600 - mins * 60))
         return " " .. hours .. ":" .. mins .. ":" .. secs
     else
         return false
     end
 end
 
-function obj:createMenu()
+function obj.createMenu()
     obj.logger.i("HammerMenu.spoon Creating menu")
     obj.menu = hs.menubar.new()
     obj.menu:setIcon(obj.menuIcon)

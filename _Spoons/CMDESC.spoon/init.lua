@@ -11,7 +11,7 @@ So I was like, how the fuck do we get ~?
 Spent all this time figuring out how to hit ~ (shift + keycode 50)
 But.. it's just ⌘ + `
 
-EDIT: Nope, it's shift + grave 
+EDIT: Nope, it's shift + grave
 
 Keycodes
 
@@ -64,8 +64,8 @@ function obj:mod_event_handler(event)
         if (obj.logging) then
             obj.logger.i(
                 "\n\n\tcmd dwn: " ..
-                    tostring(self.cmd_held_down_alone) ..
-                        "\t\tcur_mods: " .. len(cur_mods) .. "\t\tprev_mods: " .. len(self.prev_mods) .. "\n"
+                tostring(self.cmd_held_down_alone) ..
+                "\t\tcur_mods: " .. len(cur_mods) .. "\t\tprev_mods: " .. len(self.prev_mods) .. "\n"
             )
         end
     end
@@ -100,8 +100,8 @@ function obj:mod_event_handler(event)
         obj.logger.i("Success! Firing: ⌘ + ~")
         -- event:setFlags({shift = true})
         -- hs.eventtap.event.newKeyEvent({"cmd"}, 50, true):post()
-        hs.eventtap.event.newKeyEvent({"shift"}, "`", true):post()
-        hs.eventtap.event.newKeyEvent({"shift"}, "`", false):post()
+        hs.eventtap.event.newKeyEvent({ "shift" }, "`", true):post()
+        hs.eventtap.event.newKeyEvent({ "shift" }, "`", false):post()
         -- hs.eventtap.event.newKeyEvent({"cmd", "shift"}, 50, true):post()
         self.cmd_held_down_alone = false
     end
@@ -117,40 +117,40 @@ function obj:init()
 
     self.cmd_tap =
         hs.eventtap.new(
-        {hs.eventtap.event.types.flagsChanged},
-        function(event)
-            local mods = event:getFlags()
-            if not mods["cmd"] and not mods["shift"] then
-                -- obj.logger.i("Not cmd or shift, we don't care")
-                return false
-            end
-            -- obj.logger.e("cmd_tap fired")
-            -- obj.logger.e(i(event))
-            -- obj.logger.e(event:getKeyCode())
-            -- hs.alert("caps fired")
-            obj:mod_event_handler(event)
-        end
-    )
-    self.non_cmd_tap =
-        hs.eventtap.new(
-        {hs.eventtap.event.types.keyDown},
-        function(event)
-            -- obj.logger.e("non_cmd_tap fired")
-            -- obj.logger.e(i(event))
-            -- obj.logger.e(event:getKeyCode())]
-            -- local cur_keycode = event:getKeyCode()
-
-            self.send_tilde = false
-
-            if (not event:getFlags("cmd") or not event:getFlags("shift")) and event:getKeyCode() then
-                return false
-            else
+            { hs.eventtap.event.types.flagsChanged },
+            function(event)
+                local mods = event:getFlags()
+                if not mods["cmd"] and not mods["shift"] then
+                    -- obj.logger.i("Not cmd or shift, we don't care")
+                    return false
+                end
+                -- obj.logger.e("cmd_tap fired")
+                -- obj.logger.e(i(event))
+                -- obj.logger.e(event:getKeyCode())
+                -- hs.alert("caps fired")
                 obj:mod_event_handler(event)
             end
+        )
+    self.non_cmd_tap =
+        hs.eventtap.new(
+            { hs.eventtap.event.types.keyDown },
+            function(event)
+                -- obj.logger.e("non_cmd_tap fired")
+                -- obj.logger.e(i(event))
+                -- obj.logger.e(event:getKeyCode())]
+                -- local cur_keycode = event:getKeyCode()
 
-            return false
-        end
-    )
+                self.send_tilde = false
+
+                if (not event:getFlags("cmd") or not event:getFlags("shift")) and event:getKeyCode() then
+                    return false
+                else
+                    obj:mod_event_handler(event)
+                end
+
+                return false
+            end
+        )
 end
 
 function obj:start()
