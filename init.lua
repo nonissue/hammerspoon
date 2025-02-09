@@ -164,8 +164,8 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 -- Currently, you have to specify the choices manually
 -- May change that in future
 ------------------------------------------------------------------------------
-hs.loadSpoon("Resolute")
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
+-- hs.loadSpoon("Resolute")
+-- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
@@ -283,3 +283,5 @@ WE NEED TO RUN THIS ONCE FOR EACH APP FIRST TO ALLOW ACCESS
 Repeat as needed for each app.
 
 ]]
+
+hs.alert("config reloaded")
