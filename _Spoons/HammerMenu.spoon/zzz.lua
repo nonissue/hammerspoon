@@ -48,8 +48,8 @@ for i = 1, presetCount do
 end
 
 local startMenuStaticOpts = {
-    {title = "-"},
-    {title = hs.styledtext.new("XXm"), fn = function() obj.chooser:show() end},
+    { title = "-" },
+    { title = hs.styledtext.new("XXm"), fn = function() obj.chooser:show() end },
     {
         title = hs.styledtext.new("Debug"),
         fn = function() self:startTimer(0.05) end
@@ -63,8 +63,8 @@ obj.modifyTimerChoices = {
         ["action"] = "stop",
         ["m"] = 0,
         ["text"] = "Stop current timer!"
-    }, {["id"] = 2, ["action"] = "adjust", ["m"] = 5, ["text"] = "+5 minutes!"},
-    {["id"] = 3, ["action"] = "adjust", ["m"] = -5, ["text"] = "-5 minutes"}
+    }, { ["id"] = 2, ["action"] = "adjust", ["m"] = 5, ["text"] = "+5 minutes!" },
+    { ["id"] = 3, ["action"] = "adjust", ["m"] = -5, ["text"] = "-5 minutes" }
 }
 
 -- Table of actions that modify a running countdown from our menubar
@@ -81,33 +81,33 @@ obj.modifyMenuChoices = {
             obj:processChoice(obj.modifyTimerChoices[1])
         end
     }, {
-        ["id"] = 2,
-        ["action"] = "adjust",
-        ["m"] = 5,
-        ["text"] = "+5m",
-        title = hs.styledtext.new("+5m"),
-        fn = function()
-            -- Reuse the action our chooser uses as it is the shape
-            -- processChoice expects
-            obj:processChoice(obj.modifyTimerChoices[2])
-        end
-    }, {
-        ["id"] = 3,
-        ["action"] = "adjust",
-        ["m"] = -5,
-        ["text"] = "-5m",
-        title = hs.styledtext.new("-5m"),
-        fn = function()
-            -- Reuse the action our chooser uses as it is the shape
-            -- processChoice expects
-            obj:processChoice(obj.modifyTimerChoices[3])
-        end
-    }
+    ["id"] = 2,
+    ["action"] = "adjust",
+    ["m"] = 5,
+    ["text"] = "+5m",
+    title = hs.styledtext.new("+5m"),
+    fn = function()
+        -- Reuse the action our chooser uses as it is the shape
+        -- processChoice expects
+        obj:processChoice(obj.modifyTimerChoices[2])
+    end
+}, {
+    ["id"] = 3,
+    ["action"] = "adjust",
+    ["m"] = -5,
+    ["text"] = "-5m",
+    title = hs.styledtext.new("-5m"),
+    fn = function()
+        -- Reuse the action our chooser uses as it is the shape
+        -- processChoice expects
+        obj:processChoice(obj.modifyTimerChoices[3])
+    end
+}
 }
 
 function obj:generateZzzMenu()
     local startMenuChoices = hs.fnutils.concat(obj.startMenuChoices,
-                                               startMenuStaticOpts)
+        startMenuStaticOpts)
 
     return startMenuChoices
 end
@@ -119,9 +119,9 @@ function obj:formatSeconds(s)
     if seconds then
         local hours = string.format("%02.f", math.floor(seconds / 3600))
         local mins = string.format("%02.f",
-                                   math.floor(seconds / 60 - (hours * 60)))
+            math.floor(seconds / 60 - (hours * 60)))
         local secs = string.format("%02.f", math.floor(
-                                       seconds - hours * 3600 - mins * 60))
+            seconds - hours * 3600 - mins * 60))
         return " " .. hours .. ":" .. mins .. ":" .. secs
     else
         return false
@@ -161,11 +161,11 @@ function obj:startTimer(timerInMins)
         self:updateMenu()
         self.menuItems = self.modifyMenuChoices
         self.timerEvent = hs.timer.doAfter(tonumber(timerInMins) * 60,
-                                           function()
-            self.logger.df("Timer finished, sleeping!")
-            self:deleteTimer()
-            hs.caffeinate.systemSleep()
-        end)
+            function()
+                self.logger.df("Timer finished, sleeping!")
+                self:deleteTimer()
+                hs.caffeinate.systemSleep()
+            end)
     end
     return true
 end

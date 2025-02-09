@@ -54,10 +54,10 @@ obj.spoonPath = script_path()
 
 -- change icon to match circle icons
 -- UPDATE: Using TV icon across all resolutions as it's simpler
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({w = 20, h = 20})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.tv.circle.fill.pdf"):setSize({ w = 20, h = 20 })
 
 obj.defaultHotkeys = {
-    showResolute = {{"ctrl", "cmd", "alt"}, "L"}
+    showResolute = { { "ctrl", "cmd", "alt" }, "L" }
 }
 
 -- We can get available modes with hs.screen:availableModes()
@@ -148,7 +148,7 @@ obj.displayArrangement = {
         number = #hs.screen.allScreens()
     },
     previous = {
-        displays = {{}},
+        displays = { {} },
         number = nil
     }
 }
@@ -175,7 +175,7 @@ function obj:updateDisplayArrangement()
     obj.displayArrangement.previous = obj.displayArrangement.current
 
     obj.displayArrangement.current = {
-        displays = {hs.screen.allScreens()},
+        displays = { hs.screen.allScreens() },
         number = #hs.screen.allScreens()
     }
 end
@@ -219,7 +219,7 @@ function obj.changeRes(choice)
 end
 
 function obj:generateMenubarItems(displayOptions)
-    local newMenubarItems = {{title = hs.screen.primaryScreen():name(), disabled = true}, {title = "-"}}
+    local newMenubarItems = { { title = hs.screen.primaryScreen():name(), disabled = true }, { title = "-" } }
 
     for i = 1, #displayOptions do
         table.insert(
@@ -233,10 +233,10 @@ function obj:generateMenubarItems(displayOptions)
             }
         )
         if
-            -- indicate currently selected scaling mode
+        -- indicate currently selected scaling mode
             hs.screen.mainScreen():currentMode().w == displayOptions[i]["res"].w and
-                hs.screen.mainScreen():currentMode().h == displayOptions[i]["res"].h
-         then
+            hs.screen.mainScreen():currentMode().h == displayOptions[i]["res"].h
+        then
             obj.menubarIcon = displayOptions[i]["image"]
             newMenubarItems[i + 2]["checked"] = true
         end
@@ -245,7 +245,7 @@ function obj:generateMenubarItems(displayOptions)
     hs.fnutils.concat(
         newMenubarItems,
         {
-            {title = "-"},
+            { title = "-" },
             {
                 title = "Refresh",
                 fn = function()
@@ -313,17 +313,17 @@ function obj:init()
 
     self.resChooser =
         hs.chooser.new(
-        function(choice)
-            if not (choice) then
-                obj.logger.i("Hiding chooser")
-                self.resChooser:hide()
-                return
-            else
-                obj.logger.i("Choice selected")
-                self:chooserCallback(choice)
+            function(choice)
+                if not (choice) then
+                    obj.logger.i("Hiding chooser")
+                    self.resChooser:hide()
+                    return
+                else
+                    obj.logger.i("Choice selected")
+                    self:chooserCallback(choice)
+                end
             end
-        end
-    )
+        )
 
     self.resChooser:choices(obj.getDisplayOptions())
     self.resChooser:rows(#obj.getDisplayOptions())

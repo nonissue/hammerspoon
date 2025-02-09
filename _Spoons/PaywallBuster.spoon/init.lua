@@ -6,12 +6,12 @@
     Update:
     THese methods are becoming less and less succeesful.
     Might want to roll my own using google's search indexer IP address
-    
+
     some ideas lifted from here:
     https://github.com/iamadamdev/bypass-paywalls-firefox/
 
     https://stackoverflow.com/questions/20937287/how-to-intercept-a-web-request
-    
+
     Also, if we allow javascript from apple events, we might be able to injectjs
     in pages using applescript?
 
@@ -51,7 +51,7 @@ end
 -- for the other entries, you specify their name, subtext, and then the baseURL of the
 -- URL we wish to call
 local chooserTable = {
-    {["id"] = 1, ["text"] = "Private Browsing", subText = "Opens current url in private browsing mode"},
+    { ["id"] = 1, ["text"] = "Private Browsing", subText = "Opens current url in private browsing mode" },
     {
         ["id"] = 2,
         ["text"] = "Facebook Outlinking",
@@ -97,7 +97,7 @@ local chooserTable = {
 
 -- create new private browsing window
 local privateBrowsing =
-    [[
+[[
     tell application "Safari"
     activate
         tell application "System Events"
@@ -108,7 +108,7 @@ local privateBrowsing =
 ]]
 
 local getURL =
-    [[
+[[
     tell application "Safari"
     set currentURL to URL of front document
     end tell
@@ -129,7 +129,7 @@ function obj.createWindow(originalURL, newURL)
     )
     hs.osascript.applescript(
         'tell window 1 of application "Safari" to set current tab to (make new tab with properties {URL:' ..
-            '"' .. newURL .. '"' .. "})"
+        '"' .. newURL .. '"' .. "})"
     )
 end
 
@@ -141,7 +141,7 @@ function obj.createCustom(URL)
     local newURL = "https://outline.com/" .. hs.http.encodeForQuery(URL)
     hs.osascript.applescript(
         'tell window 0 of application "Safari" to set current tab to (make new tab with properties {URL:' ..
-            '"' .. newURL .. '"' .. "})"
+        '"' .. newURL .. '"' .. "})"
     )
 end
 
@@ -219,7 +219,7 @@ function obj:busterChooserCallback(choice)
         -- figure out a way to make the obj:bust function more flexible
         -- to handle this
         local frontmostURL = obj.getURL()
-        local UAString = {"Develop", "User Agent", "Safari — iOS 12.1.3 — iPhone"}
+        local UAString = { "Develop", "User Agent", "Safari — iOS 12.1.3 — iPhone" }
         hs.appfinder.appFromName("Safari"):selectMenuItem(UAString)
         obj.setURL(frontmostURL)
     elseif choice["id"] == 7 then
@@ -227,7 +227,7 @@ function obj:busterChooserCallback(choice)
         self.createWindow(test, test)
     else
         local URL = self.chooser:query()
-        obj:createCustom(URL)
+        obj.createCustom(URL)
     end
 end
 
@@ -244,16 +244,16 @@ function obj:init()
     obj.logger.df("-- Initializing PaywallBuster")
     self.chooser =
         hs.chooser.new(
-        function(choice)
-            if not (choice) then
-                -- print(self.chooser:query())
-                self.chooser:hide()
-                return
-            else
-                self:busterChooserCallback(choice)
+            function(choice)
+                if not (choice) then
+                    -- print(self.chooser:query())
+                    self.chooser:hide()
+                    return
+                else
+                    self:busterChooserCallback(choice)
+                end
             end
-        end
-    )
+        )
 
     self.chooser:choices(chooserTable)
     self.chooser:rows(#chooserTable)
@@ -264,7 +264,7 @@ function obj:init()
                 self.chooser:choices(chooserTable)
             else
                 local choices = {
-                    {["id"] = 0, ["text"] = "Custom", subText = "Enter a custom url to open with default method"}
+                    { ["id"] = 0, ["text"] = "Custom", subText = "Enter a custom url to open with default method" }
                 }
                 self.chooser:choices(choices)
             end

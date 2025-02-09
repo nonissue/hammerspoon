@@ -29,14 +29,14 @@ end
 
 local emojiChooser =
     hs.chooser.new(
-    function(choice)
-        if not (choice) then
-            return
-        else
-            emojiChooserCallback(choice)
+        function(choice)
+            if not (choice) then
+                return
+            else
+                emojiChooserCallback(choice)
+            end
         end
-    end
-):rows(3):width(20):choices(emojis):searchSubText(true)
+    ):rows(3):width(20):choices(emojis):searchSubText(true)
 
 hs.hotkey.bind(
     mash,
