@@ -56,6 +56,10 @@ pbcopy = hs.pasteboard.setContents
 print_t = utils.print_r
 print_r = utils.print_r
 hostname = hs.host.localizedName()
+-- access location early to trigger macOS location services permission dialog on first run
+-- and to load hs.locaiton on future runs because:
+-- hs.wifi.currentNetwork() relies on user's location as of macOS 14
+local location = hs.location.get()
 
 local mash = { "cmd", "alt", "ctrl" }
 
