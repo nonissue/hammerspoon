@@ -30,17 +30,17 @@ end
 
 -- can't remember if/what depends on this
 
-if not hs.ipc.cliStatus() then
-    local cliInstallResult = hs.ipc.cliInstall()
-    if cliInstallResult then
-        require("hs.ipc")
-    else
-        hs.alert("hs.ipc error!")
-    end
-else
-    hs.ipc.cliSaveHistory(true)
-    require("hs.ipc")
-end
+-- if not hs.ipc.cliStatus() then
+--     local cliInstallResult = hs.ipc.cliInstall()
+--     if cliInstallResult then
+--         require("hs.ipc")
+--     else
+--         hs.alert("hs.ipc error!")
+--     end
+-- else
+--     hs.ipc.cliSaveHistory(true)
+--     require("hs.ipc")
+-- end
 
 -- sane defaults
 hs.logger.defaultLogLevel = 5
