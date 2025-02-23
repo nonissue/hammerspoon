@@ -36,7 +36,7 @@ obj.author = "andy williams <andy@nonissue.org>"
 obj.homepage = "https://github.com/nonissue/hammerspoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.logger = hs.logger.new("CMDESC")
-obj.logging = true
+obj.logging = false
 
 obj.cmd_held_down_alone = false
 obj.prev_mods = {}
