@@ -108,17 +108,15 @@ local function atHome(SSID)
     return has_value(homeSSIDs, SSID)
 end
 
--- direction: 
+-- direction:
 -- type: string
 -- accepted: bottom, left, right,
 function obj.moveDock(direction)
-    hs.applescript.applescript([[ 
+    hs.applescript.applescript([[
         tell application "System Events" to set the autohide of the dock preferences to true
         tell application "System Events" to set the screen edge of the dock preferences to ]] .. direction
     )
 end
-
-
 
 --- Context.moveDockLeft()
 --- Function
@@ -236,6 +234,7 @@ function obj.ssidChangedCallback()
     elseif (atHome(newSSID)) and (not has_value(homeSSIDs, obj.currentSSID)) then
         obj.logger.i("home")
         obj.homeArrived()
+        obj.location = "home"
     elseif not atHome(newSSID) then
         obj.logger.i("away")
         obj.homeDeparted()
@@ -294,6 +293,7 @@ end
 ---  * None
 function obj.screenWatcherCallback()
     local newNumberOfScreens = #hs.screen.allScreens()
+
     obj.logger.i("[SW] Fired")
     -- hs.alert("[SW] Fired")
     -- obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
@@ -383,7 +383,11 @@ function obj.screenWatcherCallback()
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and
-        (hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
+        (
+            hs.screen.find("Color LCD") or
+            MBP_14_UUID or
+            hs.screen.find("Built-in Retina Display")
+        )
     then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
@@ -480,6 +484,10 @@ function obj:init()
 
     obj.display_ids = hs.settings.get("context.display_ids") or {}
     obj.drives = hs.settings.get("context.drives") or {}
+    if atHome(hs.wifi.currentNetwork()) then
+        obj.location = "home"
+        hs.alert("@HOME")
+    end
 
     -- if options then
     --     obj.shownInMenu = options.showMenu or obj.shownInMenu
@@ -518,7 +526,7 @@ function obj.createMenu(location, docked, gpu)
             {
                 {
                     title = hs.styledtext.new(
-                        "  @ " .. (location or obj.location or "error"),
+                        "  @" .. (location or obj.location or "error"),
                         { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                     ),
                     fn = function()
@@ -618,9 +626,31 @@ function obj.createMenu(location, docked, gpu)
     -- see ./settings.lua
     local function getSetupState()
         if (hs.settings.get("context_settings_setup_done")) then
-            return "✔︎"
+            return true
         else
-            return "×"
+            return false
+        end
+    end
+
+    local function setupStateDisplay()
+        local setupDoneTitle = hs.styledtext.new(
+            "✔︎ Setup",
+            {
+                color = { alpha = 0.9, green = 0.95 },
+                font = hs.styledtext.defaultFonts.userFixedPitch.name
+            }
+        )
+        local setupNotDoneTitle = hs.styledtext.new(
+            "× Setup",
+            {
+                color = { alpha = 0.6, red = 1 },
+                font = hs.styledtext.defaultFonts.userFixedPitch.name
+            }
+        )
+        if (getSetupState()) then
+            return setupDoneTitle
+        else
+            return setupNotDoneTitle
         end
     end
 
@@ -628,16 +658,18 @@ function obj.createMenu(location, docked, gpu)
         newMenu,
         {
             {
-                title = hs.styledtext.new(
-                    getSetupState() .. " Setup",
-                    {
-                        color = { alpha = 0.6 },
-                        font = hs.styledtext.defaultFonts.userFixedPitch.name
-                    }
-                ),
+                title = setupStateDisplay(),
+                -- title = hs.styledtext.new(
+                --     setupStateDisplay() .. " Setup",
+                --     {
+                --         color = { alpha = 0.6, green = 1 },
+                --         font = hs.styledtext.defaultFonts.userFixedPitch.name
+                --     }
+                -- ),
                 -- checked = getSetupState(),
                 fn = function()
                     if (getSetupState()) then
+                        hs.alert("CLEARING context_settings_setup_done")
                         hs.settings.clear("context_settings_setup_done")
                     else
                         hs.settings.setDate("context_settings_setup_done", os.date(hs.settings.dateFormat))
