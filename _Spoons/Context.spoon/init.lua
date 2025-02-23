@@ -367,14 +367,14 @@ function obj.screenWatcherCallback()
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
         -- obj.moveDockDown()
-        obj.moveDockLeft()
+        -- obj.moveDockLeft()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
         obj.docked == "@desk"
     then
         obj.logger.i("[SW] undocking")
         obj.docked = "mobile"
         obj.contextValues.docked = "mobile"
-        obj.moveDockLeft()
+        -- obj.moveDockLeft()
 
         for i = 1, #obj.drives do
             obj.checkAndEject(obj.drives[i])
@@ -383,8 +383,7 @@ function obj.screenWatcherCallback()
         obj.logger.i("[SW] Sidecar Mode")
         obj.moveDockDown()
     elseif #hs.screen.allScreens() == 1 and
-        (
-            hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
+        (hs.screen.find("Color LCD") or MBP_14_UUID or hs.screen.find("Built-in Retina Display"))
     then
         -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
         -- Need to find by id but don't know if that's stable. Hmmm.
@@ -392,7 +391,8 @@ function obj.screenWatcherCallback()
         obj.logger.i("[SW] Mobile")
         obj.docked = "mobile"
         obj.contextValues.docked = "mobile"
-        obj.moveDockLeft()
+        -- obj.moveDockLeft()
+        obj.moveDockDown()
     else
         obj.logger.e("[SW] Error!")
         obj.logger.e("[SW] All screens: ")
