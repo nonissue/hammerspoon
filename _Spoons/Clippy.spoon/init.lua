@@ -13,8 +13,9 @@ obj.homepage = "https.//github.com/nonissue"
 obj.license = "MIT - https.//opensource.org/licenses/MIT"
 
 obj.logger = hs.logger.new("Clippy")
+obj.debug = true
 obj.hotkeyShow = nil
-obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2016mbpr"
+obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2021mbp"
 obj.wasCreated = false
 
 obj.newScreenshot = nil
@@ -74,8 +75,8 @@ function obj.imageToClipboard(files, flagTables)
         -- hacky way to skip iterations of the for loop
         if
             file ~= nil and string.sub(file, -4) == ".png" and string.sub(fileName, 1, 3) == "apw" and
-                flagTables[y]["itemIsDir"] ~= true
-         then
+            flagTables[y]["itemIsDir"] ~= true
+        then
             obj.skip = 0
         elseif string.sub(fileName, -4) ~= ".png" then
             obj.skip = 1
@@ -88,8 +89,8 @@ function obj.imageToClipboard(files, flagTables)
             if obj.debug == true then
                 print(
                     "\n\n\t\tSkipping:" ..
-                        "\n\t\t\tpath:\t\t" ..
-                            file .. "\n\t\t\tfileName:\t" .. fileName .. "\n\t\tReason:\n\t\t\tFails criteria\n"
+                    "\n\t\t\tpath:\t\t" ..
+                    file .. "\n\t\t\tfileName:\t" .. fileName .. "\n\t\tReason:\n\t\t\tFails criteria\n"
                 )
             end
         else
@@ -100,8 +101,8 @@ function obj.imageToClipboard(files, flagTables)
                 if obj.debug == true then
                     print(
                         "\n\n\t\tSkipping:" ..
-                            "\n\t\t\tpath: " ..
-                                file .. "\n\t\t\tfileName: " .. fileName .. "\n\t\tReason: Not a new screenshot\n"
+                        "\n\t\t\tpath: " ..
+                        file .. "\n\t\t\tfileName: " .. fileName .. "\n\t\tReason: Not a new screenshot\n"
                     )
                 end
             end
@@ -128,7 +129,7 @@ function obj.imageToClipboard(files, flagTables)
                 if obj.wasCreated then
                     print(
                         "\n\n\t------------------------\n\t💯 Match! Copying:\n" ..
-                            "\t• " .. fileName .. "\n\tto clipboard.\n\t------------------------\n"
+                        "\t• " .. fileName .. "\n\tto clipboard.\n\t------------------------\n"
                     )
                     hs.pasteboard.writeObjects(obj.newScreenshot)
                     hs.notify.new(
@@ -183,6 +184,7 @@ function obj:start() -- luacheck: ignore
     obj.logger.df("-- Starting Clippy")
     obj.screenshotWatcher:start()
 end
+
 --- Clippy:stop()
 --- Method
 --- Stops clippy
