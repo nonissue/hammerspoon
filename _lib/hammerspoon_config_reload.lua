@@ -7,7 +7,7 @@
 
 
 
-local mod={}
+local mod = {}
 local configFileWatcher
 
 local hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
@@ -17,9 +17,9 @@ mod.config = {
 }
 
 -- Automatic config reload if any files in ~/.hammerspoon change
-function reloadConfig(files)
+local function reloadConfig(files)
    doReload = false
-   for _,file in pairs(files) do
+   for _, file in pairs(files) do
       if file:sub(-4) == ".lua" then
          doReload = true
       end
@@ -36,8 +36,8 @@ function mod.init()
       configFileWatcher:start()
    end
 
-  --  Manual config reload
-    -- apw.bind(mod.config.manual_reload_key, hs.reload)
+   --  Manual config reload
+   -- apw.bind(mod.config.manual_reload_key, hs.reload)
 end
 
 return mod
