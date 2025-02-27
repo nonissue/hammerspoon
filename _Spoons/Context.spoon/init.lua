@@ -148,10 +148,16 @@ end
 function obj.moveDockDown()
     hs.applescript.applescript(
         [[
-            tell application "System Events" to set the autohide of the dock preferences to false
             tell application "System Events" to set the screen edge of the dock preferences to bottom
       ]]
     )
+end
+
+function obj.dockAutoHideEnable()
+    hs.applescript.applescript(
+        [[
+            tell application "System Events" to set the autohide of the dock preferences to false
+    ]])
 end
 
 --- Context.checkAndEject()
