@@ -60,37 +60,72 @@ hostname = hs.host.localizedName()
 -- and to load hs.locaiton on future runs because:
 -- hs.wifi.currentNetwork() relies on user's location as of macOS 14
 local location = hs.location.get()
-
 local mash = { "cmd", "alt", "ctrl" }
 
-------------------------------------------------------------------------------
---                              START OF SPOONS                             --
-------------------------------------------------------------------------------
--- ControlEscape.spoon / https://github.com/jasonrudolph/ControlEscape.spoon
-------------------------------------------------------------------------------
--- I wanted this to resolve my issues with my locking capslock key on my
--- AEKII m3501, but I don't think it does
--- It does replace Karabiner Elements for me though, which is nice!
--- EDIT: maybe check this
--- https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
-------------------------------------------------------------------------------
+-- ==========================================================================
+-- START OF SPOONS                           
+-- ==========================================================================
+
+--[[
+
+    ┌────────────────┬───────────────┐
+    │    Spoon:      │    Clippy     │
+    ├────────────────┼───────────────┤
+    │    Author:     │    Me         │
+    └────────────────┴───────────────┘  
+
+    Copy screenshot to clipboard AND save to disk at the same time
+    which is weirdly not possible on macOS
+
+]]
+
+hs.loadSpoon("Clippy"):start()
+
+--[[
+
+    ┌────────────────┬───────────────┐
+    │    Spoon:      │    CTRLESC    │
+    ├────────────────┼───────────────┤
+    │    Author:     │    Me         │
+    └────────────────┴───────────────┘  
+
+    Inspiraction/prior art:
+    ControlEscape.spoon / https://github.com/jasonrudolph/ControlEscape.spoon
+
+    —
+
+    I wanted this to resolve my issues with my locking capslock key on my
+    AEKII m3501, but I don't think it does
+    It does replace Karabiner Elements for me though, which is nice!
+    EDIT: maybe check this
+    https://gist.github.com/zcmarine/f65182fe26b029900792fa0b59f09d7f
+
+]]
+
 hs.loadSpoon("CTRLESC"):start()
 
-------------------------------------------------------------------------------
--- Context.spoon / by me
-------------------------------------------------------------------------------
--- Watches for wifi ssid changes + screen resolution changes
--- If changes are detected and match a series of rules
--- Systemwide settings are configured
--- For example:
---  * On wifi ssid change, if isn't one of our home networks
---    system is muted and screenlock is set to a short time
---
--- PARAMS:
--- [Optional] Accepts a boolean which dictates whether the menubar item is shown
--- Defaults to false if nothing is passed
-------------------------------------------------------------------------------
+--[[
 
+    ┌────────────────┬───────────────┐
+    │    Spoon:      │    Context    │
+    ├────────────────┼───────────────┤
+    │    Author:     │    Me         │
+    └────────────────┴───────────────┘  
+
+    Watches for wifi ssid changes + screen resolution changes
+    If changes are detected and match a series of rules
+    Systemwide settings are configured
+    For example:
+    * On wifi ssid change, if isn't one of our home networks
+    system is muted and screenlock is set to a short time
+
+    PARAMS:
+    [Optional] Accepts a boolean which dictates whether the menubar item is shown
+    Defaults to false if nothing is passed
+
+ ]]
+
+--- this is config for contexts, not ideal atm
 local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
 local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
 
@@ -110,6 +145,7 @@ hs.settings.set(
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
 
+-- Load spoon
 hs.loadSpoon("Context"):start(
     {
         showMenu = true,
@@ -118,28 +154,64 @@ hs.loadSpoon("Context"):start(
     }
 )
 
-------------------------------------------------------------------------------
--- SafariKeys.spoon / by me
-------------------------------------------------------------------------------
+--[[
+
+    ┌────────────────┬───────────────────┐
+    │    Spoon:      │    SafariKeys     │
+    ├────────────────┼───────────────────┤
+    │    Author:     │    Me             │
+    └────────────────┴───────────────────┘  
+
+    Custom hotkeys for safari that target commands or actions
+    available in the menubar but that don't have a hotkey bound to them.
+    For example, move tab to new window or merge all windows are available
+    in the menu system but are annoying to find and invoke.
+
+]]
 
 hs.loadSpoon("SafariKeys")
 spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
-------------------------------------------------------------------------------
--- PaywallBuster.spoon / by me
-------------------------------------------------------------------------------
--- Ultimately this probably isn't necessary, but I do occasionally use it
-------------------------------------------------------------------------------
--- TODO: bind default hotkey in spoon
--- hs.loadSpoon("PaywallBuster")
--- hs.hotkey.bind(
---     mash,
---     "B",
---     function()
---         spoon.PaywallBuster:show()
---     end
--- )
 
+--[[
+    ┌────────────────┬───────────────────┐
+    │    Spoon:      │    SafariKeys     │
+    ├────────────────┼───────────────────┤
+    │    Author:     │    Me             │
+    └────────────────┴───────────────────┘  
+    
+    Ultimately this probably isn't necessary, but I do occasionally use it
+    TODO: bind default hotkey in spoon
+]]
+--[[
+    hs.loadSpoon("PaywallBuster")
+    hs.hotkey.bind(
+        mash,
+        "B",
+        function()
+            spoon.PaywallBuster:show()
+        end
+    )
+]]
+
+--[[
+    ┌────────────────┬───────────────────┐
+    │    Spoon:      │    SafariKeys     │
+    ├────────────────┼───────────────────┤
+    │    Author:     │    Me             │
+    └────────────────┴───────────────────┘  
+    
+    Ultimately this probably isn't necessary, but I do occasionally use it
+    TODO: bind default hotkey in spoon
+    hs.loadSpoon("PaywallBuster")
+    hs.hotkey.bind(
+        mash,
+        "B",
+        function()
+            spoon.PaywallBuster:show()
+        end
+    )
+]]
 ------------------------------------------------------------------------------
 -- Zzz.spoon / by me
 ------------------------------------------------------------------------------
@@ -180,12 +252,7 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
-------------------------------------------------------------------------------
--- Clippy.spoon / by me
-------------------------------------------------------------------------------
--- Copy screenshot to clipboard and save to disk
-------------------------------------------------------------------------------
-hs.loadSpoon("Clippy"):start()
+
 
 ------------------------------------------------------------------------------
 -- Wip
@@ -202,7 +269,7 @@ hs.loadSpoon("Clippy"):start()
 TextInflator = require("TextInflator")
 TextInflator:init()
 
-hs.loadSpoon("CMDESC"):start()
+-- hs.loadSpoon("CMDESC"):start()
 
 -- hs.loadSpoon("LoPo"):init()
 -- hs.loadSpoon("LoPo"):start()
