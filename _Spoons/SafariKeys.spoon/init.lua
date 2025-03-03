@@ -103,13 +103,13 @@ end
 function obj.addToReadingList()
     local ok, result =
         hs.osascript.applescript(
-        [[
+            [[
         tell application "Safari"
 	        set result to URL of document 1
         end tell
         tell application "Safari" to add reading list item result
     ]]
-    )
+        )
 
     if (ok) then
         hs.alert.show(" ⚯⁺")
@@ -130,13 +130,13 @@ function obj:addToReadingListTest(url)
     if (not url) then
         local _, _ =
             hs.osascript.applescript(
-            [[
+                [[
             tell application "Safari"
                 set result to URL of document 1
             end tell
             tell application "Safari" to add reading list item result
         ]]
-        )
+            )
     else
         obj.logger.e("URL: " .. url)
         local script = string.format([[tell application "Safari" to add reading list item %s]], url)
@@ -210,7 +210,7 @@ function obj.mailToSelf()
     -- end
 
     local script =
-        [[
+    [[
             tell application "Safari"
                 set currentURL to URL of document 1
             end tell

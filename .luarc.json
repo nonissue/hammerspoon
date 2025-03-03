@@ -36,5 +36,18 @@
       "type"
     ]
   },
-  "workspace": { "ignoreDir": [".vscode", "_archive", "Spoons"] }
+  "workspace": {
+    "ignoreDir": [
+      ".vscode",
+      "_archive",
+      "Spoons"
+    ]
+  },
+  "format": {
+    "defaultConfig": {
+      "indent_style": "space",
+      "space_before_attribute": "false",
+      "space_around_table_field_list": "false"
+    }
+  }
 }

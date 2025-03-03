@@ -227,13 +227,13 @@ function obj:startTimer(timerInMins)
         self.sleepTimerMenu:setMenu(self.modifyMenuChoices)
         self.timerEvent =
             hs.timer.doAfter(
-            tonumber(timerInMins) * 60,
-            function()
-                self.logger.df("Timer finished, sleeping!")
-                self:deleteTimer()
-                hs.caffeinate.systemSleep()
-            end
-        )
+                tonumber(timerInMins) * 60,
+                function()
+                    self.logger.df("Timer finished, sleeping!")
+                    self:deleteTimer()
+                    hs.caffeinate.systemSleep()
+                end
+            )
     end
     return true
 end
@@ -373,14 +373,14 @@ end
 function obj:initChooser()
     self.chooser =
         hs.chooser.new(
-        function(choice)
-            if not (choice) then
-                print(self.chooser:query())
-            else
-                self:processChoice(choice)
+            function(choice)
+                if not (choice) then
+                    print(self.chooser:query())
+                else
+                    self:processChoice(choice)
+                end
             end
-        end
-    )
+        )
 
     self.chooser:choices(self:getCurrentChoices())
     self.chooser:rows(#self:getCurrentChoices())

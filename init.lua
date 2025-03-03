@@ -21,7 +21,7 @@ local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 
 hs_reload.init()
--- require("console")
+require("console")
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -63,7 +63,7 @@ local location = hs.location.get()
 local mash = { "cmd", "alt", "ctrl" }
 
 -- ==========================================================================
--- START OF SPOONS                           
+-- START OF SPOONS
 -- ==========================================================================
 
 --[[
@@ -72,7 +72,7 @@ local mash = { "cmd", "alt", "ctrl" }
     │    Spoon:      │    Clippy     │
     ├────────────────┼───────────────┤
     │    Author:     │    Me         │
-    └────────────────┴───────────────┘  
+    └────────────────┴───────────────┘
 
     Copy screenshot to clipboard AND save to disk at the same time
     which is weirdly not possible on macOS
@@ -87,7 +87,7 @@ hs.loadSpoon("Clippy"):start()
     │    Spoon:      │    CTRLESC    │
     ├────────────────┼───────────────┤
     │    Author:     │    Me         │
-    └────────────────┴───────────────┘  
+    └────────────────┴───────────────┘
 
     Inspiraction/prior art:
     ControlEscape.spoon / https://github.com/jasonrudolph/ControlEscape.spoon
@@ -110,7 +110,7 @@ hs.loadSpoon("CTRLESC"):start()
     │    Spoon:      │    Context    │
     ├────────────────┼───────────────┤
     │    Author:     │    Me         │
-    └────────────────┴───────────────┘  
+    └────────────────┴───────────────┘
 
     Watches for wifi ssid changes + screen resolution changes
     If changes are detected and match a series of rules
@@ -160,7 +160,7 @@ hs.loadSpoon("Context"):start(
     │    Spoon:      │    SafariKeys     │
     ├────────────────┼───────────────────┤
     │    Author:     │    Me             │
-    └────────────────┴───────────────────┘  
+    └────────────────┴───────────────────┘
 
     Custom hotkeys for safari that target commands or actions
     available in the menubar but that don't have a hotkey bound to them.
@@ -169,8 +169,8 @@ hs.loadSpoon("Context"):start(
 
 ]]
 
-hs.loadSpoon("SafariKeys")
-spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
+-- hs.loadSpoon("SafariKeys")
+-- spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
 
 --[[
@@ -178,8 +178,8 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
     │    Spoon:      │    SafariKeys     │
     ├────────────────┼───────────────────┤
     │    Author:     │    Me             │
-    └────────────────┴───────────────────┘  
-    
+    └────────────────┴───────────────────┘
+
     Ultimately this probably isn't necessary, but I do occasionally use it
     TODO: bind default hotkey in spoon
 ]]
@@ -199,8 +199,8 @@ spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
     │    Spoon:      │    SafariKeys     │
     ├────────────────┼───────────────────┤
     │    Author:     │    Me             │
-    └────────────────┴───────────────────┘  
-    
+    └────────────────┴───────────────────┘
+
     Ultimately this probably isn't necessary, but I do occasionally use it
     TODO: bind default hotkey in spoon
     hs.loadSpoon("PaywallBuster")
