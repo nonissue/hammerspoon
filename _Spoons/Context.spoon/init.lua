@@ -72,7 +72,7 @@ obj.spoonPath = script_path()
 
 -- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
 -- or if there is a warning (eg. dgpu enabled?)
-obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({ w = 20, h = 20 })
+obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({w = 20, h = 20})
 -- obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.number.circle.fill.pdf"):setSize({w = 18, h = 18})
 
 -- get value with obj.contextValuesWatcher:value('location')
@@ -193,8 +193,8 @@ function obj.homeArrived()
     -- For Example!
     -- IN /etc/sudoers.d/power_mgmt (sudo visudo -f /etc/sudoers.d/power_mgmt)
     -- <yourusername> ALL=(root) NOPASSWD: /usr/bin/pmset *
-    os.execute("sudo pmset -b displaysleep 2 sleep 10")
-    os.execute("sudo pmset -c displaysleep 5 sleep 15")
+    -- os.execute("sudo pmset -b displaysleep 2 sleep 10")
+    -- os.execute("sudo pmset -ci displaysleep 5 sleep 15")
     hs.audiodevice.defaultOutputDevice():setMuted(false)
 
     hs.alert(" ☛ ⌂ ", 3)
@@ -214,7 +214,7 @@ end
 function obj.homeDeparted()
     hs.audiodevice.defaultOutputDevice():setMuted(true)
     hs.alert("~(☛ ⌂)", 1)
-    os.execute("sudo pmset -a displaysleep 1 sleep 5")
+    -- os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
     obj.contextValues.location = "away"
     obj.location = "away"
@@ -533,7 +533,7 @@ function obj.createMenu(location, docked, gpu)
                 {
                     title = hs.styledtext.new(
                         "  @" .. (location or obj.location or "error"),
-                        { font = hs.styledtext.defaultFonts.userFixedPitch.name }
+                        {font = hs.styledtext.defaultFonts.userFixedPitch.name}
                     ),
                     fn = function()
                         hs.alert("Current Wifi: " .. obj.currentSSID)
@@ -549,7 +549,7 @@ function obj.createMenu(location, docked, gpu)
             {
                 title = hs.styledtext.new(
                     "  " .. (docked or obj.docked or "error"),
-                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
+                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
                 ),
                 fn = function()
                     hs.alert("docked clicked")
@@ -564,7 +564,7 @@ function obj.createMenu(location, docked, gpu)
             {
                 title = hs.styledtext.new(
                     (gpu or obj.currentGPU or "error"),
-                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
+                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
                 ),
                 fn = function()
                     hs.alert("Launching activity monitor...")
@@ -584,7 +584,7 @@ function obj.createMenu(location, docked, gpu)
                 {
                     title = hs.styledtext.new(
                         "  Toggle UI",
-                        { font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {} }
+                        {font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {}}
                     ),
                     fn = function()
                         obj.darkModeScript =
@@ -615,7 +615,7 @@ function obj.createMenu(location, docked, gpu)
                 title = hs.styledtext.new(
                     "  Refresh   ",
                     {
-                        color = { blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8 },
+                        color = {blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8},
                         -- underlineStyle = 1,
                         font = hs.styledtext.defaultFonts.userFixedPitch.name
                     }
@@ -642,14 +642,14 @@ function obj.createMenu(location, docked, gpu)
         local setupDoneTitle = hs.styledtext.new(
             "✔︎ Setup",
             {
-                color = { alpha = 0.9, green = 0.95 },
+                color = {alpha = 0.9, green = 0.95},
                 font = hs.styledtext.defaultFonts.userFixedPitch.name
             }
         )
         local setupNotDoneTitle = hs.styledtext.new(
             "× Setup",
             {
-                color = { alpha = 0.6, red = 1 },
+                color = {alpha = 0.6, red = 1},
                 font = hs.styledtext.defaultFonts.userFixedPitch.name
             }
         )
