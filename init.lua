@@ -269,6 +269,13 @@ spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 TextInflator = require("TextInflator")
 TextInflator:init()
 
+-- Messing around wtih asmagills spoon formatting but it's weird
+-- hs.loadSpoon is easier for me to reason about
+
+hs.loadSpoon("RT")
+spoon.RT:bindHotkeys(spoon.RT.defaultHotkeys)
+
+
 -- hs.loadSpoon("CMDESC"):start()
 
 -- hs.loadSpoon("LoPo"):init()
