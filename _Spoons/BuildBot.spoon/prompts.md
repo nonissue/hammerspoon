@@ -1,0 +1,5 @@
+I play sc2 and build orders are important. there's a tool for windows called overwolf that allows you to provide a build order in a specific encoding (I think SALT?) and then it creates a HUD that is visible while you're in game that gives you instructions on timing and what to do. how hard would that be to create on macOS? im thinking hammerspoon would be able to do it with its extensive apis.
+
+---
+
+Okay, so I've created a hammerspoon spoon plugin to help me learn build orders for the game Starcraft 2. It's called BuildBot. It works by creating an overlay that displays different steps from a build order on screen at different times as I'm playing. Generally, Sc2 build orders are made available in "SALT encoding" which are complicated strings that have the build order encoded. i have made a parser for this, but haven't tested it. can you iniitalize a claude.md explaining this in `_Spoons/BuildBot.spoon` and take a look at my current implementation and suggest any changes you think would improve it?

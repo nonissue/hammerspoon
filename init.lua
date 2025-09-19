@@ -362,8 +362,8 @@ Repeat as needed for each app.
 
 ]]
 
-local BA = hs.loadSpoon("BuildAdvisor")
-BA:bindHotkeys({
+local BuildBot = hs.loadSpoon("BuildBot")
+BuildBot:bindHotkeys({
     start = { { "ctrl", "alt", "cmd" }, "S" },
     pause = { { "ctrl", "alt", "cmd" }, "P" },
     resume = { { "ctrl", "alt", "cmd" }, "R" },
@@ -371,8 +371,8 @@ BA:bindHotkeys({
     toggle = { { "ctrl", "alt", "cmd" }, "H" },
     reload = { { "ctrl", "alt", "cmd" }, "L" },
 })
--- BA:setGameFilter("com.blizzard.starcraft2")
-BA:loadBuild({
+BuildBot:setGameFilter("com.blizzard.starcraft2")
+BuildBot:loadBuild({
     { time = 12, supply = "14", action = "Pylon at ramp" },
     { time = 17, supply = "16", action = "Gateway" },
     { time = 20, supply = "17", action = "Scout" },
