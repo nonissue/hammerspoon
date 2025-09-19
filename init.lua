@@ -272,8 +272,8 @@ TextInflator:init()
 -- Messing around wtih asmagills spoon formatting but it's weird
 -- hs.loadSpoon is easier for me to reason about
 
-hs.loadSpoon("BuildBot")
-spoon.BuildBot:bindHotkeys(spoon.BuildBot.defaultHotkeys)
+-- hs.loadSpoon("BuildBot")
+-- spoon.BuildBot:bindHotkeys(spoon.BuildBot.defaultHotkeys)
 
 
 -- hs.loadSpoon("CMDESC"):start()
