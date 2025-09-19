@@ -169,8 +169,8 @@ hs.loadSpoon("Context"):start(
 
 ]]
 
--- hs.loadSpoon("SafariKeys")
--- spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
+hs.loadSpoon("SafariKeys")
+spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
 
 --[[
