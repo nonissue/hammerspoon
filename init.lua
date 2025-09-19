@@ -362,4 +362,22 @@ Repeat as needed for each app.
 
 ]]
 
+local BA = hs.loadSpoon("BuildAdvisor")
+BA:bindHotkeys({
+    start = { { "ctrl", "alt", "cmd" }, "S" },
+    pause = { { "ctrl", "alt", "cmd" }, "P" },
+    resume = { { "ctrl", "alt", "cmd" }, "R" },
+    stop = { { "ctrl", "alt", "cmd" }, "X" },
+    toggle = { { "ctrl", "alt", "cmd" }, "H" },
+    reload = { { "ctrl", "alt", "cmd" }, "L" },
+})
+-- BA:setGameFilter("com.blizzard.starcraft2")
+BA:loadBuild({
+    { time = 12, supply = "14", action = "Pylon at ramp" },
+    { time = 17, supply = "16", action = "Gateway" },
+    { time = 20, supply = "17", action = "Scout" },
+    { time = 27, supply = "20", action = "Cybernetics Core" },
+    { time = 38, supply = "23", action = "2nd Gas" },
+})
+
 hs.alert("config reloaded")
