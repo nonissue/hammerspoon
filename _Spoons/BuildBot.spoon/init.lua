@@ -52,6 +52,7 @@ obj.cfg            = {
     clickThrough = true,        -- ignore mouse/keyboard
     showOnlyWhenFocused = true, -- gated by bundleID filter
     bundleID = "com.blizzard.starcraft2",
+    debug = false,              -- enable debug logging
 }
 
 -- ============ State ============
@@ -68,27 +69,40 @@ obj._isShowing     = false
 -- ============ Internal helpers ============
 local function now() return timer.secondsSinceEpoch() end
 
+local function debugLog(self, msg)
+    if self.cfg.debug then
+        hs.printf("[BuildBot] %s", msg)
+    end
+end
+
+local function formatGameTime(seconds)
+    local mins = math.floor(seconds / 60)
+    local secs = math.floor(seconds % 60)
+    return string.format("%d:%02d", mins, secs)
+end
+
 local function fmtStepLine(step, prefix, elapsed)
-    if not step then return "" end
+    if not step then return nil end
     local ahead = step.time - elapsed
     local sign = ahead >= 0 and "-" or "+"
-    return string.format("%s[%02d] %s%ss  %s  —  %s",
+    return string.format("%s[%s] %s%ds  %s  —  %s",
         prefix or "",
-        step.time,
+        formatGameTime(step.time),
         sign,
-        math.abs(ahead),
+        math.floor(math.abs(ahead)),
         step.supply or "",
         step.action or ""
     )
 end
 
 function obj:_currentIndex(elapsed)
-    if #self._build == 0 then return 0 end
-    local idx = 0
+    if #self._build == 0 then return 1 end
     for i, s in ipairs(self._build) do
-        if s.time <= elapsed then idx = i else break end
+        if s.time > elapsed then
+            return i
+        end
     end
-    return idx
+    return #self._build
 end
 
 function obj:_composeText(elapsed)
@@ -98,15 +112,36 @@ function obj:_composeText(elapsed)
     if not self._startEpoch then
         return "Press Start/Sync to begin (game timer)."
     end
-    local idx = self:_currentIndex(elapsed)
-    local lines = {
-        string.format("⏱  %0.1fs   %s", elapsed, (self._paused and "[PAUSED]" or "")),
-        "",
-        "Now / Next:"
-    }
-    lines[#lines + 1] = fmtStepLine(self._build[idx], "➤ ", elapsed)
-    lines[#lines + 1] = fmtStepLine(self._build[idx + 1], "   ", elapsed)
-    lines[#lines + 1] = fmtStepLine(self._build[idx + 2], "   ", elapsed)
+
+    local currentIdx = self:_currentIndex(elapsed)
+    local lines = {}
+
+    lines[#lines + 1] = string.format("⏱  %s   %s\n\nCurrent / Next:",
+        formatGameTime(elapsed),
+        (self._paused and "[PAUSED]" or ""))
+
+    -- Show previous step
+    if currentIdx > 1 then
+        local prevLine = fmtStepLine(self._build[currentIdx - 1], "   ", elapsed)
+        if prevLine then
+            lines[#lines + 1] = prevLine
+        end
+    end
+
+    -- Show current step (what to do now) with arrow
+    local currentLine = fmtStepLine(self._build[currentIdx], "➤ ", elapsed)
+    if currentLine then
+        lines[#lines + 1] = currentLine
+    end
+
+    -- Show next 2 steps
+    for i = 1, 2 do
+        local nextLine = fmtStepLine(self._build[currentIdx + i], "   ", elapsed)
+        if nextLine then
+            lines[#lines + 1] = nextLine
+        end
+    end
+
     return table.concat(lines, "\n")
 end
 
@@ -120,9 +155,9 @@ function obj:_ensureHUD()
     c[2] = {
         type = "text",
         textSize = self.cfg.textSize,
-        textColor = self.cfg.textColor,
+        textFont = "Menlo",
         frame = self.cfg.align,
-        text = "",
+        text = {},
     }
     self._hud = c
 end
@@ -154,13 +189,37 @@ function obj:_startTicker()
         else
             elapsed = self._elapsedOffset
         end
-        self._hud[2].text = self:_composeText(elapsed)
+        -- Round to 1 decimal place to avoid floating point precision issues
+        elapsed = math.floor(elapsed * 10 + 0.5) / 10
+        local composedText = self:_composeText(elapsed)
+        if type(composedText) == "string" then
+            self._hud[2].text = composedText
+            self._hud[2].textColor = self.cfg.textColor
+        else
+            self._hud[2].text = composedText
+        end
     end)
 end
 
 function obj:_stopTicker()
     if self._tick then
         self._tick:stop(); self._tick = nil
+    end
+end
+
+function obj:_cleanupWindowFilter()
+    if self._wf then
+        self._wf:unsubscribeAll()
+        self._wf = nil
+    end
+end
+
+function obj:_cleanupHotkeys()
+    if self._hotkeys then
+        for _, hk in pairs(self._hotkeys) do
+            if hk then hk:delete() end
+        end
+        self._hotkeys = {}
     end
 end
 
@@ -181,7 +240,7 @@ end
 function obj:loadSALT(s)
     local parsed = SaltParser.parse(s)
     if not parsed or #parsed == 0 then
-        hs.printf("[BuildBot] SALT parse failed; keeping prior build.")
+        debugLog(self, "SALT parse failed; keeping prior build.")
         return self
     end
     self._build = parsed
@@ -193,9 +252,8 @@ end
 --- Show overlay only when this macOS app is focused (default: SC2).
 function obj:setGameFilter(bundleID)
     self.cfg.bundleID = bundleID or self.cfg.bundleID
-    if self._wf then
-        self._wf:unsubscribeAll(); self._wf = nil
-    end
+    self:_cleanupWindowFilter()
+
     if self.cfg.showOnlyWhenFocused and self.cfg.bundleID then
         self._wf = wf.new(false):allowApp(self.cfg.bundleID)
         self._wf:subscribe(wf.windowFocused, function () self:_showHUD() end)
@@ -204,10 +262,10 @@ function obj:setGameFilter(bundleID)
     return self
 end
 
---- BuildBot:start()
+--- BuildBot:startTimer()
 --- Method
 --- Start/sync the timer (manual sync at game start).
-function obj:start()
+function obj:startTimer()
     self:_ensureHUD()
     self:_showHUD()
     self._paused = false
@@ -243,14 +301,15 @@ function obj:resume()
     return self
 end
 
---- BuildBot:stop()
+--- BuildBot:stopTimer()
 --- Method
 --- Stop the timer and reset elapsed (keeps HUD visible).
-function obj:stop()
+function obj:stopTimer()
     self._startEpoch = nil
     self._paused = false
     self._pauseEpoch = nil
     self._elapsedOffset = 0
+    self._completedSteps = {}
     -- HUD remains; text will prompt to Start
     return self
 end
@@ -268,9 +327,9 @@ end
 
 --- BuildBot:resetElapsed()
 --- Method
---- Keep timer stopped but preserve build; equivalent to stop().
+--- Keep timer stopped but preserve build; equivalent to stopTimer().
 function obj:resetElapsed()
-    return self:stop()
+    return self:stopTimer()
 end
 
 --- BuildBot:bindHotkeys(map)
@@ -279,7 +338,8 @@ end
 --- BuildBot:bindHotkeys(map)
 --- map keys: start, pause, resume, stop, toggle, reload
 function obj:bindHotkeys(map)
-    self._hotkeys = self._hotkeys or {}
+    self:_cleanupHotkeys()
+    self._hotkeys = {}
 
     local function safeBind(actionName, fn)
         local spec = map and map[actionName]
@@ -307,15 +367,14 @@ function obj:bindHotkeys(map)
 
         -- Validate
         if type(mods) ~= "table" or (type(key) ~= "string" and type(key) ~= "number") then
-            hs.printf("[BuildBot] Skipping hotkey '%s': expected {mods, key,...} but got %s",
-                actionName, type(spec))
+            debugLog(self, string.format("Skipping hotkey '%s': expected {mods, key,...} but got %s",
+                actionName, type(spec)))
             return
         end
 
-        -- Delete previous binding if present
+        -- Delete previous binding if present (redundant now due to cleanup)
         if self._hotkeys[actionName] then
             self._hotkeys[actionName]:delete()
-            self._hotkeys[actionName] = nil
         end
 
         -- If caller didn’t provide custom pressed/released/repeat, use our fn
@@ -323,26 +382,53 @@ function obj:bindHotkeys(map)
         self._hotkeys[actionName] = hk
     end
 
-    safeBind("start", function () self:start() end)
+    safeBind("start", function () self:startTimer() end)
     safeBind("pause", function () self:pause() end)
     safeBind("resume", function () self:resume() end)
-    safeBind("stop", function () self:stop() end)
+    safeBind("stop", function () self:stopTimer() end)
     safeBind("toggle", function () self:toggleHUD() end)
     safeBind("reload", function ()
         if self._build and #self._build > 0 then self:loadBuild(self._build) end
     end)
 
-    -- ensure ticker exists so HUD updates even before start()
-    self:_startTicker()
+    -- Only start ticker when we have hotkeys bound and a build loaded
+    if #self._build > 0 then
+        self:_startTicker()
+    end
+
     -- initial filter
     self:setGameFilter(self.cfg.bundleID)
+    return self
+end
+
+-- ============ Spoon Lifecycle Methods ============
+
+--- BuildBot:stop()
+--- Method
+--- Stop the spoon and clean up all resources (called on Hammerspoon reload)
+function obj:stop()
+    self:_stopTicker()
+    self:_cleanupWindowFilter()
+    self:_cleanupHotkeys()
+    self:_hideHUD()
+    if self._hud then
+        self._hud:delete()
+        self._hud = nil
+    end
+    return self
+end
+
+--- BuildBot:start()
+--- Method
+--- Initialize the spoon (called when loaded)
+function obj:start()
+    -- Minimal startup - actual initialization happens in bindHotkeys
     return self
 end
 
 -- ============ Spoon Metatable Boilerplate ============
 function obj:new()
     local o = setmetatable({}, self)
-    -- nothing heavy here; actual init in bindHotkeys/setGameFilter
     return o
 end
 

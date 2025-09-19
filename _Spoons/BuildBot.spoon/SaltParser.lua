@@ -6,6 +6,10 @@ local M = {}
 local json = require("hs.json")
 local haveBase64, b64 = pcall(require, "hs.base64")
 
+local function validateTime(time)
+    return time and time >= 0 and time <= 7200
+end
+
 local function parseTime(tok)
     tok = (tok or ""):lower()
     local h, m, s
@@ -13,16 +17,34 @@ local function parseTime(tok)
         local parts = {}
         for part in tok:gmatch("%d+") do parts[#parts + 1] = tonumber(part) end
         if #parts == 2 then
-            m, s = parts[1], parts[2]; return m * 60 + s
+            m, s = parts[1], parts[2]
+            local time = m * 60 + s
+            return validateTime(time) and time or nil
         elseif #parts == 3 then
-            h, m, s = parts[1], parts[2], parts[3]; return h * 3600 + m * 60 + s
+            h, m, s = parts[1], parts[2], parts[3]
+            local time = h * 3600 + m * 60 + s
+            return validateTime(time) and time or nil
         end
     end
     local mm, ss = tok:match("^(%d+)m(%d+)s$")
-    if mm and ss then return tonumber(mm) * 60 + tonumber(ss) end
-    mm = tok:match("^(%d+)m$"); if mm then return tonumber(mm) * 60 end
-    ss = tok:match("^(%d+)s$"); if ss then return tonumber(ss) end
-    if tok:match("^%d+$") then return tonumber(tok) end
+    if mm and ss then
+        local time = tonumber(mm) * 60 + tonumber(ss)
+        return validateTime(time) and time or nil
+    end
+    mm = tok:match("^(%d+)m$")
+    if mm then
+        local time = tonumber(mm) * 60
+        return validateTime(time) and time or nil
+    end
+    ss = tok:match("^(%d+)s$")
+    if ss then
+        local time = tonumber(ss)
+        return validateTime(time) and time or nil
+    end
+    if tok:match("^%d+$") then
+        local time = tonumber(tok)
+        return validateTime(time) and time or nil
+    end
     return nil
 end
 
@@ -61,7 +83,8 @@ local function parseText(str)
         local tTime = line:match("(%d+:%d%d:%d%d)") or line:match("(%d+:%d%d)") or
             line:match("(%d+%s*[sm])") or line:match("(%d+)")
         local time = tTime and parseTime(tTime)
-        local supply = line:match("@(%d+)") or line:match("^%s*(%d+)%s+")
+        local supply = line:match("@(%d+)") or line:match("^%s*(%d+)%s+") or
+            line:match("%s+(%d+)%s+") or line:match("supply[:%s]*(%d+)")
         local act = line
         if tTime then act = act:gsub(tTime, "", 1) end
         if supply then act = act:gsub("@" .. supply, "", 1) end
@@ -73,14 +96,20 @@ end
 
 function M.parse(s)
     local parsers = { parseJSON, parseBase64JSON, parseText }
+    local errors = {}
+
     for _, f in ipairs(parsers) do
         local ok, res = pcall(f, s)
         if ok and res then
             table.sort(res, function (a, b) return a.time < b.time end)
-            return res
+            return res, nil
+        elseif not ok then
+            errors[#errors + 1] = tostring(res)
         end
     end
-    return {}
+
+    local errorMsg = #errors > 0 and table.concat(errors, "; ") or "Unknown format"
+    return {}, errorMsg
 end
 
 return M
