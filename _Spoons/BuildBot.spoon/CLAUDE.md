@@ -123,3 +123,33 @@ BuildBot.spoon/
 The implementation follows Hammerspoon Spoon conventions with proper lifecycle management. The overlay uses `hs.canvas` for rendering and `hs.window.filter` for game detection.
 
 The SALT parser is particularly robust, attempting multiple parsing strategies and gracefully falling back when formats don't match.
+
+## Recent Session History (2025-09-18)
+
+### Issue Encountered
+- BuildBot spoon was not loading due to "table being nil" error
+- Problem traced to previous transparency changes in display logic
+
+### Changes Made
+1. **Transparency Feature Attempt**: Previously attempted to add transparency to previous build steps by modifying:
+   - `fmtStepLine()` function to return styled text objects with alpha values
+   - `_composeText()` function to handle styled text arrays instead of simple strings
+
+2. **Issue Identified**: The styled text implementation broke the spoon loading because:
+   - `fmtStepLine()` inconsistently returned either strings or styled text objects
+   - Code tried to access `.text` property on string returns, causing nil table errors
+
+3. **Solution Applied**: Reverted transparency changes:
+   - Restored `fmtStepLine()` to return simple strings (removed `dimmed` parameter)
+   - Simplified `_composeText()` to concatenate strings with `table.concat()`
+   - Removed all styled text object handling
+
+### Current Status
+- BuildBot spoon code is functional again
+- User has commented out the spoon loading in `init.lua` (lines 365-423)
+- Need to uncomment the BuildBot loading code to test functionality
+
+### Next Steps
+- User should uncomment BuildBot loading section in `init.lua`
+- Test spoon loading and basic functionality
+- If transparency is still desired, implement it properly with consistent return types
