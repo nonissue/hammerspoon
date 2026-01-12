@@ -13,31 +13,39 @@ local configFileWatcher
 local hs_config_dir = os.getenv("HOME") .. "/.hammerspoon/"
 
 mod.config = {
-   auto_reload = true,
+    auto_reload = true,
 }
 
 -- Automatic config reload if any files in ~/.hammerspoon change
 local function reloadConfig(files)
-   doReload = false
-   for _, file in pairs(files) do
-      if file:sub(-4) == ".lua" then
-         doReload = true
-      end
-   end
-   if doReload then
-      hs.reload()
-   end
+    doReload = false
+    for _, file in pairs(files) do
+        if file:sub(-4) == ".lua" then
+            doReload = true
+        end
+    end
+    if doReload then
+        hs.reload()
+
+        local console = hs.console
+
+        console.toolbar():insertItem("darkMode", #console.toolbar():visibleItems() + 1)
+            :insertItem("clear", #console.toolbar():visibleItems() + 1):insertItem(
+            "editConfig", #console.toolbar():visibleItems() + 1):insertItem(
+            "hsDocsWeb", #console.toolbar():visibleItems() + 1):insertItem(
+            "reload2", #console.toolbar():visibleItems() + 1)
+    end
 end
 
 function mod.init()
-   if mod.config.auto_reload then
-      print("Setting up config auto-reload watcher on %s", hs_config_dir)
-      configFileWatcher = hs.pathwatcher.new(hs_config_dir, reloadConfig)
-      configFileWatcher:start()
-   end
+    if mod.config.auto_reload then
+        print("Setting up config auto-reload watcher on %s", hs_config_dir)
+        configFileWatcher = hs.pathwatcher.new(hs_config_dir, reloadConfig)
+        configFileWatcher:start()
+    end
 
-   --  Manual config reload
-   -- apw.bind(mod.config.manual_reload_key, hs.reload)
+    --  Manual config reload
+    -- apw.bind(mod.config.manual_reload_key, hs.reload)
 end
 
 return mod

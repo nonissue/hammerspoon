@@ -16,12 +16,23 @@ package.path = package.path .. ";_lib/?.lua"
 package.path = hs.configdir .. "/_Spoons/?.spoon/init.lua;" .. package.path
 package.path = hs.configdir .. "/WIP/?.spoon/init.lua;" .. package.path
 package.path = package.path .. ";_scratch/?.lua"
+
+local console = hs.console
+
 local styles = require("styles")
 local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 
 hs_reload.init()
-require("console")
+
+-- been having issues with console (toolbar specifically) on hammerspoon 1.1.10
+local customConsole = require("consoleTweaks")
+
+-- console.toolbar():insertItem("darkMode", #console.toolbar():visibleItems() + 1)
+--     :insertItem("clear", #console.toolbar():visibleItems() + 1):insertItem(
+--     "editConfig", #console.toolbar():visibleItems() + 1):insertItem(
+--     "hsDocsWeb", #console.toolbar():visibleItems() + 1):insertItem(
+--     "reload2", #console.toolbar():visibleItems() + 1)
 
 -- bind our alert style to default alert style
 for k, v in pairs(styles.alert_default) do
@@ -169,6 +180,7 @@ hs.loadSpoon("Context"):start(
 
 ]]
 
+-- 26-01-11: i think this was causing an issue at some point? not sure why i disabled
 hs.loadSpoon("SafariKeys")
 spoon.SafariKeys:bindHotkeys(spoon.SafariKeys.defaultHotkeys)
 
@@ -252,8 +264,6 @@ spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
-
-
 ------------------------------------------------------------------------------
 -- Wip
 ------------------------------------------------------------------------------
@@ -272,8 +282,8 @@ TextInflator:init()
 -- Messing around wtih asmagills spoon formatting but it's weird
 -- hs.loadSpoon is easier for me to reason about
 
-hs.loadSpoon("BuildBot")
-spoon.BuildBot:bindHotkeys(spoon.BuildBot.defaultHotkeys)
+-- hs.loadSpoon("BuildBot")
+-- spoon.BuildBot:bindHotkeys(spoon.BuildBot.defaultHotkeys)
 
 
 -- hs.loadSpoon("CMDESC"):start()
