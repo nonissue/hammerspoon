@@ -31,7 +31,7 @@ obj.chooser = nil
 obj.timerEvent = nil
 
 obj.defaultHotkeys = {
-    toggleChooser = {{"ctrl", "alt", "cmd"}, "S"}
+    toggleChooser = { { "ctrl", "alt", "cmd" }, "S" }
 }
 
 obj.timers = {}
@@ -43,7 +43,7 @@ end
 
 obj.spoonPath = script_path()
 
-obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.circle.fill.pdf"):setSize({w = 20, h = 20})
+obj.menubarIcon = hs.image.imageFromPath(obj.spoonPath .. "/moon.circle.fill.pdf"):setSize({ w = 20, h = 20 })
 
 local minMins = 0
 local minSecs = minMins / 60
@@ -59,6 +59,25 @@ local updateInterval = 5
 local presetCount = 3
 -- How often the menubar is updated when countdown running (in seconds)
 local updateFreq = 1
+
+local defaultFont = {
+    font = "Menlo",
+    color = { hex = "#EEEEEE" }
+}
+
+local almostDone = {
+    font = "Menlo",
+    color = { hex = "#FF6F00" }
+}
+
+obj.menuFont = defaultFont
+
+function obj:styleText(text)
+    return hs.styledtext.new(
+        text, self.menuFont
+    -- self.menuFont
+    )
+end
 
 obj.createTimerChoices = {}
 obj.startMenuChoices = {}
@@ -80,7 +99,7 @@ for i = 1, presetCount do
         obj.startMenuChoices,
         {
             title = hs.styledtext.new(tostring(i * sleepInterval .. "m")),
-            fn = function()
+            fn = function ()
                 obj:processChoice(obj.createTimerChoices[i])
             end,
             ["id"] = i,
@@ -97,7 +116,7 @@ local startMenuStaticOpts = {
     },
     {
         title = hs.styledtext.new("XXm"),
-        fn = function()
+        fn = function ()
             obj.chooser:show()
         end
     }
@@ -133,7 +152,7 @@ obj.modifyMenuChoices = {
         ["m"] = 0,
         ["text"] = "Stop Timer",
         title = hs.styledtext.new("Stop"),
-        fn = function()
+        fn = function ()
             -- Reuse the action our chooser uses as it is the shape
             -- processChoice expects
             obj:processChoice(obj.modifyTimerChoices[1])
@@ -145,7 +164,7 @@ obj.modifyMenuChoices = {
         ["m"] = 5,
         ["text"] = "+5m",
         title = hs.styledtext.new("+5m"),
-        fn = function()
+        fn = function ()
             -- Reuse the action our chooser uses as it is the shape
             -- processChoice expects
             obj:processChoice(obj.modifyTimerChoices[2])
@@ -157,7 +176,7 @@ obj.modifyMenuChoices = {
         ["m"] = -5,
         ["text"] = "-5m",
         title = hs.styledtext.new("-5m"),
-        fn = function()
+        fn = function ()
             -- Reuse the action our chooser uses as it is the shape
             -- processChoice expects
             obj:processChoice(obj.modifyTimerChoices[3])
@@ -179,10 +198,14 @@ function obj:bindHotkeys(keys)
 
     hs.hotkey.bindSpec(
         hotkeys["toggleChooser"],
-        function()
+        function ()
             obj.chooser:show()
         end
     )
+end
+
+function obj:setTitleStyled(text)
+    self.sleepTimerMenu:setTitle(hs.styledtext.new(text, self.menuFont))
 end
 
 --- Zzz:formatSeconds(s)
@@ -228,7 +251,7 @@ function obj:startTimer(timerInMins)
         self.timerEvent =
             hs.timer.doAfter(
                 tonumber(timerInMins) * 60,
-                function()
+                function ()
                     self.logger.df("Timer finished, sleeping!")
                     self:deleteTimer()
                     hs.caffeinate.systemSleep()
@@ -283,10 +306,10 @@ end
 ---  * Nothing
 function obj:updateMenu()
     hs.timer.doWhile(
-        function()
+        function ()
             return self.timerEvent
         end,
-        function()
+        function ()
             local timeLeft = self.timerEvent:nextTrigger()
             if math.floor(timeLeft) == 10 then
                 self.logger.d("Sleeping in 10 seconds")
@@ -294,7 +317,8 @@ function obj:updateMenu()
                 obj.menuFont = almostDone
             end
 
-            self.sleepTimerMenu:setTitle(obj:formatSeconds(timeLeft))
+            self:setTitleStyled(obj:formatSeconds(timeLeft))
+            -- self.sleepTimerMenu:setTitle(obj:formatSeconds(timeLeft))
         end,
         updateFreq
     )
@@ -373,7 +397,7 @@ end
 function obj:initChooser()
     self.chooser =
         hs.chooser.new(
-            function(choice)
+            function (choice)
                 if not (choice) then
                     print(self.chooser:query())
                 else
@@ -393,14 +417,14 @@ function obj:initChooser()
     -- if they dont want a default option, otherwise they will
     -- user arrow keys/hotkeys to select option
     self.chooser:queryChangedCallback(
-        function(query)
+        function (query)
             local queryNum = tonumber(query)
             if query == "" then
                 self.chooser:choices(self:getCurrentChoices())
             elseif queryNum then
                 -- elseif queryNum > minSecs and queryNum < maxMins then
                 local choices = {
-                    {["id"] = 0, ["text"] = "Custom", subText = "Enter a custom time"}
+                    { ["id"] = 0, ["text"] = "Custom", subText = "Enter a custom time" }
                 }
                 self.chooser:choices(choices)
             else
