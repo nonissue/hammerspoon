@@ -60,13 +60,41 @@ obj.defaultHotkeys = {
     showResolute = { { "ctrl", "cmd", "alt" }, "L" }
 }
 
+--[[
+Hook into the watchable `context.primaryScreen` which is updated by
+Context.spoons screenWatcherCallback, which fires every time a change in screen
+configuration is detected by hammerspoon.
+
+We use this hook to rebuild the menu items for Resolute when the primaryScreen changes
+as we want the menu items to be an accurate list of resolutions for that primaryScreen
+
+]]
+obj.screenWatcher = hs.watchable.watch("context.primaryScreen",
+    function (_, _, _, oldValue, newValue)
+        hs.alert("HEYO, resolute saw that shit change!", 10)
+
+        if oldValue ~= newValue then
+            obj:init()
+        end
+        -- if obj.menubar then
+        --     obj.menubar:delete()
+        -- end
+
+        -- if obj.resChooser then
+        --     obj.resChooser:delete()
+        -- end
+
+        -- obj.createMenubar(obj.getDisplayOptions())
+    end)
+
+
 -- We can get available modes with hs.screen:availableModes()
 -- But the list is too long, and we only care about a few options
 -- Might be nice to automatically choose some based on screen,
 -- but it's tough to know what will look good
 -- NOTE: Is used for both chooserChoices and menubar menuitems
 
-local mbp14 = {
+local MBP14 = {
     {
         ["id"] = 1,
         ["image"] = obj.menubarIcon,
@@ -102,7 +130,7 @@ local mbp14 = {
     }
 }
 
-local LGUltrafine24 = {
+local LGUltraFine24 = {
     {
         ["id"] = 1,
         ["image"] = obj.menubarIcon,
@@ -138,7 +166,45 @@ local LGUltrafine24 = {
     }
 }
 
+local LGUltraFine27 = {
+    {
+        ["id"] = 1,
+        ["image"] = obj.menubarIcon,
+        ["text"] = "Less",
+        ["subText"] = "2048 x 1152",
+        ["res"] = {
+            h = 1152,
+            s = 2.0,
+            w = 2048
+        }
+    },
+    {
+        ["id"] = 2,
+        ["image"] = obj.menubarIcon,
+        ["text"] = "Default",
+        ["subText"] = "2560 x 1440",
+        ["res"] = {
+            h = 1440,
+            s = 2.0,
+            w = 2560
+        }
+    },
+    {
+        ["id"] = 3,
+        ["image"] = obj.menubarIcon,
+        ["subText"] = "2880 x 1620",
+        ["text"] = "More Space",
+        ["res"] = {
+            h = 1620,
+            s = 2.0,
+            w = 2880
+        }
+    }
+}
+
 local UNKNOWN_DISPLAY = {}
+
+
 
 obj.displayArrangement = {
     current = {
@@ -165,7 +231,7 @@ function obj:bindHotkeys(keys)
 
     hs.hotkey.bindSpec(
         hotkeys["showResolute"],
-        function()
+        function ()
             self:show()
         end
     )
@@ -186,16 +252,32 @@ end
 
 function obj.getDisplayOptions()
     local targetDisplay
+    local primaryScreenUUID = hs.screen.primaryScreen():getUUID()
+    local screenUUIDList = hs.settings.get("context.screenUUIDs")
 
-    if (hs.screen.primaryScreen():name() == "Cinema HD") then
-        targetDisplay = cinema30
-    elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
-        targetDisplay = mbp14
-    elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
-        targetDisplay = LGUltrafine24
+
+    -- for screen, UUID in pairs(hs.settings.get("context.screenUUIDs")) do
+    --     hs.alert(primaryScreenUUID)
+    --     hs.alert(UUID)
+    --     if UUID == primaryScreenUUID then
+    --         targetDisplay = screen
+    --     end
+    -- end
+
+
+
+    if (primaryScreenUUID == screenUUIDList['MBP14']) then
+        targetDisplay = MBP14
+    elseif (primaryScreenUUID == screenUUIDList['LGUltraFine24']) then
+        targetDisplay = LGUltraFine24
+    elseif (primaryScreenUUID == screenUUIDList['LGUltraFine27']) then
+        targetDisplay = LGUltraFine27
     else
         targetDisplay = UNKNOWN_DISPLAY
     end
+
+    -- obj.logger.d(hs.inspect(targetDisplay))
+
 
     return targetDisplay
 end
@@ -203,12 +285,14 @@ end
 function obj.changeRes(choice)
     obj.logger.d(i(choice))
 
+
+
     local w = choice["w"]
     local h = choice["h"]
     local s = choice["s"]
 
     local freq = 120
-    if (hs.screen.primaryScreen():name() == "LG UltraFine") then
+    if (hs.screen.primaryScreen():name():find("LG UltraFine") ~= nil) then
         freq = 60
     end
 
@@ -226,7 +310,7 @@ function obj:generateMenubarItems(displayOptions)
             newMenubarItems,
             {
                 title = hs.styledtext.new("" .. displayOptions[i]["text"]),
-                fn = function()
+                fn = function ()
                     self.changeRes(displayOptions[i]["res"])
                 end,
                 checked = false
@@ -248,7 +332,7 @@ function obj:generateMenubarItems(displayOptions)
             { title = "-" },
             {
                 title = "Refresh",
-                fn = function()
+                fn = function ()
                     obj:init()
                 end
             }
@@ -268,15 +352,16 @@ end
 function obj:show()
     -- added logic to show different resolution choices on different screens
     -- works on whichever screen is currently focused
-    local targetDisplay
+    local targetDisplay = obj.getDisplayOptions()
 
-    if (hs.screen.primaryScreen():name() == "LG UltraFine") then
-        targetDisplay = LGUltrafine24
-    elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
-        targetDisplay = mbp14
-    else
-        targetDisplay = UNKNOWN_DISPLAY
-    end
+
+    -- if (hs.screen.primaryScreen():name() == "LG UltraFine") then
+    --     targetDisplay = LGUltraFine24
+    -- elseif (hs.screen.primaryScreen():name() == "Built-in Retina Display") then
+    --     targetDisplay = mbp14
+    -- else
+    --     targetDisplay = UNKNOWN_DISPLAY
+    -- end
 
     self.resChooser:choices(targetDisplay)
 
@@ -291,15 +376,16 @@ function obj:init()
     -- local targetDisplay
     -- obj.debugHelper()
 
-    if (hs.screen.primaryScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
-        obj.logger.d("Single display detected")
-    elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
-        obj.logger.d("\nMultiple Displays detected - " .. hs.screen.mainScreen():name())
-    else
-        obj.logger.e("pScreen: " .. hs.screen.primaryScreen():name())
 
-        return self
-    end
+    -- if (hs.screen.primaryScreen():name() == "Built-in Retina Display") and (#hs.screen.allScreens() == 1) then
+    --     obj.logger.d("Single display detected")
+    -- elseif (hs.screen.primaryScreen():name() == "LG UltraFine") then
+    --     obj.logger.d("\nMultiple Displays detected - " .. hs.screen.mainScreen():name())
+    -- else
+    --     obj.logger.e("pScreen: " .. hs.screen.primaryScreen():name())
+
+    --     return self
+    -- end
 
     if self.menubar then
         self.menubar:delete()
@@ -313,7 +399,7 @@ function obj:init()
 
     self.resChooser =
         hs.chooser.new(
-            function(choice)
+            function (choice)
                 if not (choice) then
                     obj.logger.i("Hiding chooser")
                     self.resChooser:hide()

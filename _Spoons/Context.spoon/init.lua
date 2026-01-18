@@ -56,7 +56,28 @@ obj.lastNumberOfScreens = #hs.screen.allScreens()
 
 obj.currentGPU = nil
 
-obj.contextValues = hs.watchable.new("context")
+-- local watchableCallback = function (watcher, path, key, old, new)
+--     hs.alert("watchable callback fired")
+--     hs.alert(old)
+-- end
+
+-- hs.watchable.watch("context", "docked", function () hs.alert("context.testing changed") end)
+
+-- The watcher function for "context" is at the bottom of this file
+obj.contextValues = hs.watchable.new("context", true)
+obj.contextValues.docked = nil
+obj.contextValues.primaryScreen = hs.screen.primaryScreen()
+-- obj.contextWatcher = hs.watchable.watch("context.*",
+--     function (_, _, _, oldValue, newValue) hs.alert("Old: " .. (oldValue and oldValue or "nil") .. "\nNew: " .. newValue) end)
+
+-- obj.dockedWatcher = hs.watchable.watch("context.docked",
+--     function (_, _, _, oldValue, newValue)
+--         hs.alert("Old: " .. (oldValue and oldValue or "nil") .. "\nNew: " .. newValue)
+--         fn = function ()
+--             obj.menubar:setMenu(obj.createMenu(_, _, _))
+--         end
+--     end)
+
 
 -- spoon options
 obj.shownInMenu = false
@@ -72,7 +93,7 @@ obj.spoonPath = script_path()
 
 -- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
 -- or if there is a warning (eg. dgpu enabled?)
-obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({w = 20, h = 20})
+obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({ w = 20, h = 20 })
 -- obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.number.circle.fill.pdf"):setSize({w = 18, h = 18})
 
 -- get value with obj.contextValuesWatcher:value('location')
@@ -292,12 +313,41 @@ end
 --- Method
 --- screenWatcherCallback
 ---
+--- Complete rework to make this much simpler, so I can dump the complete nightmare the other one has become
+function obj.screenWatcherCallback()
+    hs.alert("screenwatcher callback fired")
+    obj.logger.i("[SW] Fired")
+    local newNumberOfScreens = #hs.screen.allScreens()
+
+    obj.contextValues.primaryScreen = hs.screen.primaryScreen()
+
+    if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.contextValues.docked then
+        return
+    end
+
+    if #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") then
+        obj.contextValues.docked = "mobile"
+    elseif hs.fnutils.some(hs.screen.allScreens(), function (s)
+            return s:name():find(
+                "^LG UltraFine") ~= nil
+        end) then
+        hs.alert("WE'RE docked BABY")
+        obj.contextValues.docked = "desk"
+    end
+
+    obj.lastNumberOfScreens = newNumberOfScreens
+end
+
+--- Context.screenWatcherCallback()
+--- Method
+--- screenWatcherCallback
+---
 --- Parameters:
 --- * None
 ---
 --- Returns:
 ---  * None
-function obj.screenWatcherCallback()
+function obj.screenWatcherCallback2()
     local newNumberOfScreens = #hs.screen.allScreens()
 
     obj.logger.i("[SW] Fired")
@@ -366,14 +416,24 @@ function obj.screenWatcherCallback()
     local LGUltrafine = hs.screen.find("LG Ultrafine")
     local ULTRAFINE_24_UUID = hs.screen.find("A690D7DD-9EB8-40EF-9910-EFC67701A3BC")
 
+
+
+    --  so, it doesn't look like display UUIDs are stable? I get a different result for my lg ultrafine now
+    -- WAIT, WEIRD, MBP_14_UUID IS stable, but LG ultrafine isnt?
+    -- I also no longer use / own a bunch of the displays listed above, and my setup rotatates
+    -- Geneerally it's LG Ultrafine 5k 27" + LG Ultrafine 4k 24" (lg 24MD4KL-B)
+
+    -- Okay, so I'm going to refactor this.
+
+
+    -- Utility:
+    -- hs.fnutils.each(hs.screen.allScreens(), function(s) hs.printf(hs.inspect(s:name())) end)
+    -- hs.fnutils.each(hs.settings.getKeys(), function (k) hs.printf(hs.settings.get(k)) end)
     if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
         obj.logger.i("[SW] no change")
-    elseif Acer4K or CinemaDisplay or ULTRAFINE_24_UUID then
-        obj.logger.i("[SW] no change") -- how do i know this is no change?
+    elseif #hs.screen.allScreens() > 1 then
         obj.docked = "docked"
         obj.contextValues.docked = "docked"
-        -- obj.moveDockDown()
-        -- obj.moveDockLeft()
     elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
         obj.docked == "@desk"
     then
@@ -385,24 +445,6 @@ function obj.screenWatcherCallback()
         for i = 1, #obj.drives do
             obj.checkAndEject(obj.drives[i])
         end
-    elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
-        obj.logger.i("[SW] Sidecar Mode")
-        obj.moveDockDown()
-    elseif #hs.screen.allScreens() == 1 and
-        (
-            hs.screen.find("Color LCD") or
-            MBP_14_UUID or
-            hs.screen.find("Built-in Retina Display")
-        )
-    then
-        -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
-        -- Need to find by id but don't know if that's stable. Hmmm.
-        -- Okay, UUID seems stable after restarting, connecting external display.
-        obj.logger.i("[SW] Mobile")
-        obj.docked = "mobile"
-        obj.contextValues.docked = "mobile"
-        -- obj.moveDockLeft()
-        obj.moveDockDown()
     else
         obj.logger.e("[SW] Error!")
         obj.logger.e("[SW] All screens: ")
@@ -411,6 +453,53 @@ function obj.screenWatcherCallback()
         obj.contextValues.docked = "error"
         obj.docked = "error"
     end
+
+    -- if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
+    --     obj.logger.i("[SW] no change")
+    -- elseif Acer4K or CinemaDisplay or ULTRAFINE_24_UUID then
+    --     obj.logger.i("[SW] no change") -- how do i know this is no change?
+    --     obj.docked = "docked"
+    --     obj.contextValues.docked = "docked"
+    --     -- obj.moveDockDown()
+    --     -- obj.moveDockLeft()
+    -- elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
+    --     obj.docked == "@desk"
+
+    -- then
+    --     obj.logger.i("[SW] undocking")
+    --     obj.docked = "mobile"
+    --     obj.contextValues.docked = "mobile"
+    --     -- obj.moveDockLeft()
+
+    --     for i = 1, #obj.drives do
+    --         obj.checkAndEject(obj.drives[i])
+    --     end
+    -- elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
+    --     obj.logger.i("[SW] Sidecar Mode")
+    --     obj.moveDockDown()
+    -- elseif #hs.screen.allScreens() == 1 and
+    --     (
+    --         hs.screen.find("Color LCD") or
+    --         MBP_14_UUID or
+    --         hs.screen.find("Built-in Retina Display")
+    --     )
+    -- then
+    --     -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
+    --     -- Need to find by id but don't know if that's stable. Hmmm.
+    --     -- Okay, UUID seems stable after restarting, connecting external display.
+    --     obj.logger.i("[SW] Mobile")
+    --     obj.docked = "mobile"
+    --     obj.contextValues.docked = "mobile"
+    --     -- obj.moveDockLeft()
+    --     obj.moveDockDown()
+    -- else
+    --     obj.logger.e("[SW] Error!")
+    --     obj.logger.e("[SW] All screens: ")
+    --     obj.logger.e(i(hs.screen.allScreens()))
+    --     obj.logger.e("[SW] all screens #" .. #hs.screen.allScreens())
+    --     obj.contextValues.docked = "error"
+    --     obj.docked = "error"
+    -- end
 
     obj.lastNumberOfScreens = newNumberOfScreens
 end
@@ -463,7 +552,7 @@ end
 function obj.initScreenWatcher()
     -- if docked hasn't been set,
     -- run the callback once to populate it
-    if not obj.docked then
+    if not obj.contextValues.docked then
         obj.screenWatcherCallback()
     end
 
@@ -491,7 +580,7 @@ function obj:init()
     obj.display_ids = hs.settings.get("context.display_ids") or {}
     obj.drives = hs.settings.get("context.drives") or {}
     if atHome(hs.wifi.currentNetwork()) then
-        obj.location = "home"
+        obj.contextValues.location = "@home"
         hs.alert("@HOME")
     end
 
@@ -532,10 +621,10 @@ function obj.createMenu(location, docked, gpu)
             {
                 {
                     title = hs.styledtext.new(
-                        "  @" .. (location or obj.location or "error"),
-                        {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                        "  @" .. (location or obj.contextValues.location or "error"),
+                        { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                     ),
-                    fn = function()
+                    fn = function ()
                         hs.alert("Current Wifi: " .. obj.currentSSID)
                     end
                 }
@@ -548,10 +637,12 @@ function obj.createMenu(location, docked, gpu)
         {
             {
                 title = hs.styledtext.new(
-                    "  " .. (docked or obj.docked or "error"),
-                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                -- I'm not sure why we have 'obj.docked' since we've now figured out how to get 'obj.contextValues.docked' working
+                -- properly...
+                    "  " .. (docked or obj.contextValues.docked or obj.docked or "error"),
+                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                 ),
-                fn = function()
+                fn = function ()
                     hs.alert("docked clicked")
                 end
             }
@@ -564,9 +655,9 @@ function obj.createMenu(location, docked, gpu)
             {
                 title = hs.styledtext.new(
                     (gpu or obj.currentGPU or "error"),
-                    {font = hs.styledtext.defaultFonts.userFixedPitch.name}
+                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
                 ),
-                fn = function()
+                fn = function ()
                     hs.alert("Launching activity monitor...")
                     hs.application.launchOrFocus("Activity Monitor")
                 end
@@ -584,9 +675,9 @@ function obj.createMenu(location, docked, gpu)
                 {
                     title = hs.styledtext.new(
                         "  Toggle UI",
-                        {font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {}}
+                        { font = hs.styledtext.defaultFonts.userFixedPitch.name, color = {} }
                     ),
-                    fn = function()
+                    fn = function ()
                         obj.darkModeScript =
                         [[
                     tell application "System Events"
@@ -615,12 +706,12 @@ function obj.createMenu(location, docked, gpu)
                 title = hs.styledtext.new(
                     "  Refresh   ",
                     {
-                        color = {blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8},
+                        color = { blue = 0.1, green = 0.9, red = 0.9, alpha = 0.8 },
                         -- underlineStyle = 1,
                         font = hs.styledtext.defaultFonts.userFixedPitch.name
                     }
                 ),
-                fn = function()
+                fn = function ()
                     obj.menubar:setMenu(obj.createMenu(_, _, _))
                 end
             }
@@ -642,14 +733,14 @@ function obj.createMenu(location, docked, gpu)
         local setupDoneTitle = hs.styledtext.new(
             "✔︎ Setup",
             {
-                color = {alpha = 0.9, green = 0.95},
+                color = { alpha = 0.9, green = 0.95 },
                 font = hs.styledtext.defaultFonts.userFixedPitch.name
             }
         )
         local setupNotDoneTitle = hs.styledtext.new(
             "× Setup",
             {
-                color = {alpha = 0.6, red = 1},
+                color = { alpha = 0.6, red = 1 },
                 font = hs.styledtext.defaultFonts.userFixedPitch.name
             }
         )
@@ -673,7 +764,7 @@ function obj.createMenu(location, docked, gpu)
                 --     }
                 -- ),
                 -- checked = getSetupState(),
-                fn = function()
+                fn = function ()
                     if (getSetupState()) then
                         hs.alert("CLEARING context_settings_setup_done")
                         hs.settings.clear("context_settings_setup_done")
@@ -754,15 +845,38 @@ function obj:stop()
     return self
 end
 
+--[[
+
+Cool, so this was here the whole time from long ago, and I forgot about it
+and had to figure out how watchers worked from scratch, which I find difficult, but
+anyway.
+
+This function watches ALL keys of the 'watchable' we set up at the top of this file ("context")
+In this Spoon, obj.contextValues is set to store that watchable [1] for ease of use.
+
+Anytime a child key of 'context' changes, the callback below fires, which is super cool. In this case,
+we use it to update the context menubar menu when any of the variables it displays change
+
+The crazy part is, we can also WATCH the 'context' watchable scope from other modules / spoons, which is
+super cool. So now, Resolute [2] can watch `context.primaryScreen` and if the primary screen changes, update
+it's menu items to be relevant to that display.
+
+[1]: this just makes it easier to modify values in future as we can do `obj.contextValues.docked = "mmobile"`
+and it's the same as doing hs.watchable.watch("context.docked"):change("mobile")
+[2]:
+
+
+
+]]
 function obj.watchers()
     obj.contextValuesWatcher =
         hs.watchable.watch(
-            "context_settings_test.*",
-            function(_, _, key, old_value, new_value)
-                hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
+            "context.*",
+            function (_, _, key, old_value, new_value)
+                hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value), 5)
                 hs.alert(obj.contextValues.location)
                 obj.menubar:setMenu(
-                    obj.createMenu(obj.contextValues.location, obj.contextValues.docked, obj.contextValues.currentGPU)
+                    obj.createMenu(obj.contextValues.location, obj.contextValues.docked, _)
                 )
             end
         )
