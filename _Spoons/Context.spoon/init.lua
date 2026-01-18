@@ -530,7 +530,7 @@ function obj.createMenu(location, docked)
                     }
                 ),
                 fn = function ()
-                    obj.menubar:setMenu(obj.createMenu(_, _, _))
+                    obj.menubar:setMenu(obj.createMenu(_, _))
                 end
             }
         }
@@ -694,7 +694,7 @@ function obj.watchers()
                 hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value), 5)
                 hs.alert(obj.contextValues.location)
                 obj.menubar:setMenu(
-                    obj.createMenu(obj.contextValues.location, obj.contextValues.docked, _)
+                    obj.createMenu(obj.contextValues.location, obj.contextValues.docked)
                 )
             end
         )
