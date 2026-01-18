@@ -20,6 +20,7 @@ package.path = package.path .. ";_scratch/?.lua"
 local console = hs.console
 
 local styles = require("styles")
+
 local utils = require("utilities")
 local hs_reload = require("hammerspoon_config_reload")
 
@@ -140,6 +141,12 @@ hs.loadSpoon("CTRLESC"):start()
 local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
 local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
 
+local screenUUIDs = {
+    MBP14 = "37D8832A-2D66-02CA-B9F7-8F30A301B230",
+    LGUltraFine27 = "100C5501-31A5-4552-BB4A-34D7BE288248",
+    LGUltraFine24 = "423C5088-FF6E-45E8-B924-871A96096EAF",
+}
+
 hs.settings.set(
     "homeSSIDs",
     {
@@ -155,6 +162,7 @@ hs.settings.set(
 )
 hs.settings.set("context.drives", drives)
 hs.settings.set("context.display_ids", display_ids)
+hs.settings.set("context.screenUUIDs", screenUUIDs)
 
 -- Load spoon
 hs.loadSpoon("Context"):start(
