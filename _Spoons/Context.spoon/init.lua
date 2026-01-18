@@ -2,7 +2,6 @@
 ---
 --- Change settings based on location and displays
 --- Also, indicate current 'system' context with menubar item
---- eg. indicate which gpu is currently being used on computers with iGPU and dGPUs
 ---
 --- TODO:
 
@@ -54,7 +53,7 @@ obj.currentSSID = nil
 obj.currentScreens = nil
 obj.lastNumberOfScreens = #hs.screen.allScreens()
 
-obj.currentGPU = nil
+
 
 -- local watchableCallback = function (watcher, path, key, old, new)
 --     hs.alert("watchable callback fired")
@@ -92,7 +91,6 @@ end
 obj.spoonPath = script_path()
 
 -- right so i like this one the best visually, but maybe it should change if unknown state is encoutered
--- or if there is a warning (eg. dgpu enabled?)
 obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.grid.circle.fill.pdf"):setSize({ w = 20, h = 20 })
 -- obj.menuIcon = hs.image.imageFromPath(obj.spoonPath .. "/bold.number.circle.fill.pdf"):setSize({w = 18, h = 18})
 
@@ -338,172 +336,6 @@ function obj.screenWatcherCallback()
     obj.lastNumberOfScreens = newNumberOfScreens
 end
 
---- Context.screenWatcherCallback()
---- Method
---- screenWatcherCallback
----
---- Parameters:
---- * None
----
---- Returns:
----  * None
-function obj.screenWatcherCallback2()
-    local newNumberOfScreens = #hs.screen.allScreens()
-
-    obj.logger.i("[SW] Fired")
-    -- hs.alert("[SW] Fired")
-    -- obj.logger.d("\n\n~~~~~~~~~~" .. i(obj.display_ids) .. "\n\n")
-
-    -- ugly as hell way to find out which display is in use
-    -- uses sed to cut all text between "Intel" and "Displays"
-    -- If Radeon (our discrete gpu) occurs between these strings,
-    -- then we know that the displays are assigned to the Radeon and it is
-    -- the current gpu in use. If there is no occurrence of Radeon between
-    -- "Intel" and "Displays", it means we are using the integrated gpu
-
-    -- Warning: not sure if this would work with egpus, not sure if it matters
-    -- alternate sed:
-    -- system_profiler SPDisplaysDataType | sed -e '/Intel/,/Displays/!d' | grep Radeon
-    -- system_profiler SPDisplaysDataType | sed -e '/Intel/,/Radeon/!d' | grep Displays
-
-    -- this shoudl work for any discrete gpu?
-    -- if we find "Displays" after Chipset Mode: Intel but before a blank line
-    -- then we know displays are attached to integrated gpu
-    -- system_profiler SPDisplaysDataType | sed -e '/Chipset Model: Intel/,/^\\s*$/!d' | grep Displays
-    --
-    -- Use UUIDs for logic
-    -- Cinema HD: 12C25E80-CE33-A29C-DA8C-E02B2E982D59
-    -- Color LCD: 120F5D25-16F2-160F-2DC6-FE73F87D696C
-    if (hs.settings.get("context_settings_show_gpu")) then
-        local res,
-        success,
-        exit = --luacheck: ignore
-            hs.execute(
-                "system_profiler SPDisplaysDataType | \
-        sed -n '/Intel/,/Displays/p' | grep Radeon | tr -d '[:space:]'"
-            )
-        if res == "" then
-            obj.currentGPU = "iGPU"
-            obj.contextValues.currentGPU = "iGPU"
-        else
-            obj.currentGPU = "dGPU"
-            obj.contextValues.currentGPU = "dGPU"
-        end
-        -- rcreate menu on change
-        -- obj.createMenu()
-        -- Move this to end of function?
-        -- if obj.menubar ~= nil then
-        --     obj.menubar:setMenu(obj.createMenu(obj.currentGPU))
-        -- end
-        -- maybe check how long the dedicated gpu has been in use?
-        if obj.currentGPU == "discrete" then
-            hs.notify.new(
-                {
-                    title = "GPU Status",
-                    subtitle = "Warning",
-                    informativeText = "Dedicated GPU in use",
-                    alwaysPresent = true,
-                    autoWithdraw = false
-                }
-            ):send()
-            hs.alert("Current GPU")
-        end
-    end
-
-    local Acer4K = hs.screen.find("B286HK")
-    local CinemaDisplay = hs.screen.find("12C25E80-CE33-A29C-DA8C-E02B2E982D59") -- UUID of cinema display
-    local MBP_14_UUID = hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230")
-    local LGUltrafine = hs.screen.find("LG Ultrafine")
-    local ULTRAFINE_24_UUID = hs.screen.find("A690D7DD-9EB8-40EF-9910-EFC67701A3BC")
-
-
-
-    --  so, it doesn't look like display UUIDs are stable? I get a different result for my lg ultrafine now
-    -- WAIT, WEIRD, MBP_14_UUID IS stable, but LG ultrafine isnt?
-    -- I also no longer use / own a bunch of the displays listed above, and my setup rotatates
-    -- Geneerally it's LG Ultrafine 5k 27" + LG Ultrafine 4k 24" (lg 24MD4KL-B)
-
-    -- Okay, so I'm going to refactor this.
-
-
-    -- Utility:
-    -- hs.fnutils.each(hs.screen.allScreens(), function(s) hs.printf(hs.inspect(s:name())) end)
-    -- hs.fnutils.each(hs.settings.getKeys(), function (k) hs.printf(hs.settings.get(k)) end)
-    if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
-        obj.logger.i("[SW] no change")
-    elseif #hs.screen.allScreens() > 1 then
-        obj.docked = "docked"
-        obj.contextValues.docked = "docked"
-    elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
-        obj.docked == "@desk"
-    then
-        obj.logger.i("[SW] undocking")
-        obj.docked = "mobile"
-        obj.contextValues.docked = "mobile"
-        -- obj.moveDockLeft()
-
-        for i = 1, #obj.drives do
-            obj.checkAndEject(obj.drives[i])
-        end
-    else
-        obj.logger.e("[SW] Error!")
-        obj.logger.e("[SW] All screens: ")
-        obj.logger.e(i(hs.screen.allScreens()))
-        obj.logger.e("[SW] all screens #" .. #hs.screen.allScreens())
-        obj.contextValues.docked = "error"
-        obj.docked = "error"
-    end
-
-    -- if #hs.screen.allScreens() == obj.lastNumberOfScreens and obj.docked and obj.location then
-    --     obj.logger.i("[SW] no change")
-    -- elseif Acer4K or CinemaDisplay or ULTRAFINE_24_UUID then
-    --     obj.logger.i("[SW] no change") -- how do i know this is no change?
-    --     obj.docked = "docked"
-    --     obj.contextValues.docked = "docked"
-    --     -- obj.moveDockDown()
-    --     -- obj.moveDockLeft()
-    -- elseif #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") and
-    --     obj.docked == "@desk"
-
-    -- then
-    --     obj.logger.i("[SW] undocking")
-    --     obj.docked = "mobile"
-    --     obj.contextValues.docked = "mobile"
-    --     -- obj.moveDockLeft()
-
-    --     for i = 1, #obj.drives do
-    --         obj.checkAndEject(obj.drives[i])
-    --     end
-    -- elseif #hs.screen.allScreens() == 2 and hs.screen.find(obj.display_ids["sidecar"]) then
-    --     obj.logger.i("[SW] Sidecar Mode")
-    --     obj.moveDockDown()
-    -- elseif #hs.screen.allScreens() == 1 and
-    --     (
-    --         hs.screen.find("Color LCD") or
-    --         MBP_14_UUID or
-    --         hs.screen.find("Built-in Retina Display")
-    --     )
-    -- then
-    --     -- Screen loses name for some reason? No longer called Color LCD in catalina. just unnamed?
-    --     -- Need to find by id but don't know if that's stable. Hmmm.
-    --     -- Okay, UUID seems stable after restarting, connecting external display.
-    --     obj.logger.i("[SW] Mobile")
-    --     obj.docked = "mobile"
-    --     obj.contextValues.docked = "mobile"
-    --     -- obj.moveDockLeft()
-    --     obj.moveDockDown()
-    -- else
-    --     obj.logger.e("[SW] Error!")
-    --     obj.logger.e("[SW] All screens: ")
-    --     obj.logger.e(i(hs.screen.allScreens()))
-    --     obj.logger.e("[SW] all screens #" .. #hs.screen.allScreens())
-    --     obj.contextValues.docked = "error"
-    --     obj.docked = "error"
-    -- end
-
-    obj.lastNumberOfScreens = newNumberOfScreens
-end
-
 -- ---------------------------------------------------------------------------
 -- Watchers
 -- ---------------------------------------------------------------------------
@@ -612,7 +444,7 @@ end
 ---
 --- Returns:
 --- New Menubar
-function obj.createMenu(location, docked, gpu)
+function obj.createMenu(location, docked)
     local newMenu = {}
 
     if (hs.settings.get("context_settings_show_location")) then
@@ -649,21 +481,7 @@ function obj.createMenu(location, docked, gpu)
         }
     )
 
-    if (hs.settings.get("context_settings_show_gpu")) then
-        hs.fnutils.concat(
-            newMenu,
-            {
-                title = hs.styledtext.new(
-                    (gpu or obj.currentGPU or "error"),
-                    { font = hs.styledtext.defaultFonts.userFixedPitch.name }
-                ),
-                fn = function ()
-                    hs.alert("Launching activity monitor...")
-                    hs.application.launchOrFocus("Activity Monitor")
-                end
-            }
-        )
-    end
+
 
     if (hs.settings.get("context_settings_show_appearance_toggle")) then
         hs.fnutils.concat(
@@ -689,7 +507,7 @@ function obj.createMenu(location, docked, gpu)
 
                         hs.osascript.applescript(obj.darkModeScript)
 
-                        obj.menubar:setMenu(obj.createMenu(_, _, _))
+                        obj.menubar:setMenu(obj.createMenu(_, _))
                     end
                 }
             }
@@ -812,7 +630,7 @@ function obj:start(options)
     -- currently menu functions dont do anything
     if obj.shownInMenu then
         obj.menubar = hs.menubar.new():setIcon(obj.menuIcon)
-        obj.menubar:setMenu(obj.createMenu(_, _, obj.currentGPU))
+        obj.menubar:setMenu(obj.createMenu(_, _))
     end
 
     return self

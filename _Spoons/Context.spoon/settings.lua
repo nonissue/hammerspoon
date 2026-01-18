@@ -17,7 +17,6 @@ local CONTEXT_SETTINGS_DEFAULTS = {
     debug_mode = true,
     setup_done = false,
     show_appearance_toggle = true,
-    show_gpu = false,
     show_location = true,
     show_menu = true
 }
@@ -41,7 +40,7 @@ function obj:setDefaultSettings()
         hs.settings.watchKey(
             "context.settings.watcher." .. k,
             "context_settings_" .. k,
-            function(key)
+            function (key)
                 hs.alert("context should reload...")
             end
         )
