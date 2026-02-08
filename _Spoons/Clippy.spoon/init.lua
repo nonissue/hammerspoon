@@ -45,7 +45,8 @@ function obj.imageToClipboard(files, flagTables)
     -- To prevent this, when we have successfully copied a screenshot to the pasteboard,
     -- we set obj.lastRuntime, which is compared to the current time on each invocation.
     -- if less than a second has passed since the last run, we return to avoid redundant invocations
-    if os.time() - obj.lastRuntime < 2 then
+    if os.time() - obj.lastRuntime < 4 then
+        -- 26-02-06: screenshot notifications started firing twice again, so I bumped the debounce threshold up to 4 seconds
         print("DEBUG: Clippy pathwatcher debounced")
         return
     end
@@ -94,7 +95,7 @@ function obj.imageToClipboard(files, flagTables)
                 )
             end
         else
-            difference = os.time() - hs.fs.attributes(file).creation
+            local difference = os.time() - hs.fs.attributes(file).creation
             local fileName = file:match("([^/]+)$")
 
             if difference > 100 then
@@ -133,10 +134,17 @@ function obj.imageToClipboard(files, flagTables)
                     )
                     hs.pasteboard.writeObjects(obj.newScreenshot)
                     hs.notify.new(
+                        function ()
+                            -- Action button function
+                            -- Should open the enclosing folder of the latest screenshot
+                            hs.execute("open " .. obj.screenshotPath)
+                        end,
                         {
                             title = "Screenshot!",
                             subtitle = "New screenshot detected",
                             informativeText = "Screenshot copied to clipboard",
+                            hasActionButton = true,
+                            actionButtonTitle = "Open in Finder",
                             alwaysPresent = true,
                             autoWithdraw = true
                         }
