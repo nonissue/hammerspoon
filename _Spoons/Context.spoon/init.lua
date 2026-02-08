@@ -218,6 +218,7 @@ function obj.homeArrived()
 
     hs.alert(" ☛ ⌂ ", 3)
     obj.contextValues.location = "home"
+    obj.logger.i("[SW: contextValues] location = home")
     obj.location = "home"
 end
 
@@ -236,6 +237,7 @@ function obj.homeDeparted()
     -- os.execute("sudo pmset -a displaysleep 1 sleep 5")
 
     obj.contextValues.location = "away"
+    obj.logger.i("[SW: contextValues] location = away")
     obj.location = "away"
 end
 
@@ -270,7 +272,7 @@ function obj.ssidChangedCallback()
 
         obj.logger.e("[SC] No SSID found!")
     end
-
+    obj.logger.i("[SW] @DOCKED")
     obj.currentSSID = newSSID
     obj.contextValues.currentSSID = newSSID
 
@@ -313,7 +315,7 @@ end
 ---
 --- Complete rework to make this much simpler, so I can dump the complete nightmare the other one has become
 function obj.screenWatcherCallback()
-    hs.alert("screenwatcher callback fired")
+    -- hs.alert("screenwatcher callback fired")
     obj.logger.i("[SW] Fired")
     local newNumberOfScreens = #hs.screen.allScreens()
 
@@ -324,12 +326,16 @@ function obj.screenWatcherCallback()
     end
 
     if #hs.screen.allScreens() == 1 and hs.screen.find("37D8832A-2D66-02CA-B9F7-8F30A301B230") then
+        obj.logger.i("[SW: UPDATE] docked: mobile")
         obj.contextValues.docked = "mobile"
-    elseif hs.fnutils.some(hs.screen.allScreens(), function (s)
-            return s:name():find(
-                "^LG UltraFine") ~= nil
-        end) then
-        hs.alert("WE'RE docked BABY")
+    elseif hs.fnutils.some(hs.screen.allScreens(),
+            function (s)
+                return s:name():find(
+                    "^LG UltraFine") ~= nil
+            end)
+    then
+        -- hs.alert("WE'RE docked BABY")
+        obj.logger.i("[SW: UPDATE] docked: desk")
         obj.contextValues.docked = "desk"
     end
 
@@ -413,7 +419,8 @@ function obj:init()
     obj.drives = hs.settings.get("context.drives") or {}
     if atHome(hs.wifi.currentNetwork()) then
         obj.contextValues.location = "@home"
-        hs.alert("@HOME")
+        obj.logger.i("[SW] @home, setting location")
+        -- hs.alert("@HOME")
     end
 
     -- if options then
@@ -691,7 +698,9 @@ function obj.watchers()
         hs.watchable.watch(
             "context.*",
             function (_, _, key, old_value, new_value)
-                hs.alert(tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value), 5)
+                obj.logger.i("[@contextUpdate]" ..
+                    tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value))
+                -- hs.alert("TEST" .. tostring(key) .. ": " .. tostring(old_value) .. " -> " .. tostring(new_value), 5)
                 hs.alert(obj.contextValues.location)
                 obj.menubar:setMenu(
                     obj.createMenu(obj.contextValues.location, obj.contextValues.docked)
