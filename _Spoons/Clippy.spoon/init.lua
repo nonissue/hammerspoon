@@ -99,7 +99,8 @@ function obj.notifyScreenshotCopied(filePath)
             hasActionButton = true,
             actionButtonTitle = "Open in Finder",
             alwaysPresent = true,
-            autoWithdraw = true
+            autoWithdraw = false,
+            withdrawAfter = 0
         }
     ):send()
 end
@@ -109,7 +110,7 @@ function obj.scheduleScreenshotCopy(filePath, attempt)
         return
     end
 
-    obj.pendingScreenshots[filePath] = hs.timer.doAfter(obj.copyDelay, function()
+    obj.pendingScreenshots[filePath] = hs.timer.doAfter(obj.copyDelay, function ()
         obj.pendingScreenshots[filePath] = nil
         obj.processScreenshot(filePath, attempt or 1)
     end)
