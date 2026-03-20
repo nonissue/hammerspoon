@@ -16,18 +16,159 @@ obj.logger = hs.logger.new("Clippy")
 obj.debug = true
 obj.hotkeyShow = nil
 obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2021mbp"
-obj.wasCreated = false
-
-obj.newScreenshot = nil
-obj.currentScreenshot = nil
-obj.stop = 0
-obj.skip = 0
--- for an explanation of this variable, see first if block in obj.imageToClipboard
-obj.lastRuntime = 0
+obj.filenamePrefix = "apw"
+obj.copyDelay = 0.5
+obj.maxCopyAttempts = 5
+obj.recentScreenshotWindow = 15
+obj.pendingScreenshots = {}
+obj.processedScreenshots = {}
 -- https://github.com/CommandPost/CommandPost/blob/develop/src/plugins/finalcutpro/text2speech/init.lua
 -- https://github.com/heptal/dotfiles/blob/9f1277e162a9416b5f8b4094e87e7cd1fc374b18/roles/hammerspoon/files/pasteboard.lua
 -- https://github.com/search?q=hs.pasteboard+extension%3Alua&type=Code
 -- https://github.com/ahonn/dotfiles/blob/c5e2f2845924daf970dce48aecbae48e325069a9/hammerspoon/modules/clipboard.lua
+
+local function debugLog(message)
+    if obj.debug then
+        print("Clippy: " .. message)
+    end
+end
+
+local function fileNameFromPath(path)
+    if type(path) ~= "string" then
+        return nil
+    end
+
+    return path:match("([^/]+)$")
+end
+
+function obj.pruneProcessedScreenshots()
+    local cutoff = os.time() - 86400
+
+    for filePath, processedAt in pairs(obj.processedScreenshots) do
+        if processedAt < cutoff then
+            obj.processedScreenshots[filePath] = nil
+        end
+    end
+end
+
+function obj.isCandidateScreenshot(filePath, flagTable)
+    local fileName = fileNameFromPath(filePath)
+
+    if fileName == nil or fileName == ".DS_Store" then
+        return false, "Ignored file"
+    end
+
+    if type(flagTable) == "table" and flagTable.itemIsDir then
+        return false, "Directory event"
+    end
+
+    if fileName:sub(1, 1) == "." then
+        return false, "Temporary file"
+    end
+
+    if fileName:sub(-4):lower() ~= ".png" then
+        return false, "Not a PNG"
+    end
+
+    if obj.filenamePrefix ~= nil and fileName:sub(1, #obj.filenamePrefix) ~= obj.filenamePrefix then
+        return false, "Prefix mismatch"
+    end
+
+    if type(flagTable) ~= "table" then
+        return false, "Missing event flags"
+    end
+
+    if not (flagTable.itemCreated or flagTable.itemModified or flagTable.itemRenamed) then
+        return false, "No creation-like flag"
+    end
+
+    return true
+end
+
+function obj.notifyScreenshotCopied(filePath)
+    local fileName = fileNameFromPath(filePath) or filePath
+
+    hs.notify.new(
+        function ()
+            hs.execute(string.format("open %q", obj.screenshotPath))
+        end,
+        {
+            title = "Screenshot!",
+            subtitle = "New screenshot detected",
+            informativeText = fileName .. " copied to clipboard",
+            hasActionButton = true,
+            actionButtonTitle = "Open in Finder",
+            alwaysPresent = true,
+            autoWithdraw = true
+        }
+    ):send()
+end
+
+function obj.scheduleScreenshotCopy(filePath, attempt)
+    if obj.processedScreenshots[filePath] ~= nil or obj.pendingScreenshots[filePath] ~= nil then
+        return
+    end
+
+    obj.pendingScreenshots[filePath] = hs.timer.doAfter(obj.copyDelay, function()
+        obj.pendingScreenshots[filePath] = nil
+        obj.processScreenshot(filePath, attempt or 1)
+    end)
+end
+
+function obj.retryScreenshotCopy(filePath, attempt, reason)
+    if attempt >= obj.maxCopyAttempts then
+        debugLog("Giving up on " .. filePath .. ": " .. reason)
+        return
+    end
+
+    debugLog(
+        "Retrying " ..
+        filePath ..
+        " (" ..
+        tostring(attempt + 1) ..
+        "/" ..
+        tostring(obj.maxCopyAttempts) ..
+        "): " ..
+        reason
+    )
+    obj.scheduleScreenshotCopy(filePath, attempt + 1)
+end
+
+function obj.processScreenshot(filePath, attempt)
+    if obj.processedScreenshots[filePath] ~= nil then
+        return
+    end
+
+    local attributes = hs.fs.attributes(filePath)
+    if attributes == nil or attributes.mode ~= "file" then
+        obj.retryScreenshotCopy(filePath, attempt, "File not ready")
+        return
+    end
+
+    local createdAt = attributes.creation or attributes.modification or attributes.change
+    if createdAt ~= nil and os.time() - createdAt > obj.recentScreenshotWindow then
+        debugLog("Ignoring stale event for " .. filePath)
+        return
+    end
+
+    if attributes.size == nil or attributes.size == 0 then
+        obj.retryScreenshotCopy(filePath, attempt, "File is empty")
+        return
+    end
+
+    local screenshot = hs.image.imageFromPath(filePath)
+    if screenshot == nil then
+        obj.retryScreenshotCopy(filePath, attempt, "Image could not be loaded yet")
+        return
+    end
+
+    hs.pasteboard.writeObjects(screenshot)
+    obj.processedScreenshots[filePath] = os.time()
+    obj.pruneProcessedScreenshots()
+
+    debugLog("Copied screenshot to clipboard: " .. filePath)
+    obj.notifyScreenshotCopied(filePath)
+end
 
 --- Clippy.imageToClipboard(files, flagtables)
 --- Method
@@ -40,130 +181,16 @@ obj.lastRuntime = 0
 --- Returns:
 ---  * Nothing
 function obj.imageToClipboard(files, flagTables)
-    -- Simple way to debounce things as there several file events within the span of a few seconds
-    -- when a screenshot is created, and pathwatcher fires for all of them.
-    -- To prevent this, when we have successfully copied a screenshot to the pasteboard,
-    -- we set obj.lastRuntime, which is compared to the current time on each invocation.
-    -- if less than a second has passed since the last run, we return to avoid redundant invocations
-    if os.time() - obj.lastRuntime < 4 then
-        -- 26-02-06: screenshot notifications started firing twice again, so I bumped the debounce threshold up to 4 seconds
-        print("DEBUG: Clippy pathwatcher debounced")
-        return
-    end
+    for index, filePath in ipairs(files) do
+        local flagTable = flagTables[index] or {}
+        local shouldProcess, reason = obj.isCandidateScreenshot(filePath, flagTable)
 
-    -- We definitely don't care if it's a .DS_Store file, lawl
-    if files[1] == ".DS_Store" and #files == 1 then
-        return
-    end
-
-    -- NOTE: not sure if this check is necessary?
-    -- if any of the sub tables in our flagtables
-    -- have itemCreated = true, then we know a new file was created.
-    -- If it isn't passed as a flag for any events, then we don't care
-    -- (pathwatcher fires when files are opened/deleted)
-    for x = 1, #flagTables do
-        if flagTables[x]["itemCreated"] then
-            obj.wasCreated = true
-        end
-    end
-
-    obj.wasCreated = true
-
-    for y = 1, #files do
-        local file = files[y]
-        local fileName = file:match("([^/]+)$")
-
-        -- hacky way to skip iterations of the for loop
-        if
-            file ~= nil and string.sub(file, -4) == ".png" and string.sub(fileName, 1, 3) == "apw" and
-            flagTables[y]["itemIsDir"] ~= true
-        then
-            obj.skip = 0
-        elseif string.sub(fileName, -4) ~= ".png" then
-            obj.skip = 1
-        elseif string.sub(fileName, 1, 3) ~= "apw" then
-            obj.skip = 1
-        end
-
-        -- more skip loop
-        if obj.skip == 1 then
-            if obj.debug == true then
-                print(
-                    "\n\n\t\tSkipping:" ..
-                    "\n\t\t\tpath:\t\t" ..
-                    file .. "\n\t\t\tfileName:\t" .. fileName .. "\n\t\tReason:\n\t\t\tFails criteria\n"
-                )
-            end
+        if shouldProcess then
+            obj.scheduleScreenshotCopy(filePath, 1)
         else
-            local difference = os.time() - hs.fs.attributes(file).creation
-            local fileName = file:match("([^/]+)$")
-
-            if difference > 100 then
-                if obj.debug == true then
-                    print(
-                        "\n\n\t\tSkipping:" ..
-                        "\n\t\t\tpath: " ..
-                        file .. "\n\t\t\tfileName: " .. fileName .. "\n\t\tReason: Not a new screenshot\n"
-                    )
-                end
-            end
-
-            local filePath = file
-
-            -- if file doesn't start with prefix set in our macos defaults
-            -- then we don't care about it. when a screenshot is created,
-            -- it seems like a bunch of temporary files with a period prepended
-            -- are created and then removed, which breaks our utility.
-            -- We also make sure this is a "file creation" event before continuing
-            obj.newScreenshot = hs.image.imageFromPath(filePath)
-            obj.currentScreenshot = hs.pasteboard.readImage("clippyboard")
-            if obj.currentScreenshot ~= nil and obj.currentScreenshot:size().w == obj.newScreenshot:size().w then
-                print("\n\n\t------------------------\n\nERROR! Already in clipboard!\n\t------------------------\n")
-                obj.skip = 1
-                return
-            end
-
-            if obj.skip == 1 then
-                print("we should be skipping now...")
-                break
-            else
-                if obj.wasCreated then
-                    print(
-                        "\n\n\t------------------------\n\t💯 Match! Copying:\n" ..
-                        "\t• " .. fileName .. "\n\tto clipboard.\n\t------------------------\n"
-                    )
-                    hs.pasteboard.writeObjects(obj.newScreenshot)
-                    hs.notify.new(
-                        function ()
-                            -- Action button function
-                            -- Should open the enclosing folder of the latest screenshot
-                            hs.execute("open " .. obj.screenshotPath)
-                        end,
-                        {
-                            title = "Screenshot!",
-                            subtitle = "New screenshot detected",
-                            informativeText = "Screenshot copied to clipboard",
-                            hasActionButton = true,
-                            actionButtonTitle = "Open in Finder",
-                            alwaysPresent = true,
-                            autoWithdraw = true
-                        }
-                    ):send()
-
-                    obj.lastRuntime = os.time()
-                    obj.wasCreated = false
-                    obj.skip = 1
-                    -- Don't need to go through rest of files if we have a match
-
-                    -- Either a file was modified, deleted or created by macos
-                    -- print("file watcher called, but file is either temporary, or has been removed")
-                    break
-                end
-            end
+            debugLog("Ignoring " .. tostring(filePath) .. ": " .. reason)
         end
     end
-
-    obj.wasCreated = false
 end
 
 --- Clippy:init()
@@ -205,7 +232,12 @@ end
 function obj:stop()
     obj.logger.df("-- Stopping Clippy")
     obj.screenshotWatcher:stop()
-    obj.wasCreated = false
+
+    for _, timer in pairs(obj.pendingScreenshots) do
+        timer:stop()
+    end
+
+    obj.pendingScreenshots = {}
 end
 
 --- Clippy.disable()
@@ -218,8 +250,17 @@ end
 --- Returns:
 ---  * None
 function obj.disable()
-    obj.screenshotWatcher:stop()
-    obj.screenshotWatcher = nil
+    if obj.screenshotWatcher ~= nil then
+        obj.screenshotWatcher:stop()
+        obj.screenshotWatcher = nil
+    end
+
+    for _, timer in pairs(obj.pendingScreenshots) do
+        timer:stop()
+    end
+
+    obj.pendingScreenshots = {}
+    obj.processedScreenshots = {}
 end
 
 return obj
