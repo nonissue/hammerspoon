@@ -93,8 +93,8 @@ function obj.notifyScreenshotCopied(filePath)
             hs.execute(string.format("open %q", obj.screenshotPath))
         end,
         {
-            title = "Screenshot!",
-            subtitle = "New screenshot detected",
+            title = "Clippy",
+            subTitle = "New screenshot detected",
             informativeText = fileName .. " copied to clipboard",
             hasActionButton = true,
             actionButtonTitle = "Open in Finder",
