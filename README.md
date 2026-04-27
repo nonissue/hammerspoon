@@ -2,6 +2,22 @@
 
 ![stars](https://img.shields.io/github/stars/nonissue/hammerspoon?style=for-the-badge) ![license](https://img.shields.io/github/license/nonissue/hammerspoon?style=for-the-badge)
 
+## Tips
+
+### Using SF Symbols
+
+#### Export Utility
+
+We can export sf symbols as pdfs for use as icons in a variety of places, particularly with spoons.
+
+See: https://github.com/yapstudios/sfsym
+
+#### Copy SVG from SF Symbols
+
+We might be able to copy and use SVG directly from SF Symbols? This worked for `InputOverride.spoon`:
+
+Right click -> Copy image as -> SVG -> Change "Scale" to "Small", leave the rest -> Done
+
 ## Custom Spoons
 
 My custom spoons can be found in the `_Spoons` directory. They aren't really designed to be plug and play, there is often some manually configuration required, but the code is generally documented / relatively simple. Let me know if you have issues / questions / wish for me to officially publish any of them.
