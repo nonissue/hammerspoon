@@ -272,6 +272,9 @@ spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
+
+hs.loadSpoon("InputOverride"):start()
+
 ------------------------------------------------------------------------------
 -- Wip
 ------------------------------------------------------------------------------
