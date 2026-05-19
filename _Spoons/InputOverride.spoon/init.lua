@@ -2,6 +2,14 @@
 ---
 --- Keep the system input device pinned to a preferred device when it is available.
 ---
+---
+---     26-05-18: Disabled for now
+---
+---      • Menu bar item would disappear randomly
+---      • Interacting with input in other apps (like changing the input in facetime)
+---        caused instability and apps to crash. Something wonky going on.
+---
+---
 
 local obj = {}
 obj.__index = obj
@@ -174,7 +182,7 @@ function obj:generateMenubarMenuItems()
     table.insert(menuItems, {
         title = "Clear preferred input",
         disabled = preferredInputDevice == nil,
-        fn = function()
+        fn = function ()
             self:clearPreferredInputDevice()
         end
     })
@@ -241,7 +249,7 @@ end
 function obj:scheduleMenubarMenuUpdate()
     stopMenuRefreshTimer(self)
 
-    self.menuRefreshTimer = hs.timer.doAfter(menuRefreshDelay, function()
+    self.menuRefreshTimer = hs.timer.doAfter(menuRefreshDelay, function ()
         self:enforcePreferredInputDevice()
         self:updateMenubarMenu()
         self.menuRefreshTimer = nil
@@ -273,7 +281,7 @@ function obj:start()
     self.menubarMenu = hs.menubar.new():setMenu(self:generateMenubarMenuItems())
     self.menubarMenu:setIcon(self.menubarIcon)
 
-    hs.audiodevice.watcher.setCallback(function(eventName)
+    hs.audiodevice.watcher.setCallback(function (eventName)
         self.logger.df("%s", tostring(eventName))
 
         if audioEventAffectsInput(eventName) then

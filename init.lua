@@ -273,7 +273,8 @@ hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
 
-hs.loadSpoon("InputOverride"):start()
+-- InputOverride disabled for now, see Spoon for comments explaining why
+-- hs.loadSpoon("InputOverride"):start()
 
 ------------------------------------------------------------------------------
 -- Wip
