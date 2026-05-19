@@ -17,7 +17,7 @@ obj.debug = true
 obj.hotkeyShow = nil
 obj.screenshotPath = os.getenv("HOME") .. "/Documents/screenshots/2021mbp"
 obj.filenamePrefix = "apw"
-obj.copyDelay = 0.5
+obj.copyDelay = 0.3
 obj.maxCopyAttempts = 5
 obj.recentScreenshotWindow = 15
 obj.pendingScreenshots = {}
@@ -90,7 +90,7 @@ function obj.notifyScreenshotCopied(filePath)
 
     hs.notify.new(
         function ()
-            hs.execute(string.format("open %q", obj.screenshotPath))
+            hs.execute(string.format("open -R %q", obj.screenshotPath .. "/" .. fileName))
         end,
         {
             title = "Clippy",
