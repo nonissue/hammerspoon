@@ -124,23 +124,15 @@ hs.loadSpoon("CTRLESC"):start()
     │    Author:     │    Me         │
     └────────────────┴───────────────┘
 
-    Watches for wifi ssid changes + screen resolution changes
-    If changes are detected and match a series of rules
-    Systemwide settings are configured
-    For example:
-    * On wifi ssid change, if isn't one of our home networks
-    system is muted and screenlock is set to a short time
+    Mutes audio when leaving home wifi (or waking from sleep away from
+    home), unmutes when arriving back home.
 
-    PARAMS:
-    [Optional] Accepts a boolean which dictates whether the menubar item is shown
-    Defaults to false if nothing is passed
+    Also publishes the "context" watchable (location, currentSSID,
+    primaryScreen) — Resolute watches context.primaryScreen.
 
  ]]
 
---- this is config for contexts, not ideal atm
-local drives = { "ExternalSSD", "Win-Stuff", "Photos" }
-local display_ids = { mbp = 2077750265, cinema = 69489832, sidecar = 4128829 }
-
+-- used by Resolute to identify the primary screen
 local screenUUIDs = {
     MBP14 = "37D8832A-2D66-02CA-B9F7-8F30A301B230",
     LGUltraFine27 = "100C5501-31A5-4552-BB4A-34D7BE288248",
@@ -160,18 +152,9 @@ hs.settings.set(
         "RamadaExecutive_5G"
     }
 )
-hs.settings.set("context.drives", drives)
-hs.settings.set("context.display_ids", display_ids)
 hs.settings.set("context.screenUUIDs", screenUUIDs)
 
--- Load spoon
-hs.loadSpoon("Context"):start(
-    {
-        showMenu = true,
-        display_ids = display_ids,
-        drives = drives
-    }
-)
+hs.loadSpoon("Context"):start()
 
 --[[
 
@@ -384,4 +367,4 @@ Repeat as needed for each app.
 
 ]]
 
-hs.alert("config reloaded")
+hs.alert("HS: Reloaded")
