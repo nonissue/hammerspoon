@@ -243,8 +243,8 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 -- Currently, you have to specify the choices manually
 -- May change that in future
 ------------------------------------------------------------------------------
-hs.loadSpoon("Resolute")
-spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
+-- hs.loadSpoon("Resolute")
+-- spoon.Resolute:bindHotkeys(spoon.Resolute.defaultHotkeys)
 
 ------------------------------------------------------------------------------
 -- Fenestra.spoon / by me
