@@ -255,9 +255,21 @@ spoon.Zzz:bindHotkeys(spoon.Zzz.defaultHotkeys)
 hs.loadSpoon("Fenestra")
 spoon.Fenestra:bindHotkeys(spoon.Fenestra.defaultHotkeys)
 
+------------------------------------------------------------------------------
+-- AppWinCycle.spoon / by me
+------------------------------------------------------------------------------
+--- Restores convenient macOS application-window cycling on compact keyboards
+--- without a dedicated grave (`) key.
+------------------------------------------------------------------------------
+hs.loadSpoon("AppWinCycle")
+spoon.AppWinCycle.keyboard_type = 46
+spoon.AppWinCycle:start()
+
 
 -- InputOverride disabled for now, see Spoon for comments explaining why
 -- hs.loadSpoon("InputOverride"):start()
+
+
 
 ------------------------------------------------------------------------------
 -- Wip
