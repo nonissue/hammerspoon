@@ -16,7 +16,7 @@ obj.__index = obj
 obj.name = "AppWinCycle"
 obj.version = "1.0"
 obj.author = "Andy"
-obj.homepage = "https://andy.ws"
+obj.homepage = ""
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 --- AppWinCycle.keyboard_type
@@ -25,6 +25,8 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 ---
 --- The keyboard type can be determined from a key event using
 --- `hs.eventtap.event.properties.keyboardEventKeyboardType`.
+---
+--- This value must be configured before calling `AppWinCycle:start()`.
 obj.keyboard_type = nil
 
 --- AppWinCycle:start()
@@ -48,6 +50,11 @@ function obj:start()
         return self
     end
 
+    assert(
+        self.keyboard_type ~= nil,
+        "AppWinCycle.keyboard_type must be configured before calling :start()"
+    )
+
     self.event_tap = hs.eventtap.new(
         { hs.eventtap.event.types.keyDown },
         function (event)
@@ -60,8 +67,8 @@ function obj:start()
                 return false
             end
 
-            -- Escape has the macOS virtual keycode 53.
-            if event:getKeyCode() ~= 53 then
+            -- Only intercept the physical Escape key.
+            if event:getKeyCode() ~= hs.keycodes.map.escape then
                 return false
             end
 
